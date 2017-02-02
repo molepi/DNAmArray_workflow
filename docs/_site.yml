@@ -1,0 +1,29 @@
+name: "my-website"
+output_dir: "."
+navbar:
+  title: "My Website"
+  left:
+    - text: "Home"
+      href: index.html
+    - text: "Install"      
+      href: 01_Install.html
+    - text: "Sample quality control"      
+      href: 02_SampleQualityControl.html
+    - text: "Reading idats"      
+      href: 03_ReadingIdats.html
+    - text: "Visualization"      
+      href: 04_Visualization.html
+    - text: "Normalization"      
+      href: 05_Normalization.html
+    - text: "Probe filtering"      
+      href: 06_ProbeFiltering.html
+    - text: "Miscellaneous"      
+      href: 07_Miscellaneous.html
+    - text: "SummarizedExperiment"      
+      href: 08_SummarizedExperiment.html
+    - text: "Ewas"
+      href: 09_EWAS.html
+    - text: "About"
+      href: about.html
+
+

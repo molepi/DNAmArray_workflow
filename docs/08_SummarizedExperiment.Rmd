@@ -1,0 +1,49 @@
+---
+title: "Creating a **SummarizedExperiment**"
+output: 
+  html_document:
+    highlight: tango
+    toc: true
+    toc_float:
+      collapsed: false
+---
+
+```{r, child="_setup.Rmd"}
+```
+
+It is usefull to store the normalized beta- or M-values together with
+metadata on samples and features as a 
+[**SummarizedExperiment**](http://bioconductor.org).
+
+Get probe annotation:
+
+```{r se.rowannotation}
+library(FDb.InfiniumMethylation.hg19)
+rowRanges <- getPlatform(platform="HM450", genome="hg19")
+rowRanges
+```
+Get sample annotation/metadata:
+
+```{r se.colannotation, message=FALSE, results='hide'}
+pheno <- getView("allPhenotypes")
+colData <- merge(pheno, targets, by="ids", all.y=TRUE)
+rownames(colData) <- colData$run_id
+```
+```{r se.coldata}
+colData[1:5, 1:5]
+```
+
+```{r se.sumexp}
+mvalues <- makeSE(mvalues, colData, rowRanges, note="Functional Normalized and knn imputed")
+mvalues
+```
+
+## Basic how to use **SummarizedExperiment** ##
+
+More about [**SummarizedExperiment**](http://bioconductor.org) see:
+ 1. [package vignette](http://bioconductor.org/packages/release/bioc/vignettes/SummarizedExperiment/inst/doc/SummarizedExperiment.html) 
+ 2. [course material](http://bioconductor.org/help/course-materials/2012/BiocEurope2012/SummarizedExperiment.pdf) 
+ 3. [BioConductor nature paper](http://www.nature.com/nmeth/journal/v12/n2/full/nmeth.3252.html)
+
+
+

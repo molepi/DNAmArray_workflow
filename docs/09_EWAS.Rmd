@@ -1,0 +1,78 @@
+---
+title: "Epigenomewide association study on Age"
+output: 
+  html_document:
+    highlight: tango
+    toc: true
+    toc_float:
+      collapsed: false
+---
+
+```{r, child="_setup.Rmd"}
+```
+
+## Simple EWAS using **limma** ##
+
+M-values valid to run EWAS using linear regression approach. 
+
+Here skipping the empirical Bayes step, because of the large sample
+size this should give very similar results?
+
+```{r design1}
+covariates <- c("DNA_BloodSampling_Age", "Sex", "Sentrix_Position", "Smoking", "Mono_Perc", "Baso_Perc", "Eos_Perc", "Neut_Perc") 
+design <- data.frame(Int=1, colData(mvalues)[, covariates])
+complete <- apply(design, 1, function(x) sum(is.na(x)) == 0 )
+data <- assays(mvalues)$data
+design <- design[complete,]
+data <- data[,complete]
+dim(data)
+```
+
+```{r design2}
+design$Sentrix_Position <- as.integer(as.factor(design$Sentrix_Position))
+```
+
+```{r ewas}
+library(limma)
+fit <- lmFit(data, design)     
+tstat <- fit$coef/fit$stdev.unscaled/fit$sigma        
+pval <- 2*pnorm(-abs(tstat[,2]))
+padj <- p.adjust(sort(pval, decreasing=FALSE), method="bonf")
+head(padj[padj < 0.05])
+```
+
+## Unobserved covariates using **cate** ##
+
+Often unobserved technical or biological covariates can be present. A
+recent approach available from cran
+[**cate**](https://cran.r-project.org/package=irlba) is able to
+estimate the unobserved covariates. There are other methods as well,
+...
+
+```{r cate} 
+library(cate)
+fa <- cate.fit(design[,2,drop=FALSE], design[,-2], t(data), r = 3, calibrate=FALSE, adj.method="naive")
+```
+
+Here we assumed the presence of three unobserved covariates but cate
+has two method implemented that can estimate the precise number of
+unobserved covariates.
+
+## Correct for bias and inflation ##
+
+As is seen in GWAS, inflation, also occurs in EWAS. And not only
+inflation but bias can be observed too. We developed a package called
+[**bacon**](http://bioconductor.org/bacon) to estimate and correct for bias and inflation
+for EWAS (and TWAS).
+
+```{r bacon}
+library(bacon)
+tstats <- cbind(limma=tstat[,2], cate=as.vector(fa$beta.t))
+bc <- bacon(tstats)
+bc
+print(plot(bc, type="hist"))
+print(plot(bc, type="qq"))
+head(pval(bc))
+```
+
+
