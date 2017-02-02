@@ -1,0 +1,166 @@
+---
+title: "Probe-level filtering"
+output: 
+  html_document:
+    highlight: tango
+    toc: true
+    toc_float:
+      collapsed: false
+---
+
+```{r, child="_setup.Rmd"}
+```
+
+# Sex check #
+
+**add explaination**
+
+```{r, eval=FALSE}
+library(BiocParallel)
+library(DNAmArray)
+register(MulticoreParam(8))
+RGset <- read.450k.exp.par(targets)
+```
+
+```{r phenotypes, message=FALSE, results='hide', eval=FALSE}
+pheno <- getView("allPhenotypes")
+id <- match(targets$ids, pheno$ids)
+sex <- rep(2, nrow(targets))
+sex[!is.na(id)] <- pheno$Sex[id[!is.na(id)]]
+```
+
+```{r sexcheck, eval=FALSE}
+betas <- getBeta(RGset)
+predicted <- getSex.DNAmArray(betas)
+assumed <- sex
+assumed <- as.character(factor(assumed, labels=c("Male", "Female", "Unknown")))
+str(predicted)
+str(assumed)
+print(table(predicted, assumed))
+```
+
+# Genotype check #
+
+Beta-values of the probes containing SNP can be extract from the RGset
+using [**minfi**](http:/bioconductor.org/minfi)'s `getSnpBeta`-function.
+
+```{r getsnps, eval=FALSE}
+betas <- getSnpBeta(RGset)
+dim(betas)
+```
+
+```{r cleanning, echo = FALSE, results = 'hide', eval=FALSE}
+rm(RGset); gc()
+```
+
+Now we convert the beta-values to alleles using K-means clustering. A
+similar approach is taken by [**wateRmelon**](http:/bioconductor.org/wateRmelon).
+
+
+```{r methalleles, eval=FALSE}
+methAlleles <- beta2allele(betas)
+methAlleles[1:5, 1:5]
+dim(methAlleles)
+```
+
+If genotypes are available using the same or an overlapping set of
+SNPs these can be used to confirm the sample identity or to discover
+swaps. To ensure the the same alleles are called the function
+`relabelgenotypes` should be run first.
+
+```{r relabel, eval=FALSE}
+methAlleles <- relabelgenotypes(methAlleles, genoAlleles)
+data <- alleleSharing(methAlleles, genoAlleles)
+```
+
+Here we just correlated all DNA samples with each other to check for
+unreported relatedness. From the genotypes we calculated
+identity-by-state for each SNPs and summarize by mean and variance.
+Based on a idea from GRR-tool [@Abecasis2001] for the detection of
+sample relationship in genotype data.
+
+```{r allelesharing, eval=FALSE}
+data <- alleleSharing(methAlleles)
+dim(data)
+head(data)
+```
+
+```{r kmeans, eval=FALSE}
+km <- kmeans(data[,1:2], centers=matrix(c(tapply(data[,1], data[,5], median),
+                                          tapply(data[,2], data[,5], median)), 2, 2))
+data$predicted <- factor(km$cluster)
+levels(data$predicted) <- c("unrelated", "related")
+table(`Predicted relationship`=data$predicted, `Assumed relationship`=data$relationship)
+head(subset(data[order(data$mean, decreasing=TRUE),], predicted != relationship), n=10)
+```
+
+# Imputation #
+
+Several algorithms do not allow NA's but beta-values and or M-values
+can contain NA's after preprocessing. Either because some probes/CpG
+were specifically set NA or because of transformation from Intensities
+to beta or M-values.
+
+The [**impute**](https://cran.r-project.org/package=imputex) package
+can be used to impute these NA's, for example using the knn approach
+implemented in the `knn.impute`-function[@Troyanskaya2001].
+
+```{r imputation, results='hide'}
+library(impute)
+mvalues <- impute.knn(as.matrix(mvalues))$data
+```
+
+# Annotation #
+
+We have implemented a small function to map CpG-probes to their
+nearest genes.
+
+```{r}
+cpgs <- head(rownames(mvalues))
+cpgInfo(cpgs, TxDb="TxDb.Hsapiens.UCSC.hg19.ensGene")
+```
+
+# White Blood Cell Counts #
+
+White blood cell count can be predicted using Houseman's
+method[@Houseman2012] implemented in the
+[**minfi**](http://bioconductor.org/minfi)[@Jaffe2014].
+
+See also our approach for the imputation of white blood cell
+counts:[wbccPredictor](https://github.com/mvaniterson/wbccPredictor)
+
+# Phenotyping #
+  
+# SummarizedExperiment #
+
+It is usefull to store the normalized beta- or M-values together with
+metadata on samples and features as a 
+[**SummarizedExperiment**](http://bioconductor.org).
+
+Get probe annotation:
+
+```{r se.rowannotation, eval=FALSE}
+library(FDb.InfiniumMethylation.hg19)
+rowRanges <- getPlatform(platform="HM450", genome="hg19")
+rowRanges
+```
+Get sample annotation/metadata:
+
+```{r se.colannotation, message=FALSE, results='hide'}
+pheno <- getView("allPhenotypes")
+colData <- merge(pheno, targets, by="ids", all.y=TRUE)
+rownames(colData) <- colData$run_id
+```
+```{r se.coldata}
+colData[1:5, 1:5]
+```
+
+```{r se.sumexp}
+mvalues <- makeSE(mvalues, colData, rowRanges, note="Functional Normalized and knn imputed")
+mvalues
+```
+
+More about [**SummarizedExperiment**](http://bioconductor.org) see:
+ 1. [package vignette](http://bioconductor.org/packages/release/bioc/vignettes/SummarizedExperiment/inst/doc/SummarizedExperiment.html) 
+ 2. [course material](http://bioconductor.org/help/course-materials/2012/BiocEurope2012/SummarizedExperiment.pdf) 
+ 3. [BioConductor nature paper](http://www.nature.com/nmeth/journal/v12/n2/full/nmeth.3252.html)

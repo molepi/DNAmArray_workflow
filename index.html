@@ -1,0 +1,429 @@
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+
+<meta charset="utf-8">
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="generator" content="pandoc" />
+
+
+<meta name="author" content="Maarten van Iterson, Elmar Tobi, Roderick Slieker, Wouter den Hollander, Koen Dekkers, Rene Luijk, Eline Slagboom and Bas Heijmans Department of Molecular Epidemiology, Leiden University Medical Center, Leiden, The Netherlands" />
+
+
+<title>Streamlined workflow for the quality control, normalization and bias-free analysis of Illumina methylation array data - The Leiden approach</title>
+
+<script src="site_libs/jquery-1.11.3/jquery.min.js"></script>
+<script src="site_libs/jqueryui-1.11.4/jquery-ui.min.js"></script>
+<link href="site_libs/tocify-1.9.1/jquery.tocify.css" rel="stylesheet" />
+<script src="site_libs/tocify-1.9.1/jquery.tocify.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="site_libs/bootstrap-3.3.5/css/spacelab.min.css" rel="stylesheet" />
+<script src="site_libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/respond.min.js"></script>
+
+
+<style type="text/css">code{white-space: pre;}</style>
+<style type="text/css">
+div.sourceCode { overflow-x: auto; }
+table.sourceCode, tr.sourceCode, td.lineNumbers, td.sourceCode {
+  margin: 0; padding: 0; vertical-align: baseline; border: none; }
+table.sourceCode { width: 100%; line-height: 100%; background-color: #f8f8f8; }
+td.lineNumbers { text-align: right; padding-right: 4px; padding-left: 4px; color: #aaaaaa; border-right: 1px solid #aaaaaa; }
+td.sourceCode { padding-left: 5px; }
+pre, code { background-color: #f8f8f8; }
+code > span.kw { color: #204a87; font-weight: bold; } /* Keyword */
+code > span.dt { color: #204a87; } /* DataType */
+code > span.dv { color: #0000cf; } /* DecVal */
+code > span.bn { color: #0000cf; } /* BaseN */
+code > span.fl { color: #0000cf; } /* Float */
+code > span.ch { color: #4e9a06; } /* Char */
+code > span.st { color: #4e9a06; } /* String */
+code > span.co { color: #8f5902; font-style: italic; } /* Comment */
+code > span.ot { color: #8f5902; } /* Other */
+code > span.al { color: #ef2929; } /* Alert */
+code > span.fu { color: #000000; } /* Function */
+code > span.er { color: #a40000; font-weight: bold; } /* Error */
+code > span.wa { color: #8f5902; font-weight: bold; font-style: italic; } /* Warning */
+code > span.cn { color: #000000; } /* Constant */
+code > span.sc { color: #000000; } /* SpecialChar */
+code > span.vs { color: #4e9a06; } /* VerbatimString */
+code > span.ss { color: #4e9a06; } /* SpecialString */
+code > span.im { } /* Import */
+code > span.va { color: #000000; } /* Variable */
+code > span.cf { color: #204a87; font-weight: bold; } /* ControlFlow */
+code > span.op { color: #ce5c00; font-weight: bold; } /* Operator */
+code > span.pp { color: #8f5902; font-style: italic; } /* Preprocessor */
+code > span.ex { } /* Extension */
+code > span.at { color: #c4a000; } /* Attribute */
+code > span.do { color: #8f5902; font-weight: bold; font-style: italic; } /* Documentation */
+code > span.an { color: #8f5902; font-weight: bold; font-style: italic; } /* Annotation */
+code > span.cv { color: #8f5902; font-weight: bold; font-style: italic; } /* CommentVar */
+code > span.in { color: #8f5902; font-weight: bold; font-style: italic; } /* Information */
+</style>
+<style type="text/css">
+  pre:not([class]) {
+    background-color: white;
+  }
+</style>
+
+
+<style type="text/css">
+h1 {
+  font-size: 34px;
+}
+h1.title {
+  font-size: 38px;
+}
+h2 {
+  font-size: 30px;
+}
+h3 {
+  font-size: 24px;
+}
+h4 {
+  font-size: 18px;
+}
+h5 {
+  font-size: 16px;
+}
+h6 {
+  font-size: 12px;
+}
+.table th:not([align]) {
+  text-align: left;
+}
+</style>
+
+
+</head>
+
+<body>
+
+<style type = "text/css">
+.main-container {
+  max-width: 940px;
+  margin-left: auto;
+  margin-right: auto;
+}
+code {
+  color: inherit;
+  background-color: rgba(0, 0, 0, 0.04);
+}
+img {
+  max-width:100%;
+  height: auto;
+}
+.tabbed-pane {
+  padding-top: 12px;
+}
+button.code-folding-btn:focus {
+  outline: none;
+}
+</style>
+
+<style type="text/css">
+/* padding for bootstrap navbar */
+body {
+  padding-top: 52px;
+  padding-bottom: 40px;
+}
+/* offset scroll position for anchor links (for fixed navbar)  */
+.section h1 {
+  padding-top: 57px;
+  margin-top: -57px;
+}
+
+.section h2 {
+  padding-top: 57px;
+  margin-top: -57px;
+}
+.section h3 {
+  padding-top: 57px;
+  margin-top: -57px;
+}
+.section h4 {
+  padding-top: 57px;
+  margin-top: -57px;
+}
+.section h5 {
+  padding-top: 57px;
+  margin-top: -57px;
+}
+.section h6 {
+  padding-top: 57px;
+  margin-top: -57px;
+}
+</style>
+
+<script>
+// manage active state of menu based on current page
+$(document).ready(function () {
+  // active menu anchor
+  href = window.location.pathname
+  href = href.substr(href.lastIndexOf('/') + 1)
+  if (href === "")
+    href = "index.html";
+  var menuAnchor = $('a[href="' + href + '"]');
+
+  // mark it active
+  menuAnchor.parent().addClass('active');
+
+  // if it's got a parent navbar menu mark it active as well
+  menuAnchor.closest('li.dropdown').addClass('active');
+});
+</script>
+
+
+<div class="container-fluid main-container">
+
+<!-- tabsets -->
+<script src="site_libs/navigation-1.0/tabsets.js"></script>
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+</script>
+
+<!-- code folding -->
+
+
+
+
+<script>
+$(document).ready(function ()  {
+
+    // move toc-ignore selectors from section div to header
+    $('div.section.toc-ignore')
+        .removeClass('toc-ignore')
+        .children('h1,h2,h3,h4,h5').addClass('toc-ignore');
+
+    // establish options
+    var options = {
+      selectors: "h1,h2,h3",
+      theme: "bootstrap3",
+      context: '.toc-content',
+      hashGenerator: function (text) {
+        return text.replace(/[.\/?&!#<>]/g, '').replace(/\s/g, '_').toLowerCase();
+      },
+      ignoreSelector: ".toc-ignore",
+      scrollTo: 0
+    };
+    options.showAndHide = false;
+    options.smoothScroll = true;
+
+    // tocify
+    var toc = $("#TOC").tocify(options).data("toc-tocify");
+});
+</script>
+
+<style type="text/css">
+
+#TOC {
+  margin: 25px 0px 20px 0px;
+}
+@media (max-width: 768px) {
+#TOC {
+  position: relative;
+  width: 100%;
+}
+}
+
+.toc-content {
+  padding-left: 30px;
+  padding-right: 40px;
+}
+
+div.main-container {
+  max-width: 1200px;
+}
+
+div.tocify {
+  width: 20%;
+  max-width: 260px;
+  max-height: 85%;
+}
+
+@media (min-width: 768px) and (max-width: 991px) {
+  div.tocify {
+    width: 25%;
+  }
+}
+
+@media (max-width: 767px) {
+  div.tocify {
+    width: 100%;
+    max-width: none;
+  }
+}
+
+.tocify ul, .tocify li {
+  line-height: 20px;
+}
+
+.tocify-subheader .tocify-item {
+  font-size: 0.9em;
+  padding-left: 5px;
+}
+
+.tocify .list-group-item {
+  border-radius: 0px;
+}
+
+.tocify-subheader {
+  display: inline;
+}
+.tocify-subheader .tocify-item {
+  font-size: 0.95em;
+  padding-left: 10px;
+}
+
+</style>
+
+<!-- setup 3col/9col grid for toc_float and main content  -->
+<div class="row-fluid">
+<div class="col-xs-12 col-sm-4 col-md-3">
+<div id="TOC" class="tocify">
+</div>
+</div>
+
+<div class="toc-content col-xs-12 col-sm-8 col-md-9">
+
+
+
+
+<div class="navbar navbar-default  navbar-fixed-top" role="navigation">
+  <div class="container">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="index.html">DNAmArray</a>
+    </div>
+    <div id="navbar" class="navbar-collapse collapse">
+      <ul class="nav navbar-nav">
+        <li>
+  <a href="index.html">Home</a>
+</li>
+<li>
+  <a href="02_SampleQualityControl.html">Quality control</a>
+</li>
+<li>
+  <a href="03_ReadingIdats.html">Reading idats</a>
+</li>
+<li>
+  <a href="04_Visualization.html">Visualizations</a>
+</li>
+<li>
+  <a href="05_Normalization.html">Normalization</a>
+</li>
+<li>
+  <a href="06_ProbeFiltering.html">Probe filtering</a>
+</li>
+<li>
+  <a href="07_EWAS.html">Ewas</a>
+</li>
+<li>
+  <a href="08_Miscellaneous.html">Miscellaneous</a>
+</li>
+      </ul>
+      <ul class="nav navbar-nav navbar-right">
+        <li>
+  <a href="about.html">About</a>
+</li>
+      </ul>
+    </div><!--/.nav-collapse -->
+  </div><!--/.container -->
+</div><!--/.navbar -->
+
+<div class="fluid-row" id="header">
+
+
+
+<h1 class="title toc-ignore">Streamlined workflow for the quality control, normalization and bias-free analysis of Illumina methylation array data - The Leiden approach</h1>
+<h4 class="author"><em>Maarten van Iterson, Elmar Tobi, Roderick Slieker, Wouter den Hollander, Koen Dekkers, Rene Luijk, Eline Slagboom and Bas Heijmans Department of Molecular Epidemiology, Leiden University Medical Center, Leiden, The Netherlands</em></h4>
+
+</div>
+
+
+<p><a href="https://doi.org/10.5281/zenodo.158908"><img src="https://zenodo.org/badge/DOI/10.5281/zenodo.158908.svg" alt="DOI" /></a></p>
+<div id="introduction" class="section level1">
+<h1>Introduction</h1>
+<p>Here we provide a complete workflow for the the preprocessing and analysis of DNA methylation array data. The workflow combines best practices in the field with in-house developed methodology and is geared towards large-scale studies, including Epigenomewide Association Studies (EWAS). A specific aim of the work flow is to support such studies within the BIOS consortium encompassing multiple omics data on 4000 individuals from 6 Dutch biobanks operating within the frame of <a href="https://www.bbmri.nl/on_offer/bios/">BBMRI-NL</a></p>
+<p>The <strong>DNAmArray</strong>-package contains a series of convenient functions for the quality control, normalization and analysis of methylation array data. The workflow has been thoroughly tested on 450k array data but will similarly be applicable to the newer 850k EPIC array pending updates of Bioconductor packages from other groups.</p>
+<p>The workflow and package extensively uses functionality of other BioConductor packages, e.g., for transforming idats to so-called <code>RGlist</code> we use <a href="http:/bioconductor.org/minfi"><strong>minfi</strong></a> but <strong>DNAmArray</strong> provides functionality to do this in parallel. Furthermore, we have developed two other packages <a href="http:/bioconductor.org/MethylAid"><strong>MethylAid</strong></a> <span class="citation">(M. van Iterson et al. 2014)</span> and <a href="http:/bioconductor.org/bacon"><strong>bacon</strong></a> <span class="citation">(M. M. van Iterson et al. 2016)</span>, reps., performing interactive sample quality control and bias- and inflation-correction in epigenomewide association studies, each have been deposited at BioConductor (of note: <a href="http:/bioconductor.org/bacon"><strong>bacon</strong></a> also applies to transcriptome- and any other ome-wide association studies) .</p>
+</div>
+<div id="leiden-longevity-study" class="section level1">
+<h1>Leiden Longevity Study</h1>
+<p>The example DNA methylation data that is used in this workflow is from the Leiden Longevity Study. The Leiden Longevity Study has been described in detail previously by Westendorp et al. <span class="citation">(Westendorp et al. 2009)</span>. It is a family based study consists of 1671 offspring of 421 nonagenarians sibling pairs of Dutch descent, and their 744 partners. In the current EWAS initiative 793 individuals with available DNA methylation data and phenotypic data (mean age = 60 years) were included.</p>
+</div>
+<div id="installation" class="section level1">
+<h1>Installation</h1>
+<p>The <strong>DNAmArray</strong>-package can be installed in several ways which are described below. The package has been installed successfully for &gt;= R-3.2.0 on different linux-builds.</p>
+<p>The package depends on many other packages from <a href="https://www.bioconductor.org">BioConductor</a> or <a href="https://cran.r-project.org/">cran</a>. Usually these are installed automatically, otherwise, we refer to <a href="https://www.bioconductor.org/install/">BioConductor</a> or <a href="https://cran.r-project.org/doc/manuals/r-release/R-admin.html#Installing-packages">cran</a> documentation for the installation of these packages.</p>
+<p>The installed package takes around ~7Mb of memory a large bit of it comes from an <code>Rdata</code>-object containing the information on the cross-hybridizing probes<span class="citation">(Chen et al. 2013)</span>.</p>
+<div id="install-using-the-devtools-package" class="section level2">
+<h2>Install using the <strong>devtools</strong>-package</h2>
+<p>First install the package <a href="https://github.com/hadley/devtools"><strong>devtools</strong></a>. Next use:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(devtools)
+<span class="kw">install_git</span>(<span class="st">&quot;https://git.lumc.nl/molepi/DNAmArray.git&quot;</span>)</code></pre></div>
+</div>
+<div id="install-from-source-using-gitr" class="section level2">
+<h2>Install from source using <code>git/R</code></h2>
+<p>Using <a href="https://git-scm.com/">git</a>, e.g, use <code>git clone</code> and then build and install the package from source:</p>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash"><span class="kw">git</span> clone git@git.lumc.nl:molepi/DNAmArray.git
+<span class="kw">R</span> CMD build DNAmArray
+<span class="kw">R</span> CMD INSTALL DNAmArray_x.y.z.tar.gz</code></pre></div>
+<p>Change <code>_x.y.z.</code> to the proper version you downloaded!</p>
+</div>
+</div>
+<div id="references" class="section level1 unnumbered">
+<h1>References</h1>
+<div id="refs" class="references">
+<div id="ref-Chen2013">
+<p>Chen, Y. A., M. Lemire, S. Choufani, D. T. Butcher, D. Grafodatskaya, B. W. Zanke, S. Gallinger, T. J. Hudson, and R. Weksberg. 2013. “Discovery of cross-reactive probes and polymorphic CpGs in the Illumina Infinium HumanMethylation450 microarray.” <em>Epigenetics</em> 8 (2): 203–9.</p>
+</div>
+<div id="ref-Iterson2014">
+<p>Iterson, M. van, E. W. Tobi, R. C. Slieker, W. den Hollander, R. Luijk, P. E. Slagboom, and B. T. Heijmans. 2014. “MethylAid: visual and interactive quality control of large Illumina 450k datasets.” <em>Bioinformatics</em> 30 (23): 3435–7.</p>
+</div>
+<div id="ref-Iterson2016">
+<p>Iterson, Maarten M. van, Erik W. van ZwetP. Eline Slagboom, and Bastiaan T. Heijmans. 2016. “Controlling Bias and Inflation in Epigenome- and Transcriptome-Wide Association Studies Using the Empirical Null Distribution.” <em>BioRxiv</em>. doi:<a href="https://doi.org/10.1101/055772">10.1101/055772</a>.</p>
+</div>
+<div id="ref-Westendorp2009">
+<p>Westendorp, R. G., D. van Heemst, M. P. Rozing, M. Frolich, S. P. Mooijaart, G. J. Blauw, M. Beekman, B. T. Heijmans, A. J. de Craen, and P. E. Slagboom. 2009. “Nonagenarian siblings and their offspring display lower risk of mortality and morbidity than sporadic nonagenarians: The Leiden Longevity Study.” <em>J Am Geriatr Soc</em> 57 (9): 1634–7.</p>
+</div>
+</div>
+</div>
+
+
+
+</div>
+</div>
+
+</div>
+
+<script>
+
+// add bootstrap table styles to pandoc tables
+$(document).ready(function () {
+  $('tr.header').parent('thead').parent('table').addClass('table table-condensed');
+});
+
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>

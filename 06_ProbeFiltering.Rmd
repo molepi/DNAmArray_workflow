@@ -18,13 +18,13 @@ output:
 RGset <- probeFiltering(RGset)
 ```
 
-## Number of beads ##
+# Number of beads #
 
 Occasionally some probes as measured with a too small number of beads
 leading to unreliable probe intensities. By default probes intensities
 are set to NA if the probe intensity is based on less then 3 beads. 
 
-## Zero intensities ##
+# Zero intensities #
 
 Ifthere are no beads at all for a certain probe the probe intensity will
 be exactly zero, these are set to NA, as well.
@@ -34,7 +34,7 @@ the above filter steps, will be removed from the `RGChannelSet`.
 
 # CpG-level filtering #
 
-## detection P-value ##
+# detection P-value #
 
 The negative controls on the 450k array can be used to detect outlying
 samples e.g., samples that have a significant larger background then
@@ -45,7 +45,7 @@ Detection P-values are calculated using the `detectionP`-function from
 [**minfi**](http:/bioconductor.org/minfi). By default detection
 P-values with a value >0.01 are set to NA.
 
-## Cross reactive probes/CpGs ##
+# Cross reactive probes/CpGs #
 
 485,577 assays (482,421 CpG sites, 3091 non-CpG sites and 65 random
 SNPs)...[@Bibikova2011]
@@ -81,7 +81,7 @@ nrow(typeI)
 
 Methylated and Unmethylated Intensities
 
-## Success Rates ##
+# Success Rates #
 
 All these probe filter-steps are implemented in the function
 `filtering`.
@@ -100,7 +100,7 @@ betas <- reduce(GRset, RGset, what="beta")
 mvalues <- reduce(GRset, RGset, what="M")
 ```
 
-## Array design ##
+# Array design #
 
 Chips, plates, arrays, ...
 

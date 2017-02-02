@@ -11,6 +11,8 @@ output:
 ```{r, child="_setup.Rmd"}
 ```
 
+# MethylAid #
+	
 Sample quality control is performed using the
 [**MethylAid**](http://bioconductor.org/MethylAid)
 [@Iterson2014]. [**MethylAid**](http://bioconductor.org/MethylAid) is

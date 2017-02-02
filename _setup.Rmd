@@ -7,7 +7,7 @@ title: "Setup"
 suppressPackageStartupMessages({
 
     ##library(DNAmArray)
-    library(BIOSRutils)
+    ##library(BIOSRutils)
     
     library(knitr)
     

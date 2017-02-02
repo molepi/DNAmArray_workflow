@@ -11,7 +11,7 @@ output:
 ```{r, child="_setup.Rmd"}
 ```
 
-## Constructing an `RGset`-object in parallel ##
+# Constructing an `RGset`-object in parallel #
 
 Reading a large number of IDAT-files can be time-consuming. The
 **DNAmArray** package offers the `read.450k.exp.par`-function for
@@ -32,6 +32,8 @@ outliers <- read.table(file.path(path450k, "outliers.txt"), header=TRUE)
 targets <- targets[!(targets$ids %in% outliers$ids), ]
 ```
 
+# Using multiple cores #
+	
 ```{r ri.readidats, results='hide', messages=FALSE}
 library(BiocParallel)
 library(DNAmArray)
@@ -50,6 +52,8 @@ extended with a comprehensive set of functions for debugging for the
 various parallel architectures. We recommend running
 e.g. `MulticoreParam` with option `log=TRUE`.
 
+# On a cluster #
+     
 [**BiocParallel**](http://bioconductor.org/BiocParallel) offers
 functionality to run jobs in parallel on various architectures e.g. on
 a Sun Grid Enginge.

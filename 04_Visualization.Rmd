@@ -14,7 +14,7 @@ output:
 Here we show different ways to inspect the 450k with emphasis on fast
 and efficient tools for large data sets...
 
-## beta densities ##
+# Beta densities #
 
 Inspect distribution of beta-densities across all samples can be done
 either before and after normalization. The following is just just take
@@ -25,7 +25,7 @@ library(minfi)
 densityPlot(RGset, main = "Beta", xlab = "Beta")
 ``` 
 
-## principal components plot ##
+# Principal components plot #
 
 Using the
 [**irlba**](https://cran.r-project.org/package=irlba)-package for
@@ -46,7 +46,7 @@ and converts them to beta-values using $\nicefrac{M}{M+U}$, whereas,
 `type="Illumina"` adds $100$ to the denominator which prevents
 beta-values becoming NA if both M and U are exactly zero.
 
-## heatmap ##
+# Heatmap #
 
 Inspect heatmap correlations of control probes with
 technical/biological covariates:
@@ -59,7 +59,7 @@ cxy <- cor(P$v, scale(df[, keep]))
 pheatmap(cxy, cluster_rows=FALSE)
 ```
 
-## dendrogram ##
+# Dendrogram #
 
 This is more appropriated for smaller sample sizes Using the
 [**fastclust**](https://cran.r-project.org/package=fastclust)-package.
