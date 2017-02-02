@@ -1,0 +1,117 @@
+---
+title: "Probe-level filtering"
+output: 
+  html_document:
+    highlight: tango
+    toc: true
+    toc_float:
+      collapsed: false
+---
+
+```{r, child="_setup.Rmd"}
+```
+
+**TODO add more background Maarten** 
+**beware 450K specific**
+
+```{r probefiltering}
+RGset <- probeFiltering(RGset)
+```
+
+## Number of beads ##
+
+Occasionally some probes as measured with a too small number of beads
+leading to unreliable probe intensities. By default probes intensities
+are set to NA if the probe intensity is based on less then 3 beads. 
+
+## Zero intensities ##
+
+Ifthere are no beads at all for a certain probe the probe intensity will
+be exactly zero, these are set to NA, as well.
+
+Samples which have more then 5% of their probes set to NA, based on
+the above filter steps, will be removed from the `RGChannelSet`.
+
+# CpG-level filtering #
+
+## detection P-value ##
+
+The negative controls on the 450k array can be used to detect outlying
+samples e.g., samples that have a significant larger background then
+average, this is summarized in the so-called detection
+P-value.
+
+Detection P-values are calculated using the `detectionP`-function from
+[**minfi**](http:/bioconductor.org/minfi). By default detection
+P-values with a value >0.01 are set to NA.
+
+## Cross reactive probes/CpGs ##
+
+485,577 assays (482,421 CpG sites, 3091 non-CpG sites and 65 random
+SNPs)...[@Bibikova2011]
+
+Furthermore, several probes do not map uniquely to the genome or
+contain common polymorphisms. Chen \emph{et al.}[@Chen2013] analyzed
+in detail cross-reactive and polymorphic probes. We exclude the set of
+polymorphic CG and CH probes (42.403) discovered by Chen.
+
+482,421 CpG sites are measured using two chemistries Type I (135,476) and Type
+II (350,036). the Type I chemistry uses two probes to measure a CpG site
+while the Type II measure CpG methylation using one probe. The Type II
+chemistry was specially designed to measure CpG methylation in low CpG
+dense regions. There are 
+
+Depending on the methylation status of the probe either of the green
+or red fluorescence signals is detected a strongest.
+
+Information on Type I and II probes, address, etc. can be extracted
+using [**minfi**](http:/bioconductor.org/minfi)-functionality.
+
+```{r, eval=FALSE}
+library(minfi)
+locusNames <- getManifestInfo(RGset, "locusNames")
+typeII <- getProbeInfo(RGset, type = "II")
+nrow(typeII)
+typeI <- getProbeInfo(RGset, type = "I")
+head(typeI)
+nrow(typeI)
+```
+
+482421 + 3091 (excluding 65 SNPs)
+
+Methylated and Unmethylated Intensities
+
+## Success Rates ##
+
+All these probe filter-steps are implemented in the function
+`filtering`.
+
+RGset containing Red/Green signal intensities are converted to
+Methylated and Unmethylated signals (see also, `?preprocessRaw`, from
+minfi). These can in turn be converted to either beta-values or
+M-values.
+
+
+```{r reduce2beta, eval=FALSE}
+betas <- reduce(GRset, RGset, what="beta")
+```
+
+```{r reduce2mvalues}
+mvalues <- reduce(GRset, RGset, what="M")
+```
+
+## Array design ##
+
+Chips, plates, arrays, ...
+
+probe addressess A (Type I and Type II) B (Type I only) 
+There are 620988 probes on the array
+
+Number of beads
+
+Each probe is measured using more then one bead, the average signal
+intensities is used as a measure for the probe intensity.
+
+```{r cleanup, echo = FALSE, results = 'hide'}
+rm(RGset); rm(GRset); gc()
+```

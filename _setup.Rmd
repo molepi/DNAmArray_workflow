@@ -1,0 +1,31 @@
+---
+title: "Setup"
+---
+
+```{r setup, include=FALSE}
+
+suppressPackageStartupMessages({
+
+    ##library(DNAmArray)
+    library(BIOSRutils)
+    
+    library(knitr)
+    
+    library(MethylAid)
+    library(minfi)
+    library(BiocParallel)
+    library(BatchJobs)
+    library(cate)
+    library(limma)
+    library(irlba)
+    library(pheatmap)
+    library(fastcluster)
+    library(FDb.InfiniumMethylation.hg19)
+    library(impute)
+    library(bacon)
+    
+})
+
+opts_chunk$set(cache=TRUE, eval=FALSE)
+
+```

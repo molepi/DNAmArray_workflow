@@ -1,0 +1,60 @@
+---
+title: "Title"
+author: Maarten van Iterson, Elmar Tobi, Roderick Slieker, Wouter den Hollander, Koen Dekkers, Rene Luijk, Eline Slagboom and Bas Heijmans Department of Molecular Epidemiology, Leiden University Medical Center, Leiden, The Netherlands
+email: m.van\_iterson@lumc.nl
+abstract: >
+  Streamlined workflow for the quality control, normalization and bias-free analysis of Illumina methylation array data - The Leiden approach
+header-includes:
+   - \usepackage{nicefrac}
+bibliography: DNAmArray.bib
+---
+
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.158908.svg)](https://doi.org/10.5281/zenodo.158908)
+
+# Introduction #
+
+Here we provide a complete workflow for the the preprocessing and
+analysis of DNA methylation array data. The workflow combines best
+practices in the field with in-house developed methodology and is
+geared towards large-scale studies, including Epigenomewide
+Association Studies (EWAS). A specific aim of the work flow is to
+support such studies within the BIOS consortium encompassing multiple
+omics data on 4000 individuals from 6 Dutch biobanks operating within
+the frame of [BBMRI-NL](https://www.bbmri.nl/on_offer/bios/)
+
+The **DNAmArray**-package contains a series of convenient
+functions for the quality control, normalization and analysis of
+methylation array data. The workflow has been thoroughly tested on
+450k array data but will similarly be applicable to the newer 850k
+EPIC array pending updates of Bioconductor packages from other groups.
+
+The workflow and package extensively uses functionality of other
+BioConductor packages, e.g., for transforming idats to so-called
+`RGlist` we use [**minfi**](http:/bioconductor.org/minfi) but
+**DNAmArray** provides functionality to do this in
+parallel. Furthermore, we have developed two other packages
+[**MethylAid**](http:/bioconductor.org/MethylAid) [@Iterson2014] and
+[**bacon**](http:/bioconductor.org/bacon) [@Iterson2016], reps.,
+performing interactive sample quality control and bias- and
+inflation-correction in epigenomewide association studies, each have
+been deposited at BioConductor (of note:
+[**bacon**](http:/bioconductor.org/bacon) also applies to
+transcriptome- and any other ome-wide association studies) .
+
+# Leiden Longevity Study #
+
+The example DNA methylation data that is used in this workflow is from the
+Leiden Longevity Study. The Leiden Longevity Study has been described
+in detail previously by Westendorp et al. [@Westendorp2009]. It is a
+family based study consists of 1671 offspring of 421 nonagenarians
+sibling pairs of Dutch descent, and their 744 partners. In the current
+EWAS initiative 793 individuals with available DNA methylation data
+and phenotypic data (mean age = 60 years) were included. 
+
+
+# References #
+
+
+
+
+library(DNAmArray)
