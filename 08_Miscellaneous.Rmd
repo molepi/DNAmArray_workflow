@@ -108,7 +108,7 @@ nearest genes.
 
 ```{r}
 cpgs <- head(rownames(mvalues))
-cpgInfo(cpgs, TxDb="TxDb.Hsapiens.UCSC.hg19.ensGene")
+cpgInfo(cpgs, TxDb="TxDb.Hsapiens.UCSC.hg19.knownGene")
 ```
 
 # White Blood Cell Counts #
@@ -130,7 +130,7 @@ metadata on samples and features as a
 
 Get probe annotation:
 
-```{r se.rowannotation, eval=FALSE}
+```{r se.rowannotation}
 library(FDb.InfiniumMethylation.hg19)
 rowRanges <- getPlatform(platform="HM450", genome="hg19")
 rowRanges
@@ -155,3 +155,10 @@ More about [**SummarizedExperiment**](http://bioconductor.org) see:
  1. [package vignette](http://bioconductor.org/packages/release/bioc/vignettes/SummarizedExperiment/inst/doc/SummarizedExperiment.html) 
  2. [course material](http://bioconductor.org/help/course-materials/2012/BiocEurope2012/SummarizedExperiment.pdf) 
  3. [BioConductor nature paper](http://www.nature.com/nmeth/journal/v12/n2/full/nmeth.3252.html)
+
+
+# DMR finder #
+
+See[@Slieker2013].
+
+

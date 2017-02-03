@@ -3,8 +3,8 @@
 
 suppressPackageStartupMessages({
 
-    ##library(DNAmArray)
-    ##library(BIOSRutils)
+    library(DNAmArray)
+    library(BBMRIomics)
     
     library(knitr)
     
@@ -23,6 +23,6 @@ suppressPackageStartupMessages({
     
 })
 
-opts_chunk$set(cache=TRUE, eval=FALSE)
+opts_chunk$set(cache=TRUE, eval=TRUE)
 
 ```

@@ -13,7 +13,7 @@ from [**minfi**](http://bioconductor.org/minfi).
 
 ```{r}
 library(minfi)
-densityPlot(RGset, main = "Beta", xlab = "Beta")
+densityPlot(RGset[, 1:10], main = "Beta", xlab = "Beta")
 ``` 
 
 # Principal components plot #
@@ -28,8 +28,9 @@ allow any NA's***
 library(irlba)
 beta <- getBeta(RGset, type="Illumina")
 beta[is.na(beta)] <- median(beta, na.rm=TRUE)
-P <- irlba(beta, nv=5, center=colMeans(beta))
-plot(P$v, xlab="PC 1", ylab="PC 2")
+pc <- prcomp_irlba(t(beta), n=3)
+summary(pc)
+plot(pc$x)
 ```
 
 **Note** `getBeta` extracts Methylated and Unmethylated intensities
@@ -46,7 +47,7 @@ technical/biological covariates:
 library(pheatmap)
 df <- apply(targets, 2, function(x) as.numeric(factor(x)))
 keep <- apply(df, 2, sd) > 0    
-cxy <- cor(P$v, scale(df[, keep]))   
+cxy <- cor(pc$x, scale(df[, keep]))   
 pheatmap(cxy, cluster_rows=FALSE)
 ```
 
