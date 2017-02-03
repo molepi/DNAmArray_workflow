@@ -1,4 +1,7 @@
 
+```{r, child="_setup.Rmd"}
+```
+
 This web-site is generated with
 [**rmarkdown**](http://rmarkdown.rstudio.com/index.html)
 on `r format(Sys.time(), '%d %B, %Y')` using R-version and packages: 

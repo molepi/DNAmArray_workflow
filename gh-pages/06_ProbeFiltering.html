@@ -14,15 +14,31 @@
 <title></title>
 
 <script src="site_libs/jquery-1.11.3/jquery.min.js"></script>
-<script src="site_libs/jqueryui-1.11.4/jquery-ui.min.js"></script>
-<link href="site_libs/tocify-1.9.1/jquery.tocify.css" rel="stylesheet" />
-<script src="site_libs/tocify-1.9.1/jquery.tocify.js"></script>
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <link href="site_libs/bootstrap-3.3.5/css/spacelab.min.css" rel="stylesheet" />
 <script src="site_libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
 <script src="site_libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
 <script src="site_libs/bootstrap-3.3.5/shim/respond.min.js"></script>
+<script src="site_libs/jqueryui-1.11.4/jquery-ui.min.js"></script>
+<link href="site_libs/tocify-1.9.1/jquery.tocify.css" rel="stylesheet" />
+<script src="site_libs/tocify-1.9.1/jquery.tocify.js"></script>
+<script src="site_libs/navigation-1.1/tabsets.js"></script>
+<link href="site_libs/highlightjs-1.1/textmate.css" rel="stylesheet" />
+<script src="site_libs/highlightjs-1.1/highlight.js"></script>
 
+<style type="text/css">code{white-space: pre;}</style>
+<style type="text/css">
+  pre:not([class]) {
+    background-color: white;
+  }
+</style>
+<script type="text/javascript">
+if (window.hljs && document.readyState && document.readyState === "complete") {
+   window.setTimeout(function() {
+      hljs.initHighlighting();
+   }, 0);
+}
+</script>
 
 
 
@@ -80,6 +96,7 @@ button.code-folding-btn:focus {
 }
 </style>
 
+
 <style type="text/css">
 /* padding for bootstrap navbar */
 body {
@@ -136,7 +153,6 @@ $(document).ready(function () {
 <div class="container-fluid main-container">
 
 <!-- tabsets -->
-<script src="site_libs/navigation-1.0/tabsets.js"></script>
 <script>
 $(document).ready(function () {
   window.buildTabsets("TOC");
@@ -158,16 +174,16 @@ $(document).ready(function ()  {
 
     // establish options
     var options = {
-      selectors: "h1,h2,h3",
+      selectors: "h1,h2",
       theme: "bootstrap3",
       context: '.toc-content',
       hashGenerator: function (text) {
-        return text.replace(/[.\/?&!#<>]/g, '').replace(/\s/g, '_').toLowerCase();
+        return text.replace(/[.\\/?&!#<>]/g, '').replace(/\s/g, '_').toLowerCase();
       },
       ignoreSelector: ".toc-ignore",
       scrollTo: 0
     };
-    options.showAndHide = false;
+    options.showAndHide = true;
     options.smoothScroll = true;
 
     // tocify
@@ -186,6 +202,7 @@ $(document).ready(function ()  {
   width: 100%;
 }
 }
+
 
 .toc-content {
   padding-left: 30px;
@@ -220,21 +237,15 @@ div.tocify {
 }
 
 .tocify-subheader .tocify-item {
-  font-size: 0.9em;
-  padding-left: 5px;
+  font-size: 0.90em;
+  padding-left: 25px;
+  text-indent: 0;
 }
 
 .tocify .list-group-item {
   border-radius: 0px;
 }
 
-.tocify-subheader {
-  display: inline;
-}
-.tocify-subheader .tocify-item {
-  font-size: 0.95em;
-  padding-left: 10px;
-}
 
 </style>
 
@@ -304,32 +315,58 @@ div.tocify {
 </div>
 
 
-<div id="acknowledgements" class="section level1">
-<h1>Acknowledgements</h1>
-<p>Paul Hop and Jenny van Dongen were involved in testing the first versions and helped us improving the packages/workflow.</p>
-<p>Contributors to the development of the package/workflow are:</p>
-<pre><code>Elmar W. Tobi,
-Roderick Slieker, 
-Wouter den Hollander, 
-Rene Luijk,
-Koen F.Dekkers and  
-Bas Heijmans (PI) from Molecular Epidemiology Section, Leiden
-University Medical Center, The Netherlands.</code></pre>
-<p>Development of the workflow and generation of example data in LLS was funded by BBMRI-NL, a research infrastructure financed by the Dutch government (NWO 184.021.007).</p>
-<p>Maarten van Iterson is the main author of the package/workflow and should be contacted for any questions: m.van_iterson at lumc.nl</p>
-<p>Please cite Dekkers at al. <span class="citation">(Dekkers et al. 2016)</span> when using the <strong>DNAmArray</strong> package or workflow.</p>
+<p><strong>TODO add more background Maarten</strong> <strong>beware 450K specific</strong></p>
+<pre class="r"><code>RGset &lt;- probeFiltering(RGset)</code></pre>
+<div id="number-of-beads" class="section level1">
+<h1>Number of beads</h1>
+<p>Occasionally some probes as measured with a too small number of beads leading to unreliable probe intensities. By default probes intensities are set to NA if the probe intensity is based on less then 3 beads.</p>
 </div>
-<div id="disclamer" class="section level1">
-<h1>disclamer</h1>
-<p><strong>add one</strong></p>
+<div id="zero-intensities" class="section level1">
+<h1>Zero intensities</h1>
+<p>Ifthere are no beads at all for a certain probe the probe intensity will be exactly zero, these are set to NA, as well.</p>
+<p>Samples which have more then 5% of their probes set to NA, based on the above filter steps, will be removed from the <code>RGChannelSet</code>.</p>
 </div>
-<div id="licence" class="section level1">
-<h1>licence</h1>
-<p><strong>add one</strong></p>
-<div id="refs" class="references">
-<div id="ref-dekkers2016">
-<p>Dekkers, K. F., M. van Iterson, R. C. Slieker, M. H. Moed, M. J. Bonder, M. van Galen, H. Mei, et al. 2016. “Blood lipids influence DNA methylation in circulating cells.” <em>Genome Biol.</em> 17 (1): 138.</p>
+<div id="cpg-level-filtering" class="section level1">
+<h1>CpG-level filtering</h1>
 </div>
+<div id="detection-p-value" class="section level1">
+<h1>detection P-value</h1>
+<p>The negative controls on the 450k array can be used to detect outlying samples e.g., samples that have a significant larger background then average, this is summarized in the so-called detection P-value.</p>
+<p>Detection P-values are calculated using the <code>detectionP</code>-function from <a href="http:/bioconductor.org/minfi"><strong>minfi</strong></a>. By default detection P-values with a value &gt;0.01 are set to NA.</p>
+</div>
+<div id="cross-reactive-probescpgs" class="section level1">
+<h1>Cross reactive probes/CpGs</h1>
+<p>485,577 assays (482,421 CpG sites, 3091 non-CpG sites and 65 random SNPs)…<span class="citation">(Bibikova et al. 2011)</span></p>
+<p>Furthermore, several probes do not map uniquely to the genome or contain common polymorphisms. Chen <span class="citation">(Chen et al. 2013)</span> analyzed in detail cross-reactive and polymorphic probes. We exclude the set of polymorphic CG and CH probes (42.403) discovered by Chen.</p>
+<p>482,421 CpG sites are measured using two chemistries Type I (135,476) and Type II (350,036). the Type I chemistry uses two probes to measure a CpG site while the Type II measure CpG methylation using one probe. The Type II chemistry was specially designed to measure CpG methylation in low CpG dense regions. There are</p>
+<p>Depending on the methylation status of the probe either of the green or red fluorescence signals is detected a strongest.</p>
+<p>Information on Type I and II probes, address, etc. can be extracted using <a href="http:/bioconductor.org/minfi"><strong>minfi</strong></a>-functionality.</p>
+<pre class="r"><code>library(minfi)
+locusNames &lt;- getManifestInfo(RGset, &quot;locusNames&quot;)
+typeII &lt;- getProbeInfo(RGset, type = &quot;II&quot;)
+nrow(typeII)
+typeI &lt;- getProbeInfo(RGset, type = &quot;I&quot;)
+head(typeI)
+nrow(typeI)</code></pre>
+<p>482421 + 3091 (excluding 65 SNPs)</p>
+<p>Methylated and Unmethylated Intensities</p>
+</div>
+<div id="success-rates" class="section level1">
+<h1>Success Rates</h1>
+<p>All these probe filter-steps are implemented in the function <code>filtering</code>.</p>
+<p>RGset containing Red/Green signal intensities are converted to Methylated and Unmethylated signals (see also, <code>?preprocessRaw</code>, from minfi). These can in turn be converted to either beta-values or M-values.</p>
+<pre class="r"><code>betas &lt;- reduce(GRset, RGset, what=&quot;beta&quot;)</code></pre>
+<pre class="r"><code>mvalues &lt;- reduce(GRset, RGset, what=&quot;M&quot;)</code></pre>
+</div>
+<div id="array-design" class="section level1">
+<h1>Array design</h1>
+<p>Chips, plates, arrays, …</p>
+<p>probe addressess A (Type I and Type II) B (Type I only) There are 620988 probes on the array</p>
+<p>Number of beads</p>
+<p>Each probe is measured using more then one bead, the average signal intensities is used as a measure for the probe intensity.</p>
+<div class="references">
+<p>Bibikova, M., B. Barnes, C. Tsan, V. Ho, B. Klotzle, J. M. Le, D. Delano, et al. 2011. “High Density DNA Methylation Array with Single CpG Site Resolution.” <em>Genomics</em> 98 (4) (Oct): 288–295.</p>
+<p>Chen, Y. A., M. Lemire, S. Choufani, D. T. Butcher, D. Grafodatskaya, B. W. Zanke, S. Gallinger, T. J. Hudson, and R. Weksberg. 2013. “Discovery of Cross-Reactive Probes and Polymorphic CpGs in the Illumina Infinium HumanMethylation450 Microarray.” <em>Epigenetics</em> 8 (2) (Feb): 203–209.</p>
 </div>
 </div>
 
@@ -343,9 +380,13 @@ University Medical Center, The Netherlands.</code></pre>
 <script>
 
 // add bootstrap table styles to pandoc tables
-$(document).ready(function () {
+function bootstrapStylePandocTables() {
   $('tr.header').parent('thead').parent('table').addClass('table table-condensed');
+}
+$(document).ready(function () {
+  bootstrapStylePandocTables();
 });
+
 
 </script>
 

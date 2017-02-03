@@ -1,6 +1,3 @@
----
-title: "Setup"
----
 
 ```{r setup, include=FALSE}
 

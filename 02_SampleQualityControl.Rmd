@@ -1,17 +1,8 @@
----
-title: "Sample-level quality control"
-output: 
-  html_document:
-    highlight: tango
-    toc: true
-    toc_float:
-      collapsed: false
----
 
 ```{r, child="_setup.Rmd"}
 ```
 
-# MethylAid #
+# Running MethylAid #
 	
 Sample quality control is performed using the
 [**MethylAid**](http://bioconductor.org/MethylAid)

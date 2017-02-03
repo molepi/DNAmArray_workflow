@@ -1,6 +1,4 @@
 base
-RevoUtilsMath
-rmarkdown
 knitr
 MethylAid
 BiocGenerics

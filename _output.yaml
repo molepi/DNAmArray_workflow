@@ -1,0 +1,7 @@
+html_document:
+    theme: spacelab
+    highlight: textmate
+    toc: true
+    toc_depth: 2
+    toc_float: true
+    pandoc_args: ["--bibliography", "./DNAmArray.bib"]

@@ -1,12 +1,3 @@
----
-title: "Functional Normalization"
-output: 
-  html_document:
-    highlight: tango
-    toc: true
-    toc_float:
-      collapsed: false
----
 
 ```{r, child="_setup.Rmd"}
 ```

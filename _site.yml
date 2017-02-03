@@ -1,5 +1,5 @@
 name: "DNAmArray"
-output_dir: "."
+output_dir: "gh-pages"
 navbar:
   title: "DNAmArray"
   left:
@@ -21,11 +21,4 @@ navbar:
       href: 08_Miscellaneous.html
   right:
     - text: "About"
-      href: about.html	
-output:
-  html_document:
-    theme: spacelab
-    highlight: textmate
-
-
-
+      href: about.html

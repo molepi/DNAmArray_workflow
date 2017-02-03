@@ -1,12 +1,3 @@
----
-title: "Visual inspection of the data"
-output: 
-  html_document:
-    highlight: tango
-    toc: true
-    toc_float:
-      collapsed: false
----
 
 ```{r, child="_setup.Rmd"}
 ```

@@ -11,62 +11,35 @@
 
 
 
-<title>Epigenomewide association study on Age</title>
+<title></title>
 
 <script src="site_libs/jquery-1.11.3/jquery.min.js"></script>
-<script src="site_libs/jqueryui-1.11.4/jquery-ui.min.js"></script>
-<link href="site_libs/tocify-1.9.1/jquery.tocify.css" rel="stylesheet" />
-<script src="site_libs/tocify-1.9.1/jquery.tocify.js"></script>
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <link href="site_libs/bootstrap-3.3.5/css/spacelab.min.css" rel="stylesheet" />
 <script src="site_libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
 <script src="site_libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
 <script src="site_libs/bootstrap-3.3.5/shim/respond.min.js"></script>
-
+<script src="site_libs/jqueryui-1.11.4/jquery-ui.min.js"></script>
+<link href="site_libs/tocify-1.9.1/jquery.tocify.css" rel="stylesheet" />
+<script src="site_libs/tocify-1.9.1/jquery.tocify.js"></script>
+<script src="site_libs/navigation-1.1/tabsets.js"></script>
+<link href="site_libs/highlightjs-1.1/textmate.css" rel="stylesheet" />
+<script src="site_libs/highlightjs-1.1/highlight.js"></script>
 
 <style type="text/css">code{white-space: pre;}</style>
-<style type="text/css">
-div.sourceCode { overflow-x: auto; }
-table.sourceCode, tr.sourceCode, td.lineNumbers, td.sourceCode {
-  margin: 0; padding: 0; vertical-align: baseline; border: none; }
-table.sourceCode { width: 100%; line-height: 100%; background-color: #f8f8f8; }
-td.lineNumbers { text-align: right; padding-right: 4px; padding-left: 4px; color: #aaaaaa; border-right: 1px solid #aaaaaa; }
-td.sourceCode { padding-left: 5px; }
-pre, code { background-color: #f8f8f8; }
-code > span.kw { color: #204a87; font-weight: bold; } /* Keyword */
-code > span.dt { color: #204a87; } /* DataType */
-code > span.dv { color: #0000cf; } /* DecVal */
-code > span.bn { color: #0000cf; } /* BaseN */
-code > span.fl { color: #0000cf; } /* Float */
-code > span.ch { color: #4e9a06; } /* Char */
-code > span.st { color: #4e9a06; } /* String */
-code > span.co { color: #8f5902; font-style: italic; } /* Comment */
-code > span.ot { color: #8f5902; } /* Other */
-code > span.al { color: #ef2929; } /* Alert */
-code > span.fu { color: #000000; } /* Function */
-code > span.er { color: #a40000; font-weight: bold; } /* Error */
-code > span.wa { color: #8f5902; font-weight: bold; font-style: italic; } /* Warning */
-code > span.cn { color: #000000; } /* Constant */
-code > span.sc { color: #000000; } /* SpecialChar */
-code > span.vs { color: #4e9a06; } /* VerbatimString */
-code > span.ss { color: #4e9a06; } /* SpecialString */
-code > span.im { } /* Import */
-code > span.va { color: #000000; } /* Variable */
-code > span.cf { color: #204a87; font-weight: bold; } /* ControlFlow */
-code > span.op { color: #ce5c00; font-weight: bold; } /* Operator */
-code > span.pp { color: #8f5902; font-style: italic; } /* Preprocessor */
-code > span.ex { } /* Extension */
-code > span.at { color: #c4a000; } /* Attribute */
-code > span.do { color: #8f5902; font-weight: bold; font-style: italic; } /* Documentation */
-code > span.an { color: #8f5902; font-weight: bold; font-style: italic; } /* Annotation */
-code > span.cv { color: #8f5902; font-weight: bold; font-style: italic; } /* CommentVar */
-code > span.in { color: #8f5902; font-weight: bold; font-style: italic; } /* Information */
-</style>
 <style type="text/css">
   pre:not([class]) {
     background-color: white;
   }
 </style>
+<script type="text/javascript">
+if (window.hljs && document.readyState && document.readyState === "complete") {
+   window.setTimeout(function() {
+      hljs.initHighlighting();
+   }, 0);
+}
+</script>
+
 
 
 <style type="text/css">
@@ -122,6 +95,7 @@ button.code-folding-btn:focus {
   outline: none;
 }
 </style>
+
 
 <style type="text/css">
 /* padding for bootstrap navbar */
@@ -179,7 +153,6 @@ $(document).ready(function () {
 <div class="container-fluid main-container">
 
 <!-- tabsets -->
-<script src="site_libs/navigation-1.0/tabsets.js"></script>
 <script>
 $(document).ready(function () {
   window.buildTabsets("TOC");
@@ -201,16 +174,16 @@ $(document).ready(function ()  {
 
     // establish options
     var options = {
-      selectors: "h1,h2,h3",
+      selectors: "h1,h2",
       theme: "bootstrap3",
       context: '.toc-content',
       hashGenerator: function (text) {
-        return text.replace(/[.\/?&!#<>]/g, '').replace(/\s/g, '_').toLowerCase();
+        return text.replace(/[.\\/?&!#<>]/g, '').replace(/\s/g, '_').toLowerCase();
       },
       ignoreSelector: ".toc-ignore",
       scrollTo: 0
     };
-    options.showAndHide = false;
+    options.showAndHide = true;
     options.smoothScroll = true;
 
     // tocify
@@ -229,6 +202,7 @@ $(document).ready(function ()  {
   width: 100%;
 }
 }
+
 
 .toc-content {
   padding-left: 30px;
@@ -263,21 +237,15 @@ div.tocify {
 }
 
 .tocify-subheader .tocify-item {
-  font-size: 0.9em;
-  padding-left: 5px;
+  font-size: 0.90em;
+  padding-left: 25px;
+  text-indent: 0;
 }
 
 .tocify .list-group-item {
   border-radius: 0px;
 }
 
-.tocify-subheader {
-  display: inline;
-}
-.tocify-subheader .tocify-item {
-  font-size: 0.95em;
-  padding-left: 10px;
-}
 
 </style>
 
@@ -343,7 +311,6 @@ div.tocify {
 
 
 
-<h1 class="title toc-ignore">Epigenomewide association study on Age</h1>
 
 </div>
 
@@ -352,38 +319,41 @@ div.tocify {
 <h1>Simple EWAS using <strong>limma</strong></h1>
 <p>M-values valid to run EWAS using linear regression approach.</p>
 <p>Here skipping the empirical Bayes step, because of the large sample size this should give very similar results?</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">covariates &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="st">&quot;DNA_BloodSampling_Age&quot;</span>, <span class="st">&quot;Sex&quot;</span>, <span class="st">&quot;Sentrix_Position&quot;</span>, <span class="st">&quot;Smoking&quot;</span>, <span class="st">&quot;Mono_Perc&quot;</span>, <span class="st">&quot;Baso_Perc&quot;</span>, <span class="st">&quot;Eos_Perc&quot;</span>, <span class="st">&quot;Neut_Perc&quot;</span>) 
-design &lt;-<span class="st"> </span><span class="kw">data.frame</span>(<span class="dt">Int=</span><span class="dv">1</span>, <span class="kw">colData</span>(mvalues)[, covariates])
-complete &lt;-<span class="st"> </span><span class="kw">apply</span>(design, <span class="dv">1</span>, function(x) <span class="kw">sum</span>(<span class="kw">is.na</span>(x)) ==<span class="st"> </span><span class="dv">0</span> )
-data &lt;-<span class="st"> </span><span class="kw">assays</span>(mvalues)$data
-design &lt;-<span class="st"> </span>design[complete,]
-data &lt;-<span class="st"> </span>data[,complete]
-<span class="kw">dim</span>(data)</code></pre></div>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">design$Sentrix_Position &lt;-<span class="st"> </span><span class="kw">as.integer</span>(<span class="kw">as.factor</span>(design$Sentrix_Position))</code></pre></div>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(limma)
-fit &lt;-<span class="st"> </span><span class="kw">lmFit</span>(data, design)     
-tstat &lt;-<span class="st"> </span>fit$coef/fit$stdev.unscaled/fit$sigma        
-pval &lt;-<span class="st"> </span><span class="dv">2</span>*<span class="kw">pnorm</span>(-<span class="kw">abs</span>(tstat[,<span class="dv">2</span>]))
-padj &lt;-<span class="st"> </span><span class="kw">p.adjust</span>(<span class="kw">sort</span>(pval, <span class="dt">decreasing=</span><span class="ot">FALSE</span>), <span class="dt">method=</span><span class="st">&quot;bonf&quot;</span>)
-<span class="kw">head</span>(padj[padj &lt;<span class="st"> </span><span class="fl">0.05</span>])</code></pre></div>
+<pre class="r"><code>covariates &lt;- c(&quot;DNA_BloodSampling_Age&quot;, &quot;Sex&quot;, &quot;Sentrix_Position&quot;, &quot;Smoking&quot;, &quot;Mono_Perc&quot;, &quot;Baso_Perc&quot;, &quot;Eos_Perc&quot;, &quot;Neut_Perc&quot;) 
+design &lt;- data.frame(Int=1, colData(mvalues)[, covariates])
+complete &lt;- apply(design, 1, function(x) sum(is.na(x)) == 0 )
+data &lt;- assays(mvalues)$data
+design &lt;- design[complete,]
+data &lt;- data[,complete]
+dim(data)</code></pre>
+<pre class="r"><code>design$Sentrix_Position &lt;- as.integer(as.factor(design$Sentrix_Position))</code></pre>
+<pre class="r"><code>library(limma)
+fit &lt;- lmFit(data, design)     
+tstat &lt;- fit$coef/fit$stdev.unscaled/fit$sigma        
+pval &lt;- 2*pnorm(-abs(tstat[,2]))
+padj &lt;- p.adjust(sort(pval, decreasing=FALSE), method=&quot;bonf&quot;)
+head(padj[padj &lt; 0.05])</code></pre>
 </div>
 <div id="unobserved-covariates-using-cate" class="section level1">
 <h1>Unobserved covariates using <strong>cate</strong></h1>
 <p>Often unobserved technical or biological covariates can be present. A recent approach available from cran <a href="https://cran.r-project.org/package=irlba"><strong>cate</strong></a> is able to estimate the unobserved covariates. There are other methods as well, …</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(cate)
-fa &lt;-<span class="st"> </span><span class="kw">cate.fit</span>(design[,<span class="dv">2</span>,<span class="dt">drop=</span><span class="ot">FALSE</span>], design[,-<span class="dv">2</span>], <span class="kw">t</span>(data), <span class="dt">r =</span> <span class="dv">3</span>, <span class="dt">calibrate=</span><span class="ot">FALSE</span>, <span class="dt">adj.method=</span><span class="st">&quot;naive&quot;</span>)</code></pre></div>
+<pre class="r"><code>library(cate)
+fa &lt;- cate.fit(design[,2,drop=FALSE], design[,-2], t(data), r = 3, calibrate=FALSE, adj.method=&quot;naive&quot;)</code></pre>
 <p>Here we assumed the presence of three unobserved covariates but cate has two method implemented that can estimate the precise number of unobserved covariates.</p>
 </div>
 <div id="correct-for-bias-and-inflation" class="section level1">
 <h1>Correct for bias and inflation</h1>
 <p>As is seen in GWAS, inflation, also occurs in EWAS. And not only inflation but bias can be observed too. We developed a package called <a href="http://bioconductor.org/bacon"><strong>bacon</strong></a> to estimate and correct for bias and inflation for EWAS (and TWAS).</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(bacon)
-tstats &lt;-<span class="st"> </span><span class="kw">cbind</span>(<span class="dt">limma=</span>tstat[,<span class="dv">2</span>], <span class="dt">cate=</span><span class="kw">as.vector</span>(fa$beta.t))
-bc &lt;-<span class="st"> </span><span class="kw">bacon</span>(tstats)
+<pre class="r"><code>library(bacon)
+tstats &lt;- cbind(limma=tstat[,2], cate=as.vector(fa$beta.t))
+bc &lt;- bacon(tstats)
 bc
-<span class="kw">print</span>(<span class="kw">plot</span>(bc, <span class="dt">type=</span><span class="st">&quot;hist&quot;</span>))
-<span class="kw">print</span>(<span class="kw">plot</span>(bc, <span class="dt">type=</span><span class="st">&quot;qq&quot;</span>))
-<span class="kw">head</span>(<span class="kw">pval</span>(bc))</code></pre></div>
+print(plot(bc, type=&quot;hist&quot;))
+print(plot(bc, type=&quot;qq&quot;))
+head(pval(bc))</code></pre>
+<div class="references">
+
+</div>
 </div>
 
 
@@ -396,9 +366,13 @@ bc
 <script>
 
 // add bootstrap table styles to pandoc tables
-$(document).ready(function () {
+function bootstrapStylePandocTables() {
   $('tr.header').parent('thead').parent('table').addClass('table table-condensed');
+}
+$(document).ready(function () {
+  bootstrapStylePandocTables();
 });
+
 
 </script>
 
