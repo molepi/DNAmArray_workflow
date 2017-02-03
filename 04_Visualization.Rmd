@@ -34,8 +34,8 @@ plot(pc$x)
 ```
 
 **Note** `getBeta` extracts Methylated and Unmethylated intensities
-and converts them to beta-values using $\nicefrac{M}{M+U}$, whereas,
-`type="Illumina"` adds $100$ to the denominator which prevents
+and converts them to beta-values using M/(M+U), whereas,
+`type="Illumina"` adds 100 to the denominator which prevents
 beta-values becoming NA if both M and U are exactly zero.
 
 # Heatmap #

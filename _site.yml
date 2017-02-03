@@ -15,10 +15,10 @@ navbar:
       href: 05_Normalization.html
     - text: "Probe filtering"      
       href: 06_ProbeFiltering.html
-    - text: "Ewas"
-      href: 07_EWAS.html
     - text: "Miscellaneous"
-      href: 08_Miscellaneous.html
+      href: 07_Miscellaneous.html
+    - text: "Ewas"
+      href: 08_EWAS.html
   right:
     - text: "About"
       href: about.html

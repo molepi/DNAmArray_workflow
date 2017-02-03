@@ -36,6 +36,6 @@ NA's in the `RGChannelSet`. Therefore, we combine after noramlization
 and probe filtering the filtered-`RGChannelSet` and the
 normalized-`GenomicRatioSet` using the function `reduce`.
 
-
+# References #
 
 

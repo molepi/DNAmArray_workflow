@@ -107,3 +107,5 @@ intensities is used as a measure for the probe intensity.
 ```{r cleanup, echo = FALSE, results = 'hide'}
 rm(RGset); rm(GRset); gc()
 ```
+
+# References #
