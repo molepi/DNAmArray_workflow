@@ -20,7 +20,7 @@ First, prepare the targets file, similar to the one used by
 [**MethylAid**](http://bioconductor.org/minfi).
 
 ```{r sqc.generatetargets, message=FALSE, results='hide'}
-library(BIOSRutils)
+library(BBMRIomics)
 path450k <- file.path(RP3DATADIR, "IlluminaHumanMethylation450k")
 samplesheets <- getView("methylationSamplesheet")
 samplesheets$biobank_id <- gsub("-.*$", "", samplesheets$ids)

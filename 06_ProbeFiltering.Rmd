@@ -88,6 +88,7 @@ betas <- reduce(GRset, RGset, what="beta")
 ```
 
 ```{r reduce2mvalues}
+
 mvalues <- reduce(GRset, RGset, what="M")
 ```
 
@@ -98,7 +99,7 @@ Chips, plates, arrays, ...
 probe addressess A (Type I and Type II) B (Type I only) 
 There are 620988 probes on the array
 
-Number of beads
+# Number of beads #
 
 Each probe is measured using more then one bead, the average signal
 intensities is used as a measure for the probe intensity.

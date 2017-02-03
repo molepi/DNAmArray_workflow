@@ -73,7 +73,7 @@ First install the package [**devtools**](https://github.com/hadley/devtools). Ne
 
 ```{r devtools, eval=FALSE}
 library(devtools)
-install_git("https://git.lumc.nl/molepi/DNAmArray.git")
+install_git("https://github.com/molepi/DNAmArray.git")
 ```
 
 ## Install from source using `git/R` ##
@@ -82,7 +82,7 @@ Using [git](https://git-scm.com/), e.g, use `git clone` and then build
 and install the package from source:
 
 ```{r git, engine='bash', eval=FALSE}
-git clone git@git.lumc.nl:molepi/DNAmArray.git
+git clone git@github.com/molepi/DNAmArray.git
 R CMD build DNAmArray
 R CMD INSTALL DNAmArray_x.y.z.tar.gz
 ```

@@ -36,7 +36,7 @@ head(padj[padj < 0.05])
 
 Often unobserved technical or biological covariates can be present. A
 recent approach available from cran
-[**cate**](https://cran.r-project.org/package=irlba) is able to
+[**cate**](https://cran.r-project.org/package=cate) is able to
 estimate the unobserved covariates. There are other methods as well,
 ...
 
@@ -54,7 +54,7 @@ unobserved covariates.
 As is seen in GWAS, inflation, also occurs in EWAS. And not only
 inflation but bias can be observed too. We developed a package called
 [**bacon**](http://bioconductor.org/bacon) to estimate and correct for bias and inflation
-for EWAS (and TWAS).
+for EWAS (and TWAS)[@Iterson2017].
 
 ```{r bacon}
 library(bacon)
@@ -66,4 +66,5 @@ print(plot(bc, type="qq"))
 head(pval(bc))
 ```
 
+# References #
 

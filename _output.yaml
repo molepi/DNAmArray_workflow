@@ -5,3 +5,5 @@ html_document:
     toc_depth: 2
     toc_float: true
     pandoc_args: ["--bibliography", "./DNAmArray.bib"]
+    includes:
+      in_header: header.tex
