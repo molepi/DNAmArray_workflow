@@ -25,6 +25,7 @@
 <script src="site_libs/navigation-1.1/tabsets.js"></script>
 <link href="site_libs/highlightjs-1.1/textmate.css" rel="stylesheet" />
 <script src="site_libs/highlightjs-1.1/highlight.js"></script>
+\usepackage{nicefrac}
 
 <style type="text/css">code{white-space: pre;}</style>
 <style type="text/css">
@@ -317,7 +318,7 @@ div.tocify {
 
 <div id="constructing-an-rgset-object-in-parallel" class="section level1">
 <h1>Constructing an <code>RGset</code>-object in parallel</h1>
-<p>Reading a large number of IDAT-files can be time-consuming. The <strong>DNAmArray</strong> package offers the <code>read.450k.exp.par</code>-function for reading IDAT-files in parallel using functionallity from <a href="http://bioconductor.org/BiocParallel"><strong>BiocParallel</strong></a>. The target-file is divided in a number of smaller targets files according to the number of workers (compute nodes) available. On each worknode a subset of IDAT-files are read using the regular <a href="http://bioconductor.org/minfi"><strong>minfi</strong></a> function-<code>read.450k.expr</code>. Once all idat-files are read they are combined into on <code>RGChannelSet</code>-object and returned.</p>
+<p>Reading a large number of IDAT-files can be time-consuming. The <a href="https://github.com/molepi/DNAmArray"><strong>DNAmArray</strong></a>** package offers the <code>read.450k.exp.par</code>-function for reading IDAT-files in parallel using functionallity from <a href="http://bioconductor.org/BiocParallel"><strong>BiocParallel</strong></a>. The target-file is divided in a number of smaller targets files according to the number of workers (compute nodes) available. On each worknode a subset of IDAT-files are read using the regular <a href="http://bioconductor.org/minfi"><strong>minfi</strong></a> function-<code>read.450k.expr</code>. Once all idat-files are read they are combined into on <code>RGChannelSet</code>-object and returned.</p>
 <p>First, we remove those samples that did not pass quality control.</p>
 <pre class="r"><code>path450k &lt;- file.path(RP3DATADIR, &quot;IlluminaHumanMethylation450k/450k/LLS&quot;)
 outliers &lt;- read.table(file.path(path450k, &quot;outliers.txt&quot;), header=TRUE)    

@@ -25,6 +25,7 @@
 <script src="site_libs/navigation-1.1/tabsets.js"></script>
 <link href="site_libs/highlightjs-1.1/textmate.css" rel="stylesheet" />
 <script src="site_libs/highlightjs-1.1/highlight.js"></script>
+\usepackage{nicefrac}
 
 <style type="text/css">code{white-space: pre;}</style>
 <style type="text/css">
@@ -320,7 +321,7 @@ div.tocify {
 <h1>Beta densities</h1>
 <p>Inspect distribution of beta-densities across all samples can be done either before and after normalization. The following is just just take from <a href="http://bioconductor.org/minfi"><strong>minfi</strong></a>.</p>
 <pre class="r"><code>library(minfi)
-densityPlot(RGset, main = &quot;Beta&quot;, xlab = &quot;Beta&quot;)</code></pre>
+densityPlot(RGset[, 1:10], main = &quot;Beta&quot;, xlab = &quot;Beta&quot;)</code></pre>
 </div>
 <div id="principal-components-plot" class="section level1">
 <h1>Principal components plot</h1>
@@ -328,8 +329,9 @@ densityPlot(RGset, main = &quot;Beta&quot;, xlab = &quot;Beta&quot;)</code></pre
 <pre class="r"><code>library(irlba)
 beta &lt;- getBeta(RGset, type=&quot;Illumina&quot;)
 beta[is.na(beta)] &lt;- median(beta, na.rm=TRUE)
-P &lt;- irlba(beta, nv=5, center=colMeans(beta))
-plot(P$v, xlab=&quot;PC 1&quot;, ylab=&quot;PC 2&quot;)</code></pre>
+pc &lt;- prcomp_irlba(t(beta), n=3)
+summary(pc)
+plot(pc$x)</code></pre>
 <p><strong>Note</strong> <code>getBeta</code> extracts Methylated and Unmethylated intensities and converts them to beta-values using <span class="math">\(\nicefrac{M}{M+U}\)</span>, whereas, <code>type=&quot;Illumina&quot;</code> adds <span class="math">\(100\)</span> to the denominator which prevents beta-values becoming NA if both M and U are exactly zero.</p>
 </div>
 <div id="heatmap" class="section level1">
@@ -338,7 +340,7 @@ plot(P$v, xlab=&quot;PC 1&quot;, ylab=&quot;PC 2&quot;)</code></pre>
 <pre class="r"><code>library(pheatmap)
 df &lt;- apply(targets, 2, function(x) as.numeric(factor(x)))
 keep &lt;- apply(df, 2, sd) &gt; 0    
-cxy &lt;- cor(P$v, scale(df[, keep]))   
+cxy &lt;- cor(pc$x, scale(df[, keep]))   
 pheatmap(cxy, cluster_rows=FALSE)</code></pre>
 </div>
 <div id="dendrogram" class="section level1">

@@ -1,5 +1,5 @@
 name: "DNAmArray"
-output_dir: "gh-pages"
+output_dir: "docs"
 navbar:
   title: "DNAmArray"
   left:

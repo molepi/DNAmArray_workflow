@@ -5,8 +5,9 @@
 # Constructing an `RGset`-object in parallel #
 
 Reading a large number of IDAT-files can be time-consuming. The
-**DNAmArray** package offers the `read.450k.exp.par`-function for
-reading IDAT-files in parallel using functionallity from
+[**DNAmArray**](https://github.com/molepi/DNAmArray)** package offers
+the `read.450k.exp.par`-function for reading IDAT-files in parallel
+using functionallity from
 [**BiocParallel**](http://bioconductor.org/BiocParallel). The
 target-file is divided in a number of smaller targets files according
 to the number of workers (compute nodes) available. On each worknode a

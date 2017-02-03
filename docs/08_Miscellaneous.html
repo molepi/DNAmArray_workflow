@@ -25,6 +25,7 @@
 <script src="site_libs/navigation-1.1/tabsets.js"></script>
 <link href="site_libs/highlightjs-1.1/textmate.css" rel="stylesheet" />
 <script src="site_libs/highlightjs-1.1/highlight.js"></script>
+\usepackage{nicefrac}
 
 <style type="text/css">code{white-space: pre;}</style>
 <style type="text/css">
@@ -368,7 +369,7 @@ mvalues &lt;- impute.knn(as.matrix(mvalues))$data</code></pre>
 <h1>Annotation</h1>
 <p>We have implemented a small function to map CpG-probes to their nearest genes.</p>
 <pre class="r"><code>cpgs &lt;- head(rownames(mvalues))
-cpgInfo(cpgs, TxDb=&quot;TxDb.Hsapiens.UCSC.hg19.ensGene&quot;)</code></pre>
+cpgInfo(cpgs, TxDb=&quot;TxDb.Hsapiens.UCSC.hg19.knownGene&quot;)</code></pre>
 </div>
 <div id="white-blood-cell-counts" class="section level1">
 <h1>White Blood Cell Counts</h1>
@@ -393,10 +394,15 @@ rownames(colData) &lt;- colData$run_id</code></pre>
 <pre class="r"><code>mvalues &lt;- makeSE(mvalues, colData, rowRanges, note=&quot;Functional Normalized and knn imputed&quot;)
 mvalues</code></pre>
 <p>More about <a href="http://bioconductor.org"><strong>SummarizedExperiment</strong></a> see: 1. <a href="http://bioconductor.org/packages/release/bioc/vignettes/SummarizedExperiment/inst/doc/SummarizedExperiment.html">package vignette</a> 2. <a href="http://bioconductor.org/help/course-materials/2012/BiocEurope2012/SummarizedExperiment.pdf">course material</a> 3. <a href="http://www.nature.com/nmeth/journal/v12/n2/full/nmeth.3252.html">BioConductor nature paper</a></p>
+</div>
+<div id="dmr-finder" class="section level1">
+<h1>DMR finder</h1>
+<p>See<span class="citation">(Slieker et al. 2013)</span>.</p>
 <div class="references">
 <p>Abecasis, G. R., S. S. Cherny, W. O. Cookson, and L. R. Cardon. 2001. “GRR: graphical Representation of Relationship Errors.” <em>Bioinformatics</em> 17 (8) (Aug): 742–743.</p>
 <p>Houseman, E. A., W. P. Accomando, D. C. Koestler, B. C. Christensen, C. J. Marsit, H. H. Nelson, J. K. Wiencke, and K. T. Kelsey. 2012. “DNA Methylation Arrays as Surrogate Measures of Cell Mixture Distribution.” <em>BMC Bioinformatics</em> 13: 86.</p>
 <p>Jaffe, A. E., and R. A. Irizarry. 2014. “Accounting for Cellular Heterogeneity Is Critical in Epigenome-Wide Association Studies.” <em>Genome Biol.</em> 15 (2): R31.</p>
+<p>Slieker, R. C., S. D. Bos, J. J. Goeman, J. V. Bovee, R. P. Talens, R. van der Breggen, H. E. Suchiman, et al. 2013. “Identification and Systematic Annotation of Tissue-Specific Differentially Methylated Regions Using the Illumina 450k Array.” <em>Epigenetics Chromatin</em> 6 (1) (Aug): 26.</p>
 <p>Troyanskaya, O., M. Cantor, G. Sherlock, P. Brown, T. Hastie, R. Tibshirani, D. Botstein, and R. B. Altman. 2001. “Missing Value Estimation Methods for DNA Microarrays.” <em>Bioinformatics</em> 17 (6) (Jun): 520–525.</p>
 </div>
 </div>

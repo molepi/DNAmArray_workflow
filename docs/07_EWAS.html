@@ -25,6 +25,7 @@
 <script src="site_libs/navigation-1.1/tabsets.js"></script>
 <link href="site_libs/highlightjs-1.1/textmate.css" rel="stylesheet" />
 <script src="site_libs/highlightjs-1.1/highlight.js"></script>
+\usepackage{nicefrac}
 
 <style type="text/css">code{white-space: pre;}</style>
 <style type="text/css">
@@ -336,14 +337,14 @@ head(padj[padj &lt; 0.05])</code></pre>
 </div>
 <div id="unobserved-covariates-using-cate" class="section level1">
 <h1>Unobserved covariates using <strong>cate</strong></h1>
-<p>Often unobserved technical or biological covariates can be present. A recent approach available from cran <a href="https://cran.r-project.org/package=irlba"><strong>cate</strong></a> is able to estimate the unobserved covariates. There are other methods as well, …</p>
+<p>Often unobserved technical or biological covariates can be present. A recent approach available from cran <a href="https://cran.r-project.org/package=cate"><strong>cate</strong></a> is able to estimate the unobserved covariates. There are other methods as well, …</p>
 <pre class="r"><code>library(cate)
 fa &lt;- cate.fit(design[,2,drop=FALSE], design[,-2], t(data), r = 3, calibrate=FALSE, adj.method=&quot;naive&quot;)</code></pre>
 <p>Here we assumed the presence of three unobserved covariates but cate has two method implemented that can estimate the precise number of unobserved covariates.</p>
 </div>
 <div id="correct-for-bias-and-inflation" class="section level1">
 <h1>Correct for bias and inflation</h1>
-<p>As is seen in GWAS, inflation, also occurs in EWAS. And not only inflation but bias can be observed too. We developed a package called <a href="http://bioconductor.org/bacon"><strong>bacon</strong></a> to estimate and correct for bias and inflation for EWAS (and TWAS).</p>
+<p>As is seen in GWAS, inflation, also occurs in EWAS. And not only inflation but bias can be observed too. We developed a package called <a href="http://bioconductor.org/bacon"><strong>bacon</strong></a> to estimate and correct for bias and inflation for EWAS (and TWAS)<span class="citation">(Iterson, Zwet, and Heijmans 2017)</span>.</p>
 <pre class="r"><code>library(bacon)
 tstats &lt;- cbind(limma=tstat[,2], cate=as.vector(fa$beta.t))
 bc &lt;- bacon(tstats)
@@ -352,7 +353,8 @@ print(plot(bc, type=&quot;hist&quot;))
 print(plot(bc, type=&quot;qq&quot;))
 head(pval(bc))</code></pre>
 <div class="references">
-
+<h1>References</h1>
+<p>Iterson, M. van, E. W. van Zwet, and B. T. Heijmans. 2017. “Controlling Bias and Inflation in Epigenome- and Transcriptome-Wide Association Studies Using the Empirical Null Distribution.” <em>Genome Biol.</em> 18 (1) (Jan): 19.</p>
 </div>
 </div>
 

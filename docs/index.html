@@ -26,6 +26,7 @@
 <script src="site_libs/navigation-1.1/tabsets.js"></script>
 <link href="site_libs/highlightjs-1.1/textmate.css" rel="stylesheet" />
 <script src="site_libs/highlightjs-1.1/highlight.js"></script>
+\usepackage{nicefrac}
 
 <style type="text/css">code{white-space: pre;}</style>
 <style type="text/css">
@@ -323,7 +324,7 @@ div.tocify {
 <h1>Introduction</h1>
 <p>Here we provide a complete workflow for the the preprocessing and analysis of DNA methylation array data. The workflow combines best practices in the field with in-house developed methodology and is geared towards large-scale studies, including Epigenomewide Association Studies (EWAS). A specific aim of the work flow is to support such studies within the BIOS consortium encompassing multiple omics data on 4000 individuals from 6 Dutch biobanks operating within the frame of <a href="https://www.bbmri.nl/on_offer/bios/">BBMRI-NL</a></p>
 <p>The <strong>DNAmArray</strong>-package contains a series of convenient functions for the quality control, normalization and analysis of methylation array data. The workflow has been thoroughly tested on 450k array data but will similarly be applicable to the newer 850k EPIC array pending updates of Bioconductor packages from other groups.</p>
-<p>The workflow and package extensively uses functionality of other BioConductor packages, e.g., for transforming idats to so-called <code>RGlist</code> we use <a href="http:/bioconductor.org/minfi"><strong>minfi</strong></a> but <strong>DNAmArray</strong> provides functionality to do this in parallel. Furthermore, we have developed two other packages <a href="http:/bioconductor.org/MethylAid"><strong>MethylAid</strong></a> <span class="citation">(M. van Iterson et al. 2014)</span> and <a href="http:/bioconductor.org/bacon"><strong>bacon</strong></a> <span class="citation">(M. M. van Iterson et al. 2016)</span>, reps., performing interactive sample quality control and bias- and inflation-correction in epigenomewide association studies, each have been deposited at BioConductor (of note: <a href="http:/bioconductor.org/bacon"><strong>bacon</strong></a> also applies to transcriptome- and any other ome-wide association studies) .</p>
+<p>The workflow and package extensively uses functionality of other BioConductor packages, e.g., for transforming idats to so-called <code>RGlist</code> we use <a href="http:/bioconductor.org/minfi"><strong>minfi</strong></a> but <strong>DNAmArray</strong> provides functionality to do this in parallel. Furthermore, we have developed two other packages <a href="http:/bioconductor.org/MethylAid"><strong>MethylAid</strong></a> <span class="citation">(Iterson et al. 2014)</span> and <a href="http:/bioconductor.org/bacon"><strong>bacon</strong></a> <span class="citation">(Iterson, Zwet, and Heijmans 2017)</span>, reps., performing interactive sample quality control and bias- and inflation-correction in epigenomewide association studies, each have been deposited at BioConductor (of note: <a href="http:/bioconductor.org/bacon"><strong>bacon</strong></a> also applies to transcriptome- and any other ome-wide association studies) .</p>
 </div>
 <div id="leiden-longevity-study" class="section level1">
 <h1>Leiden Longevity Study</h1>
@@ -331,26 +332,27 @@ div.tocify {
 </div>
 <div id="installation" class="section level1">
 <h1>Installation</h1>
-<p>The <strong>DNAmArray</strong>-package can be installed in several ways which are described below. The package has been installed successfully for &gt;= R-3.2.0 on different linux-builds.</p>
+<p>The <a href="https://github.com/molepi/DNAmArray"><strong>DNAmArray</strong></a>-package can be installed in several ways which are described below. The package has been installed successfully for &gt;= R-3.2.0 on different linux-builds.</p>
 <p>The package depends on many other packages from <a href="https://www.bioconductor.org">BioConductor</a> or <a href="https://cran.r-project.org/">cran</a>. Usually these are installed automatically, otherwise, we refer to <a href="https://www.bioconductor.org/install/">BioConductor</a> or <a href="https://cran.r-project.org/doc/manuals/r-release/R-admin.html#Installing-packages">cran</a> documentation for the installation of these packages.</p>
 <p>The installed package takes around ~7Mb of memory a large bit of it comes from an <code>Rdata</code>-object containing the information on the cross-hybridizing probes<span class="citation">(Chen et al. 2013)</span>.</p>
 <div id="install-using-the-devtools-package" class="section level2">
 <h2>Install using the <strong>devtools</strong>-package</h2>
 <p>First install the package <a href="https://github.com/hadley/devtools"><strong>devtools</strong></a>. Next use:</p>
 <pre class="r"><code>library(devtools)
-install_git(&quot;https://git.lumc.nl/molepi/DNAmArray.git&quot;)</code></pre>
+install_github(&quot;molepi/DNAmArray.git&quot;)</code></pre>
 </div>
 <div id="install-from-source-using-gitr" class="section level2">
 <h2>Install from source using <code>git/R</code></h2>
 <p>Using <a href="https://git-scm.com/">git</a>, e.g, use <code>git clone</code> and then build and install the package from source:</p>
-<pre class="bash"><code>git clone git@git.lumc.nl:molepi/DNAmArray.git
+<pre class="bash"><code>git clone git@github.com/molepi/DNAmArray.git
 R CMD build DNAmArray
 R CMD INSTALL DNAmArray_x.y.z.tar.gz</code></pre>
 <p>Change <code>_x.y.z.</code> to the proper version you downloaded!</p>
 <div class="references">
+<h1>References</h1>
 <p>Chen, Y. A., M. Lemire, S. Choufani, D. T. Butcher, D. Grafodatskaya, B. W. Zanke, S. Gallinger, T. J. Hudson, and R. Weksberg. 2013. “Discovery of Cross-Reactive Probes and Polymorphic CpGs in the Illumina Infinium HumanMethylation450 Microarray.” <em>Epigenetics</em> 8 (2) (Feb): 203–209.</p>
 <p>Iterson, M. van, E. W. Tobi, R. C. Slieker, W. den Hollander, R. Luijk, P. E. Slagboom, and B. T. Heijmans. 2014. “MethylAid: visual and Interactive Quality Control of Large Illumina 450k Datasets.” <em>Bioinformatics</em> 30 (23): 3435–3437.</p>
-<p>Iterson, Maarten M. van, Erik W. van ZwetP. Eline Slagboom, and Bastiaan T. Heijmans. 2016. “Controlling Bias and Inflation in Epigenome- and Transcriptome-Wide Association Studies Using the Empirical Null Distribution.” <em>bioRxiv</em>. doi:<a href="http://dx.doi.org/10.1101/055772">10.1101/055772</a>. <a href="http://biorxiv.org/content/early/2016/05/27/055772">http://biorxiv.org/content/early/2016/05/27/055772</a>.</p>
+<p>Iterson, M. van, E. W. van Zwet, and B. T. Heijmans. 2017. “Controlling Bias and Inflation in Epigenome- and Transcriptome-Wide Association Studies Using the Empirical Null Distribution.” <em>Genome Biol.</em> 18 (1) (Jan): 19.</p>
 <p>Westendorp, R. G., D. van Heemst, M. P. Rozing, M. Frolich, S. P. Mooijaart, G. J. Blauw, M. Beekman, B. T. Heijmans, A. J. de Craen, and P. E. Slagboom. 2009. “Nonagenarian Siblings and Their Offspring Display Lower Risk of Mortality and Morbidity Than Sporadic Nonagenarians: The Leiden Longevity Study.” <em>J Am Geriatr Soc</em> 57 (9) (Sep): 1634–1637.</p>
 </div>
 </div>

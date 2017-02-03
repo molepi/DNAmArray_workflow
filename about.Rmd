@@ -1,11 +1,12 @@
 
+```{r}
+opts_chunk$set(cache=FALSE, eval=TRUE) ##always run this file
+```
+
 ```{r, child="_setup.Rmd"}
 ```
 
 # Acknowledgements #
-
-Paul Hop and Jenny van Dongen were involved in testing the first
-versions and helped us improving the packages/workflow.
 
 Contributors to the development of the package/workflow are: 
 
@@ -24,16 +25,12 @@ government (NWO 184.021.007).
 Maarten van Iterson is the main author of the package/workflow and
 should be contacted for any questions: m.van_iterson at lumc.nl
 
-Please cite Dekkers at al. [@dekkers2016] when using the 
-**DNAmArray** package or workflow.
+Paul Hop and Jenny van Dongen were involved in testing the first
+versions and helped us improving the packages/workflow.
 
-# disclamer #
-
-**add one**
-
-# licence # 
-
-**add one**
+Please cite van Iterson at al. [@Iterson2017] when using the
+[**DNAmArray**](https://github.com/molepi/DNAmArray)** package or
+workflow.
 
 ```{r, child="_sessioninfo.Rmd"}
 ```
