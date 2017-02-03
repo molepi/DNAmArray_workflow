@@ -25,7 +25,6 @@
 <script src="site_libs/navigation-1.1/tabsets.js"></script>
 <link href="site_libs/highlightjs-1.1/textmate.css" rel="stylesheet" />
 <script src="site_libs/highlightjs-1.1/highlight.js"></script>
-\usepackage{nicefrac}
 
 <style type="text/css">code{white-space: pre;}</style>
 <style type="text/css">
@@ -293,10 +292,10 @@ div.tocify {
   <a href="06_ProbeFiltering.html">Probe filtering</a>
 </li>
 <li>
-  <a href="07_EWAS.html">Ewas</a>
+  <a href="07_Miscellaneous.html">Miscellaneous</a>
 </li>
 <li>
-  <a href="08_Miscellaneous.html">Miscellaneous</a>
+  <a href="08_EWAS.html">Ewas</a>
 </li>
       </ul>
       <ul class="nav navbar-nav navbar-right">
@@ -324,6 +323,7 @@ div.tocify {
 <p>By default <code>preprocessFunnorm</code> return beta-values calculated with an offset of 100, like GenomeStudio. If required these can be transformed to M-values using minfi’s <code>getM</code> which does a logit2-transformation on the beta-values.</p>
 <p>We recommend to perform probe-filtering which sets unreliable measured probes to NA. Unfortunately, Functional Normalization does not allow NA’s in the <code>RGChannelSet</code>. Therefore, we combine after noramlization and probe filtering the filtered-<code>RGChannelSet</code> and the normalized-<code>GenomicRatioSet</code> using the function <code>reduce</code>.</p>
 <div class="references">
+<h1>References</h1>
 <p>Fortin, J. P., A. Labbe, M. Lemire, B. W. Zanke, T. J. Hudson, E. J. Fertig, C. M. Greenwood, and K. D. Hansen. 2014. “Functional Normalization of 450k Methylation Array Data Improves Replication in Large Cancer Studies.” <em>Genome Biology</em> 15 (12): 503.</p>
 <p>Triche, T. J., D. J. Weisenberger, D. Van Den Berg, P. W. Laird, and K. D. Siegmund. 2013. “Low-Level Processing of Illumina Infinium DNA Methylation BeadArrays.” <em>Nucleic Acids Res.</em> 41 (7) (Apr): e90.</p>
 </div>

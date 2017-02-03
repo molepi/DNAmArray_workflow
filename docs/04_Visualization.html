@@ -25,7 +25,6 @@
 <script src="site_libs/navigation-1.1/tabsets.js"></script>
 <link href="site_libs/highlightjs-1.1/textmate.css" rel="stylesheet" />
 <script src="site_libs/highlightjs-1.1/highlight.js"></script>
-\usepackage{nicefrac}
 
 <style type="text/css">code{white-space: pre;}</style>
 <style type="text/css">
@@ -293,10 +292,10 @@ div.tocify {
   <a href="06_ProbeFiltering.html">Probe filtering</a>
 </li>
 <li>
-  <a href="07_EWAS.html">Ewas</a>
+  <a href="07_Miscellaneous.html">Miscellaneous</a>
 </li>
 <li>
-  <a href="08_Miscellaneous.html">Miscellaneous</a>
+  <a href="08_EWAS.html">Ewas</a>
 </li>
       </ul>
       <ul class="nav navbar-nav navbar-right">
@@ -332,7 +331,7 @@ beta[is.na(beta)] &lt;- median(beta, na.rm=TRUE)
 pc &lt;- prcomp_irlba(t(beta), n=3)
 summary(pc)
 plot(pc$x)</code></pre>
-<p><strong>Note</strong> <code>getBeta</code> extracts Methylated and Unmethylated intensities and converts them to beta-values using <span class="math">\(\nicefrac{M}{M+U}\)</span>, whereas, <code>type=&quot;Illumina&quot;</code> adds <span class="math">\(100\)</span> to the denominator which prevents beta-values becoming NA if both M and U are exactly zero.</p>
+<p><strong>Note</strong> <code>getBeta</code> extracts Methylated and Unmethylated intensities and converts them to beta-values using M/(M+U), whereas, <code>type=&quot;Illumina&quot;</code> adds 100 to the denominator which prevents beta-values becoming NA if both M and U are exactly zero.</p>
 </div>
 <div id="heatmap" class="section level1">
 <h1>Heatmap</h1>
