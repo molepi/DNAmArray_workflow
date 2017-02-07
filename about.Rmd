@@ -1,8 +1,4 @@
 
-```{r}
-opts_chunk$set(cache=FALSE, eval=TRUE) ##always run this file
-```
-
 ```{r, child="_setup.Rmd"}
 ```
 
@@ -29,8 +25,10 @@ Paul Hop and Jenny van Dongen were involved in testing the first
 versions and helped us improving the packages/workflow.
 
 Please cite van Iterson at al. [@Iterson2017] when using the
-[**DNAmArray**](https://github.com/molepi/DNAmArray)** package or
+[**DNAmArray**](https://github.com/molepi/DNAmArray) package or
 workflow.
 
 ```{r, child="_sessioninfo.Rmd"}
 ```
+
+# References #

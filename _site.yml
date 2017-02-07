@@ -7,8 +7,6 @@ navbar:
       href: index.html
     - text: "Quality control"      
       href: 02_SampleQualityControl.html
-    - text: "Reading idats"      
-      href: 03_ReadingIdats.html
     - text: "Visualizations"      
       href: 04_Visualization.html
     - text: "Normalization"      
