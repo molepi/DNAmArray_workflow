@@ -6,20 +6,6 @@
 
 **add explaination**
 
-```{r, eval=FALSE}
-library(BiocParallel)
-library(DNAmArray)
-register(MulticoreParam(8))
-RGset <- read.450k.exp.par(targets)
-```
-
-```{r phenotypes, message=FALSE, results='hide', eval=FALSE}
-pheno <- getView("allPhenotypes")
-id <- match(targets$ids, pheno$ids)
-sex <- rep(2, nrow(targets))
-sex[!is.na(id)] <- pheno$Sex[id[!is.na(id)]]
-```
-
 ```{r sexcheck, eval=FALSE}
 betas <- getBeta(RGset)
 predicted <- getSex.DNAmArray(betas)

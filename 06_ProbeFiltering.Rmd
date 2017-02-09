@@ -88,7 +88,6 @@ betas <- reduce(GRset, RGset, what="beta")
 ```
 
 ```{r reduce2mvalues}
-
 mvalues <- reduce(GRset, RGset, what="M")
 ```
 

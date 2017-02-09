@@ -3,24 +3,40 @@
 
 suppressPackageStartupMessages({
 
-    library(DNAmArray)
-    library(BBMRIomics)
-    
-    library(knitr)
-    
-    library(MethylAid)
-    library(minfi)
-    library(BiocParallel)
-    library(BatchJobs)
-    library(cate)
-    library(limma)
-    library(irlba)
-    library(pheatmap)
-    library(fastcluster)
-    library(FDb.InfiniumMethylation.hg19)
-    library(impute)
-    library(bacon)
-    
+    Require <- function(pkg){
+        pkg <- as.character(substitute(pkg))
+        if(!require(pkg, character.only=TRUE)){
+            require("BiocInstaller")
+            biocLite(pkg)
+        }
+        require(pkg, character.only=TRUE)
+    }
+
+    if(!require(BiocInstaller)) {
+        source("https://bioconductor.org/biocLite.R")
+        require(BiocInstaller)
+    }
+
+    if(!require(DNAmArray)) {
+        biocLite("molepi/DNAmArray")
+        require(DNAmArray)
+    }
+
+    Require(knitr)
+    Require(MethylAid)
+    Require(minfi)
+    Require(BiocParallel)
+    Require(BatchJobs)
+    Require(Biobase) 
+    Require(cate)
+    Require(limma)
+    Require(irlba)
+    Require(pheatmap)
+    Require(fastcluster)
+    Require(FDb.InfiniumMethylation.hg19)
+    Require(impute)
+    Require(bacon)
+
 })
 
 opts_chunk$set(cache=TRUE, eval=FALSE)
