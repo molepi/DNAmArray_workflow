@@ -39,6 +39,6 @@ suppressPackageStartupMessages({
 
 })
 
-opts_chunk$set(cache=TRUE, eval=TRUE)
+opts_chunk$set(cache=TRUE, eval=FALSE)
 
 ```

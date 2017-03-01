@@ -1,0 +1,427 @@
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+
+<meta charset="utf-8">
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="generator" content="pandoc" />
+
+
+
+
+<title></title>
+
+<script src="site_libs/jquery-1.11.3/jquery.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="site_libs/bootstrap-3.3.5/css/spacelab.min.css" rel="stylesheet" />
+<script src="site_libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/respond.min.js"></script>
+<script src="site_libs/jqueryui-1.11.4/jquery-ui.min.js"></script>
+<link href="site_libs/tocify-1.9.1/jquery.tocify.css" rel="stylesheet" />
+<script src="site_libs/tocify-1.9.1/jquery.tocify.js"></script>
+<script src="site_libs/navigation-1.1/tabsets.js"></script>
+<link href="site_libs/highlightjs-1.1/textmate.css" rel="stylesheet" />
+<script src="site_libs/highlightjs-1.1/highlight.js"></script>
+
+<style type="text/css">code{white-space: pre;}</style>
+<style type="text/css">
+  pre:not([class]) {
+    background-color: white;
+  }
+</style>
+<script type="text/javascript">
+if (window.hljs && document.readyState && document.readyState === "complete") {
+   window.setTimeout(function() {
+      hljs.initHighlighting();
+   }, 0);
+}
+</script>
+
+
+
+<style type="text/css">
+h1 {
+  font-size: 34px;
+}
+h1.title {
+  font-size: 38px;
+}
+h2 {
+  font-size: 30px;
+}
+h3 {
+  font-size: 24px;
+}
+h4 {
+  font-size: 18px;
+}
+h5 {
+  font-size: 16px;
+}
+h6 {
+  font-size: 12px;
+}
+.table th:not([align]) {
+  text-align: left;
+}
+</style>
+
+
+</head>
+
+<body>
+
+<style type = "text/css">
+.main-container {
+  max-width: 940px;
+  margin-left: auto;
+  margin-right: auto;
+}
+code {
+  color: inherit;
+  background-color: rgba(0, 0, 0, 0.04);
+}
+img {
+  max-width:100%;
+  height: auto;
+}
+.tabbed-pane {
+  padding-top: 12px;
+}
+button.code-folding-btn:focus {
+  outline: none;
+}
+</style>
+
+
+<style type="text/css">
+/* padding for bootstrap navbar */
+body {
+  padding-top: 52px;
+  padding-bottom: 40px;
+}
+/* offset scroll position for anchor links (for fixed navbar)  */
+.section h1 {
+  padding-top: 57px;
+  margin-top: -57px;
+}
+
+.section h2 {
+  padding-top: 57px;
+  margin-top: -57px;
+}
+.section h3 {
+  padding-top: 57px;
+  margin-top: -57px;
+}
+.section h4 {
+  padding-top: 57px;
+  margin-top: -57px;
+}
+.section h5 {
+  padding-top: 57px;
+  margin-top: -57px;
+}
+.section h6 {
+  padding-top: 57px;
+  margin-top: -57px;
+}
+</style>
+
+<script>
+// manage active state of menu based on current page
+$(document).ready(function () {
+  // active menu anchor
+  href = window.location.pathname
+  href = href.substr(href.lastIndexOf('/') + 1)
+  if (href === "")
+    href = "index.html";
+  var menuAnchor = $('a[href="' + href + '"]');
+
+  // mark it active
+  menuAnchor.parent().addClass('active');
+
+  // if it's got a parent navbar menu mark it active as well
+  menuAnchor.closest('li.dropdown').addClass('active');
+});
+</script>
+
+
+<div class="container-fluid main-container">
+
+<!-- tabsets -->
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+</script>
+
+<!-- code folding -->
+
+
+
+
+<script>
+$(document).ready(function ()  {
+
+    // move toc-ignore selectors from section div to header
+    $('div.section.toc-ignore')
+        .removeClass('toc-ignore')
+        .children('h1,h2,h3,h4,h5').addClass('toc-ignore');
+
+    // establish options
+    var options = {
+      selectors: "h1,h2",
+      theme: "bootstrap3",
+      context: '.toc-content',
+      hashGenerator: function (text) {
+        return text.replace(/[.\\/?&!#<>]/g, '').replace(/\s/g, '_').toLowerCase();
+      },
+      ignoreSelector: ".toc-ignore",
+      scrollTo: 0
+    };
+    options.showAndHide = true;
+    options.smoothScroll = true;
+
+    // tocify
+    var toc = $("#TOC").tocify(options).data("toc-tocify");
+});
+</script>
+
+<style type="text/css">
+
+#TOC {
+  margin: 25px 0px 20px 0px;
+}
+@media (max-width: 768px) {
+#TOC {
+  position: relative;
+  width: 100%;
+}
+}
+
+
+.toc-content {
+  padding-left: 30px;
+  padding-right: 40px;
+}
+
+div.main-container {
+  max-width: 1200px;
+}
+
+div.tocify {
+  width: 20%;
+  max-width: 260px;
+  max-height: 85%;
+}
+
+@media (min-width: 768px) and (max-width: 991px) {
+  div.tocify {
+    width: 25%;
+  }
+}
+
+@media (max-width: 767px) {
+  div.tocify {
+    width: 100%;
+    max-width: none;
+  }
+}
+
+.tocify ul, .tocify li {
+  line-height: 20px;
+}
+
+.tocify-subheader .tocify-item {
+  font-size: 0.90em;
+  padding-left: 25px;
+  text-indent: 0;
+}
+
+.tocify .list-group-item {
+  border-radius: 0px;
+}
+
+
+</style>
+
+<!-- setup 3col/9col grid for toc_float and main content  -->
+<div class="row-fluid">
+<div class="col-xs-12 col-sm-4 col-md-3">
+<div id="TOC" class="tocify">
+</div>
+</div>
+
+<div class="toc-content col-xs-12 col-sm-8 col-md-9">
+
+
+
+
+<div class="navbar navbar-default  navbar-fixed-top" role="navigation">
+  <div class="container">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="index.html">DNAmArray</a>
+    </div>
+    <div id="navbar" class="navbar-collapse collapse">
+      <ul class="nav navbar-nav">
+        <li>
+  <a href="02_SampleQualityControl.html">Quality control</a>
+</li>
+<li>
+  <a href="04_Visualization.html">Visualizations</a>
+</li>
+<li>
+  <a href="05_Normalization.html">Normalization</a>
+</li>
+<li>
+  <a href="06_ProbeFiltering.html">Probe filtering</a>
+</li>
+<li>
+  <a href="07_Miscellaneous.html">Miscellaneous</a>
+</li>
+<li>
+  <a href="08_EWAS.html">Ewas</a>
+</li>
+      </ul>
+      <ul class="nav navbar-nav navbar-right">
+        <li>
+  <a href="about.html">About</a>
+</li>
+      </ul>
+    </div><!--/.nav-collapse -->
+  </div><!--/.container -->
+</div><!--/.navbar -->
+
+<div class="fluid-row" id="header">
+
+
+
+
+</div>
+
+
+<div id="sex-check" class="section level1">
+<h1>Sex check</h1>
+<p><strong>add explaination</strong></p>
+<pre class="r"><code>betas &lt;- getBeta(RGset)
+predicted &lt;- getSex.DNAmArray(betas)
+assumed &lt;- sex
+assumed &lt;- as.character(factor(assumed, labels=c(&quot;Male&quot;, &quot;Female&quot;, &quot;Unknown&quot;)))
+str(predicted)
+str(assumed)
+print(table(predicted, assumed))</code></pre>
+</div>
+<div id="genotype-check" class="section level1">
+<h1>Genotype check</h1>
+<p>Beta-values of the probes containing SNP can be extract from the RGset using <a href="http:/bioconductor.org/minfi"><strong>minfi</strong></a>’s <code>getSnpBeta</code>-function.</p>
+<pre class="r"><code>betas &lt;- getSnpBeta(RGset)
+dim(betas)</code></pre>
+<p>Now we convert the beta-values to alleles using K-means clustering. A similar approach is taken by <a href="http:/bioconductor.org/wateRmelon"><strong>wateRmelon</strong></a>.</p>
+<pre class="r"><code>methAlleles &lt;- beta2allele(betas)
+methAlleles[1:5, 1:5]
+dim(methAlleles)</code></pre>
+<p>If genotypes are available using the same or an overlapping set of SNPs these can be used to confirm the sample identity or to discover swaps. To ensure the the same alleles are called the function <code>relabelgenotypes</code> should be run first.</p>
+<pre class="r"><code>methAlleles &lt;- relabelgenotypes(methAlleles, genoAlleles)
+data &lt;- alleleSharing(methAlleles, genoAlleles)</code></pre>
+<p>Here we just correlated all DNA samples with each other to check for unreported relatedness. From the genotypes we calculated identity-by-state for each SNPs and summarize by mean and variance. Based on a idea from GRR-tool <span class="citation">(Abecasis et al. 2001)</span> for the detection of sample relationship in genotype data.</p>
+<pre class="r"><code>data &lt;- alleleSharing(methAlleles)
+dim(data)
+head(data)</code></pre>
+<pre class="r"><code>km &lt;- kmeans(data[,1:2], centers=matrix(c(tapply(data[,1], data[,5], median),
+                                          tapply(data[,2], data[,5], median)), 2, 2))
+data$predicted &lt;- factor(km$cluster)
+levels(data$predicted) &lt;- c(&quot;unrelated&quot;, &quot;related&quot;)
+table(`Predicted relationship`=data$predicted, `Assumed relationship`=data$relationship)
+head(subset(data[order(data$mean, decreasing=TRUE),], predicted != relationship), n=10)</code></pre>
+</div>
+<div id="imputation" class="section level1">
+<h1>Imputation</h1>
+<p>Several algorithms do not allow NA’s but beta-values and or M-values can contain NA’s after preprocessing. Either because some probes/CpG were specifically set NA or because of transformation from Intensities to beta or M-values.</p>
+<p>The <a href="https://cran.r-project.org/package=imputex"><strong>impute</strong></a> package can be used to impute these NA’s, for example using the knn approach implemented in the <code>knn.impute</code>-function<span class="citation">(Troyanskaya et al. 2001)</span>.</p>
+<pre class="r"><code>library(impute)
+mvalues &lt;- impute.knn(as.matrix(mvalues))$data</code></pre>
+</div>
+<div id="annotation" class="section level1">
+<h1>Annotation</h1>
+<p>We have implemented a small function to map CpG-probes to their nearest genes.</p>
+<pre class="r"><code>cpgs &lt;- head(rownames(mvalues))
+cpgInfo(cpgs, TxDb=&quot;TxDb.Hsapiens.UCSC.hg19.knownGene&quot;)</code></pre>
+</div>
+<div id="white-blood-cell-counts" class="section level1">
+<h1>White Blood Cell Counts</h1>
+<p>White blood cell count can be predicted using Houseman’s method<span class="citation">(Houseman et al. 2012)</span> implemented in the <a href="http://bioconductor.org/minfi"><strong>minfi</strong></a><span class="citation">(Jaffe and Irizarry 2014)</span>.</p>
+<p>See also our approach for the imputation of white blood cell counts:<a href="https://github.com/mvaniterson/wbccPredictor">wbccPredictor</a></p>
+</div>
+<div id="phenotyping" class="section level1">
+<h1>Phenotyping</h1>
+</div>
+<div id="summarizedexperiment" class="section level1">
+<h1>SummarizedExperiment</h1>
+<p>It is usefull to store the normalized beta- or M-values together with metadata on samples and features as a <a href="http://bioconductor.org"><strong>SummarizedExperiment</strong></a>.</p>
+<p>Get probe annotation:</p>
+<pre class="r"><code>library(FDb.InfiniumMethylation.hg19)
+rowRanges &lt;- getPlatform(platform=&quot;HM450&quot;, genome=&quot;hg19&quot;)
+rowRanges</code></pre>
+<p>Get sample annotation/metadata:</p>
+<pre class="r"><code>pheno &lt;- getView(&quot;allPhenotypes&quot;)
+colData &lt;- merge(pheno, targets, by=&quot;ids&quot;, all.y=TRUE)
+rownames(colData) &lt;- colData$run_id</code></pre>
+<pre class="r"><code>colData[1:5, 1:5]</code></pre>
+<pre class="r"><code>mvalues &lt;- makeSE(mvalues, colData, rowRanges, note=&quot;Functional Normalized and knn imputed&quot;)
+mvalues</code></pre>
+<p>More about <a href="http://bioconductor.org"><strong>SummarizedExperiment</strong></a> see: 1. <a href="http://bioconductor.org/packages/release/bioc/vignettes/SummarizedExperiment/inst/doc/SummarizedExperiment.html">package vignette</a> 2. <a href="http://bioconductor.org/help/course-materials/2012/BiocEurope2012/SummarizedExperiment.pdf">course material</a> 3. <a href="http://www.nature.com/nmeth/journal/v12/n2/full/nmeth.3252.html">BioConductor nature paper</a></p>
+</div>
+<div id="dmr-finder" class="section level1">
+<h1>DMR finder</h1>
+<p>See<span class="citation">(Slieker et al. 2013)</span>.</p>
+<div class="references">
+<h1>References</h1>
+<p>Abecasis, G. R., S. S. Cherny, W. O. Cookson, and L. R. Cardon. 2001. “GRR: graphical Representation of Relationship Errors.” <em>Bioinformatics</em> 17 (8) (Aug): 742–743.</p>
+<p>Houseman, E. A., W. P. Accomando, D. C. Koestler, B. C. Christensen, C. J. Marsit, H. H. Nelson, J. K. Wiencke, and K. T. Kelsey. 2012. “DNA Methylation Arrays as Surrogate Measures of Cell Mixture Distribution.” <em>BMC Bioinformatics</em> 13: 86.</p>
+<p>Jaffe, A. E., and R. A. Irizarry. 2014. “Accounting for Cellular Heterogeneity Is Critical in Epigenome-Wide Association Studies.” <em>Genome Biol.</em> 15 (2): R31.</p>
+<p>Slieker, R. C., S. D. Bos, J. J. Goeman, J. V. Bovee, R. P. Talens, R. van der Breggen, H. E. Suchiman, et al. 2013. “Identification and Systematic Annotation of Tissue-Specific Differentially Methylated Regions Using the Illumina 450k Array.” <em>Epigenetics Chromatin</em> 6 (1) (Aug): 26.</p>
+<p>Troyanskaya, O., M. Cantor, G. Sherlock, P. Brown, T. Hastie, R. Tibshirani, D. Botstein, and R. B. Altman. 2001. “Missing Value Estimation Methods for DNA Microarrays.” <em>Bioinformatics</em> 17 (6) (Jun): 520–525.</p>
+</div>
+</div>
+
+
+
+</div>
+</div>
+
+</div>
+
+<script>
+
+// add bootstrap table styles to pandoc tables
+function bootstrapStylePandocTables() {
+  $('tr.header').parent('thead').parent('table').addClass('table table-condensed');
+}
+$(document).ready(function () {
+  bootstrapStylePandocTables();
+});
+
+
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>
