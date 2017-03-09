@@ -19,8 +19,8 @@ First, prepare the targets file, similar to the one used by
 [**minfi**](http://bioconductor.org/minfi).
 
 ```{r sqc.generatetargets, message=FALSE, results='hide'}
-path450k <- "/exports/molepi/BIOS/LLS/450k/"
-targets <- read.table(file.path(path450k, "sample_sheet.txt"), sep="\t", header=TRUE, as.is=TRUE)
+path450k <- "/virdir/Backup/RP3_data/IlluminaHumanMethylation450k/450k/LLS"
+targets <- read.table(file.path(path450k, "sample_sheet.txt"), sep=",", header=TRUE, as.is=TRUE)
 head(targets)
 targets$Basename <- with(targets,
                               file.path(path450k, Sentrix_Barcode,
@@ -76,7 +76,7 @@ First, we remove those samples that did not pass quality control.
 
 ```{r ri.removeoutliers, dependson="sqc.generatetargets"}
 outliers <- read.table(file.path(path450k, "outliers.txt"), header=TRUE)    
-targets <- targets[!(targets$methylation_run_id %in% outliers$run_id), ]
+targets <- targets[!(targets$run_id %in% outliers$run_id), ]
 ```
 
 For example, running on a cluster with the Sun Grid Job scheduler.
@@ -85,8 +85,7 @@ For example, running on a cluster with the Sun Grid Job scheduler.
 library(DNAmArray)
 library(BiocParallel)
 library(BatchJobs)
-conffile <- system.file("scripts/config.R", package="MethylAid")
-BPPARAM <- BatchJobsParam(workers = 10, progressbar = FALSE, conffile = conffile)
+register(MulticoreParam(6))
 RGset <- read.metharray.exp.par(targets, verbose=TRUE, extended=TRUE)
 ```
 

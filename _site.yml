@@ -6,17 +6,17 @@ navbar:
     - text: "Home"
       href: index.html
     - text: "Quality control"      
-      href: 02_SampleQualityControl.html
+      href: SampleQualityControl.html
     - text: "Visualizations"      
-      href: 04_Visualization.html
+      href: Visualization.html
     - text: "Normalization"      
-      href: 05_Normalization.html
+      href: Normalization.html
     - text: "Probe filtering"      
-      href: 06_ProbeFiltering.html
+      href: ProbeFiltering.html
     - text: "Miscellaneous"
-      href: 07_Miscellaneous.html
+      href: Miscellaneous.html
     - text: "Ewas"
-      href: 08_EWAS.html
+      href: EWAS.html
   right:
     - text: "About"
       href: about.html
