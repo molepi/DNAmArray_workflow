@@ -342,7 +342,7 @@ fa &lt;- cate.fit(design[,2,drop=FALSE], design[,-2], t(data), r = 3, calibrate=
 </div>
 <div id="correct-for-bias-and-inflation" class="section level1">
 <h1>Correct for bias and inflation</h1>
-<p>As is seen in GWAS, inflation, also occurs in EWAS. And not only inflation but bias can be observed too. We developed a package called <a href="http://bioconductor.org/bacon"><strong>bacon</strong></a> to estimate and correct for bias and inflation for EWAS (and TWAS)<span class="citation">(Iterson, Zwet, and Heijmans 2017)</span>.</p>
+<p>As is seen in GWAS, inflation, also occurs in EWAS. And not only inflation but bias can be observed too. We developed a package called <a href="http://bioconductor.org/packages/bacon"><strong>bacon</strong></a> to estimate and correct for bias and inflation for EWAS (and TWAS)<span class="citation">(Iterson, Zwet, and Heijmans 2017)</span>.</p>
 <pre class="r"><code>library(bacon)
 tstats &lt;- cbind(limma=tstat[,2], cate=as.vector(fa$beta.t))
 bc &lt;- bacon(tstats)</code></pre>

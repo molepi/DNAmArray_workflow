@@ -19,7 +19,7 @@ print(table(predicted, assumed))
 # Genotype check #
 
 Beta-values of the probes containing SNP can be extract from the RGset
-using [**minfi**](http:/bioconductor.org/minfi)'s `getSnpBeta`-function.
+using [**minfi**](http:/bioconductor.org/packages/minfi)'s `getSnpBeta`-function.
 
 ```{r getsnps, eval=FALSE}
 betas <- getSnpBeta(RGset)
@@ -31,7 +31,7 @@ rm(RGset); gc()
 ```
 
 Now we convert the beta-values to alleles using K-means clustering. A
-similar approach is taken by [**wateRmelon**](http:/bioconductor.org/wateRmelon).
+similar approach is taken by [**wateRmelon**](http:/bioconductor.org/packages/wateRmelon).
 
 
 ```{r methalleles, eval=FALSE}
@@ -101,7 +101,7 @@ cpgInfo(cpgs, TxDb="TxDb.Hsapiens.UCSC.hg19.knownGene")
 
 White blood cell count can be predicted using Houseman's
 method[@Houseman2012] implemented in the
-[**minfi**](http://bioconductor.org/minfi)[@Jaffe2014].
+[**minfi**](http://bioconductor.org/packages/minfi)[@Jaffe2014].
 
 See also our approach for the imputation of white blood cell
 counts:[wbccPredictor](https://github.com/mvaniterson/wbccPredictor)
@@ -112,7 +112,7 @@ counts:[wbccPredictor](https://github.com/mvaniterson/wbccPredictor)
 
 It is usefull to store the normalized beta- or M-values together with
 metadata on samples and features as a 
-[**SummarizedExperiment**](http://bioconductor.org).
+[**SummarizedExperiment**](http://bioconductor.org/packages/SummarizedExperiment).
 
 Get probe annotation:
 

@@ -322,10 +322,10 @@ print(table(predicted, assumed))</code></pre>
 </div>
 <div id="genotype-check" class="section level1">
 <h1>Genotype check</h1>
-<p>Beta-values of the probes containing SNP can be extract from the RGset using <a href="http:/bioconductor.org/minfi"><strong>minfi</strong></a>’s <code>getSnpBeta</code>-function.</p>
+<p>Beta-values of the probes containing SNP can be extract from the RGset using <a href="http:/bioconductor.org/packages/minfi"><strong>minfi</strong></a>’s <code>getSnpBeta</code>-function.</p>
 <pre class="r"><code>betas &lt;- getSnpBeta(RGset)
 dim(betas)</code></pre>
-<p>Now we convert the beta-values to alleles using K-means clustering. A similar approach is taken by <a href="http:/bioconductor.org/wateRmelon"><strong>wateRmelon</strong></a>.</p>
+<p>Now we convert the beta-values to alleles using K-means clustering. A similar approach is taken by <a href="http:/bioconductor.org/packages/wateRmelon"><strong>wateRmelon</strong></a>.</p>
 <pre class="r"><code>methAlleles &lt;- beta2allele(betas)
 methAlleles[1:5, 1:5]
 dim(methAlleles)</code></pre>
@@ -368,7 +368,7 @@ cpgInfo(cpgs, TxDb=&quot;TxDb.Hsapiens.UCSC.hg19.knownGene&quot;)</code></pre>
 </div>
 <div id="white-blood-cell-counts" class="section level1">
 <h1>White Blood Cell Counts</h1>
-<p>White blood cell count can be predicted using Houseman’s method<span class="citation">(Houseman et al. 2012)</span> implemented in the <a href="http://bioconductor.org/minfi"><strong>minfi</strong></a><span class="citation">(Jaffe and Irizarry 2014)</span>.</p>
+<p>White blood cell count can be predicted using Houseman’s method<span class="citation">(Houseman et al. 2012)</span> implemented in the <a href="http://bioconductor.org/packages/minfi"><strong>minfi</strong></a><span class="citation">(Jaffe and Irizarry 2014)</span>.</p>
 <p>See also our approach for the imputation of white blood cell counts:<a href="https://github.com/mvaniterson/wbccPredictor">wbccPredictor</a></p>
 </div>
 <div id="phenotyping" class="section level1">
@@ -376,7 +376,7 @@ cpgInfo(cpgs, TxDb=&quot;TxDb.Hsapiens.UCSC.hg19.knownGene&quot;)</code></pre>
 </div>
 <div id="summarizedexperiment" class="section level1">
 <h1>SummarizedExperiment</h1>
-<p>It is usefull to store the normalized beta- or M-values together with metadata on samples and features as a <a href="http://bioconductor.org"><strong>SummarizedExperiment</strong></a>.</p>
+<p>It is usefull to store the normalized beta- or M-values together with metadata on samples and features as a <a href="http://bioconductor.org/packages/SummarizedExperiment"><strong>SummarizedExperiment</strong></a>.</p>
 <p>Get probe annotation:</p>
 <pre class="r"><code>library(FDb.InfiniumMethylation.hg19)
 rowRanges &lt;- getPlatform(platform=&quot;HM450&quot;, genome=&quot;hg19&quot;)</code></pre>

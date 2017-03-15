@@ -53,7 +53,7 @@ unobserved covariates.
 
 As is seen in GWAS, inflation, also occurs in EWAS. And not only
 inflation but bias can be observed too. We developed a package called
-[**bacon**](http://bioconductor.org/bacon) to estimate and correct for bias and inflation
+[**bacon**](http://bioconductor.org/packages/bacon) to estimate and correct for bias and inflation
 for EWAS (and TWAS)[@Iterson2017].
 
 ```{r bacon}

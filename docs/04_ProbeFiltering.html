@@ -333,7 +333,7 @@ div.tocify {
 <div id="detection-p-value" class="section level1">
 <h1>detection P-value</h1>
 <p>The negative controls on the 450k array can be used to detect outlying samples e.g., samples that have a significant larger background then average, this is summarized in the so-called detection P-value.</p>
-<p>Detection P-values are calculated using the <code>detectionP</code>-function from <a href="http:/bioconductor.org/minfi"><strong>minfi</strong></a>. By default detection P-values with a value &gt;0.01 are set to NA.</p>
+<p>Detection P-values are calculated using the <code>detectionP</code>-function from <a href="http:/bioconductor.org/packages/minfi"><strong>minfi</strong></a>. By default detection P-values with a value &gt;0.01 are set to NA.</p>
 </div>
 <div id="cross-reactive-probescpgs" class="section level1">
 <h1>Cross reactive probes/CpGs</h1>
@@ -341,7 +341,7 @@ div.tocify {
 <p>Furthermore, several probes do not map uniquely to the genome or contain common polymorphisms. Chen <span class="citation">(Chen et al. 2013)</span> analyzed in detail cross-reactive and polymorphic probes. We exclude the set of polymorphic CG and CH probes (42.403) discovered by Chen.</p>
 <p>482,421 CpG sites are measured using two chemistries Type I (135,476) and Type II (350,036). the Type I chemistry uses two probes to measure a CpG site while the Type II measure CpG methylation using one probe. The Type II chemistry was specially designed to measure CpG methylation in low CpG dense regions. There are</p>
 <p>Depending on the methylation status of the probe either of the green or red fluorescence signals is detected a strongest.</p>
-<p>Information on Type I and II probes, address, etc. can be extracted using <a href="http:/bioconductor.org/minfi"><strong>minfi</strong></a>-functionality.</p>
+<p>Information on Type I and II probes, address, etc. can be extracted using <a href="http:/bioconductor.org/packages/minfi"><strong>minfi</strong></a>-functionality.</p>
 <pre class="r"><code>library(minfi)
 locusNames &lt;- getManifestInfo(RGset, &quot;locusNames&quot;)
 typeII &lt;- getProbeInfo(RGset, type = &quot;II&quot;)

@@ -33,7 +33,7 @@ average, this is summarized in the so-called detection
 P-value.
 
 Detection P-values are calculated using the `detectionP`-function from
-[**minfi**](http:/bioconductor.org/minfi). By default detection
+[**minfi**](http:/bioconductor.org/packages/minfi). By default detection
 P-values with a value >0.01 are set to NA.
 
 # Cross reactive probes/CpGs #
@@ -56,7 +56,7 @@ Depending on the methylation status of the probe either of the green
 or red fluorescence signals is detected a strongest.
 
 Information on Type I and II probes, address, etc. can be extracted
-using [**minfi**](http:/bioconductor.org/minfi)-functionality.
+using [**minfi**](http:/bioconductor.org/packages/minfi)-functionality.
 
 ```{r, eval=FALSE}
 library(minfi)
