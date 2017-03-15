@@ -4,7 +4,7 @@
 
 <head>
 
-<meta charset="utf-8">
+<meta charset="utf-8" />
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <meta name="generator" content="pandoc" />
 
@@ -274,22 +274,22 @@ div.tocify {
     <div id="navbar" class="navbar-collapse collapse">
       <ul class="nav navbar-nav">
         <li>
-  <a href="02_SampleQualityControl.html">Quality control</a>
+  <a href="SampleQualityControl.html">Quality control</a>
 </li>
 <li>
-  <a href="04_Visualization.html">Visualizations</a>
+  <a href="Visualization.html">Visualizations</a>
 </li>
 <li>
-  <a href="05_Normalization.html">Normalization</a>
+  <a href="Normalization.html">Normalization</a>
 </li>
 <li>
-  <a href="06_ProbeFiltering.html">Probe filtering</a>
+  <a href="ProbeFiltering.html">Probe filtering</a>
 </li>
 <li>
-  <a href="07_Miscellaneous.html">Miscellaneous</a>
+  <a href="Miscellaneous.html">Miscellaneous</a>
 </li>
 <li>
-  <a href="08_EWAS.html">Ewas</a>
+  <a href="EWAS.html">Ewas</a>
 </li>
       </ul>
       <ul class="nav navbar-nav navbar-right">
@@ -355,6 +355,16 @@ mvalues &lt;- impute.knn(as.matrix(mvalues))$data</code></pre>
 <p>We have implemented a small function to map CpG-probes to their nearest genes.</p>
 <pre class="r"><code>cpgs &lt;- head(rownames(mvalues))
 cpgInfo(cpgs, TxDb=&quot;TxDb.Hsapiens.UCSC.hg19.knownGene&quot;)</code></pre>
+<pre><code>## Fetching coordinates for hg19...</code></pre>
+<pre><code>## &#39;select()&#39; returned 1:1 mapping between keys and columns</code></pre>
+<pre><code>## Warning in renameSeqlevels(genes, newnames): invalid seqlevels &#39;X&#39; ignored</code></pre>
+<pre><code>##            seqnames    start      end  width strand gene_id  SYMBOL
+## cg02494853        1  4868267  5610264 741998      +   83259 PCDH11Y
+## cg01707559        1  6778727  6959724 180998      +   90665   TBL1Y
+## cg04023335        1 14517915 14533389  15475      -  352887  GYG2P1
+## cg02004872        1 15815447 15817902   2456      +    9087  TMSB4Y
+## cg03706273        1 16634488 16955848 321361      +   22829  NLGN4Y
+## cg03244189        1 21094585 21239302 144718      -   83869  TTTY14</code></pre>
 </div>
 <div id="white-blood-cell-counts" class="section level1">
 <h1>White Blood Cell Counts</h1>
@@ -369,27 +379,118 @@ cpgInfo(cpgs, TxDb=&quot;TxDb.Hsapiens.UCSC.hg19.knownGene&quot;)</code></pre>
 <p>It is usefull to store the normalized beta- or M-values together with metadata on samples and features as a <a href="http://bioconductor.org"><strong>SummarizedExperiment</strong></a>.</p>
 <p>Get probe annotation:</p>
 <pre class="r"><code>library(FDb.InfiniumMethylation.hg19)
-rowRanges &lt;- getPlatform(platform=&quot;HM450&quot;, genome=&quot;hg19&quot;)
-rowRanges</code></pre>
+rowRanges &lt;- getPlatform(platform=&quot;HM450&quot;, genome=&quot;hg19&quot;)</code></pre>
+<pre><code>## Fetching coordinates for hg19...</code></pre>
+<pre class="r"><code>rowRanges</code></pre>
+<pre><code>## GRanges object with 485577 ranges and 10 metadata columns:
+##              seqnames               ranges strand |    addressA
+##                 &lt;Rle&gt;            &lt;IRanges&gt;  &lt;Rle&gt; | &lt;character&gt;
+##   cg04913815    chr16       [60438, 60439]      * |    24771476
+##   cg01686861    chr16       [60748, 60749]      * |    36644319
+##   cg05558259    chr16       [61085, 61086]      * |    65765435
+##   cg26978960    chr16       [62460, 62461]      * |    28717484
+##   cg03792876    chr16       [73243, 73244]      * |    42725455
+##          ...      ...                  ...    ... .         ...
+##   cg17939569     chrY [27009430, 27009431]      * |    73757458
+##   cg13365400     chrY [27210334, 27210335]      * |    61745505
+##   cg21106100     chrY [28555536, 28555537]      * |    56793430
+##   cg08265308     chrY [28555550, 28555551]      * |    67794346
+##   cg14273923     chrY [28555912, 28555913]      * |    16749405
+##                 addressB channel platform percentGC
+##              &lt;character&gt;   &lt;Rle&gt;    &lt;Rle&gt; &lt;numeric&gt;
+##   cg04913815                Both    HM450      0.58
+##   cg01686861    45624454     Red    HM450      0.76
+##   cg05558259                Both    HM450      0.56
+##   cg26978960                Both    HM450      0.66
+##   cg03792876                Both    HM450      0.64
+##          ...         ...     ...      ...       ...
+##   cg17939569                Both    HM450      0.42
+##   cg13365400                Both    HM450      0.44
+##   cg21106100                Both    HM450      0.66
+##   cg08265308    26610401     Red    HM450      0.68
+##   cg14273923                Both    HM450      0.48
+##                            sourceSeq probeType  probeStart    probeEnd
+##                       &lt;DNAStringSet&gt;     &lt;Rle&gt; &lt;character&gt; &lt;character&gt;
+##   cg04913815 TTTCGGTGGT...GTCAGACCCG        cg       60438       60487
+##   cg01686861 CGCCCCCAGG...CACGCCCCCC        cg       60700       60749
+##   cg05558259 CAGCTAGGGA...TGGCAGCACG        cg       61037       61086
+##   cg26978960 CGGCCCAGTA...CTGTCGACTC        cg       62412       62461
+##   cg03792876 ATGGAGGCTT...GCAGGTTACG        cg       73195       73244
+##          ...                     ...       ...         ...         ...
+##   cg17939569 CGCCTAAATA...AAATCACCGG        cg    27009430    27009479
+##   cg13365400 CGTCACCTGG...CCCTAAGGAC        cg    27210334    27210383
+##   cg21106100 CGGATCTTTC...CTGGCCTCCC        cg    28555488    28555537
+##   cg08265308 CGGCTCCCAA...CATCTTGGCC        cg    28555502    28555551
+##   cg14273923 TGGTATTGGT...ATAATCGTCG        cg    28555912    28555961
+##              probeTarget
+##                &lt;numeric&gt;
+##   cg04913815       60438
+##   cg01686861       60748
+##   cg05558259       61085
+##   cg26978960       62460
+##   cg03792876       73243
+##          ...         ...
+##   cg17939569    27009430
+##   cg13365400    27210334
+##   cg21106100    28555536
+##   cg08265308    28555550
+##   cg14273923    28555912
+##   -------
+##   seqinfo: 24 sequences from hg19 genome</code></pre>
 <p>Get sample annotation/metadata:</p>
-<pre class="r"><code>pheno &lt;- getView(&quot;allPhenotypes&quot;)
+<pre class="r"><code>library(BBMRIomics)
+pheno &lt;- getView(&quot;allPhenotypes&quot;, usrpwd=RP3_MDB_USRPWD, url=RP3_MDB)
 colData &lt;- merge(pheno, targets, by=&quot;ids&quot;, all.y=TRUE)
 rownames(colData) &lt;- colData$run_id</code></pre>
 <pre class="r"><code>colData[1:5, 1:5]</code></pre>
+<pre><code>##                        ids RNA_A260280ratio Lipids_BloodSampling_Date
+## 9374343010_R04C02 LLS-1002               NA                2003-11-28
+## 8655685197_R04C02 LLS-1006             2.14                2003-11-28
+## 8655677092_R01C02 LLS-1007             2.14                2003-11-28
+## 8667045031_R03C01 LLS-1010             2.13                2003-11-28
+## 8454787147_R05C02 LLS-1016             2.08                2003-12-01
+##                   TotChol LDLchol
+## 9374343010_R04C02    5.97  4.0730
+## 8655685197_R04C02    5.87  4.2215
+## 8655677092_R01C02    5.84  3.7125
+## 8667045031_R03C01    5.86  3.7275
+## 8454787147_R05C02    5.35  3.3345</code></pre>
 <pre class="r"><code>mvalues &lt;- makeSE(mvalues, colData, rowRanges, note=&quot;Functional Normalized and knn imputed&quot;)
 mvalues</code></pre>
+<pre><code>## class: RangedSummarizedExperiment 
+## dim: 483098 24 
+## metadata(4): creationDate author BBMRIomicsVersion note
+## assays(1): data
+## rownames(483098): cg01707559 cg02004872 ... ch.22.47579720R
+##   ch.22.48274842R
+## rowData names(10): addressA addressB ... probeEnd probeTarget
+## colnames(24): 9374343010_R04C02 8655685185_R01C02 ...
+##   8655685195_R01C01 9374343010_R06C02
+## colData names(97): ids RNA_A260280ratio ... STM_Lotnumber Basename</code></pre>
 <p>More about <a href="http://bioconductor.org"><strong>SummarizedExperiment</strong></a> see: 1. <a href="http://bioconductor.org/packages/release/bioc/vignettes/SummarizedExperiment/inst/doc/SummarizedExperiment.html">package vignette</a> 2. <a href="http://bioconductor.org/help/course-materials/2012/BiocEurope2012/SummarizedExperiment.pdf">course material</a> 3. <a href="http://www.nature.com/nmeth/journal/v12/n2/full/nmeth.3252.html">BioConductor nature paper</a></p>
 </div>
 <div id="dmr-finder" class="section level1">
 <h1>DMR finder</h1>
 <p>See<span class="citation">(Slieker et al. 2013)</span>.</p>
-<div class="references">
+</div>
+<div id="references" class="section level1 unnumbered">
 <h1>References</h1>
-<p>Abecasis, G. R., S. S. Cherny, W. O. Cookson, and L. R. Cardon. 2001. “GRR: graphical Representation of Relationship Errors.” <em>Bioinformatics</em> 17 (8) (Aug): 742–743.</p>
-<p>Houseman, E. A., W. P. Accomando, D. C. Koestler, B. C. Christensen, C. J. Marsit, H. H. Nelson, J. K. Wiencke, and K. T. Kelsey. 2012. “DNA Methylation Arrays as Surrogate Measures of Cell Mixture Distribution.” <em>BMC Bioinformatics</em> 13: 86.</p>
-<p>Jaffe, A. E., and R. A. Irizarry. 2014. “Accounting for Cellular Heterogeneity Is Critical in Epigenome-Wide Association Studies.” <em>Genome Biol.</em> 15 (2): R31.</p>
-<p>Slieker, R. C., S. D. Bos, J. J. Goeman, J. V. Bovee, R. P. Talens, R. van der Breggen, H. E. Suchiman, et al. 2013. “Identification and Systematic Annotation of Tissue-Specific Differentially Methylated Regions Using the Illumina 450k Array.” <em>Epigenetics Chromatin</em> 6 (1) (Aug): 26.</p>
-<p>Troyanskaya, O., M. Cantor, G. Sherlock, P. Brown, T. Hastie, R. Tibshirani, D. Botstein, and R. B. Altman. 2001. “Missing Value Estimation Methods for DNA Microarrays.” <em>Bioinformatics</em> 17 (6) (Jun): 520–525.</p>
+<div id="refs" class="references">
+<div id="ref-Abecasis2001">
+<p>Abecasis, G. R., S. S. Cherny, W. O. Cookson, and L. R. Cardon. 2001. “GRR: graphical representation of relationship errors.” <em>Bioinformatics</em> 17 (8): 742–43.</p>
+</div>
+<div id="ref-Houseman2012">
+<p>Houseman, E. A., W. P. Accomando, D. C. Koestler, B. C. Christensen, C. J. Marsit, H. H. Nelson, J. K. Wiencke, and K. T. Kelsey. 2012. “DNA methylation arrays as surrogate measures of cell mixture distribution.” <em>BMC Bioinformatics</em> 13: 86.</p>
+</div>
+<div id="ref-Jaffe2014">
+<p>Jaffe, A. E., and R. A. Irizarry. 2014. “Accounting for cellular heterogeneity is critical in epigenome-wide association studies.” <em>Genome Biol.</em> 15 (2): R31.</p>
+</div>
+<div id="ref-Slieker2013">
+<p>Slieker, R. C., S. D. Bos, J. J. Goeman, J. V. Bovee, R. P. Talens, R. van der Breggen, H. E. Suchiman, et al. 2013. “Identification and systematic annotation of tissue-specific differentially methylated regions using the Illumina 450k array.” <em>Epigenetics Chromatin</em> 6 (1): 26.</p>
+</div>
+<div id="ref-Troyanskaya2001">
+<p>Troyanskaya, O., M. Cantor, G. Sherlock, P. Brown, T. Hastie, R. Tibshirani, D. Botstein, and R. B. Altman. 2001. “Missing value estimation methods for DNA microarrays.” <em>Bioinformatics</em> 17 (6): 520–25.</p>
+</div>
 </div>
 </div>
 

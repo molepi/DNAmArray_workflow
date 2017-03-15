@@ -27,7 +27,7 @@ targets$Basename <- with(targets,
                                         paste(Sentrix_Barcode, Sentrix_Position, sep="_")))
 ```
 
-```{r sqc.targets, dependson="sqc.generatetargets"}
+```{r sqc.targets}
 targets[1:5, 1:5]
 ```
 
@@ -35,12 +35,10 @@ Next, summarize and visualize the data, see the
 [MethylAid vignette](https://www.bioconductor.org/packages/release/bioc/vignettes/MethylAid/inst/doc/MethylAid.pdf)
 for more details.
 
-```{r sqc.methylaid, dependson="sqc.generatetargets", eval=FALSE}
+```{r sqc.methylaid, eval=FALSE}
 library(MethylAid)
 library(BiocParallel)
-library(BatchJobs)
-conffile <- system.file("scripts/config.R", package="MethylAid")
-BPPARAM <- BatchJobsParam(workers = 10, progressbar = FALSE, conffile = conffile)
+BPPARAM <- MulticoreParam(10)
 sData <- summarize(targets, batchSize = 50, BPPARAM = BPPARAM)
 ```
 
@@ -74,22 +72,22 @@ combined into on `RGChannelSet`-object and returned.
 
 First, we remove those samples that did not pass quality control.
 
-```{r ri.removeoutliers, dependson="sqc.generatetargets"}
+```{r ri.removeoutliers}
 outliers <- read.table(file.path(path450k, "outliers.txt"), header=TRUE)    
 targets <- targets[!(targets$run_id %in% outliers$run_id), ]
 ```
 
 For example, running on a cluster with the Sun Grid Job scheduler.
 	
-```{r ri.readidats, results='hide', messages=FALSE, dependson="ri.removeoutliers"}
+```{r ri.readidats, results='hide', messages=FALSE}
 library(DNAmArray)
 library(BiocParallel)
-library(BatchJobs)
 register(MulticoreParam(6))
+targets <- targets[1:24,]
 RGset <- read.metharray.exp.par(targets, verbose=TRUE, extended=TRUE)
 ```
 
-```{r ri.rgset, dependson="ri.readidats"}
+```{r ri.rgset}
 RGset
 ```
 

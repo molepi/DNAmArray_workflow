@@ -124,7 +124,8 @@ rowRanges
 Get sample annotation/metadata:
 
 ```{r se.colannotation, message=FALSE, results='hide'}
-pheno <- getView("allPhenotypes")
+library(BBMRIomics)
+pheno <- getView("allPhenotypes", usrpwd=RP3_MDB_USRPWD, url=RP3_MDB)
 colData <- merge(pheno, targets, by="ids", all.y=TRUE)
 rownames(colData) <- colData$run_id
 ```

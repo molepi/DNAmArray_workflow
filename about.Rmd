@@ -6,13 +6,13 @@
 
 Contributors to the development of the package/workflow are: 
 
-	Elmar W. Tobi,
-	Roderick Slieker, 
-	Wouter den Hollander, 
-	Rene Luijk,
-	Koen F.Dekkers and	
-	Bas Heijmans (PI) from Molecular Epidemiology Section, Leiden
-    University Medical Center, The Netherlands.
+ Elmar W. Tobi,
+ Roderick Slieker, 
+ Wouter den Hollander, 
+ Rene Luijk,
+ Koen F.Dekkers and	
+ Bas Heijmans (PI) from Molecular Epidemiology Section, Leiden
+ University Medical Center, The Netherlands.
 
 Development of the workflow and generation of example data in LLS was
 funded by BBMRI-NL, a research infrastructure financed by the Dutch

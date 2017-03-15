@@ -4,7 +4,7 @@
 
 <head>
 
-<meta charset="utf-8">
+<meta charset="utf-8" />
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <meta name="generator" content="pandoc" />
 
@@ -274,22 +274,22 @@ div.tocify {
     <div id="navbar" class="navbar-collapse collapse">
       <ul class="nav navbar-nav">
         <li>
-  <a href="02_SampleQualityControl.html">Quality control</a>
+  <a href="SampleQualityControl.html">Quality control</a>
 </li>
 <li>
-  <a href="04_Visualization.html">Visualizations</a>
+  <a href="Visualization.html">Visualizations</a>
 </li>
 <li>
-  <a href="05_Normalization.html">Normalization</a>
+  <a href="Normalization.html">Normalization</a>
 </li>
 <li>
-  <a href="06_ProbeFiltering.html">Probe filtering</a>
+  <a href="ProbeFiltering.html">Probe filtering</a>
 </li>
 <li>
-  <a href="07_Miscellaneous.html">Miscellaneous</a>
+  <a href="Miscellaneous.html">Miscellaneous</a>
 </li>
 <li>
-  <a href="08_EWAS.html">Ewas</a>
+  <a href="EWAS.html">Ewas</a>
 </li>
       </ul>
       <ul class="nav navbar-nav navbar-right">
@@ -320,6 +320,7 @@ data &lt;- assays(mvalues)$data
 design &lt;- design[complete,]
 data &lt;- data[,complete]
 dim(data)</code></pre>
+<pre><code>## [1] 483098     22</code></pre>
 <pre class="r"><code>design$Sentrix_Position &lt;- as.integer(as.factor(design$Sentrix_Position))</code></pre>
 <pre class="r"><code>library(limma)
 fit &lt;- lmFit(data, design)     
@@ -327,6 +328,10 @@ tstat &lt;- fit$coef/fit$stdev.unscaled/fit$sigma
 pval &lt;- 2*pnorm(-abs(tstat[,2]))
 padj &lt;- p.adjust(sort(pval, decreasing=FALSE), method=&quot;bonf&quot;)
 head(padj[padj &lt; 0.05])</code></pre>
+<pre><code>##   cg26712943   cg00661620   cg08595806   cg15993871   cg26492480 
+## 8.967774e-13 8.168777e-11 4.483074e-08 8.776593e-07 2.008576e-06 
+##   cg00215551 
+## 2.439025e-06</code></pre>
 </div>
 <div id="unobserved-covariates-using-cate" class="section level1">
 <h1>Unobserved covariates using <strong>cate</strong></h1>
@@ -340,14 +345,40 @@ fa &lt;- cate.fit(design[,2,drop=FALSE], design[,-2], t(data), r = 3, calibrate=
 <p>As is seen in GWAS, inflation, also occurs in EWAS. And not only inflation but bias can be observed too. We developed a package called <a href="http://bioconductor.org/bacon"><strong>bacon</strong></a> to estimate and correct for bias and inflation for EWAS (and TWAS)<span class="citation">(Iterson, Zwet, and Heijmans 2017)</span>.</p>
 <pre class="r"><code>library(bacon)
 tstats &lt;- cbind(limma=tstat[,2], cate=as.vector(fa$beta.t))
-bc &lt;- bacon(tstats)
-bc
-print(plot(bc, type=&quot;hist&quot;))
-print(plot(bc, type=&quot;qq&quot;))
-head(pval(bc))</code></pre>
-<div class="references">
+bc &lt;- bacon(tstats)</code></pre>
+<pre><code>## Detected 14 workers!
+##  Running in parallel!</code></pre>
+<pre class="r"><code>bc</code></pre>
+<pre><code>## Bacon-object containing 2 set(s) of 483098 test-statistics.
+## ...estimated bias: -0.099,-0.099.
+## ...estimated inflation: 1,1.
+## 
+## Emprical null estimates are based on 5000 iterations with a burnin-period of 2000.</code></pre>
+<pre class="r"><code>print(plot(bc, type=&quot;hist&quot;))</code></pre>
+<pre><code>## `stat_bin()` using `bins = 30`. Pick better value with `binwidth`.</code></pre>
+<pre><code>## Warning: Removed 19324 rows containing non-finite values (stat_bin).</code></pre>
+<pre><code>## Warning: Removed 2 rows containing missing values (geom_bar).</code></pre>
+<pre><code>## Warning: Removed 9662 rows containing missing values (geom_path).
+
+## Warning: Removed 9662 rows containing missing values (geom_path).</code></pre>
+<p><img src="06_EWAS_files/figure-html/bacon-1.png" width="672" /></p>
+<pre class="r"><code>print(plot(bc, type=&quot;qq&quot;))</code></pre>
+<p><img src="06_EWAS_files/figure-html/bacon-2.png" width="672" /></p>
+<pre class="r"><code>head(pval(bc))</code></pre>
+<pre><code>##                 limma       cate
+## cg01707559 0.80294660 0.80239960
+## cg02004872 0.27920089 0.27842475
+## cg02494853 0.34612971 0.34532481
+## cg03244189 0.02563783 0.02542783
+## cg03706273 0.60274926 0.60257113
+## cg04023335 0.80514641 0.80521353</code></pre>
+</div>
+<div id="references" class="section level1 unnumbered">
 <h1>References</h1>
-<p>Iterson, M. van, E. W. van Zwet, and B. T. Heijmans. 2017. “Controlling Bias and Inflation in Epigenome- and Transcriptome-Wide Association Studies Using the Empirical Null Distribution.” <em>Genome Biol.</em> 18 (1) (Jan): 19.</p>
+<div id="refs" class="references">
+<div id="ref-Iterson2017">
+<p>Iterson, M. van, E. W. van Zwet, and B. T. Heijmans. 2017. “Controlling bias and inflation in epigenome- and transcriptome-wide association studies using the empirical null distribution.” <em>Genome Biol.</em> 18 (1): 19.</p>
+</div>
 </div>
 </div>
 

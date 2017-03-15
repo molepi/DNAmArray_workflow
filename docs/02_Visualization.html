@@ -4,7 +4,7 @@
 
 <head>
 
-<meta charset="utf-8">
+<meta charset="utf-8" />
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <meta name="generator" content="pandoc" />
 
@@ -274,22 +274,22 @@ div.tocify {
     <div id="navbar" class="navbar-collapse collapse">
       <ul class="nav navbar-nav">
         <li>
-  <a href="02_SampleQualityControl.html">Quality control</a>
+  <a href="SampleQualityControl.html">Quality control</a>
 </li>
 <li>
-  <a href="04_Visualization.html">Visualizations</a>
+  <a href="Visualization.html">Visualizations</a>
 </li>
 <li>
-  <a href="05_Normalization.html">Normalization</a>
+  <a href="Normalization.html">Normalization</a>
 </li>
 <li>
-  <a href="06_ProbeFiltering.html">Probe filtering</a>
+  <a href="ProbeFiltering.html">Probe filtering</a>
 </li>
 <li>
-  <a href="07_Miscellaneous.html">Miscellaneous</a>
+  <a href="Miscellaneous.html">Miscellaneous</a>
 </li>
 <li>
-  <a href="08_EWAS.html">Ewas</a>
+  <a href="EWAS.html">Ewas</a>
 </li>
       </ul>
       <ul class="nav navbar-nav navbar-right">
@@ -309,17 +309,66 @@ div.tocify {
 </div>
 
 
-<p>We prefer normalization of 450K data using the Functional Normalization approach of Fortin et al.<span class="citation">(Fortin et al. 2014)</span>. Functional Normalization includes NOOB background and dye bias correction<span class="citation">(Triche et al. 2013)</span>.</p>
-<p>In our experience the default number of principal compontents (2) is often to small. We use a screeplot to determine the optimal number of PC to use in the Function Normalization.</p>
-<pre class="r"><code>pc &lt;- screeplot(RGset)</code></pre>
-<p>Furthermore, by default Functional Normalization returns normalized copy number data making the return <code>GenomicRatioSet</code> twice the size necessary of only beta-values or M-values are required. Therefore, we slightly modified minfi’s implementation of Functional Normalization to allow for not returning normalized copy number data.</p>
-<pre class="r"><code>GRset &lt;- preprocessFunnorm.DNAmArray(RGset, nPCs=3, keepCN=FALSE)</code></pre>
-<p>By default <code>preprocessFunnorm</code> return beta-values calculated with an offset of 100, like GenomeStudio. If required these can be transformed to M-values using minfi’s <code>getM</code> which does a logit2-transformation on the beta-values.</p>
-<p>We recommend to perform probe-filtering which sets unreliable measured probes to NA. Unfortunately, Functional Normalization does not allow NA’s in the <code>RGChannelSet</code>. Therefore, we combine after noramlization and probe filtering the filtered-<code>RGChannelSet</code> and the normalized-<code>GenomicRatioSet</code> using the function <code>reduce</code>.</p>
-<div class="references">
-<h1>References</h1>
-<p>Fortin, J. P., A. Labbe, M. Lemire, B. W. Zanke, T. J. Hudson, E. J. Fertig, C. M. Greenwood, and K. D. Hansen. 2014. “Functional Normalization of 450k Methylation Array Data Improves Replication in Large Cancer Studies.” <em>Genome Biology</em> 15 (12): 503.</p>
-<p>Triche, T. J., D. J. Weisenberger, D. Van Den Berg, P. W. Laird, and K. D. Siegmund. 2013. “Low-Level Processing of Illumina Infinium DNA Methylation BeadArrays.” <em>Nucleic Acids Res.</em> 41 (7) (Apr): e90.</p>
+<p>Here we show different ways to inspect the 450k with emphasis on fast and efficient tools for large data sets…</p>
+<div id="beta-densities" class="section level1">
+<h1>Beta densities</h1>
+<p>Inspect distribution of beta-densities across all samples can be done either before and after normalization. The following is just just take from <a href="http://bioconductor.org/minfi"><strong>minfi</strong></a>.</p>
+<pre class="r"><code>library(minfi)
+densityPlot(RGset[, 1:10], main = &quot;Beta&quot;, xlab = &quot;Beta&quot;)</code></pre>
+<pre><code>## Loading required package: IlluminaHumanMethylation450kmanifest</code></pre>
+<p><img src="02_Visualization_files/figure-html/unnamed-chunk-2-1.png" width="672" /></p>
+</div>
+<div id="principal-components-plot" class="section level1">
+<h1>Principal components plot</h1>
+<p>Using the <a href="https://cran.r-project.org/package=irlba"><strong>irlba</strong></a>-package for efficient calculation of principal components, e.g., specifying the maximum number of PCs to calculate. <strong><em>The irlba-algorithm doesn’t allow any NA’s</em></strong></p>
+<pre class="r"><code>library(irlba)
+beta &lt;- getBeta(RGset, type=&quot;Illumina&quot;)
+beta[is.na(beta)] &lt;- median(beta, na.rm=TRUE)
+pc &lt;- prcomp_irlba(t(beta), n=3)
+summary(pc)</code></pre>
+<pre><code>## Importance of components:
+##                            PC1     PC2    PC3
+## Standard deviation     13.2943 11.2021 7.9687
+## Proportion of Variance  0.4833  0.3431 0.1736
+## Cumulative Proportion   0.4833  0.8264 1.0000</code></pre>
+<pre class="r"><code>plot(pc$x)</code></pre>
+<p><img src="02_Visualization_files/figure-html/irlba-1.png" width="672" /></p>
+<p><strong>Note</strong> <code>getBeta</code> extracts Methylated and Unmethylated intensities and converts them to beta-values using M/(M+U), whereas, <code>type=&quot;Illumina&quot;</code> adds 100 to the denominator which prevents beta-values becoming NA if both M and U are exactly zero.</p>
+</div>
+<div id="heatmap" class="section level1">
+<h1>Heatmap</h1>
+<p>Inspect heatmap correlations of control probes with technical/biological covariates:</p>
+<pre class="r"><code>library(pheatmap)
+df &lt;- apply(targets, 2, function(x) as.numeric(factor(x)))
+keep &lt;- apply(df, 2, sd) &gt; 0    
+cxy &lt;- cor(pc$x, scale(df[, keep]))   
+pheatmap(cxy, cluster_rows=FALSE)</code></pre>
+<p><img src="02_Visualization_files/figure-html/heatmap-1.png" width="672" /></p>
+</div>
+<div id="dendrogram" class="section level1">
+<h1>Dendrogram</h1>
+<p>This is more appropriated for smaller sample sizes Using the <a href="https://cran.r-project.org/package=fastclust"><strong>fastclust</strong></a>-package.</p>
+<pre class="r"><code>library(fastcluster)
+beta &lt;- getBeta(RGset[,1:16], type=&quot;Illumina&quot;)
+d &lt;- dist(t(beta),method=&quot;euclidean&quot;)
+fit &lt;- hclust(d, method=&quot;average&quot;)
+plot(fit)</code></pre>
+<p><img src="02_Visualization_files/figure-html/clustering-1.png" width="672" /></p>
+<pre class="r"><code>Interesting &lt;- sample(colnames(beta),1)
+colorLeafs &lt;- function(x) {
+  if (is.leaf(x) &amp;&amp; attr(x, &quot;label&quot;) %in% Interesting) {
+    attr(x, &quot;nodePar&quot;) &lt;- list(lab.col=&quot;red&quot;, pch=NA)
+  }
+  return(x)
+} 
+dd &lt;- dendrapply(as.dendrogram(fit), colorLeafs)
+op &lt;- par(mar=c(10,4,4,2))
+plot(dd)</code></pre>
+<p><img src="02_Visualization_files/figure-html/clusteringhighlight-1.png" width="672" /></p>
+<pre class="r"><code>par(op)</code></pre>
+<div id="refs" class="references">
+
+</div>
 </div>
 
 
