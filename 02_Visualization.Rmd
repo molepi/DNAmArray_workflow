@@ -2,14 +2,17 @@
 ```{r, child="_setup.Rmd"}
 ```
 
-Here we show different ways to inspect the 450k with emphasis on fast
-and efficient tools for large data sets...
+# Different ways to visualize DNAm array data #
+
+Here we show different ways to inspect DNAm array data with emphasis
+on fast and efficient tools for large data sets.
 
 # Beta densities #
 
-Inspect distribution of beta-densities across all samples can be done
-either before and after normalization. The following is just just take
-from [**minfi**](http://bioconductor.org/minfi).
+To get a global impression of the beta-value distribution and to see
+if there are outlying samples the per sample average beta-value
+distribution can be plotted. For exmaple, using `densityPlot` from
+[**minfi**](http://bioconductor.org/packages/minfi).
 
 ```{r}
 library(minfi)
@@ -18,11 +21,12 @@ densityPlot(RGset[, 1:10], main = "Beta", xlab = "Beta")
 
 # Principal components plot #
 
-Using the
-[**irlba**](https://cran.r-project.org/package=irlba)-package for
-efficient calculation of principal components, e.g., specifying the
-maximum number of PCs to calculate. ***The irlba-algorithm doesn't
-allow any NA's***
+A plot of the first principal components can be used for exploratory
+data analysis. The
+[**irlba**](https://cran.r-project.org/package=irlba)-package provides
+an efficient algorithm for the calculation of principal components.
+
+> NOTE: The irlba-algorithm doesn't allow any NA's
 
 ```{r irlba}
 library(irlba)
@@ -33,15 +37,16 @@ summary(pc)
 plot(pc$x)
 ```
 
-**Note** `getBeta` extracts Methylated and Unmethylated intensities
-and converts them to beta-values using M/(M+U), whereas,
-`type="Illumina"` adds 100 to the denominator which prevents
-beta-values becoming NA if both M and U are exactly zero.
+> NOTE: `getBeta` extracts Methylated and Unmethylated intensities and
+> converts them to beta-values using M/(M+U), whereas,
+> `type="Illumina"` adds 100 to the denominator which prevents
+> beta-values becoming NA if both M and U are exactly zero.
 
 # Heatmap #
 
-Inspect heatmap correlations of control probes with
-technical/biological covariates:
+A heatmap of correlations of the previously calculated principale
+components with technical/biological covariates to indicate which
+covariates should be included in association study.
 
 ```{r heatmap}
 library(pheatmap)
@@ -53,8 +58,12 @@ pheatmap(cxy, cluster_rows=FALSE)
 
 # Dendrogram #
 
-This is more appropriated for smaller sample sizes Using the
-[**fastclust**](https://cran.r-project.org/package=fastclust)-package.
+Another approach often used in expression data for exploratory data
+analysis is clustering of the data and visualizing using a
+dendrogram. However, this might be more appropriated for data sets
+with moderated sample sizes. Although, the
+[**fastclust**](https://cran.r-project.org/package=fastclust)-package
+is efficient in generating the hierarchical clustering.
 
 ```{r clustering}
 library(fastcluster)
@@ -63,6 +72,8 @@ d <- dist(t(beta),method="euclidean")
 fit <- hclust(d, method="average")
 plot(fit)
 ```
+  
+Highlighting a suspected outlyer can be convenient.
   
 ```{r clusteringhighlight}
 Interesting <- sample(colnames(beta),1)
