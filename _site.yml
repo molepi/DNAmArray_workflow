@@ -4,17 +4,17 @@ navbar:
   title: "DNAmArray"
   left:
     - text: "Quality control"      
-      href: SampleQualityControl.html
+      href: 01_SampleQualityControl.html
     - text: "Visualizations"      
-      href: Visualization.html
+      href: 02_Visualization.html
     - text: "Normalization"      
-      href: Normalization.html
+      href: 03_Normalization.html
     - text: "Probe filtering"      
-      href: ProbeFiltering.html
+      href: 04_ProbeFiltering.html
     - text: "Miscellaneous"
-      href: Miscellaneous.html
+      href: 05_Miscellaneous.html
     - text: "Ewas"
-      href: EWAS.html
+      href: 06_EWAS.html
   right:
     - text: "About"
       href: about.html
