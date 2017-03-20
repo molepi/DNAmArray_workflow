@@ -3,7 +3,6 @@
 ```
 
 > **TODO extent descriptions** 
-> **beware 450K specific**
 
 # Probe-level filtering #
 
@@ -75,10 +74,6 @@ head(typeI)
 nrow(typeI)
 ```
 
-482421 + 3091 (excluding 65 SNPs)
-
-Methylated and Unmethylated Intensities
-
 # Success Rates #
 
 All these probe filter-steps are implemented in the function
@@ -98,13 +93,8 @@ betas <- reduce(GRset, RGset, what="beta")
 mvalues <- reduce(GRset, RGset, what="M")
 ```
 
-# Number of beads #
-
-Each probe is measured using more then one bead, the average signal
-intensities is used as a measure for the probe intensity.
-
 ```{r cleanup, echo = FALSE, results = 'hide'}
-rm(RGset); rm(GRset); gc()
+rm(GRset); gc()
 ```
 
 # References #

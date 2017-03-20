@@ -310,20 +310,46 @@ div.tocify {
 
 
 <blockquote>
-<p><strong>TODO extent discriptions</strong> <strong>beware 450K specific</strong></p>
+<p><strong>TODO extent discriptions</strong></p>
 </blockquote>
-<div id="sex-check" class="section level1">
-<h1>Sex check</h1>
-<pre class="r"><code>betas &lt;- getBeta(RGset)
+<div id="phenotyping" class="section level1">
+<h1>Phenotyping</h1>
+<div id="predict-sex" class="section level2">
+<h2>Predict Sex</h2>
+<p>Predict sex based on sex-chromosome beta-value distribution. We use a thresholding approach.</p>
+<pre class="r"><code>betas &lt;- (2^mvalues)/(1+2^mvalues)
+betas &lt;- getBeta(RGset)
+library(BBMRIomics)
+pheno &lt;- getView(&quot;allPhenotypes&quot;, usrpwd=RP3_MDB_USRPWD, url=RP3_MDB)
+pheno &lt;- merge(pheno, targets, by=&quot;ids&quot;, all.y=TRUE)
+mid &lt;- match(colnames(betas), pheno$run_id)
 predicted &lt;- getSex.DNAmArray(betas)
-assumed &lt;- sex
+assumed &lt;- pheno$Sex[mid]
+assumed[is.na(assumed)] &lt;- 2
 assumed &lt;- as.character(factor(assumed, labels=c(&quot;Male&quot;, &quot;Female&quot;, &quot;Unknown&quot;)))
-str(predicted)
-str(assumed)
-print(table(predicted, assumed))</code></pre>
+str(predicted)</code></pre>
+<pre><code>##  Named chr [1:128] &quot;Female&quot; &quot;Female&quot; &quot;Female&quot; &quot;Female&quot; ...
+##  - attr(*, &quot;names&quot;)= chr [1:128] &quot;9374343010_R04C02&quot; &quot;8655685185_R01C02&quot; &quot;8655685197_R03C01&quot; &quot;8655685185_R06C01&quot; ...</code></pre>
+<pre class="r"><code>str(assumed)</code></pre>
+<pre><code>##  chr [1:128] &quot;Female&quot; &quot;Female&quot; &quot;Female&quot; &quot;Female&quot; &quot;Female&quot; ...</code></pre>
+<pre class="r"><code>print(table(predicted, assumed))</code></pre>
+<pre><code>##          assumed
+## predicted Female Male Unknown
+##    Female     72    0       1
+##    Male        0   52       3</code></pre>
 </div>
-<div id="genotype-check" class="section level1">
-<h1>Genotype check</h1>
+<div id="predict-white-blood-cell-composition" class="section level2">
+<h2>Predict white blood cell composition</h2>
+<p>White blood cell count can be predicted using Houseman’s method<span class="citation">(Houseman et al. 2012)</span> implemented in the <a href="http://bioconductor.org/packages/minfi"><strong>minfi</strong></a><span class="citation">(Jaffe and Irizarry 2014)</span>.</p>
+<p>See also our approach for the imputation of white blood cell counts:<a href="https://github.com/mvaniterson/wbccPredictor">wbccPredictor</a></p>
+</div>
+<div id="predict-other-phenotypes" class="section level2">
+<h2>Predict other phenotypes</h2>
+<p>For example chronological age or smoking status.</p>
+</div>
+</div>
+<div id="check-sample-relations-using-snp-probes" class="section level1">
+<h1>Check sample relations using SNP probes</h1>
 <p>Beta-values of the probes containing SNP can be extract from the RGset using <a href="http:/bioconductor.org/packages/minfi"><strong>minfi</strong></a>’s <code>getSnpBeta</code>-function.</p>
 <pre class="r"><code>betas &lt;- getSnpBeta(RGset)
 dim(betas)</code></pre>
@@ -345,15 +371,15 @@ levels(data$predicted) &lt;- c(&quot;unrelated&quot;, &quot;related&quot;)
 table(`Predicted relationship`=data$predicted, `Assumed relationship`=data$relationship)
 head(subset(data[order(data$mean, decreasing=TRUE),], predicted != relationship), n=10)</code></pre>
 </div>
-<div id="imputation" class="section level1">
-<h1>Imputation</h1>
+<div id="imputation-missing-probe-values" class="section level1">
+<h1>Imputation missing probe-values</h1>
 <p>Several algorithms do not allow NA’s but beta-values and or M-values can contain NA’s after preprocessing. Either because some probes/CpG were specifically set NA or because of transformation from Intensities to beta or M-values.</p>
 <p>The <a href="https://cran.r-project.org/package=imputex"><strong>impute</strong></a> package can be used to impute these NA’s, for example using the knn approach implemented in the <code>knn.impute</code>-function<span class="citation">(Troyanskaya et al. 2001)</span>.</p>
 <pre class="r"><code>library(impute)
 mvalues &lt;- impute.knn(as.matrix(mvalues))$data</code></pre>
 </div>
-<div id="annotation" class="section level1">
-<h1>Annotation</h1>
+<div id="adding-probe-information" class="section level1">
+<h1>Adding probe information</h1>
 <p>We have implemented a small function to map CpG-probes to their nearest genes.</p>
 <pre class="r"><code>cpgs &lt;- head(rownames(mvalues))
 cpgInfo(cpgs, TxDb=&quot;TxDb.Hsapiens.UCSC.hg19.knownGene&quot;)</code></pre>
@@ -368,16 +394,8 @@ cpgInfo(cpgs, TxDb=&quot;TxDb.Hsapiens.UCSC.hg19.knownGene&quot;)</code></pre>
 ## cg03706273        1 16634488 16955848 321361      +   22829  NLGN4Y
 ## cg03244189        1 21094585 21239302 144718      -   83869  TTTY14</code></pre>
 </div>
-<div id="white-blood-cell-counts" class="section level1">
-<h1>White Blood Cell Counts</h1>
-<p>White blood cell count can be predicted using Houseman’s method<span class="citation">(Houseman et al. 2012)</span> implemented in the <a href="http://bioconductor.org/packages/minfi"><strong>minfi</strong></a><span class="citation">(Jaffe and Irizarry 2014)</span>.</p>
-<p>See also our approach for the imputation of white blood cell counts:<a href="https://github.com/mvaniterson/wbccPredictor">wbccPredictor</a></p>
-</div>
-<div id="phenotyping" class="section level1">
-<h1>Phenotyping</h1>
-</div>
-<div id="summarizedexperiment" class="section level1">
-<h1>SummarizedExperiment</h1>
+<div id="construct-summarizedexperiment-containing-dna-methylation-data" class="section level1">
+<h1>Construct <code>SummarizedExperiment</code> containing DNA methylation data</h1>
 <p>It is usefull to store the normalized beta- or M-values together with metadata on samples and features as a <a href="http://bioconductor.org/packages/SummarizedExperiment"><strong>SummarizedExperiment</strong></a>.</p>
 <p>Get probe annotation:</p>
 <pre class="r"><code>library(FDb.InfiniumMethylation.hg19)
@@ -460,20 +478,165 @@ rownames(colData) &lt;- colData$run_id</code></pre>
 <pre class="r"><code>mvalues &lt;- makeSE(mvalues, colData, rowRanges, note=&quot;Functional Normalized and knn imputed&quot;)
 mvalues</code></pre>
 <pre><code>## class: RangedSummarizedExperiment 
-## dim: 483098 24 
+## dim: 483887 128 
 ## metadata(4): creationDate author BBMRIomicsVersion note
 ## assays(1): data
-## rownames(483098): cg01707559 cg02004872 ... ch.22.47579720R
+## rownames(483887): cg01707559 cg02004872 ... ch.22.47579720R
 ##   ch.22.48274842R
 ## rowData names(10): addressA addressB ... probeEnd probeTarget
-## colnames(24): 9374343010_R04C02 8655685185_R01C02 ...
-##   8655685195_R01C01 9374343010_R06C02
+## colnames(128): 9374343010_R04C02 8655685185_R01C02 ...
+##   8655685192_R03C02 8655685062_R01C01
 ## colData names(97): ids RNA_A260280ratio ... STM_Lotnumber Basename</code></pre>
 <p>More about <a href="http://bioconductor.org"><strong>SummarizedExperiment</strong></a> see: 1. <a href="http://bioconductor.org/packages/release/bioc/vignettes/SummarizedExperiment/inst/doc/SummarizedExperiment.html">package vignette</a> 2. <a href="http://bioconductor.org/help/course-materials/2012/BiocEurope2012/SummarizedExperiment.pdf">course material</a> 3. <a href="http://www.nature.com/nmeth/journal/v12/n2/full/nmeth.3252.html">BioConductor nature paper</a></p>
 </div>
 <div id="dmr-finder" class="section level1">
 <h1>DMR finder</h1>
-<p>See<span class="citation">(Slieker et al. 2013)</span>.</p>
+<p>We have implemented a DMR finder see <span class="citation">(Slieker et al. 2013)</span> and <code>?DMRfinder</code> for more details.</p>
+<p>Here is an example using toy data:</p>
+<pre class="r"><code>require(FDb.InfiniumMethylation.hg19)
+feats &lt;- features(FDb.InfiniumMethylation.hg19)
+regions &lt;- feats[seqnames(feats) %in% c(&quot;chr21&quot;, &quot;chr22&quot;)]
+mcols(regions)  &lt;- NULL ##drop unnecessary metadata
+mcols(regions)$crit &lt;- rbinom(length(regions), 1, prob=0.2)
+
+##input GRanges
+(dmrsR &lt;- DMRfinder(regions))</code></pre>
+<pre><code>## GRanges object with 141 ranges and 1 metadata column:
+##         seqnames               ranges strand | percentage
+##            &lt;Rle&gt;            &lt;IRanges&gt;  &lt;Rle&gt; |  &lt;numeric&gt;
+##   chr21    chr21 [15755380, 15755608]      * |         50
+##   chr21    chr21 [29910762, 29911783]      * |        100
+##   chr21    chr21 [30390417, 30392188]      * |    71.4286
+##   chr21    chr21 [33244752, 33245457]      * |         60
+##   chr21    chr21 [33765248, 33765737]      * |    66.6667
+##     ...      ...                  ...    ... .        ...
+##   chr22    chr22 [50528291, 50528564]      * |         60
+##   chr22    chr22 [50699354, 50699947]      * |         60
+##   chr22    chr22 [50746891, 50747369]      * |         75
+##   chr22    chr22 [50898040, 50898563]      * |        100
+##   chr22    chr22 [51016604, 51016899]      * |    66.6667
+##   -------
+##   seqinfo: 2 sequences from an unspecified genome; no seqlengths</code></pre>
+<pre class="r"><code>##input named-vector
+dmps &lt;- mcols(regions)$crit
+names(dmps) &lt;- names(regions)
+(dmrsV &lt;- DMRfinder(dmps))</code></pre>
+<pre><code>## GRanges object with 141 ranges and 1 metadata column:
+##         seqnames               ranges strand | percentage
+##            &lt;Rle&gt;            &lt;IRanges&gt;  &lt;Rle&gt; |  &lt;numeric&gt;
+##   chr21    chr21 [15755380, 15755608]      * |         50
+##   chr21    chr21 [29910762, 29911783]      * |        100
+##   chr21    chr21 [30390417, 30392188]      * |    71.4286
+##   chr21    chr21 [33244752, 33245457]      * |         60
+##   chr21    chr21 [33765248, 33765737]      * |    66.6667
+##     ...      ...                  ...    ... .        ...
+##   chr22    chr22 [50528291, 50528564]      * |         60
+##   chr22    chr22 [50699354, 50699947]      * |         60
+##   chr22    chr22 [50746891, 50747369]      * |         75
+##   chr22    chr22 [50898040, 50898563]      * |        100
+##   chr22    chr22 [51016604, 51016899]      * |    66.6667
+##   -------
+##   seqinfo: 2 sequences from an unspecified genome; no seqlengths</code></pre>
+<pre class="r"><code>##bed-like data.frame
+regions &lt;- as.data.frame(regions)
+regions &lt;- regions[, c(&quot;seqnames&quot;, &quot;start&quot;, &quot;crit&quot;)]
+colnames(regions) &lt;- c(&quot;chr&quot;, &quot;pos&quot;, &quot;crit&quot;)
+(dmrsD &lt;- DMRfinder(regions))</code></pre>
+<pre><code>## GRanges object with 141 ranges and 1 metadata column:
+##         seqnames               ranges strand | percentage
+##            &lt;Rle&gt;            &lt;IRanges&gt;  &lt;Rle&gt; |  &lt;numeric&gt;
+##   chr21    chr21 [15755380, 15755608]      * |         50
+##   chr21    chr21 [29910762, 29911783]      * |        100
+##   chr21    chr21 [30390417, 30392188]      * |    71.4286
+##   chr21    chr21 [33244752, 33245457]      * |         60
+##   chr21    chr21 [33765248, 33765737]      * |    66.6667
+##     ...      ...                  ...    ... .        ...
+##   chr22    chr22 [50528291, 50528564]      * |         60
+##   chr22    chr22 [50699354, 50699947]      * |         60
+##   chr22    chr22 [50746891, 50747369]      * |         75
+##   chr22    chr22 [50898040, 50898563]      * |        100
+##   chr22    chr22 [51016604, 51016899]      * |    66.6667
+##   -------
+##   seqinfo: 2 sequences from an unspecified genome; no seqlengths</code></pre>
+<pre class="r"><code>##all equal
+length(dmrsR)</code></pre>
+<pre><code>## [1] 141</code></pre>
+<pre class="r"><code>length(dmrsV)</code></pre>
+<pre><code>## [1] 141</code></pre>
+<pre class="r"><code>length(dmrsD)</code></pre>
+<pre><code>## [1] 141</code></pre>
+<pre class="r"><code>head(dmrsR)</code></pre>
+<pre><code>## GRanges object with 6 ranges and 1 metadata column:
+##         seqnames               ranges strand | percentage
+##            &lt;Rle&gt;            &lt;IRanges&gt;  &lt;Rle&gt; |  &lt;numeric&gt;
+##   chr21    chr21 [15755380, 15755608]      * |         50
+##   chr21    chr21 [29910762, 29911783]      * |        100
+##   chr21    chr21 [30390417, 30392188]      * |    71.4286
+##   chr21    chr21 [33244752, 33245457]      * |         60
+##   chr21    chr21 [33765248, 33765737]      * |    66.6667
+##   chr21    chr21 [34100306, 34100795]      * |         50
+##   -------
+##   seqinfo: 2 sequences from an unspecified genome; no seqlengths</code></pre>
+<pre class="r"><code>head(dmrsV)</code></pre>
+<pre><code>## GRanges object with 6 ranges and 1 metadata column:
+##         seqnames               ranges strand | percentage
+##            &lt;Rle&gt;            &lt;IRanges&gt;  &lt;Rle&gt; |  &lt;numeric&gt;
+##   chr21    chr21 [15755380, 15755608]      * |         50
+##   chr21    chr21 [29910762, 29911783]      * |        100
+##   chr21    chr21 [30390417, 30392188]      * |    71.4286
+##   chr21    chr21 [33244752, 33245457]      * |         60
+##   chr21    chr21 [33765248, 33765737]      * |    66.6667
+##   chr21    chr21 [34100306, 34100795]      * |         50
+##   -------
+##   seqinfo: 2 sequences from an unspecified genome; no seqlengths</code></pre>
+<pre class="r"><code>head(dmrsD)</code></pre>
+<pre><code>## GRanges object with 6 ranges and 1 metadata column:
+##         seqnames               ranges strand | percentage
+##            &lt;Rle&gt;            &lt;IRanges&gt;  &lt;Rle&gt; |  &lt;numeric&gt;
+##   chr21    chr21 [15755380, 15755608]      * |         50
+##   chr21    chr21 [29910762, 29911783]      * |        100
+##   chr21    chr21 [30390417, 30392188]      * |    71.4286
+##   chr21    chr21 [33244752, 33245457]      * |         60
+##   chr21    chr21 [33765248, 33765737]      * |    66.6667
+##   chr21    chr21 [34100306, 34100795]      * |         50
+##   -------
+##   seqinfo: 2 sequences from an unspecified genome; no seqlengths</code></pre>
+<pre class="r"><code>dmrsR == dmrsV</code></pre>
+<pre><code>##   [1] TRUE TRUE TRUE TRUE TRUE TRUE TRUE TRUE TRUE TRUE TRUE TRUE TRUE TRUE
+##  [15] TRUE TRUE TRUE TRUE TRUE TRUE TRUE TRUE TRUE TRUE TRUE TRUE TRUE TRUE
+##  [29] TRUE TRUE TRUE TRUE TRUE TRUE TRUE TRUE TRUE TRUE TRUE TRUE TRUE TRUE
+##  [43] TRUE TRUE TRUE TRUE TRUE TRUE TRUE TRUE TRUE TRUE TRUE TRUE TRUE TRUE
+##  [57] TRUE TRUE TRUE TRUE TRUE TRUE TRUE TRUE TRUE TRUE TRUE TRUE TRUE TRUE
+##  [71] TRUE TRUE TRUE TRUE TRUE TRUE TRUE TRUE TRUE TRUE TRUE TRUE TRUE TRUE
+##  [85] TRUE TRUE TRUE TRUE TRUE TRUE TRUE TRUE TRUE TRUE TRUE TRUE TRUE TRUE
+##  [99] TRUE TRUE TRUE TRUE TRUE TRUE TRUE TRUE TRUE TRUE TRUE TRUE TRUE TRUE
+## [113] TRUE TRUE TRUE TRUE TRUE TRUE TRUE TRUE TRUE TRUE TRUE TRUE TRUE TRUE
+## [127] TRUE TRUE TRUE TRUE TRUE TRUE TRUE TRUE TRUE TRUE TRUE TRUE TRUE TRUE
+## [141] TRUE</code></pre>
+<pre class="r"><code>dmrsR == dmrsD</code></pre>
+<pre><code>##   [1] TRUE TRUE TRUE TRUE TRUE TRUE TRUE TRUE TRUE TRUE TRUE TRUE TRUE TRUE
+##  [15] TRUE TRUE TRUE TRUE TRUE TRUE TRUE TRUE TRUE TRUE TRUE TRUE TRUE TRUE
+##  [29] TRUE TRUE TRUE TRUE TRUE TRUE TRUE TRUE TRUE TRUE TRUE TRUE TRUE TRUE
+##  [43] TRUE TRUE TRUE TRUE TRUE TRUE TRUE TRUE TRUE TRUE TRUE TRUE TRUE TRUE
+##  [57] TRUE TRUE TRUE TRUE TRUE TRUE TRUE TRUE TRUE TRUE TRUE TRUE TRUE TRUE
+##  [71] TRUE TRUE TRUE TRUE TRUE TRUE TRUE TRUE TRUE TRUE TRUE TRUE TRUE TRUE
+##  [85] TRUE TRUE TRUE TRUE TRUE TRUE TRUE TRUE TRUE TRUE TRUE TRUE TRUE TRUE
+##  [99] TRUE TRUE TRUE TRUE TRUE TRUE TRUE TRUE TRUE TRUE TRUE TRUE TRUE TRUE
+## [113] TRUE TRUE TRUE TRUE TRUE TRUE TRUE TRUE TRUE TRUE TRUE TRUE TRUE TRUE
+## [127] TRUE TRUE TRUE TRUE TRUE TRUE TRUE TRUE TRUE TRUE TRUE TRUE TRUE TRUE
+## [141] TRUE</code></pre>
+<pre class="r"><code>dmrsV == dmrsD</code></pre>
+<pre><code>##   [1] TRUE TRUE TRUE TRUE TRUE TRUE TRUE TRUE TRUE TRUE TRUE TRUE TRUE TRUE
+##  [15] TRUE TRUE TRUE TRUE TRUE TRUE TRUE TRUE TRUE TRUE TRUE TRUE TRUE TRUE
+##  [29] TRUE TRUE TRUE TRUE TRUE TRUE TRUE TRUE TRUE TRUE TRUE TRUE TRUE TRUE
+##  [43] TRUE TRUE TRUE TRUE TRUE TRUE TRUE TRUE TRUE TRUE TRUE TRUE TRUE TRUE
+##  [57] TRUE TRUE TRUE TRUE TRUE TRUE TRUE TRUE TRUE TRUE TRUE TRUE TRUE TRUE
+##  [71] TRUE TRUE TRUE TRUE TRUE TRUE TRUE TRUE TRUE TRUE TRUE TRUE TRUE TRUE
+##  [85] TRUE TRUE TRUE TRUE TRUE TRUE TRUE TRUE TRUE TRUE TRUE TRUE TRUE TRUE
+##  [99] TRUE TRUE TRUE TRUE TRUE TRUE TRUE TRUE TRUE TRUE TRUE TRUE TRUE TRUE
+## [113] TRUE TRUE TRUE TRUE TRUE TRUE TRUE TRUE TRUE TRUE TRUE TRUE TRUE TRUE
+## [127] TRUE TRUE TRUE TRUE TRUE TRUE TRUE TRUE TRUE TRUE TRUE TRUE TRUE TRUE
+## [141] TRUE</code></pre>
 </div>
 <div id="references" class="section level1 unnumbered">
 <h1>References</h1>

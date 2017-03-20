@@ -323,9 +323,8 @@ div.tocify {
 <p>By default Functional Normalization returns normalized copy number data making the returned <code>GenomicRatioSet</code> twice the size necessary when only beta-values or M-values are required. Therefore, we added an argument to minfi’s implementation of Functional Normalization to allow for not returning normalized copy number data.</p>
 <pre class="r"><code>GRset &lt;- preprocessFunnorm.DNAmArray(RGset, nPCs=3, keepCN=FALSE)</code></pre>
 <pre><code>## [preprocessFunnorm] Modified version not returning CN! 
-## [preprocessFunnorm] Background and dye bias correction with noob</code></pre>
-<pre><code>## Loading required package: IlluminaHumanMethylation450kanno.ilmn12.hg19</code></pre>
-<pre><code>## [preprocessNoob] Applying R/G ratio flip to fix dye bias...
+## [preprocessFunnorm] Background and dye bias correction with noob 
+## [preprocessNoob] Applying R/G ratio flip to fix dye bias...
 ## [preprocessFunnorm] Mapping to genome
 ## [preprocessFunnorm] Quantile extraction
 ## [preprocessFunnorm] Normalization</code></pre>

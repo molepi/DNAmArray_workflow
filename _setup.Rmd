@@ -35,6 +35,7 @@ suppressPackageStartupMessages({
     Require(fastcluster)
     Require(FDb.InfiniumMethylation.hg19)
     Require(IlluminaHumanMethylation450kmanifest)
+    Require(IlluminaHumanMethylation450kanno.ilmn12.hg19)
     Require(impute)
     Require(bacon)
 

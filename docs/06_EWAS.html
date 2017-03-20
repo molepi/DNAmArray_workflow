@@ -311,12 +311,15 @@ div.tocify {
 
 <div id="simple-ewas-using-limma" class="section level1">
 <h1>Simple EWAS using <strong>limma</strong></h1>
-<p>M-values valid to run EWAS using linear regression approach.</p>
-<p>Here skipping the empirical Bayes step, because of the large sample size this should give very similar results?</p>
+<p>Our approach for running an EWAS is similar to the approach of <a href="http://bioconductor.org/packages/missMethyl/"><strong>missMethyl</strong></a>. Expect that we the empirical Bayes step, because the sample size in an EWAS is large enough and there should no added value in running the <code>eBayes</code>-step?</p>
+<p>We assume the data has been normalized, filtered and NA’s have been imputed. Furthermore, it is very convenient to construct a <code>SummarizedExperiment</code>-object as described in the previous section.</p>
+<p>For example, the model that you would like to run can be added like this with the first covariate the phenotype of interest.</p>
 <pre class="r"><code>metadata(mvalues)$formula &lt;- ~DNA_BloodSampling_Age + Sex + Sentrix_Position + Smoking + Mono_Perc + Baso_Perc + Eos_Perc + Neut_Perc</code></pre>
+<p>Next, we extract those samples having a complete set of covariates. Notice that we subset the <code>SummarizedExperiment</code>-object!</p>
 <pre class="r"><code>covariates &lt;- get_all_vars(metadata(mvalues)$formula, data=colData(mvalues))
 nas &lt;- apply(covariates, 1, anyNA)
 mvalues &lt;- mvalues[, !nas]</code></pre>
+<p>Now we can run the model like this and we do not have to bother on sample administration!</p>
 <pre class="r"><code>library(limma)
 design &lt;- model.matrix(metadata(mvalues)$formula, data=colData(mvalues))
 data &lt;- assays(mvalues)$data
@@ -326,50 +329,64 @@ tstat &lt;- fit$coef/fit$stdev.unscaled/fit$sigma
 pval &lt;- 2*pnorm(-abs(tstat[,2]))
 padj &lt;- p.adjust(sort(pval, decreasing=FALSE), method=&quot;bonf&quot;)
 head(padj[padj &lt; 0.05])</code></pre>
-<pre><code>##   cg21396487   cg07207813   cg09093836   cg15983114   cg17146352 
-## 1.528417e-36 4.664146e-27 3.918954e-25 7.157765e-21 4.420802e-19 
-##   cg02635786 
-## 8.410551e-17</code></pre>
+<pre><code>##   cg16867657   cg01974375   cg01904393   cg24724428   cg04875128 
+## 1.432599e-11 2.489985e-06 1.296514e-04 1.487316e-04 6.003557e-04 
+##   cg01486610 
+## 1.580418e-03</code></pre>
 </div>
 <div id="unobserved-covariates-using-cate" class="section level1">
 <h1>Unobserved covariates using <strong>cate</strong></h1>
-<p>Often unobserved technical or biological covariates can be present. A recent approach available from cran <a href="https://cran.r-project.org/package=cate"><strong>cate</strong></a> is able to estimate the unobserved covariates. There are other methods as well, …</p>
+<p>Often unobserved technical or biological covariates can be present. A recent approach available from cran <a href="https://cran.r-project.org/package=cate"><strong>cate</strong></a> is able to estimate the unobserved covariates. There are other methods as well, like, sva, ruv but we prefer this one…</p>
 <pre class="r"><code>library(cate)
 fa &lt;- cate.fit(design[,2,drop=FALSE], design[,-2], t(data), r = 3, calibrate=FALSE, adj.method=&quot;naive&quot;)</code></pre>
-<p>Here we assumed the presence of three unobserved covariates but cate has two method implemented that can estimate the precise number of unobserved covariates.</p>
+<p>Here we assumed the presence of three unobserved covariates but cate has two methods implemented that can estimate the precise number of unobserved covariates. Furthermore, notice that we use <code>calibrate=FALSE</code> as we think the calibration of test-statistics and P values is too conservative. Actually, we propose a different method to control for test-statistic inflation and bias (see next section).</p>
 </div>
 <div id="correct-for-bias-and-inflation" class="section level1">
 <h1>Correct for bias and inflation</h1>
-<p>As is seen in GWAS, inflation, also occurs in EWAS. And not only inflation but bias can be observed too. We developed a package called <a href="http://bioconductor.org/packages/bacon"><strong>bacon</strong></a> to estimate and correct for bias and inflation for EWAS (and TWAS)<span class="citation">(Iterson, Zwet, and Heijmans 2017)</span>.</p>
+<p>We developed a package called <a href="http://bioconductor.org/packages/bacon"><strong>bacon</strong></a> to estimate and correct for bias and inflation for EWAS (and TWAS)<span class="citation">(Iterson, Zwet, and Heijmans 2017)</span> it maximizes power while properly controlling the false positive rate. <a href="http://bioconductor.org/packages/bacon"><strong>bacon</strong></a> is based on the estimation of the empirical null distribution using Bayesian statistics. The utility of the tool was illustrated through the application of meta-analysis by performing epigenome- and transcriptome-wide association studies (EWASs/TWASs) on age and smoking which highlighted an overlap in differential methylation and expression of associated genes. It can be used to remove inflation and bias often observed in EWAS/TWAS see for more details<span class="citation">(Iterson, Zwet, and Heijmans 2017)</span>.</p>
+<p>For example, we can use it on the EWAS that we just run:</p>
 <pre class="r"><code>library(bacon)
 tstats &lt;- cbind(limma=tstat[,2], cate=as.vector(fa$beta.t))
+library(BiocParallel)
+register(MulticoreParam(2))
 bc &lt;- bacon(tstats)</code></pre>
-<pre><code>## Detected 14 workers!
+<pre><code>## Detected 2 workers!
 ##  Running in parallel!</code></pre>
 <pre class="r"><code>bc</code></pre>
-<pre><code>## Bacon-object containing 2 set(s) of 483098 test-statistics.
-## ...estimated bias: -0.099,-0.099.
+<pre><code>## Bacon-object containing 2 set(s) of 483887 test-statistics.
+## ...estimated bias: -0.3,-0.31.
 ## ...estimated inflation: 1,1.
 ## 
 ## Emprical null estimates are based on 5000 iterations with a burnin-period of 2000.</code></pre>
 <pre class="r"><code>print(plot(bc, type=&quot;hist&quot;))</code></pre>
 <pre><code>## `stat_bin()` using `bins = 30`. Pick better value with `binwidth`.</code></pre>
-<pre><code>## Warning: Removed 19324 rows containing non-finite values (stat_bin).</code></pre>
+<pre><code>## Warning: Removed 19356 rows containing non-finite values (stat_bin).</code></pre>
 <pre><code>## Warning: Removed 2 rows containing missing values (geom_bar).</code></pre>
-<pre><code>## Warning: Removed 9662 rows containing missing values (geom_path).
+<pre><code>## Warning: Removed 9678 rows containing missing values (geom_path).
 
-## Warning: Removed 9662 rows containing missing values (geom_path).</code></pre>
+## Warning: Removed 9678 rows containing missing values (geom_path).</code></pre>
 <p><img src="06_EWAS_files/figure-html/bacon-1.png" width="672" /></p>
 <pre class="r"><code>print(plot(bc, type=&quot;qq&quot;))</code></pre>
 <p><img src="06_EWAS_files/figure-html/bacon-2.png" width="672" /></p>
-<pre class="r"><code>head(pval(bc))</code></pre>
-<pre><code>##                 limma       cate
-## cg01707559 0.80294660 0.80239960
-## cg02004872 0.27920089 0.27842475
-## cg02494853 0.34612971 0.34532481
-## cg03244189 0.02563783 0.02542783
-## cg03706273 0.60274926 0.60257113
-## cg04023335 0.80514641 0.80521353</code></pre>
+<pre class="r"><code>pvalsbc &lt;- pval(bc)
+head(pvalsbc[order(pvalsbc[,1]),])</code></pre>
+<pre><code>##                   limma         cate
+## cg16867657 1.223427e-17 1.017150e-17
+## cg24724428 1.138995e-10 1.017798e-10
+## cg01974375 1.155835e-10 1.089145e-10
+## cg04875128 4.599266e-10 4.136113e-10
+## cg23606718 2.722032e-09 2.467918e-09
+## cg15448975 3.418563e-09 3.102665e-09</code></pre>
+<pre class="r"><code>pvals &lt;- pval(bc, FALSE)
+head(pvals[order(pvals[,1]),])</code></pre>
+<pre><code>##                   limma         cate
+## cg16867657 2.960606e-17 2.960606e-17
+## cg01974375 5.145798e-12 5.145798e-12
+## cg01904393 2.679374e-10 2.679374e-10
+## cg24724428 3.073685e-10 3.073685e-10
+## cg04875128 1.240694e-09 1.240694e-09
+## cg01486610 3.266088e-09 3.266088e-09</code></pre>
+<p>Strong bias is observed so running <a href="http://bioconductor.org/packages/bacon"><strong>bacon</strong></a> should really be considered. There is a small difference in the calculated P values. Running <a href="https://cran.r-project.org/package=cate"><strong>cate</strong></a> did not yielded additional control for bias and inflation in this example.</p>
 </div>
 <div id="references" class="section level1 unnumbered">
 <h1>References</h1>

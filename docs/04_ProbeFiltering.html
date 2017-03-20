@@ -310,38 +310,41 @@ div.tocify {
 
 
 <blockquote>
-<p><strong>TODO extent descriptions</strong> <strong>beware 450K specific</strong></p>
+<p><strong>TODO extent descriptions</strong></p>
 </blockquote>
-<div id="probe-filtering" class="section level1">
-<h1>Probe filtering</h1>
+<div id="probe-level-filtering" class="section level1">
+<h1>Probe-level filtering</h1>
+<p>Both the functions <code>probeFiltering</code> and <code>reduce</code> should be used to obtain filtered beta- or M-values.</p>
 <pre class="r"><code>RGset &lt;- probeFiltering(RGset)</code></pre>
 <pre><code>## Calculate and filter on number of beads...</code></pre>
-<pre><code>## On average 0.11% of the probes (622399) have number of beads below 3</code></pre>
+<pre><code>## On average 0.08% of the probes (622399) have number of beads below 3</code></pre>
 <pre><code>## Calculate and filter on zero intensities...</code></pre>
-<pre><code>## On average 0.005% of the Type II probes (350036) have Red and/or Green intensity below 1</code></pre>
-<pre><code>## On average 0.012% of the Type I probes (92578), measured in Green channel, have intensity below 1</code></pre>
-<pre><code>## On average 0.012% of the Type I probes (178374), measured in Red channel, have intensity below 1</code></pre>
+<pre><code>## On average 0.002% of the Type II probes (350036) have Red and/or Green intensity below 1</code></pre>
+<pre><code>## On average 0.006% of the Type I probes (92578), measured in Green channel, have intensity below 1</code></pre>
+<pre><code>## On average 0.006% of the Type I probes (178374), measured in Red channel, have intensity below 1</code></pre>
 <pre><code>## Set filtered probes in Red and/or Green channels to NA...</code></pre>
-</div>
-<div id="number-of-beads" class="section level1">
-<h1>Number of beads</h1>
+<div id="number-of-beads" class="section level2">
+<h2>Number of beads</h2>
 <p>Occasionally some probes as measured with a too small number of beads leading to unreliable probe intensities. By default probes intensities are set to NA if the probe intensity is based on less then 3 beads.</p>
 </div>
-<div id="zero-intensities" class="section level1">
-<h1>Zero intensities</h1>
-<p>Ifthere are no beads at all for a certain probe the probe intensity will be exactly zero, these are set to NA, as well.</p>
+<div id="zero-intensities" class="section level2">
+<h2>Zero intensities</h2>
+<p>If there are no beads at all for a certain probe the probe intensity will be exactly zero, these are set to NA, as well.</p>
 <p>Samples which have more then 5% of their probes set to NA, based on the above filter steps, will be removed from the <code>RGChannelSet</code>.</p>
+</div>
 </div>
 <div id="cpg-level-filtering" class="section level1">
 <h1>CpG-level filtering</h1>
-</div>
-<div id="detection-p-value" class="section level1">
-<h1>detection P-value</h1>
+<div id="detection-p-value" class="section level2">
+<h2>detection P-value</h2>
 <p>The negative controls on the 450k array can be used to detect outlying samples e.g., samples that have a significant larger background then average, this is summarized in the so-called detection P-value.</p>
 <p>Detection P-values are calculated using the <code>detectionP</code>-function from <a href="http:/bioconductor.org/packages/minfi"><strong>minfi</strong></a>. By default detection P-values with a value &gt;0.01 are set to NA.</p>
 </div>
-<div id="cross-reactive-probescpgs" class="section level1">
-<h1>Cross reactive probes/CpGs</h1>
+<div id="cross-reactive-probescpgs" class="section level2">
+<h2>Cross reactive probes/CpGs</h2>
+<blockquote>
+<p>THIS WILL BE REPLACE BY <span class="citation">(<span class="citeproc-not-found" data-reference-id="Zhou2017"><strong>???</strong></span>)</span></p>
+</blockquote>
 <p>485,577 assays (482,421 CpG sites, 3091 non-CpG sites and 65 random SNPs)…<span class="citation">(Bibikova et al. 2011)</span></p>
 <p>Furthermore, several probes do not map uniquely to the genome or contain common polymorphisms. Chen <span class="citation">(Chen et al. 2013)</span> analyzed in detail cross-reactive and polymorphic probes. We exclude the set of polymorphic CG and CH probes (42.403) discovered by Chen.</p>
 <p>482,421 CpG sites are measured using two chemistries Type I (135,476) and Type II (350,036). the Type I chemistry uses two probes to measure a CpG site while the Type II measure CpG methylation using one probe. The Type II chemistry was specially designed to measure CpG methylation in low CpG dense regions. There are</p>
@@ -354,8 +357,7 @@ nrow(typeII)
 typeI &lt;- getProbeInfo(RGset, type = &quot;I&quot;)
 head(typeI)
 nrow(typeI)</code></pre>
-<p>482421 + 3091 (excluding 65 SNPs)</p>
-<p>Methylated and Unmethylated Intensities</p>
+</div>
 </div>
 <div id="success-rates" class="section level1">
 <h1>Success Rates</h1>
@@ -364,22 +366,13 @@ nrow(typeI)</code></pre>
 <pre class="r"><code>betas &lt;- reduce(GRset, RGset, what=&quot;beta&quot;)</code></pre>
 <pre class="r"><code>mvalues &lt;- reduce(GRset, RGset, what=&quot;M&quot;)</code></pre>
 <pre><code>## Calculate and filter on detection P-value...</code></pre>
-<pre><code>## On average 0.22% of the CpGs (485512) have detection P-value above the threshold 0.01</code></pre>
+<pre><code>## On average 0.17% of the CpGs (485512) have detection P-value above the threshold 0.01</code></pre>
 <pre><code>## Transform to M-values...</code></pre>
 <pre><code>## Set +/-Inf to +/-16...</code></pre>
-<pre><code>## On average 0.14% of the probes (485512) were set to NA in the probe filtering step!</code></pre>
+<pre><code>## On average 0.1% of the probes (485512) were set to NA in the probe filtering step!</code></pre>
 <pre><code>## Calculate success rates and reduce...</code></pre>
 <pre><code>## Percentage of samples having success rate above 0.95 is 100%</code></pre>
-<pre><code>## Percentage of CpGs having success rate above 0.95 is 99.5%</code></pre>
-</div>
-<div id="array-design" class="section level1">
-<h1>Array design</h1>
-<p>Chips, plates, arrays, …</p>
-<p>probe addressess A (Type I and Type II) B (Type I only) There are 620988 probes on the array</p>
-</div>
-<div id="number-of-beads-1" class="section level1">
-<h1>Number of beads</h1>
-<p>Each probe is measured using more then one bead, the average signal intensities is used as a measure for the probe intensity.</p>
+<pre><code>## Percentage of CpGs having success rate above 0.95 is 99.67%</code></pre>
 </div>
 <div id="references" class="section level1 unnumbered">
 <h1>References</h1>

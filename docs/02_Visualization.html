@@ -318,7 +318,6 @@ div.tocify {
 <p>To get a global impression of the beta-value distribution and to see if there are outlying samples the per sample average beta-value distribution can be plotted. For example, using <code>densityPlot</code> from <a href="http://bioconductor.org/packages/minfi"><strong>minfi</strong></a>.</p>
 <pre class="r"><code>library(minfi)
 densityPlot(RGset[, 1:10], main = &quot;Beta&quot;, xlab = &quot;Beta&quot;)</code></pre>
-<pre><code>## Loading required package: IlluminaHumanMethylation450kmanifest</code></pre>
 <p><img src="02_Visualization_files/figure-html/unnamed-chunk-2-1.png" width="672" /></p>
 </div>
 <div id="principal-components-plot" class="section level1">
@@ -333,10 +332,10 @@ beta[is.na(beta)] &lt;- median(beta, na.rm=TRUE)
 pc &lt;- prcomp_irlba(t(beta), n=3)
 summary(pc)</code></pre>
 <pre><code>## Importance of components:
-##                            PC1     PC2    PC3
-## Standard deviation     13.2943 11.2021 7.9687
-## Proportion of Variance  0.4833  0.3431 0.1736
-## Cumulative Proportion   0.4833  0.8264 1.0000</code></pre>
+##                            PC1    PC2    PC3
+## Standard deviation     12.9808 8.8282 6.4980
+## Proportion of Variance  0.5837 0.2700 0.1463
+## Cumulative Proportion   0.5837 0.8537 1.0000</code></pre>
 <pre class="r"><code>plot(pc$x)</code></pre>
 <p><img src="02_Visualization_files/figure-html/irlba-1.png" width="672" /></p>
 <p>The first principale component explains almost 50% of the variation and two groups of samples appear; these are male and female samples! Often probes on the sex-chromosomes are excluded before principale component analysis (or other analyzes).</p>

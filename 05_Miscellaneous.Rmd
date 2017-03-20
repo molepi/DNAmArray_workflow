@@ -2,22 +2,45 @@
 ```{r, child="_setup.Rmd"}
 ```
 
-> **TODO extent discriptions** 
-> **beware 450K specific**
+> **TODO extent discriptions**
 
-# Sex check #
+# Phenotyping #
 
-```{r sexcheck, eval=FALSE}
+## Predict Sex ##
+
+Predict sex based on sex-chromosome beta-value distribution. We use a
+thresholding approach.
+
+```{r sexcheck}
+betas <- (2^mvalues)/(1+2^mvalues)
 betas <- getBeta(RGset)
+library(BBMRIomics)
+pheno <- getView("allPhenotypes", usrpwd=RP3_MDB_USRPWD, url=RP3_MDB)
+pheno <- merge(pheno, targets, by="ids", all.y=TRUE)
+mid <- match(colnames(betas), pheno$run_id)
 predicted <- getSex.DNAmArray(betas)
-assumed <- sex
+assumed <- pheno$Sex[mid]
+assumed[is.na(assumed)] <- 2
 assumed <- as.character(factor(assumed, labels=c("Male", "Female", "Unknown")))
 str(predicted)
 str(assumed)
 print(table(predicted, assumed))
 ```
 
-# Genotype check #
+## Predict white blood cell composition ##
+
+White blood cell count can be predicted using Houseman's
+method[@Houseman2012] implemented in the
+[**minfi**](http://bioconductor.org/packages/minfi)[@Jaffe2014].
+
+See also our approach for the imputation of white blood cell
+counts:[wbccPredictor](https://github.com/mvaniterson/wbccPredictor)
+
+## Predict other phenotypes ##
+
+For example chronological age or smoking status.
+
+# Check sample relations using SNP probes #
 
 Beta-values of the probes containing SNP can be extract from the RGset
 using [**minfi**](http:/bioconductor.org/packages/minfi)'s `getSnpBeta`-function.
@@ -72,7 +95,7 @@ table(`Predicted relationship`=data$predicted, `Assumed relationship`=data$relat
 head(subset(data[order(data$mean, decreasing=TRUE),], predicted != relationship), n=10)
 ```
 
-# Imputation #
+# Imputation missing probe-values #
 
 Several algorithms do not allow NA's but beta-values and or M-values
 can contain NA's after preprocessing. Either because some probes/CpG
@@ -88,7 +111,7 @@ library(impute)
 mvalues <- impute.knn(as.matrix(mvalues))$data
 ```
 
-# Annotation #
+# Adding probe information #
 
 We have implemented a small function to map CpG-probes to their
 nearest genes.
@@ -98,21 +121,10 @@ cpgs <- head(rownames(mvalues))
 cpgInfo(cpgs, TxDb="TxDb.Hsapiens.UCSC.hg19.knownGene")
 ```
 
-# White Blood Cell Counts #
-
-White blood cell count can be predicted using Houseman's
-method[@Houseman2012] implemented in the
-[**minfi**](http://bioconductor.org/packages/minfi)[@Jaffe2014].
-
-See also our approach for the imputation of white blood cell
-counts:[wbccPredictor](https://github.com/mvaniterson/wbccPredictor)
-
-# Phenotyping #
-  
-# SummarizedExperiment #
+# Construct `SummarizedExperiment` containing DNA methylation data #
 
 It is usefull to store the normalized beta- or M-values together with
-metadata on samples and features as a 
+metadata on samples and features as a
 [**SummarizedExperiment**](http://bioconductor.org/packages/SummarizedExperiment).
 
 Get probe annotation:
@@ -140,14 +152,52 @@ mvalues
 ```
 
 More about [**SummarizedExperiment**](http://bioconductor.org) see:
- 1. [package vignette](http://bioconductor.org/packages/release/bioc/vignettes/SummarizedExperiment/inst/doc/SummarizedExperiment.html) 
- 2. [course material](http://bioconductor.org/help/course-materials/2012/BiocEurope2012/SummarizedExperiment.pdf) 
- 3. [BioConductor nature paper](http://www.nature.com/nmeth/journal/v12/n2/full/nmeth.3252.html)
+1. [package vignette](http://bioconductor.org/packages/release/bioc/vignettes/SummarizedExperiment/inst/doc/SummarizedExperiment.html)
+2. [course material](http://bioconductor.org/help/course-materials/2012/BiocEurope2012/SummarizedExperiment.pdf)
+3. [BioConductor nature paper](http://www.nature.com/nmeth/journal/v12/n2/full/nmeth.3252.html)
 
 
 # DMR finder #
 
-See[@Slieker2013].
+We have implemented a DMR finder see [@Slieker2013] and `?DMRfinder`
+for more details.
+
+Here is an example using toy data:
+
+```{r dmrfinder}
+require(FDb.InfiniumMethylation.hg19)
+feats <- features(FDb.InfiniumMethylation.hg19)
+regions <- feats[seqnames(feats) %in% c("chr21", "chr22")]
+mcols(regions)  <- NULL ##drop unnecessary metadata
+mcols(regions)$crit <- rbinom(length(regions), 1, prob=0.2)
+
+##input GRanges
+(dmrsR <- DMRfinder(regions))
+
+##input named-vector
+dmps <- mcols(regions)$crit
+names(dmps) <- names(regions)
+(dmrsV <- DMRfinder(dmps))
+
+##bed-like data.frame
+regions <- as.data.frame(regions)
+regions <- regions[, c("seqnames", "start", "crit")]
+colnames(regions) <- c("chr", "pos", "crit")
+(dmrsD <- DMRfinder(regions))
+
+##all equal
+length(dmrsR)
+length(dmrsV)
+length(dmrsD)
+
+head(dmrsR)
+head(dmrsV)
+head(dmrsD)
+
+dmrsR == dmrsV
+dmrsR == dmrsD
+dmrsV == dmrsD
+```
 
 
-# References # 
+# References #
