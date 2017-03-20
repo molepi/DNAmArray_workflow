@@ -4,7 +4,7 @@
 
 <head>
 
-<meta charset="utf-8" />
+<meta charset="utf-8">
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <meta name="generator" content="pandoc" />
 
@@ -313,25 +313,23 @@ div.tocify {
 <h1>Simple EWAS using <strong>limma</strong></h1>
 <p>M-values valid to run EWAS using linear regression approach.</p>
 <p>Here skipping the empirical Bayes step, because of the large sample size this should give very similar results?</p>
-<pre class="r"><code>covariates &lt;- c(&quot;DNA_BloodSampling_Age&quot;, &quot;Sex&quot;, &quot;Sentrix_Position&quot;, &quot;Smoking&quot;, &quot;Mono_Perc&quot;, &quot;Baso_Perc&quot;, &quot;Eos_Perc&quot;, &quot;Neut_Perc&quot;) 
-design &lt;- data.frame(Int=1, colData(mvalues)[, covariates])
-complete &lt;- apply(design, 1, function(x) sum(is.na(x)) == 0 )
-data &lt;- assays(mvalues)$data
-design &lt;- design[complete,]
-data &lt;- data[,complete]
-dim(data)</code></pre>
-<pre><code>## [1] 483098     22</code></pre>
-<pre class="r"><code>design$Sentrix_Position &lt;- as.integer(as.factor(design$Sentrix_Position))</code></pre>
+<pre class="r"><code>metadata(mvalues)$formula &lt;- ~DNA_BloodSampling_Age + Sex + Sentrix_Position + Smoking + Mono_Perc + Baso_Perc + Eos_Perc + Neut_Perc</code></pre>
+<pre class="r"><code>covariates &lt;- get_all_vars(metadata(mvalues)$formula, data=colData(mvalues))
+nas &lt;- apply(covariates, 1, anyNA)
+mvalues &lt;- mvalues[, !nas]</code></pre>
 <pre class="r"><code>library(limma)
-fit &lt;- lmFit(data, design)     
-tstat &lt;- fit$coef/fit$stdev.unscaled/fit$sigma        
+design &lt;- model.matrix(metadata(mvalues)$formula, data=colData(mvalues))
+data &lt;- assays(mvalues)$data
+fit &lt;- lmFit(data, design)
+tstat &lt;- fit$coef/fit$stdev.unscaled/fit$sigma
+
 pval &lt;- 2*pnorm(-abs(tstat[,2]))
 padj &lt;- p.adjust(sort(pval, decreasing=FALSE), method=&quot;bonf&quot;)
 head(padj[padj &lt; 0.05])</code></pre>
-<pre><code>##   cg26712943   cg00661620   cg08595806   cg15993871   cg26492480 
-## 8.967774e-13 8.168777e-11 4.483074e-08 8.776593e-07 2.008576e-06 
-##   cg00215551 
-## 2.439025e-06</code></pre>
+<pre><code>##   cg21396487   cg07207813   cg09093836   cg15983114   cg17146352 
+## 1.528417e-36 4.664146e-27 3.918954e-25 7.157765e-21 4.420802e-19 
+##   cg02635786 
+## 8.410551e-17</code></pre>
 </div>
 <div id="unobserved-covariates-using-cate" class="section level1">
 <h1>Unobserved covariates using <strong>cate</strong></h1>

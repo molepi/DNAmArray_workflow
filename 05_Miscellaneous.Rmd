@@ -2,9 +2,10 @@
 ```{r, child="_setup.Rmd"}
 ```
 
-# Sex check #
+> **TODO extent discriptions** 
+> **beware 450K specific**
 
-**add explaination**
+# Sex check #
 
 ```{r sexcheck, eval=FALSE}
 betas <- getBeta(RGset)

@@ -11,7 +11,7 @@ on fast and efficient tools for large data sets.
 
 To get a global impression of the beta-value distribution and to see
 if there are outlying samples the per sample average beta-value
-distribution can be plotted. For exmaple, using `densityPlot` from
+distribution can be plotted. For example, using `densityPlot` from
 [**minfi**](http://bioconductor.org/packages/minfi).
 
 ```{r}
@@ -37,8 +37,13 @@ summary(pc)
 plot(pc$x)
 ```
 
+The first principale component explains almost 50% of the variation
+and two groups of samples appear; these are male and female samples!
+Often probes on the sex-chromosomes are excluded before principale
+component analysis (or other analyzes).
+
 > NOTE: `getBeta` extracts Methylated and Unmethylated intensities and
-> converts them to beta-values using M/(M+U), whereas,
+> converts them to beta-values by default using M/(M+U), whereas,
 > `type="Illumina"` adds 100 to the denominator which prevents
 > beta-values becoming NA if both M and U are exactly zero.
 
@@ -58,10 +63,10 @@ pheatmap(cxy, cluster_rows=FALSE)
 
 # Dendrogram #
 
-Another approach often used in expression data for exploratory data
+Another approach, often used in expression data, for exploratory data
 analysis is clustering of the data and visualizing using a
-dendrogram. However, this might be more appropriated for data sets
-with moderated sample sizes. Although, the
+dendrogram. Although, this might be more appropriated for data sets
+with moderated sample sizes, the
 [**fastclust**](https://cran.r-project.org/package=fastclust)-package
 is efficient in generating the hierarchical clustering.
 
@@ -73,7 +78,7 @@ fit <- hclust(d, method="average")
 plot(fit)
 ```
   
-Highlighting a suspected outlyer can be convenient.
+Highlighting a suspected outlier can be convenient.
   
 ```{r clusteringhighlight}
 Interesting <- sample(colnames(beta),1)
@@ -86,6 +91,12 @@ colorLeafs <- function(x) {
 dd <- dendrapply(as.dendrogram(fit), colorLeafs)
 op <- par(mar=c(10,4,4,2))
 plot(dd)
+```
+
+
+```{r echo=FALSE}
 par(op)
 ```
+
+
 

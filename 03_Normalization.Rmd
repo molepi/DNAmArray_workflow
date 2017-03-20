@@ -2,23 +2,29 @@
 ```{r, child="_setup.Rmd"}
 ```
 
+# Functional normalization #
+
 We prefer normalization of 450K data using the Functional
-Normalization approach of Fortin et al.[@Fortin2014]. Functional
-Normalization includes NOOB background and dye bias
-correction[@Triche2013].
+Normalization approach of [@Fortin2014]. Functional Normalization uses
+control probes for normalization. Furthemore, Functional Normalization
+includes a NOOB background and dye bias correction step[@Triche2013].
+
+## Select number of PC's ##
 
 In our experience the default number of principal compontents (2) is
-often to small. We use a screeplot to determine the optimal number of
-PC to use in the Function Normalization.
+often too small. We use a screeplot to determine the optimal number of
+principal compontents:
 
 ```{r screeplot}
 pc <- screeplot(RGset)
 ``` 
 
-Furthermore, by default Functional Normalization returns normalized
-copy number data making the return `GenomicRatioSet` twice the size
-necessary of only beta-values or M-values are required. Therefore, we
-slightly modified minfi's implementation of Functional Normalization
+## Functional normalization without copy number data ##
+
+By default Functional Normalization returns normalized
+copy number data making the returned `GenomicRatioSet` twice the size
+necessary when only beta-values or M-values are required. Therefore, we
+added an argument to minfi's implementation of Functional Normalization
 to allow for not returning normalized copy number data.
 
 ```{r funnorm}
@@ -26,15 +32,16 @@ GRset <- preprocessFunnorm.DNAmArray(RGset, nPCs=3, keepCN=FALSE)
 ```
 
 By default `preprocessFunnorm` return beta-values calculated with an
-offset of 100, like GenomeStudio. If required these can be transformed
-to M-values using minfi's `getM` which does a logit2-transformation on
-the beta-values.
+offset of 100, like GenomeStudio (`getBeta` with type='Illumina'). If
+required these can be transformed to M-values using minfi's `getM`
+which does a logit2-transformation on the beta-values.
 
-We recommend to perform probe-filtering which sets unreliable measured
+We recommend to perform probe-filtering by setting unreliable measured
 probes to NA. Unfortunately, Functional Normalization does not allow
-NA's in the `RGChannelSet`. Therefore, we combine after noramlization
-and probe filtering the filtered-`RGChannelSet` and the
-normalized-`GenomicRatioSet` using the function `reduce`.
+NA's in the `RGChannelSet`. Therefore, we suggest to run normalization
+and probe-filtering separately and combine the results afterwards
+using `reduce`. See the next section on `Probe Filtering` for more
+details.
 
 # References #
 

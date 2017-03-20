@@ -19,7 +19,6 @@ First, prepare the targets file, similar to the one used by
 [**minfi**](http://bioconductor.org/packages/minfi).
 
 ```{r sqc.generatetargets, message=FALSE, results='hide'}
-path450k <- "/virdir/Backup/RP3_data/IlluminaHumanMethylation450k/450k/LLS"
 targets <- read.table(file.path(path450k, "sample_sheet.txt"), sep=",", header=TRUE, as.is=TRUE)
 head(targets)
 targets$Basename <- with(targets,
@@ -31,9 +30,9 @@ targets$Basename <- with(targets,
 targets[1:5, 1:5]
 ```
 
-Next, summarize and visualize the data, see the
+Next, summarize and visualize the data (see
 [MethylAid vignette](https://www.bioconductor.org/packages/release/bioc/vignettes/MethylAid/inst/doc/MethylAid.pdf)
-for more details.
+for more details).
 
 ```{r sqc.methylaid, eval=FALSE}
 library(MethylAid)
@@ -84,7 +83,7 @@ cores:
 library(DNAmArray)
 library(BiocParallel)
 register(MulticoreParam(6))
-targets <- targets[1:24,]
+targets <- targets[1:128,]
 RGset <- read.metharray.exp.par(targets, verbose=TRUE, extended=TRUE)
 ```
 

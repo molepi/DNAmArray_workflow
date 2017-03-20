@@ -4,7 +4,7 @@
 
 <head>
 
-<meta charset="utf-8" />
+<meta charset="utf-8">
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <meta name="generator" content="pandoc" />
 
@@ -315,7 +315,7 @@ div.tocify {
 </div>
 <div id="beta-densities" class="section level1">
 <h1>Beta densities</h1>
-<p>To get a global impression of the beta-value distribution and to see if there are outlying samples the per sample average beta-value distribution can be plotted. For exmaple, using <code>densityPlot</code> from <a href="http://bioconductor.org/packages/minfi"><strong>minfi</strong></a>.</p>
+<p>To get a global impression of the beta-value distribution and to see if there are outlying samples the per sample average beta-value distribution can be plotted. For example, using <code>densityPlot</code> from <a href="http://bioconductor.org/packages/minfi"><strong>minfi</strong></a>.</p>
 <pre class="r"><code>library(minfi)
 densityPlot(RGset[, 1:10], main = &quot;Beta&quot;, xlab = &quot;Beta&quot;)</code></pre>
 <pre><code>## Loading required package: IlluminaHumanMethylation450kmanifest</code></pre>
@@ -339,8 +339,9 @@ summary(pc)</code></pre>
 ## Cumulative Proportion   0.4833  0.8264 1.0000</code></pre>
 <pre class="r"><code>plot(pc$x)</code></pre>
 <p><img src="02_Visualization_files/figure-html/irlba-1.png" width="672" /></p>
+<p>The first principale component explains almost 50% of the variation and two groups of samples appear; these are male and female samples! Often probes on the sex-chromosomes are excluded before principale component analysis (or other analyzes).</p>
 <blockquote>
-<p>NOTE: <code>getBeta</code> extracts Methylated and Unmethylated intensities and converts them to beta-values using M/(M+U), whereas, <code>type=&quot;Illumina&quot;</code> adds 100 to the denominator which prevents beta-values becoming NA if both M and U are exactly zero.</p>
+<p>NOTE: <code>getBeta</code> extracts Methylated and Unmethylated intensities and converts them to beta-values by default using M/(M+U), whereas, <code>type=&quot;Illumina&quot;</code> adds 100 to the denominator which prevents beta-values becoming NA if both M and U are exactly zero.</p>
 </blockquote>
 </div>
 <div id="heatmap" class="section level1">
@@ -355,14 +356,14 @@ pheatmap(cxy, cluster_rows=FALSE)</code></pre>
 </div>
 <div id="dendrogram" class="section level1">
 <h1>Dendrogram</h1>
-<p>Another approach often used in expression data for exploratory data analysis is clustering of the data and visualizing using a dendrogram. However, this might be more appropriated for data sets with moderated sample sizes. Although, the <a href="https://cran.r-project.org/package=fastclust"><strong>fastclust</strong></a>-package is efficient in generating the hierarchical clustering.</p>
+<p>Another approach, often used in expression data, for exploratory data analysis is clustering of the data and visualizing using a dendrogram. Although, this might be more appropriated for data sets with moderated sample sizes, the <a href="https://cran.r-project.org/package=fastclust"><strong>fastclust</strong></a>-package is efficient in generating the hierarchical clustering.</p>
 <pre class="r"><code>library(fastcluster)
 beta &lt;- getBeta(RGset[,1:16], type=&quot;Illumina&quot;)
 d &lt;- dist(t(beta),method=&quot;euclidean&quot;)
 fit &lt;- hclust(d, method=&quot;average&quot;)
 plot(fit)</code></pre>
 <p><img src="02_Visualization_files/figure-html/clustering-1.png" width="672" /></p>
-<p>Highlighting a suspected outlyer can be convenient.</p>
+<p>Highlighting a suspected outlier can be convenient.</p>
 <pre class="r"><code>Interesting &lt;- sample(colnames(beta),1)
 colorLeafs &lt;- function(x) {
   if (is.leaf(x) &amp;&amp; attr(x, &quot;label&quot;) %in% Interesting) {
@@ -374,7 +375,6 @@ dd &lt;- dendrapply(as.dendrogram(fit), colorLeafs)
 op &lt;- par(mar=c(10,4,4,2))
 plot(dd)</code></pre>
 <p><img src="02_Visualization_files/figure-html/clusteringhighlight-1.png" width="672" /></p>
-<pre class="r"><code>par(op)</code></pre>
 <div id="refs" class="references">
 
 </div>

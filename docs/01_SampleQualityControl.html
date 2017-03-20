@@ -4,7 +4,7 @@
 
 <head>
 
-<meta charset="utf-8" />
+<meta charset="utf-8">
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <meta name="generator" content="pandoc" />
 
@@ -313,8 +313,7 @@ div.tocify {
 <h1>Running MethylAid</h1>
 <p>Sample quality control is performed using the <a href="http://bioconductor.org/packages/MethylAid"><strong>MethylAid</strong></a> <span class="citation">(Iterson et al. 2014)</span>. <a href="http://bioconductor.org/packages/MethylAid"><strong>MethylAid</strong></a> is specially designed for quality control of large sets of DNA methylation data e.g., epigenomewide association studies (EWAS). Extracting intensities from IDAT files can be done in batches and/or in parallel to reduce memory load and/or overcome long run-times. It requires two function calls in going from IDAT files to launch the interactive web application; <code>summarize</code> and <code>visualize</code>. For more information see <span class="citation">(Iterson et al. 2014)</span>.</p>
 <p>First, prepare the targets file, similar to the one used by <a href="http://bioconductor.org/packages/minfi"><strong>minfi</strong></a>.</p>
-<pre class="r"><code>path450k &lt;- &quot;/virdir/Backup/RP3_data/IlluminaHumanMethylation450k/450k/LLS&quot;
-targets &lt;- read.table(file.path(path450k, &quot;sample_sheet.txt&quot;), sep=&quot;,&quot;, header=TRUE, as.is=TRUE)
+<pre class="r"><code>targets &lt;- read.table(file.path(path450k, &quot;sample_sheet.txt&quot;), sep=&quot;,&quot;, header=TRUE, as.is=TRUE)
 head(targets)
 targets$Basename &lt;- with(targets,
                               file.path(path450k, Sentrix_Barcode,
@@ -326,7 +325,7 @@ targets$Basename &lt;- with(targets,
 ## 3 LLS-1007 BIOS8D85A896        LLS 8655677092_R01C02      8783644
 ## 4 LLS-1010 BIOSDC61D45E        LLS 8667045031_R03C01      8783644
 ## 5 LLS-1016 BIOS9657C41E        LLS 8454787147_R05C02      8783644</code></pre>
-<p>Next, summarize and visualize the data, see the <a href="https://www.bioconductor.org/packages/release/bioc/vignettes/MethylAid/inst/doc/MethylAid.pdf">MethylAid vignette</a> for more details.</p>
+<p>Next, summarize and visualize the data (see <a href="https://www.bioconductor.org/packages/release/bioc/vignettes/MethylAid/inst/doc/MethylAid.pdf">MethylAid vignette</a> for more details).</p>
 <pre class="r"><code>library(MethylAid)
 library(BiocParallel)
 BPPARAM &lt;- MulticoreParam(10)
@@ -349,7 +348,7 @@ targets &lt;- targets[!(targets$run_id %in% outliers$run_id), ]</code></pre>
 <pre class="r"><code>library(DNAmArray)
 library(BiocParallel)
 register(MulticoreParam(6))
-targets &lt;- targets[1:24,]
+targets &lt;- targets[1:128,]
 RGset &lt;- read.metharray.exp.par(targets, verbose=TRUE, extended=TRUE)</code></pre>
 <pre><code>## Reading multiple idat-files in parallel</code></pre>
 <pre><code>## </code></pre>

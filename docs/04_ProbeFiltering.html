@@ -4,7 +4,7 @@
 
 <head>
 
-<meta charset="utf-8" />
+<meta charset="utf-8">
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <meta name="generator" content="pandoc" />
 
@@ -309,7 +309,11 @@ div.tocify {
 </div>
 
 
-<p><strong>TODO add more background Maarten</strong> <strong>beware 450K specific</strong></p>
+<blockquote>
+<p><strong>TODO extent descriptions</strong> <strong>beware 450K specific</strong></p>
+</blockquote>
+<div id="probe-filtering" class="section level1">
+<h1>Probe filtering</h1>
 <pre class="r"><code>RGset &lt;- probeFiltering(RGset)</code></pre>
 <pre><code>## Calculate and filter on number of beads...</code></pre>
 <pre><code>## On average 0.11% of the probes (622399) have number of beads below 3</code></pre>
@@ -318,6 +322,7 @@ div.tocify {
 <pre><code>## On average 0.012% of the Type I probes (92578), measured in Green channel, have intensity below 1</code></pre>
 <pre><code>## On average 0.012% of the Type I probes (178374), measured in Red channel, have intensity below 1</code></pre>
 <pre><code>## Set filtered probes in Red and/or Green channels to NA...</code></pre>
+</div>
 <div id="number-of-beads" class="section level1">
 <h1>Number of beads</h1>
 <p>Occasionally some probes as measured with a too small number of beads leading to unreliable probe intensities. By default probes intensities are set to NA if the probe intensity is based on less then 3 beads.</p>

@@ -4,7 +4,7 @@
 
 <head>
 
-<meta charset="utf-8" />
+<meta charset="utf-8">
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <meta name="generator" content="pandoc" />
 
@@ -309,11 +309,18 @@ div.tocify {
 </div>
 
 
-<p>We prefer normalization of 450K data using the Functional Normalization approach of Fortin et al.<span class="citation">(Fortin et al. 2014)</span>. Functional Normalization includes NOOB background and dye bias correction<span class="citation">(Triche et al. 2013)</span>.</p>
-<p>In our experience the default number of principal compontents (2) is often to small. We use a screeplot to determine the optimal number of PC to use in the Function Normalization.</p>
+<div id="functional-normalization" class="section level1">
+<h1>Functional normalization</h1>
+<p>We prefer normalization of 450K data using the Functional Normalization approach of <span class="citation">(Fortin et al. 2014)</span>. Functional Normalization uses control probes for normalization. Furthemore, Functional Normalization includes a NOOB background and dye bias correction step<span class="citation">(Triche et al. 2013)</span>.</p>
+<div id="select-number-of-pcs" class="section level2">
+<h2>Select number of PC’s</h2>
+<p>In our experience the default number of principal compontents (2) is often too small. We use a screeplot to determine the optimal number of principal compontents:</p>
 <pre class="r"><code>pc &lt;- screeplot(RGset)</code></pre>
 <p><img src="03_Normalization_files/figure-html/screeplot-1.png" width="672" /></p>
-<p>Furthermore, by default Functional Normalization returns normalized copy number data making the return <code>GenomicRatioSet</code> twice the size necessary of only beta-values or M-values are required. Therefore, we slightly modified minfi’s implementation of Functional Normalization to allow for not returning normalized copy number data.</p>
+</div>
+<div id="functional-normalization-without-copy-number-data" class="section level2">
+<h2>Functional normalization without copy number data</h2>
+<p>By default Functional Normalization returns normalized copy number data making the returned <code>GenomicRatioSet</code> twice the size necessary when only beta-values or M-values are required. Therefore, we added an argument to minfi’s implementation of Functional Normalization to allow for not returning normalized copy number data.</p>
 <pre class="r"><code>GRset &lt;- preprocessFunnorm.DNAmArray(RGset, nPCs=3, keepCN=FALSE)</code></pre>
 <pre><code>## [preprocessFunnorm] Modified version not returning CN! 
 ## [preprocessFunnorm] Background and dye bias correction with noob</code></pre>
@@ -322,8 +329,10 @@ div.tocify {
 ## [preprocessFunnorm] Mapping to genome
 ## [preprocessFunnorm] Quantile extraction
 ## [preprocessFunnorm] Normalization</code></pre>
-<p>By default <code>preprocessFunnorm</code> return beta-values calculated with an offset of 100, like GenomeStudio. If required these can be transformed to M-values using minfi’s <code>getM</code> which does a logit2-transformation on the beta-values.</p>
-<p>We recommend to perform probe-filtering which sets unreliable measured probes to NA. Unfortunately, Functional Normalization does not allow NA’s in the <code>RGChannelSet</code>. Therefore, we combine after noramlization and probe filtering the filtered-<code>RGChannelSet</code> and the normalized-<code>GenomicRatioSet</code> using the function <code>reduce</code>.</p>
+<p>By default <code>preprocessFunnorm</code> return beta-values calculated with an offset of 100, like GenomeStudio (<code>getBeta</code> with type=‘Illumina’). If required these can be transformed to M-values using minfi’s <code>getM</code> which does a logit2-transformation on the beta-values.</p>
+<p>We recommend to perform probe-filtering by setting unreliable measured probes to NA. Unfortunately, Functional Normalization does not allow NA’s in the <code>RGChannelSet</code>. Therefore, we suggest to run normalization and probe-filtering separately and combine the results afterwards using <code>reduce</code>. See the next section on <code>Probe Filtering</code> for more details.</p>
+</div>
+</div>
 <div id="references" class="section level1 unnumbered">
 <h1>References</h1>
 <div id="refs" class="references">

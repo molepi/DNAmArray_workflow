@@ -20,22 +20,26 @@ within the BIOS consortium encompassing multiple omics data on 4000
 individuals from 6 Dutch biobanks operating within the frame of
 [BBMRI-NL](https://www.bbmri.nl/on_offer/bios/)
 
-The **DNAmArray**-package contains a series of convenient
-functions for the quality control, normalization and analysis of
-methylation array data. The workflow has been thoroughly tested on
-450k array data but will similarly be applicable to the newer 850k
-EPIC array pending updates of Bioconductor packages from other groups.
+The [**DNAmArray**](https://github.com/molepi/DNAmArray)-package
+contains a series of convenient functions for the quality control,
+normalization and analysis of methylation array data. The workflow has
+been thoroughly tested on 450k array data but will similarly be
+applicable to the newer 850k EPIC array pending updates of
+[BioConductor](https://www.bioconductor.org) packages from other
+groups.
 
 The workflow and package extensively uses functionality of other
-BioConductor packages, e.g., for transforming idats to so-called
-`RGset` we use [**minfi**](http:/bioconductor.org/packages/minfi) but
-**DNAmArray** provides functionality to do this in
-parallel. Furthermore, we have developed two other packages
-[**MethylAid**](http:/bioconductor.org/packages/MethylAid) [@Iterson2014] and
-[**bacon**](http:/bioconductor.org/packages/bacon) [@Iterson2017], reps.,
-performing interactive sample quality control and bias- and
-inflation-correction in epigenomewide association studies, each have
-been deposited at BioConductor (of note:
+[BioConductor](https://www.bioconductor.org) packages, e.g., for
+transforming idats to so-called `RGset` we use
+[**minfi**](http:/bioconductor.org/packages/minfi) but
+[**DNAmArray**](https://github.com/molepi/DNAmArray) provides
+functionality to do this in parallel. Furthermore, we have developed
+two other packages
+[**MethylAid**](http:/bioconductor.org/packages/MethylAid)
+[@Iterson2014] and [**bacon**](http:/bioconductor.org/packages/bacon)
+[@Iterson2017], reps., performing interactive sample quality control
+and bias- and inflation-correction in epigenomewide association
+studies, each have been deposited at BioConductor (of note:
 [**bacon**](http:/bioconductor.org/packages/bacon) also applies to
 transcriptome- and any other ome-wide association studies) .
 
@@ -64,7 +68,8 @@ automatically, otherwise, we refer to
 [cran](https://cran.r-project.org/doc/manuals/r-release/R-admin.html#Installing-packages)
 documentation for the installation of these packages.
 
-> THIS WILL BE REPLACE BY ANNOTATION FROM [@Zhou2016]
+> THIS WILL BE REPLACE BY ANNOTATION FROM [@Zhou2016]:
+
 **The installed package takes around ~7Mb of memory a large bit of it
 comes from an `Rdata`-object containing the information on the
 cross-hybridizing probes[@Chen2013].**
@@ -72,7 +77,8 @@ cross-hybridizing probes[@Chen2013].**
 
 ## Install using the **devtools**-package ##
 
-First install the package [**devtools**](https://github.com/hadley/devtools). Next use:
+First install the package
+[**devtools**](https://github.com/hadley/devtools). Next use:
 
 ```{r devtools, eval=FALSE}
 library(devtools)

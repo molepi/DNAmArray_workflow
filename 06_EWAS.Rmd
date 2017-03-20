@@ -4,29 +4,30 @@
 
 # Simple EWAS using **limma** #
 
-M-values valid to run EWAS using linear regression approach. 
+M-values valid to run EWAS using linear regression approach.
 
 Here skipping the empirical Bayes step, because of the large sample
 size this should give very similar results?
 
-```{r design1}
-covariates <- c("DNA_BloodSampling_Age", "Sex", "Sentrix_Position", "Smoking", "Mono_Perc", "Baso_Perc", "Eos_Perc", "Neut_Perc") 
-design <- data.frame(Int=1, colData(mvalues)[, covariates])
-complete <- apply(design, 1, function(x) sum(is.na(x)) == 0 )
-data <- assays(mvalues)$data
-design <- design[complete,]
-data <- data[,complete]
-dim(data)
+```{r formula}
+metadata(mvalues)$formula <- ~DNA_BloodSampling_Age + Sex + Sentrix_Position + Smoking + Mono_Perc + Baso_Perc + Eos_Perc + Neut_Perc
 ```
 
-```{r design2}
-design$Sentrix_Position <- as.integer(as.factor(design$Sentrix_Position))
+
+
+```{r complete}
+covariates <- get_all_vars(metadata(mvalues)$formula, data=colData(mvalues))
+nas <- apply(covariates, 1, anyNA)
+mvalues <- mvalues[, !nas]
 ```
 
 ```{r ewas}
 library(limma)
-fit <- lmFit(data, design)     
-tstat <- fit$coef/fit$stdev.unscaled/fit$sigma        
+design <- model.matrix(metadata(mvalues)$formula, data=colData(mvalues))
+data <- assays(mvalues)$data
+fit <- lmFit(data, design)
+tstat <- fit$coef/fit$stdev.unscaled/fit$sigma
+
 pval <- 2*pnorm(-abs(tstat[,2]))
 padj <- p.adjust(sort(pval, decreasing=FALSE), method="bonf")
 head(padj[padj < 0.05])
@@ -40,7 +41,7 @@ recent approach available from cran
 estimate the unobserved covariates. There are other methods as well,
 ...
 
-```{r cate} 
+```{r cate}
 library(cate)
 fa <- cate.fit(design[,2,drop=FALSE], design[,-2], t(data), r = 3, calibrate=FALSE, adj.method="naive")
 ```
@@ -67,4 +68,3 @@ head(pval(bc))
 ```
 
 # References #
-

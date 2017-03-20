@@ -4,7 +4,7 @@
 
 <head>
 
-<meta charset="utf-8" />
+<meta charset="utf-8">
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <meta name="generator" content="pandoc" />
 
@@ -316,8 +316,8 @@ div.tocify {
 <div id="introduction" class="section level1">
 <h1>Introduction</h1>
 <p>Here we provide a complete workflow for the preprocessing and analysis of DNA methylation array data. The workflow combines best practices in the field with in-house developed methodology and is geared towards large-scale studies, including Epigenomewide Association Studies (EWAS). A specific aim of the work flow is to support such studies within the BIOS consortium encompassing multiple omics data on 4000 individuals from 6 Dutch biobanks operating within the frame of <a href="https://www.bbmri.nl/on_offer/bios/">BBMRI-NL</a></p>
-<p>The <strong>DNAmArray</strong>-package contains a series of convenient functions for the quality control, normalization and analysis of methylation array data. The workflow has been thoroughly tested on 450k array data but will similarly be applicable to the newer 850k EPIC array pending updates of Bioconductor packages from other groups.</p>
-<p>The workflow and package extensively uses functionality of other BioConductor packages, e.g., for transforming idats to so-called <code>RGset</code> we use <a href="http:/bioconductor.org/packages/minfi"><strong>minfi</strong></a> but <strong>DNAmArray</strong> provides functionality to do this in parallel. Furthermore, we have developed two other packages <a href="http:/bioconductor.org/packages/MethylAid"><strong>MethylAid</strong></a> <span class="citation">(Iterson et al. 2014)</span> and <a href="http:/bioconductor.org/packages/bacon"><strong>bacon</strong></a> <span class="citation">(Iterson, Zwet, and Heijmans 2017)</span>, reps., performing interactive sample quality control and bias- and inflation-correction in epigenomewide association studies, each have been deposited at BioConductor (of note: <a href="http:/bioconductor.org/packages/bacon"><strong>bacon</strong></a> also applies to transcriptome- and any other ome-wide association studies) .</p>
+<p>The <a href="https://github.com/molepi/DNAmArray"><strong>DNAmArray</strong></a>-package contains a series of convenient functions for the quality control, normalization and analysis of methylation array data. The workflow has been thoroughly tested on 450k array data but will similarly be applicable to the newer 850k EPIC array pending updates of <a href="https://www.bioconductor.org">BioConductor</a> packages from other groups.</p>
+<p>The workflow and package extensively uses functionality of other <a href="https://www.bioconductor.org">BioConductor</a> packages, e.g., for transforming idats to so-called <code>RGset</code> we use <a href="http:/bioconductor.org/packages/minfi"><strong>minfi</strong></a> but <a href="https://github.com/molepi/DNAmArray"><strong>DNAmArray</strong></a> provides functionality to do this in parallel. Furthermore, we have developed two other packages <a href="http:/bioconductor.org/packages/MethylAid"><strong>MethylAid</strong></a> <span class="citation">(Iterson et al. 2014)</span> and <a href="http:/bioconductor.org/packages/bacon"><strong>bacon</strong></a> <span class="citation">(Iterson, Zwet, and Heijmans 2017)</span>, reps., performing interactive sample quality control and bias- and inflation-correction in epigenomewide association studies, each have been deposited at BioConductor (of note: <a href="http:/bioconductor.org/packages/bacon"><strong>bacon</strong></a> also applies to transcriptome- and any other ome-wide association studies) .</p>
 </div>
 <div id="leiden-longevity-study" class="section level1">
 <h1>Leiden Longevity Study</h1>
@@ -328,8 +328,9 @@ div.tocify {
 <p>The <a href="https://github.com/molepi/DNAmArray"><strong>DNAmArray</strong></a>-package can be installed in several ways which are described below. The package has been installed successfully for &gt;= R-3.2.0 on different linux-builds.</p>
 <p>The package depends on many other packages from <a href="https://www.bioconductor.org">BioConductor</a> or <a href="https://cran.r-project.org/">cran</a>. Usually these are installed automatically, otherwise, we refer to <a href="https://www.bioconductor.org/install/">BioConductor</a> or <a href="https://cran.r-project.org/doc/manuals/r-release/R-admin.html#Installing-packages">cran</a> documentation for the installation of these packages.</p>
 <blockquote>
-<p>THIS WILL BE REPLACE BY ANNOTATION FROM <span class="citation">(Zhou, Laird, and Shen 2016)</span> <strong>The installed package takes around ~7Mb of memory a large bit of it comes from an <code>Rdata</code>-object containing the information on the cross-hybridizing probes<span class="citation">(Chen et al. 2013)</span>.</strong></p>
+<p>THIS WILL BE REPLACE BY ANNOTATION FROM <span class="citation">(Zhou, Laird, and Shen 2016)</span>:</p>
 </blockquote>
+<p><strong>The installed package takes around ~7Mb of memory a large bit of it comes from an <code>Rdata</code>-object containing the information on the cross-hybridizing probes<span class="citation">(Chen et al. 2013)</span>.</strong></p>
 <div id="install-using-the-devtools-package" class="section level2">
 <h2>Install using the <strong>devtools</strong>-package</h2>
 <p>First install the package <a href="https://github.com/hadley/devtools"><strong>devtools</strong></a>. Next use:</p>
