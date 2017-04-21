@@ -68,13 +68,6 @@ automatically, otherwise, we refer to
 [cran](https://cran.r-project.org/doc/manuals/r-release/R-admin.html#Installing-packages)
 documentation for the installation of these packages.
 
-> THIS WILL BE REPLACE BY ANNOTATION FROM [@Zhou2016]:
-
-**The installed package takes around ~7Mb of memory a large bit of it
-comes from an `Rdata`-object containing the information on the
-cross-hybridizing probes[@Chen2013].**
-
-
 ## Install using the **devtools**-package ##
 
 First install the package

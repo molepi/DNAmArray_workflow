@@ -32,7 +32,7 @@ mvalues <- mvalues[, !nas]
 ```
 
 Remove probes on the X and Y chromosomes and probes containing a SNPs
-or does mapping to multiple locations. 
+or does mapping to multiple locations[@Zhou2016]. 
 
 ```{r, snpprobes}
 mvalues <- mvalues[!(seqnames(mvalues) %in% c("chrX", "chrY")),]

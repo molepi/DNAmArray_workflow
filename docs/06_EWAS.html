@@ -319,7 +319,7 @@ div.tocify {
 <pre class="r"><code>covariates &lt;- get_all_vars(metadata(mvalues)$formula, data=colData(mvalues))
 nas &lt;- apply(covariates, 1, anyNA)
 mvalues &lt;- mvalues[, !nas]</code></pre>
-<p>Remove probes on the X and Y chromosomes and probes containing a SNPs or does mapping to multiple locations.</p>
+<p>Remove probes on the X and Y chromosomes and probes containing a SNPs or does mapping to multiple locations<span class="citation">(Zhou, Laird, and Shen 2016)</span>.</p>
 <pre class="r"><code>mvalues &lt;- mvalues[!(seqnames(mvalues) %in% c(&quot;chrX&quot;, &quot;chrY&quot;)),]
 data(hm450.manifest.pop.GoNL) ##From DNAmArray
 hm450.manifest.pop.GoNL</code></pre>
@@ -638,6 +638,9 @@ head(pvals[order(pvals[,1]),])</code></pre>
 <div id="refs" class="references">
 <div id="ref-Iterson2017">
 <p>Iterson, M. van, E. W. van Zwet, and B. T. Heijmans. 2017. “Controlling bias and inflation in epigenome- and transcriptome-wide association studies using the empirical null distribution.” <em>Genome Biol.</em> 18 (1): 19.</p>
+</div>
+<div id="ref-Zhou2016">
+<p>Zhou, W., P. W. Laird, and H. Shen. 2016. “Comprehensive characterization, annotation and innovative use of Infinium DNA methylation BeadChip probes.” <em>Nucleic Acids Res.</em>, Oct.</p>
 </div>
 </div>
 </div>
