@@ -23,8 +23,8 @@
 <link href="site_libs/tocify-1.9.1/jquery.tocify.css" rel="stylesheet" />
 <script src="site_libs/tocify-1.9.1/jquery.tocify.js"></script>
 <script src="site_libs/navigation-1.1/tabsets.js"></script>
-<link href="site_libs/highlightjs-1.1/textmate.css" rel="stylesheet" />
-<script src="site_libs/highlightjs-1.1/highlight.js"></script>
+<link href="site_libs/highlightjs-9.12.0/textmate.css" rel="stylesheet" />
+<script src="site_libs/highlightjs-9.12.0/highlight.js"></script>
 
 <style type="text/css">code{white-space: pre;}</style>
 <style type="text/css">
@@ -33,10 +33,12 @@
   }
 </style>
 <script type="text/javascript">
-if (window.hljs && document.readyState && document.readyState === "complete") {
-   window.setTimeout(function() {
-      hljs.initHighlighting();
-   }, 0);
+if (window.hljs) {
+  hljs.configure({languages: []});
+  hljs.initHighlightingOnLoad();
+  if (document.readyState && document.readyState === "complete") {
+    window.setTimeout(function() { hljs.initHighlighting(); }, 0);
+  }
 }
 </script>
 
@@ -70,9 +72,7 @@ h6 {
 </style>
 
 
-</head>
 
-<body>
 
 <style type = "text/css">
 .main-container {
@@ -91,8 +91,14 @@ img {
 .tabbed-pane {
   padding-top: 12px;
 }
+.html-widget {
+  margin-bottom: 20px;
+}
 button.code-folding-btn:focus {
   outline: none;
+}
+summary {
+  display: list-item;
 }
 </style>
 
@@ -108,7 +114,6 @@ body {
   padding-top: 57px;
   margin-top: -57px;
 }
-
 .section h2 {
   padding-top: 57px;
   margin-top: -57px;
@@ -128,6 +133,43 @@ body {
 .section h6 {
   padding-top: 57px;
   margin-top: -57px;
+}
+.dropdown-submenu {
+  position: relative;
+}
+.dropdown-submenu>.dropdown-menu {
+  top: 0;
+  left: 100%;
+  margin-top: -6px;
+  margin-left: -1px;
+  border-radius: 0 6px 6px 6px;
+}
+.dropdown-submenu:hover>.dropdown-menu {
+  display: block;
+}
+.dropdown-submenu>a:after {
+  display: block;
+  content: " ";
+  float: right;
+  width: 0;
+  height: 0;
+  border-color: transparent;
+  border-style: solid;
+  border-width: 5px 0 5px 5px;
+  border-left-color: #cccccc;
+  margin-top: 5px;
+  margin-right: -10px;
+}
+.dropdown-submenu:hover>a:after {
+  border-left-color: #ffffff;
+}
+.dropdown-submenu.pull-left {
+  float: none;
+}
+.dropdown-submenu.pull-left>.dropdown-menu {
+  left: -100%;
+  margin-left: 10px;
+  border-radius: 6px 0 6px 6px;
 }
 </style>
 
@@ -149,18 +191,75 @@ $(document).ready(function () {
 });
 </script>
 
-
-<div class="container-fluid main-container">
-
 <!-- tabsets -->
+
+<style type="text/css">
+.tabset-dropdown > .nav-tabs {
+  display: inline-table;
+  max-height: 500px;
+  min-height: 44px;
+  overflow-y: auto;
+  background: white;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs > li.active:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li.active:before {
+  content: "&#xe258;";
+  border: none;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs > li.active {
+  display: block;
+}
+
+.tabset-dropdown > .nav-tabs > li > a,
+.tabset-dropdown > .nav-tabs > li > a:focus,
+.tabset-dropdown > .nav-tabs > li > a:hover {
+  border: none;
+  display: inline-block;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li {
+  display: block;
+  float: none;
+}
+
+.tabset-dropdown > .nav-tabs > li {
+  display: none;
+}
+</style>
+
 <script>
 $(document).ready(function () {
   window.buildTabsets("TOC");
 });
+
+$(document).ready(function () {
+  $('.tabset-dropdown > .nav-tabs > li').click(function () {
+    $(this).parent().toggleClass('nav-tabs-open')
+  });
+});
 </script>
 
 <!-- code folding -->
-
 
 
 
@@ -249,6 +348,16 @@ div.tocify {
 
 </style>
 
+
+
+</head>
+
+<body>
+
+
+<div class="container-fluid main-container">
+
+
 <!-- setup 3col/9col grid for toc_float and main content  -->
 <div class="row-fluid">
 <div class="col-xs-12 col-sm-4 col-md-3">
@@ -309,69 +418,85 @@ div.tocify {
 </div>
 
 
-<div id="running-methylaid" class="section level1">
-<h1>Running MethylAid</h1>
-<p>Sample quality control is performed using the <a href="http://bioconductor.org/packages/MethylAid"><strong>MethylAid</strong></a> <span class="citation">(Iterson et al. 2014)</span>. <a href="http://bioconductor.org/packages/MethylAid"><strong>MethylAid</strong></a> is specially designed for quality control of large sets of DNA methylation data e.g., epigenomewide association studies (EWAS). Extracting intensities from IDAT files can be done in batches and/or in parallel to reduce memory load and/or overcome long run-times. It requires two function calls in going from IDAT files to launch the interactive web application; <code>summarize</code> and <code>visualize</code>. For more information see <span class="citation">(Iterson et al. 2014)</span>.</p>
-<p>First, prepare the targets file, similar to the one used by <a href="http://bioconductor.org/packages/minfi"><strong>minfi</strong></a>.</p>
-<pre class="r"><code>targets &lt;- read.table(file.path(path450k, &quot;sample_sheet.txt&quot;), sep=&quot;,&quot;, header=TRUE, as.is=TRUE)
-head(targets)
-targets$Basename &lt;- with(targets,
-                              file.path(path450k, Sentrix_Barcode,
-                                        paste(Sentrix_Barcode, Sentrix_Position, sep=&quot;_&quot;)))</code></pre>
-<pre class="r"><code>targets[1:5, 1:5]</code></pre>
-<pre><code>##        ids         uuid biobank_id            run_id C2_Lotnumber
-## 1 LLS-1002 BIOS648CBD1C        LLS 9374343010_R04C02      9430495
-## 2 LLS-1006 BIOSD52795D6        LLS 8655685197_R04C02      8783644
-## 3 LLS-1007 BIOS8D85A896        LLS 8655677092_R01C02      8783644
-## 4 LLS-1010 BIOSDC61D45E        LLS 8667045031_R03C01      8783644
-## 5 LLS-1016 BIOS9657C41E        LLS 8454787147_R05C02      8783644</code></pre>
-<p>Next, summarize and visualize the data (see <a href="https://www.bioconductor.org/packages/release/bioc/vignettes/MethylAid/inst/doc/MethylAid.pdf">MethylAid vignette</a> for more details).</p>
+<hr />
+<div id="downloading-geo-example-data" class="section level1">
+<h1>Downloading GEO example data</h1>
+<p>Using <a href="http://bioconductor.org/packages/release/bioc/html/GEOquery.html"><strong>GEOquery</strong></a> <span class="citation">(Davis and Meltzer 2007)</span>, you can download the <a href="https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE48472">example data</a> <span class="citation">(Slieker et al. 2013)</span>. This package contains functions that bridge the gap between between <a href="https://www.bioconductor.org">BioConductor</a> tools and <a href="https://www.ncbi.nlm.nih.gov/geo/">GEO</a>, which is a public repository of microarray data.</p>
+<p>Initially, we use <code>getGEOSuppFiles()</code> to download the supplementary data to the current working directory. These consist of an archive containing the raw IDATs alongside some documentation. We extract these and store them in our chosen directory, ready for decompression.</p>
+<pre class="r"><code>library(GEOquery)
+getGEOSuppFiles(&quot;GSE48472&quot;)
+untar(tarfile=&quot;./GSE48472/GSE48472_RAW.tar&quot;, exdir=&quot;./IDATs&quot;)</code></pre>
+<p>After creating a list of files, we utilise the <code>gunzip()</code> function to efficiently unpack the data.</p>
+<pre class="r"><code>setwd(&quot;./IDATs&quot;)
+idat_files &lt;- list.files()
+for(i in 1:length(idat_files)){
+  gunzip(filename=idat_files[i], destname=gsub(&quot;[.]gz$&quot;, &quot;&quot;, idat_files[i]))
+}</code></pre>
+<p>We then use <code>getGEO()</code> to import SOFT format microarray data into R as a large GSE-class list. This contains a multitude of information, but we extract the phenotypic and meta-data of interest. <em>Please note that any reported parsing errors for the SPOT_ID columns do not interfere with the downstream process</em></p>
+<pre class="r"><code>GSE48472 &lt;- getGEO(GEO=&quot;GSE48472&quot;)
+targets &lt;- pData(phenoData(GSE48472[[1]]))</code></pre>
+<hr />
+</div>
+<div id="using-methylaid" class="section level1">
+<h1>Using MethylAid</h1>
+<p>We now have the data we need to commence quality control, but some reformatting is needed. The <a href="http://bioconductor.org/packages/MethylAid"><strong>MethylAid</strong></a> <span class="citation">(Iterson et al. 2014)</span> package that we developed requires the targets data frame to store IDAT file root names in a <code>Basename</code> column. Sometimes, data comes with a sample sheet to faciliate this, but in this case the information needs to be extracted from the supplementary file column instead.</p>
+<pre class="r"><code>targets$Basename &lt;- substring(targets$supplementary_file,68,95)
+head(targets[c(1,2,34)])</code></pre>
+<pre><code>##                 title geo_accession                     Basename
+## GSM1179497  Blood_IT9    GSM1179497 GSM1179497_5729917059_R01C01
+## GSM1179498 Blood_IT13    GSM1179498 GSM1179498_5729917059_R01C02
+## GSM1179499 Blood_IT10    GSM1179499 GSM1179499_5729917033_R01C01
+## GSM1179500 Blood_IT15    GSM1179500 GSM1179500_5729917032_R01C01
+## GSM1179501 Blood_IT16    GSM1179501 GSM1179501_5729917015_R01C01
+## GSM1179502 Blood_IT17    GSM1179502 GSM1179502_5729917015_R01C02</code></pre>
+<p>The following sample quality control steps require the <a href="http://bioconductor.org/packages/MethylAid"><strong>MethylAid</strong></a> and <a href="https://bioconductor.org/packages/release/bioc/html/BiocParallel.html"><strong>BiocParallel</strong></a> packages. Using parallel processing and/or batches will reduce both memory load and run-times when extracting intensities from IDAT files. Please see the <a href="http://bioconductor.org/packages/release/bioc/vignettes/MethylAid/inst/doc/MethylAid.pdf">MethylAid vignette</a> for more details.</p>
 <pre class="r"><code>library(MethylAid)
 library(BiocParallel)
 BPPARAM &lt;- MulticoreParam(10)
-sData &lt;- summarize(targets, batchSize = 50, BPPARAM = BPPARAM)</code></pre>
-<pre class="r"><code>load(file.path(path450k, &quot;MethylAid.RData&quot;))
-outliers &lt;- visualize(MethylAid)
-write.table(outliers,
-            file=file.path(path450k, &quot;outliers.txt&quot;),
-            quote=FALSE, row.names=FALSE)</code></pre>
-<p>Check the interactive visualization of the <a href="http://bios-vm.bbmrirp3-lumc.surf-hosted.nl:8008/BBMRIomics/DNAm/LLS">LLS 450k data</a> generated by <a href="http://bioconductor.org/packages/MethylAid"><strong>MethylAid</strong></a>.</p>
-<p>It turns out that 5 samples do not pass quality control.</p>
+sData &lt;- summarize(targets, batchSize=50, BPPARAM=BPPARAM)</code></pre>
+<p>After this <code>summarize()</code>, the Shiny web application can be launched to <code>visualize()</code> the data and identify outliers. In this instance, there are no apparent outliers, but if found they can be removed from the dataset.</p>
+<pre class="r"><code>outliers &lt;- visualize(sData)
+targets &lt;- targets[!(rownames(targets) %in% rownames(outliers)), ]</code></pre>
+<hr />
 </div>
-<div id="constructing-an-rgset-object-in-parallel" class="section level1">
-<h1>Constructing an <code>RGset</code>-object in parallel</h1>
-<p>Reading a large number of IDAT-files can be time-consuming. The <a href="https://github.com/molepi/DNAmArray"><strong>DNAmArray</strong></a> package offers the <code>read.metharray.exp.par</code>-function for reading IDAT-files in parallel using functionallity from <a href="http://bioconductor.org/packages/BiocParallel"><strong>BiocParallel</strong></a>. The target-file is divided in a number of smaller targets files according to the number of workers (compute nodes) available. On each worknode a subset of IDAT-files are read using the regular <a href="http://bioconductor.org/packages/minfi"><strong>minfi</strong></a> function-<code>read.metharray.expr</code>. Once all idat-files are read they are combined into on <code>RGChannelSet</code>-object and returned.</p>
-<p>First, we remove those samples that did not pass quality control.</p>
-<pre class="r"><code>outliers &lt;- read.table(file.path(path450k, &quot;outliers.txt&quot;), header=TRUE)    
-targets &lt;- targets[!(targets$run_id %in% outliers$run_id), ]</code></pre>
-<p>For example, running on a virtual machine in the cloud with multiple cores:</p>
+<div id="creating-an-rgset" class="section level1">
+<h1>Creating an <code>RGset</code></h1>
+<p>For the rest of the pipeline, our data will need to be available as an <code>RGChannelSetExtended</code> object. Reading in large numbers of IDAT files is memory-intensive and time-consuming. Therefore, our <a href="https://github.com/molepi/DNAmArray"><strong>DNAmArray</strong></a> package offers the <code>read.metharray.exp.par()</code> function, which distributes the IDAT files to each of the workers registered using <a href="https://bioconductor.org/packages/release/bioc/html/BiocParallel.html"><strong>BiocParallel</strong></a>. It then passes them in batches to <code>read.metharray.exp()</code> from <a href="http://bioconductor.org/packages/minfi"><strong>minfi</strong></a> <span class="citation">(Aryee et al. 2014)</span> and combines the returned <code>RGset</code> objects.</p>
 <pre class="r"><code>library(DNAmArray)
-library(BiocParallel)
 register(MulticoreParam(6))
-targets &lt;- targets[1:128,]
 RGset &lt;- read.metharray.exp.par(targets, verbose=TRUE, extended=TRUE)</code></pre>
-<pre><code>## Reading multiple idat-files in parallel</code></pre>
-<pre><code>## </code></pre>
-<pre><code>## Combining the RGsets to one big RGset</code></pre>
+<p>Reading data in parallel is subject to errors and debugging is often difficult. Recently, <a href="https://bioconductor.org/packages/release/bioc/html/BiocParallel.html"><strong>BiocParallel</strong></a> has been extended with a comprehensive set of functions for debugging on various parallel architectures. If problems arise, we recommend using <code>BatchJobsParam()</code> with the <code>log=TRUE</code> option in order to facilitate debugging.</p>
+<p>Our data is now an <code>RGset</code> object that can used for further visualisations.</p>
 <pre class="r"><code>RGset</code></pre>
-<pre><code>## RGChannelSetExtended (storageMode: lockedEnvironment)
-## assayData: 622399 features, 128 samples 
-##   element names: Green, GreenSD, NBeads, Red, RedSD 
-## An object of class &#39;AnnotatedDataFrame&#39;
-##   sampleNames: 9374343010_R04C02 8655685185_R01C02 ...
-##     8655685062_R01C01 (128 total)
-##   varLabels: ids uuid ... filenames (27 total)
-##   varMetadata: labelDescription
+<pre><code>## class: RGChannelSetExtended 
+## dim: 622399 56 
+## metadata(0):
+## assays(5): Green Red GreenSD RedSD NBeads
+## rownames(622399): 10600313 10600322 ... 74810490 74810492
+## rowData names(0):
+## colnames(56): GSM1179497_5729917059_R01C01
+##   GSM1179498_5729917059_R01C02 ... GSM1179551_7310440085_R01C02
+##   GSM1179552_7310440053_R03C02
+## colData names(35): title geo_accession ... Basename filenames
 ## Annotation
 ##   array: IlluminaHumanMethylation450k
 ##   annotation: ilmn12.hg19</code></pre>
-<p>Reading data in parallel can go wrong and often debugging is difficult. Recently, <a href="http://bioconductor.org/packages/BiocParallel"><strong>BiocParallel</strong></a> has been extended with a comprehensive set of functions for debugging on various parallel architectures. We recommend running e.g. <code>BatchJobsParam</code> with option <code>log=TRUE</code>.</p>
+<hr />
 </div>
 <div id="references" class="section level1 unnumbered">
 <h1>References</h1>
 <div id="refs" class="references">
+<div id="ref-Aryee2014">
+<p>Aryee, M. J., A. E. Jaffe, H. Corrada-Bravo, C. Ladd-Acosta, A. P. Feinberg, K. D. Hansen, and R. A. Irizarry. 2014. “Minfi: a flexible and comprehensive Bioconductor package for the analysis of Infinium DNA methylation microarrays.” <em>Bioinformatics</em>.</p>
+</div>
+<div id="ref-Davis2007">
+<p>Davis, S., and P. Meltzer. 2007. “GEOquery: a bridge etween the Gene Expression Omnibus (GEO) and BioConductor.” <em>Bioinformatics</em> 14: 1846–7.</p>
+</div>
 <div id="ref-Iterson2014">
 <p>Iterson, M. van, E. W. Tobi, R. C. Slieker, W. den Hollander, R. Luijk, P. E. Slagboom, and B. T. Heijmans. 2014. “MethylAid: visual and interactive quality control of large Illumina 450k datasets.” <em>Bioinformatics</em> 30 (23): 3435–7.</p>
+</div>
+<div id="ref-Slieker2013">
+<p>Slieker, R. C., S. D. Bos, J. J. Goeman, J. V. Bovee, R. P. Talens, R. van der Breggen, H. E. Suchiman, et al. 2013. “Identification and systematic annotation of tissue-specific differentially methylated regions using the Illumina 450k array.” <em>Epigenetics Chromatin</em> 6 (1): 26.</p>
 </div>
 </div>
 </div>
@@ -401,7 +526,7 @@ $(document).ready(function () {
   (function () {
     var script = document.createElement("script");
     script.type = "text/javascript";
-    script.src  = "https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
     document.getElementsByTagName("head")[0].appendChild(script);
   })();
 </script>

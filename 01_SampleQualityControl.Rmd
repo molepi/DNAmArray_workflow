@@ -2,100 +2,95 @@
 ```{r, child="_setup.Rmd"}
 ```
 
-# Running MethylAid #
-	
-Sample quality control is performed using the
-[**MethylAid**](http://bioconductor.org/packages/MethylAid)
-[@Iterson2014]. [**MethylAid**](http://bioconductor.org/packages/MethylAid) is
-specially designed for quality control of large sets of DNA
-methylation data e.g., epigenomewide association studies
-(EWAS). Extracting intensities from IDAT files can be done in batches
-and/or in parallel to reduce memory load and/or overcome long
-run-times. It requires two function calls in going from IDAT files to
-launch the interactive web application; `summarize` and
-`visualize`. For more information see [@Iterson2014].
+***
 
-First, prepare the targets file, similar to the one used by 
-[**minfi**](http://bioconductor.org/packages/minfi).
+# Downloading GEO example data #
 
-```{r sqc.generatetargets, message=FALSE, results='hide'}
-targets <- read.table(file.path(path450k, "sample_sheet.txt"), sep=",", header=TRUE, as.is=TRUE)
-head(targets)
-targets$Basename <- with(targets,
-                              file.path(path450k, Sentrix_Barcode,
-                                        paste(Sentrix_Barcode, Sentrix_Position, sep="_")))
+Using [**GEOquery**](http://bioconductor.org/packages/release/bioc/html/GEOquery.html) [@Davis2007], you can download the [example data](https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE48472) [@Slieker2013]. This package contains functions that bridge the gap between between [BioConductor](https://www.bioconductor.org) tools and [GEO](https://www.ncbi.nlm.nih.gov/geo/), which is a public repository of microarray data.
+
+Initially, we use `getGEOSuppFiles()` to download the supplementary data to the current working directory. These consist of an archive containing the raw IDATs alongside some documentation. We extract these and store them in our chosen directory, ready for decompression.
+
+```{r eval=FALSE}
+library(GEOquery)
+getGEOSuppFiles("GSE48472")
+untar(tarfile="./GSE48472/GSE48472_RAW.tar", exdir="./IDATs")
 ```
 
-```{r sqc.targets}
-targets[1:5, 1:5]
+After creating a list of files, we utilise the `gunzip()` function to efficiently unpack the data.
+
+```{r eval=FALSE}
+setwd("./IDATs")
+idat_files <- list.files()
+for(i in 1:length(idat_files)){
+  gunzip(filename=idat_files[i], destname=gsub("[.]gz$", "", idat_files[i]))
+}
 ```
 
-Next, summarize and visualize the data (see
-[MethylAid vignette](https://www.bioconductor.org/packages/release/bioc/vignettes/MethylAid/inst/doc/MethylAid.pdf)
-for more details).
+We then use `getGEO()` to import SOFT format microarray data into R as a large GSE-class list. This contains a multitude of information, but we extract the phenotypic and meta-data of interest. *Please note that any reported parsing errors for the SPOT_ID columns do not interfere with the downstream process*
 
-```{r sqc.methylaid, eval=FALSE}
+```{r eval=FALSE}
+GSE48472 <- getGEO(GEO="GSE48472")
+targets <- pData(phenoData(GSE48472[[1]]))
+```
+
+***
+
+# Using MethylAid #
+
+We now have the data we need to commence quality control, but some reformatting is needed. The [**MethylAid**](http://bioconductor.org/packages/MethylAid)
+[@Iterson2014] package that we developed requires the targets data frame to store IDAT file root names in a `Basename` column. Sometimes, data comes with a sample sheet to faciliate this, but in this case the information needs to be extracted from the supplementary file column instead.
+
+```{r echo=FALSE}
+load("./data/targets.RData")
+```
+
+```{r}
+targets$Basename <- substring(targets$supplementary_file,68,95)
+head(targets[c(1,2,34)])
+```
+
+The following sample quality control steps require the [**MethylAid**](http://bioconductor.org/packages/MethylAid) and [**BiocParallel**](https://bioconductor.org/packages/release/bioc/html/BiocParallel.html) packages. Using parallel processing and/or batches will reduce both memory load and run-times when extracting intensities from IDAT files. Please see the [MethylAid vignette](http://bioconductor.org/packages/release/bioc/vignettes/MethylAid/inst/doc/MethylAid.pdf) for more details.
+
+```{r eval=FALSE}
 library(MethylAid)
 library(BiocParallel)
 BPPARAM <- MulticoreParam(10)
-sData <- summarize(targets, batchSize = 50, BPPARAM = BPPARAM)
+sData <- summarize(targets, batchSize=50, BPPARAM=BPPARAM)
 ```
 
-```{r, eval=FALSE}
-load(file.path(path450k, "MethylAid.RData"))
-outliers <- visualize(MethylAid)
-write.table(outliers,
-            file=file.path(path450k, "outliers.txt"),
-            quote=FALSE, row.names=FALSE)
+After this `summarize()`, the Shiny web application can be launched to `visualize()` the data and identify outliers. In this instance, there are no apparent outliers, but if found they can be removed from the dataset.
+
+```{r eval=FALSE}
+outliers <- visualize(sData)
+targets <- targets[!(rownames(targets) %in% rownames(outliers)), ]
 ```
 
-Check the interactive visualization of the
-[LLS 450k data](http://bios-vm.bbmrirp3-lumc.surf-hosted.nl:8008/BBMRIomics/DNAm/LLS)
-generated by [**MethylAid**](http://bioconductor.org/packages/MethylAid).
+***
 
-It turns out that 5 samples do not pass quality control.
+# Creating an `RGset` #
 
-# Constructing an `RGset`-object in parallel #
+For the rest of the pipeline, our data will need to be available as an `RGChannelSetExtended` object. Reading in large numbers of IDAT files is memory-intensive and time-consuming. Therefore, our [**DNAmArray**](https://github.com/molepi/DNAmArray) package offers the `read.metharray.exp.par()` function, which distributes the IDAT files to each of the workers registered using [**BiocParallel**](https://bioconductor.org/packages/release/bioc/html/BiocParallel.html). It then passes them in batches to `read.metharray.exp()` from [**minfi**](http://bioconductor.org/packages/minfi) [@Aryee2014] and combines the returned `RGset` objects.
 
-Reading a large number of IDAT-files can be time-consuming. The
-[**DNAmArray**](https://github.com/molepi/DNAmArray) package offers
-the `read.metharray.exp.par`-function for reading IDAT-files in parallel
-using functionallity from
-[**BiocParallel**](http://bioconductor.org/packages/BiocParallel). The
-target-file is divided in a number of smaller targets files according
-to the number of workers (compute nodes) available. On each worknode a
-subset of IDAT-files are read using the regular
-[**minfi**](http://bioconductor.org/packages/minfi)
-function-`read.metharray.expr`. Once all idat-files are read they are
-combined into on `RGChannelSet`-object and returned.
-
-First, we remove those samples that did not pass quality control.
-
-```{r ri.removeoutliers}
-outliers <- read.table(file.path(path450k, "outliers.txt"), header=TRUE)    
-targets <- targets[!(targets$run_id %in% outliers$run_id), ]
-```
-
-For example, running on a virtual machine in the cloud with multiple
-cores:
-	
-```{r ri.readidats, results='hide', messages=FALSE}
+```{r eval=FALSE}
 library(DNAmArray)
-library(BiocParallel)
 register(MulticoreParam(6))
-targets <- targets[1:128,]
 RGset <- read.metharray.exp.par(targets, verbose=TRUE, extended=TRUE)
 ```
 
-```{r ri.rgset}
+```{r echo=FALSE}
+library(DNAmArray)
+setwd("C:/Users/Lu/Documents/Elmer Phudd/R/cd/IDATs")
+RGset <- read.metharray.exp(base=NULL, targets, extended=TRUE)
+```
+
+Reading data in parallel is subject to errors and debugging is often difficult. Recently, [**BiocParallel**](https://bioconductor.org/packages/release/bioc/html/BiocParallel.html) has been extended with a comprehensive set of functions for debugging on various parallel architectures. If problems arise, we recommend using `BatchJobsParam()` with the `log=TRUE` option in order to facilitate debugging.
+
+Our data is now an `RGset` object that can used for further visualisations.
+
+```{r}
 RGset
 ```
 
-Reading data in parallel can go wrong and often debugging is
-difficult. Recently,
-[**BiocParallel**](http://bioconductor.org/packages/BiocParallel) has been
-extended with a comprehensive set of functions for debugging on
-various parallel architectures. We recommend running
-e.g. `BatchJobsParam` with option `log=TRUE`.
+***
 
 # References #
