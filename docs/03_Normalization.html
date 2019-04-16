@@ -23,8 +23,8 @@
 <link href="site_libs/tocify-1.9.1/jquery.tocify.css" rel="stylesheet" />
 <script src="site_libs/tocify-1.9.1/jquery.tocify.js"></script>
 <script src="site_libs/navigation-1.1/tabsets.js"></script>
-<link href="site_libs/highlightjs-1.1/textmate.css" rel="stylesheet" />
-<script src="site_libs/highlightjs-1.1/highlight.js"></script>
+<link href="site_libs/highlightjs-9.12.0/textmate.css" rel="stylesheet" />
+<script src="site_libs/highlightjs-9.12.0/highlight.js"></script>
 
 <style type="text/css">code{white-space: pre;}</style>
 <style type="text/css">
@@ -33,10 +33,12 @@
   }
 </style>
 <script type="text/javascript">
-if (window.hljs && document.readyState && document.readyState === "complete") {
-   window.setTimeout(function() {
-      hljs.initHighlighting();
-   }, 0);
+if (window.hljs) {
+  hljs.configure({languages: []});
+  hljs.initHighlightingOnLoad();
+  if (document.readyState && document.readyState === "complete") {
+    window.setTimeout(function() { hljs.initHighlighting(); }, 0);
+  }
 }
 </script>
 
@@ -70,9 +72,7 @@ h6 {
 </style>
 
 
-</head>
 
-<body>
 
 <style type = "text/css">
 .main-container {
@@ -91,8 +91,14 @@ img {
 .tabbed-pane {
   padding-top: 12px;
 }
+.html-widget {
+  margin-bottom: 20px;
+}
 button.code-folding-btn:focus {
   outline: none;
+}
+summary {
+  display: list-item;
 }
 </style>
 
@@ -108,7 +114,6 @@ body {
   padding-top: 57px;
   margin-top: -57px;
 }
-
 .section h2 {
   padding-top: 57px;
   margin-top: -57px;
@@ -128,6 +133,43 @@ body {
 .section h6 {
   padding-top: 57px;
   margin-top: -57px;
+}
+.dropdown-submenu {
+  position: relative;
+}
+.dropdown-submenu>.dropdown-menu {
+  top: 0;
+  left: 100%;
+  margin-top: -6px;
+  margin-left: -1px;
+  border-radius: 0 6px 6px 6px;
+}
+.dropdown-submenu:hover>.dropdown-menu {
+  display: block;
+}
+.dropdown-submenu>a:after {
+  display: block;
+  content: " ";
+  float: right;
+  width: 0;
+  height: 0;
+  border-color: transparent;
+  border-style: solid;
+  border-width: 5px 0 5px 5px;
+  border-left-color: #cccccc;
+  margin-top: 5px;
+  margin-right: -10px;
+}
+.dropdown-submenu:hover>a:after {
+  border-left-color: #ffffff;
+}
+.dropdown-submenu.pull-left {
+  float: none;
+}
+.dropdown-submenu.pull-left>.dropdown-menu {
+  left: -100%;
+  margin-left: 10px;
+  border-radius: 6px 0 6px 6px;
 }
 </style>
 
@@ -149,18 +191,75 @@ $(document).ready(function () {
 });
 </script>
 
-
-<div class="container-fluid main-container">
-
 <!-- tabsets -->
+
+<style type="text/css">
+.tabset-dropdown > .nav-tabs {
+  display: inline-table;
+  max-height: 500px;
+  min-height: 44px;
+  overflow-y: auto;
+  background: white;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs > li.active:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li.active:before {
+  content: "&#xe258;";
+  border: none;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs > li.active {
+  display: block;
+}
+
+.tabset-dropdown > .nav-tabs > li > a,
+.tabset-dropdown > .nav-tabs > li > a:focus,
+.tabset-dropdown > .nav-tabs > li > a:hover {
+  border: none;
+  display: inline-block;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li {
+  display: block;
+  float: none;
+}
+
+.tabset-dropdown > .nav-tabs > li {
+  display: none;
+}
+</style>
+
 <script>
 $(document).ready(function () {
   window.buildTabsets("TOC");
 });
+
+$(document).ready(function () {
+  $('.tabset-dropdown > .nav-tabs > li').click(function () {
+    $(this).parent().toggleClass('nav-tabs-open')
+  });
+});
 </script>
 
 <!-- code folding -->
-
 
 
 
@@ -249,6 +348,16 @@ div.tocify {
 
 </style>
 
+
+
+</head>
+
+<body>
+
+
+<div class="container-fluid main-container">
+
+
 <!-- setup 3col/9col grid for toc_float and main content  -->
 <div class="row-fluid">
 <div class="col-xs-12 col-sm-4 col-md-3">
@@ -309,32 +418,37 @@ div.tocify {
 </div>
 
 
+<hr />
+<div id="principal-components-selection" class="section level1">
+<h1>Principal Components Selection</h1>
+<p>Since the default of selecting only two principal components is often too restrictive for this type of data, our <code>screeplot()</code> function allows visualisation to help select the optimal number. It plots the final principal component for each possible set against the variance that it would explain.</p>
+<pre class="r"><code>pc &lt;- screeplot(RGset)</code></pre>
+<p><img src="03_Normalization_files/figure-html/unnamed-chunk-3-1.png" width="672" /></p>
+<p>This plot shows a sharp drop-off of variance explained after the fifth principal component. For this reason, we choose to carry out normalization using 4 principal components.</p>
+<hr />
+</div>
 <div id="functional-normalization" class="section level1">
 <h1>Functional normalization</h1>
-<p>We prefer normalization of 450K data using the Functional Normalization approach of <span class="citation">(Fortin et al. 2014)</span>. Functional Normalization uses control probes for normalization. Furthemore, Functional Normalization includes a NOOB background and dye bias correction step<span class="citation">(Triche et al. 2013)</span>.</p>
-<div id="select-number-of-pcs" class="section level2">
-<h2>Select number of PC’s</h2>
-<p>In our experience the default number of principal compontents (2) is often too small. We use a screeplot to determine the optimal number of principal compontents:</p>
-<pre class="r"><code>pc &lt;- screeplot(RGset)</code></pre>
-<p><img src="03_Normalization_files/figure-html/screeplot-1.png" width="672" /></p>
-</div>
-<div id="functional-normalization-without-copy-number-data" class="section level2">
-<h2>Functional normalization without copy number data</h2>
-<p>By default Functional Normalization returns normalized copy number data making the returned <code>GenomicRatioSet</code> twice the size necessary when only beta-values or M-values are required. Therefore, we added an argument to minfi’s implementation of Functional Normalization to allow for not returning normalized copy number data.</p>
-<pre class="r"><code>GRset &lt;- preprocessFunnorm.DNAmArray(RGset, nPCs=3, keepCN=FALSE)</code></pre>
+<p>Our workflow uses the Functional Normalization approach <span class="citation">(Fortin et al. 2014)</span>, since this includes both NOOB background correction and a dye bias correction step <span class="citation">(Triche et al. 2013)</span>.</p>
+<blockquote>
+<p>Add section justifying choice of normalization technique.</p>
+</blockquote>
+<p>By default, functional normalization returns normalized copy number data making the returned <code>GenomicRatioSet</code> twice the size necessary when only beta-values or M-values are required. Therefore, we developed <code>preprocessFunnorm.DNAmArray()</code>, which adds an option not to return these to the <code>preprocessFunnorm()</code> function from <a href="https://bioconductor.org/packages/release/bioc/html/minfi.html"><strong>minfi</strong></a> <span class="citation">(Aryee et al. 2014)</span>.</p>
+<pre class="r"><code>GRset &lt;- preprocessFunnorm.DNAmArray(RGset, nPCs=4, keepCN=FALSE)</code></pre>
 <pre><code>## [preprocessFunnorm] Modified version not returning CN! 
 ## [preprocessFunnorm] Background and dye bias correction with noob 
-## [preprocessNoob] Applying R/G ratio flip to fix dye bias...
 ## [preprocessFunnorm] Mapping to genome
 ## [preprocessFunnorm] Quantile extraction
 ## [preprocessFunnorm] Normalization</code></pre>
-<p>By default <code>preprocessFunnorm</code> return beta-values calculated with an offset of 100, like GenomeStudio (<code>getBeta</code> with type=‘Illumina’). If required these can be transformed to M-values using minfi’s <code>getM</code> which does a logit2-transformation on the beta-values.</p>
-<p>We recommend to perform probe-filtering by setting unreliable measured probes to NA. Unfortunately, Functional Normalization does not allow NA’s in the <code>RGChannelSet</code>. Therefore, we suggest to run normalization and probe-filtering separately and combine the results afterwards using <code>reduce</code>. See the next section on <code>Probe Filtering</code> for more details.</p>
-</div>
+<p>This function returns beta-values calculated with an offset of 100, similar to specifying <code>getBeta()</code> with option <code>type='Illumina'</code>. If required, these can be transformed to M-values using <a href="https://bioconductor.org/packages/release/bioc/html/minfi.html"><strong>minfi</strong></a>’s <code>getM()</code> which applies a logit2-transformation to the beta-values.</p>
+<hr />
 </div>
 <div id="references" class="section level1 unnumbered">
 <h1>References</h1>
 <div id="refs" class="references">
+<div id="ref-Aryee2014">
+<p>Aryee, M. J., A. E. Jaffe, H. Corrada-Bravo, C. Ladd-Acosta, A. P. Feinberg, K. D. Hansen, and R. A. Irizarry. 2014. “Minfi: a flexible and comprehensive Bioconductor package for the analysis of Infinium DNA methylation microarrays.” <em>Bioinformatics</em>.</p>
+</div>
 <div id="ref-Fortin2014">
 <p>Fortin, J. P., A. Labbe, M. Lemire, B. W. Zanke, T. J. Hudson, E. J. Fertig, C. M. Greenwood, and K. D. Hansen. 2014. “Functional normalization of 450k methylation array data improves replication in large cancer studies.” <em>Genome Biology</em> 15 (12): 503.</p>
 </div>
@@ -369,7 +483,7 @@ $(document).ready(function () {
   (function () {
     var script = document.createElement("script");
     script.type = "text/javascript";
-    script.src  = "https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
     document.getElementsByTagName("head")[0].appendChild(script);
   })();
 </script>

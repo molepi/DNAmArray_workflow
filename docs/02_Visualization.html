@@ -23,8 +23,8 @@
 <link href="site_libs/tocify-1.9.1/jquery.tocify.css" rel="stylesheet" />
 <script src="site_libs/tocify-1.9.1/jquery.tocify.js"></script>
 <script src="site_libs/navigation-1.1/tabsets.js"></script>
-<link href="site_libs/highlightjs-1.1/textmate.css" rel="stylesheet" />
-<script src="site_libs/highlightjs-1.1/highlight.js"></script>
+<link href="site_libs/highlightjs-9.12.0/textmate.css" rel="stylesheet" />
+<script src="site_libs/highlightjs-9.12.0/highlight.js"></script>
 
 <style type="text/css">code{white-space: pre;}</style>
 <style type="text/css">
@@ -33,10 +33,12 @@
   }
 </style>
 <script type="text/javascript">
-if (window.hljs && document.readyState && document.readyState === "complete") {
-   window.setTimeout(function() {
-      hljs.initHighlighting();
-   }, 0);
+if (window.hljs) {
+  hljs.configure({languages: []});
+  hljs.initHighlightingOnLoad();
+  if (document.readyState && document.readyState === "complete") {
+    window.setTimeout(function() { hljs.initHighlighting(); }, 0);
+  }
 }
 </script>
 
@@ -70,9 +72,7 @@ h6 {
 </style>
 
 
-</head>
 
-<body>
 
 <style type = "text/css">
 .main-container {
@@ -91,8 +91,14 @@ img {
 .tabbed-pane {
   padding-top: 12px;
 }
+.html-widget {
+  margin-bottom: 20px;
+}
 button.code-folding-btn:focus {
   outline: none;
+}
+summary {
+  display: list-item;
 }
 </style>
 
@@ -108,7 +114,6 @@ body {
   padding-top: 57px;
   margin-top: -57px;
 }
-
 .section h2 {
   padding-top: 57px;
   margin-top: -57px;
@@ -128,6 +133,43 @@ body {
 .section h6 {
   padding-top: 57px;
   margin-top: -57px;
+}
+.dropdown-submenu {
+  position: relative;
+}
+.dropdown-submenu>.dropdown-menu {
+  top: 0;
+  left: 100%;
+  margin-top: -6px;
+  margin-left: -1px;
+  border-radius: 0 6px 6px 6px;
+}
+.dropdown-submenu:hover>.dropdown-menu {
+  display: block;
+}
+.dropdown-submenu>a:after {
+  display: block;
+  content: " ";
+  float: right;
+  width: 0;
+  height: 0;
+  border-color: transparent;
+  border-style: solid;
+  border-width: 5px 0 5px 5px;
+  border-left-color: #cccccc;
+  margin-top: 5px;
+  margin-right: -10px;
+}
+.dropdown-submenu:hover>a:after {
+  border-left-color: #ffffff;
+}
+.dropdown-submenu.pull-left {
+  float: none;
+}
+.dropdown-submenu.pull-left>.dropdown-menu {
+  left: -100%;
+  margin-left: 10px;
+  border-radius: 6px 0 6px 6px;
 }
 </style>
 
@@ -149,18 +191,75 @@ $(document).ready(function () {
 });
 </script>
 
-
-<div class="container-fluid main-container">
-
 <!-- tabsets -->
+
+<style type="text/css">
+.tabset-dropdown > .nav-tabs {
+  display: inline-table;
+  max-height: 500px;
+  min-height: 44px;
+  overflow-y: auto;
+  background: white;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs > li.active:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li.active:before {
+  content: "&#xe258;";
+  border: none;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs > li.active {
+  display: block;
+}
+
+.tabset-dropdown > .nav-tabs > li > a,
+.tabset-dropdown > .nav-tabs > li > a:focus,
+.tabset-dropdown > .nav-tabs > li > a:hover {
+  border: none;
+  display: inline-block;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li {
+  display: block;
+  float: none;
+}
+
+.tabset-dropdown > .nav-tabs > li {
+  display: none;
+}
+</style>
+
 <script>
 $(document).ready(function () {
   window.buildTabsets("TOC");
 });
+
+$(document).ready(function () {
+  $('.tabset-dropdown > .nav-tabs > li').click(function () {
+    $(this).parent().toggleClass('nav-tabs-open')
+  });
+});
 </script>
 
 <!-- code folding -->
-
 
 
 
@@ -249,6 +348,16 @@ div.tocify {
 
 </style>
 
+
+
+</head>
+
+<body>
+
+
+<div class="container-fluid main-container">
+
+
 <!-- setup 3col/9col grid for toc_float and main content  -->
 <div class="row-fluid">
 <div class="col-xs-12 col-sm-4 col-md-3">
@@ -309,73 +418,91 @@ div.tocify {
 </div>
 
 
-<div id="different-ways-to-visualize-dnam-array-data" class="section level1">
-<h1>Different ways to visualize DNAm array data</h1>
-<p>Here we show different ways to inspect DNAm array data with emphasis on fast and efficient tools for large data sets.</p>
-</div>
-<div id="beta-densities" class="section level1">
-<h1>Beta densities</h1>
-<p>To get a global impression of the beta-value distribution and to see if there are outlying samples the per sample average beta-value distribution can be plotted. For example, using <code>densityPlot</code> from <a href="http://bioconductor.org/packages/minfi"><strong>minfi</strong></a>.</p>
+<hr />
+<p>On this page, we demonstrate some different methods for inspecting methylation array data with an emphasis on fast, efficient tools for large data sets.</p>
+<hr />
+<div id="beta-density-plots" class="section level1">
+<h1>Beta density plots</h1>
+<p>Using <code>densityPlot()</code> from <a href="https://bioconductor.org/packages/release/bioc/html/minfi.html"><strong>minfi</strong></a> <span class="citation">(Aryee et al. 2014)</span>, we can visualize the per sample average beta-value distribution. This gives us a global impression of the data and allows us to identify possible anomalous samples. We expect this distribution to be bimodal with the peaks representing methylated and unmethylated signals. Any centre peaks should be further investigated for problems, such as ambiguous mapping.</p>
 <pre class="r"><code>library(minfi)
-densityPlot(RGset[, 1:10], main = &quot;Beta&quot;, xlab = &quot;Beta&quot;)</code></pre>
-<p><img src="02_Visualization_files/figure-html/unnamed-chunk-2-1.png" width="672" /></p>
+densityPlot(RGset, main=&quot;Beta density plot&quot;, xlab=&quot;Beta values&quot;)</code></pre>
+<p><img src="02_Visualization_files/figure-html/unnamed-chunk-3-1.png" width="672" /></p>
+<p>For this data, the density plot is clearly bimodal with no obvious outliers. However, in order to further investigate the beta-values, we store them using the <code>getBeta()</code> function. Since some visualisations cannot handle NA values, we use the median to impute these. The <code>type=&quot;Illumina&quot;</code> option adds 100 to the denominator of the beta-value calculation, preventing NA values being recorded when the methylated and unmethylated signal are both 0.</p>
+<pre class="r"><code>beta &lt;- getBeta(RGset, type=&quot;Illumina&quot;)
+beta[is.na(beta)] &lt;- median(beta, na.rm=TRUE)</code></pre>
+<hr />
 </div>
 <div id="principal-components-plot" class="section level1">
 <h1>Principal components plot</h1>
-<p>A plot of the first principal components can be used for exploratory data analysis. The <a href="https://cran.r-project.org/package=irlba"><strong>irlba</strong></a>-package provides an efficient algorithm for the calculation of principal components.</p>
-<blockquote>
-<p>NOTE: The irlba-algorithm doesn’t allow any NA’s</p>
-</blockquote>
+<p>Using the <code>prcomp_irlba()</code> function from <a href="https://cran.r-project.org/web/packages/irlba/index.html"><strong>irlba</strong></a> we can calculate principal components. By assessing the amount of variance explained by these and visualising them, we can better interpret the data. For example, if there was evidence of clustering this might suggest grouping of samples, such as by sex if sex-chromosomes were not yet excluded.</p>
 <pre class="r"><code>library(irlba)
-beta &lt;- getBeta(RGset, type=&quot;Illumina&quot;)
-beta[is.na(beta)] &lt;- median(beta, na.rm=TRUE)
 pc &lt;- prcomp_irlba(t(beta), n=3)
 summary(pc)</code></pre>
 <pre><code>## Importance of components:
-##                            PC1    PC2    PC3
-## Standard deviation     12.9808 8.8282 6.4980
-## Proportion of Variance  0.5837 0.2700 0.1463
-## Cumulative Proportion   0.5837 0.8537 1.0000</code></pre>
-<pre class="r"><code>plot(pc$x)</code></pre>
-<p><img src="02_Visualization_files/figure-html/irlba-1.png" width="672" /></p>
-<p>The first principale component explains almost 50% of the variation and two groups of samples appear; these are male and female samples! Often probes on the sex-chromosomes are excluded before principale component analysis (or other analyzes).</p>
-<blockquote>
-<p>NOTE: <code>getBeta</code> extracts Methylated and Unmethylated intensities and converts them to beta-values by default using M/(M+U), whereas, <code>type=&quot;Illumina&quot;</code> adds 100 to the denominator which prevents beta-values becoming NA if both M and U are exactly zero.</p>
-</blockquote>
+##                            PC1     PC2     PC3
+## Standard deviation     37.6135 31.0639 20.9449
+## Proportion of Variance  0.3227  0.2201  0.1001
+## Cumulative Proportion   0.3227  0.5428  0.6429</code></pre>
+<pre class="r"><code>plot(pc$x, main=&quot;Principal components plot&quot;)</code></pre>
+<p><img src="02_Visualization_files/figure-html/unnamed-chunk-5-1.png" width="672" /></p>
+<p>In this instance, our principal components explain nearly 65% of the variance in the data and there is no evidence of clustering.</p>
+<hr />
 </div>
 <div id="heatmap" class="section level1">
 <h1>Heatmap</h1>
-<p>A heatmap of correlations of the previously calculated principale components with technical/biological covariates to indicate which covariates should be included in association study.</p>
+<p>Each column in the targets dataframe should be considered as a potential covariate in our models. Both technical and biological factors should be investigated as these may introduce batch effects or be clinically relevant. In order to assess this, we convert each column to a categorical variable whose correlations can be visualised.</p>
+<p>Homogenous columns can be excluded, as any variables that do not change by definition cannot explain variation in the data. In this instance, the <code>contact_institute</code> for all samples is Leiden, so there is no need to investigate a city effect. However, in some instances samples may processed in different cities, meaning that this could introduce a batch effect that needed to be corrected for.</p>
+<pre class="r"><code>df &lt;- apply(targets, 2, function(x) as.numeric(factor(x)))
+keep &lt;- apply(df, 2, sd) &gt; 0
+summary(keep)</code></pre>
+<pre><code>##    Mode   FALSE    TRUE 
+## logical      24      10</code></pre>
+<pre class="r"><code>df &lt;- df[ , keep]
+colnames(df)</code></pre>
+<pre><code>##  [1] &quot;title&quot;                 &quot;geo_accession&quot;        
+##  [3] &quot;source_name_ch1&quot;       &quot;characteristics_ch1&quot;  
+##  [5] &quot;characteristics_ch1.1&quot; &quot;supplementary_file&quot;   
+##  [7] &quot;supplementary_file.1&quot;  &quot;dataset:ch1&quot;          
+##  [9] &quot;tissue:ch1&quot;            &quot;Basename&quot;</code></pre>
+<p>As you can see, 10 columns need to be examined. These include sample-level variables, such as <code>title</code>, <code>geo_accession</code>, and the <code>supplementary_file</code> variables, but also other higher-level groupings. Since this dataset contained multiple tissues collected from both cadavers and healthy individuals, we need to consider the influence of these using <code>source_name_ch1</code>, <code>characteristics_ch1.1</code>, and <code>tissue:ch1</code>. There also may be batch effects from the different data sets recorded in <code>characteristics_ch1</code> and <code>dataset:ch1</code>.</p>
+<p>Correlations between these factors and the principal components is calculated, and then these are visualised using the <code>pheatmap()</code> function from <a href="https://cran.r-project.org/web/packages/pheatmap/index.html"><strong>pheatmap</strong></a>.</p>
 <pre class="r"><code>library(pheatmap)
-df &lt;- apply(targets, 2, function(x) as.numeric(factor(x)))
-keep &lt;- apply(df, 2, sd) &gt; 0    
-cxy &lt;- cor(pc$x, scale(df[, keep]))   
-pheatmap(cxy, cluster_rows=FALSE)</code></pre>
+cxy &lt;- cor(pc$x, scale(df))   
+pheatmap(cxy, cluster_rows=FALSE, legend=TRUE, main=&quot;Heatmap of correlations&quot;)</code></pre>
 <p><img src="02_Visualization_files/figure-html/heatmap-1.png" width="672" /></p>
+<p>Here we see grouping of similar covariates together, with three main considerations: tissue type, sample-level variations, and batches, including dataset and source. Carrying on analyses separately for each tissue type will likely be sufficient adjust for these variables.</p>
+<hr />
 </div>
 <div id="dendrogram" class="section level1">
 <h1>Dendrogram</h1>
-<p>Another approach, often used in expression data, for exploratory data analysis is clustering of the data and visualizing using a dendrogram. Although, this might be more appropriated for data sets with moderated sample sizes, the <a href="https://cran.r-project.org/package=fastclust"><strong>fastclust</strong></a>-package is efficient in generating the hierarchical clustering.</p>
+<p>Although more frequently used for moderately-sized data sets, a dendogram can be helpful to visualise clustering. We use <code>dist()</code> to compute the distance matrix for the beta values, before implementing hierarchical cluster analysis with <code>hclust()</code> from the <a href="https://cran.r-project.org/package=fastclust"><strong>fastcluster</strong></a>-package. We then plot this clustering as a horizontal dendogram.</p>
 <pre class="r"><code>library(fastcluster)
-beta &lt;- getBeta(RGset[,1:16], type=&quot;Illumina&quot;)
-d &lt;- dist(t(beta),method=&quot;euclidean&quot;)
+sBeta &lt;- getBeta(RGset[,1:16], type=&quot;Illumina&quot;)
+d &lt;- dist(t(sBeta), method=&quot;euclidean&quot;)
 fit &lt;- hclust(d, method=&quot;average&quot;)
-plot(fit)</code></pre>
-<p><img src="02_Visualization_files/figure-html/clustering-1.png" width="672" /></p>
-<p>Highlighting a suspected outlier can be convenient.</p>
-<pre class="r"><code>Interesting &lt;- sample(colnames(beta),1)
+fitdd &lt;- as.dendrogram(fit)
+nodePar &lt;- list(lab.cex=0.8, pch=c(NA, 15), cex=0.8, col=&quot;#41819a&quot;)
+plot(fitdd, main=&quot;Cluster Dendogram&quot;, horiz=TRUE, nodePar=nodePar, xlab=&quot;Height&quot;)</code></pre>
+<p><img src="02_Visualization_files/figure-html/unnamed-chunk-7-1.png" width="672" /></p>
+<p>If an observation needs further investigation, we can identify it in the dendogram by highlighting it.</p>
+<pre class="r"><code>interestObs &lt;- sample(colnames(sBeta), 1)
 colorLeafs &lt;- function(x) {
-  if (is.leaf(x) &amp;&amp; attr(x, &quot;label&quot;) %in% Interesting) {
-    attr(x, &quot;nodePar&quot;) &lt;- list(lab.col=&quot;red&quot;, pch=NA)
+  if (is.leaf(x) &amp;&amp; attr(x, &quot;label&quot;) %in% interestObs) {
+    attr(x, &quot;nodePar&quot;) &lt;- list(lab.cex=0.8, lab.col=&quot;red&quot;)
   }
   return(x)
 } 
 dd &lt;- dendrapply(as.dendrogram(fit), colorLeafs)
-op &lt;- par(mar=c(10,4,4,2))
-plot(dd)</code></pre>
+plot(dd, main=&quot;Cluster Dendogram&quot;, horiz=TRUE, nodePar=nodePar, xlab=&quot;Height&quot;)</code></pre>
 <p><img src="02_Visualization_files/figure-html/clusteringhighlight-1.png" width="672" /></p>
+<hr />
+</div>
+<div id="references" class="section level1 unnumbered">
+<h1>References</h1>
 <div id="refs" class="references">
-
+<div id="ref-Aryee2014">
+<p>Aryee, M. J., A. E. Jaffe, H. Corrada-Bravo, C. Ladd-Acosta, A. P. Feinberg, K. D. Hansen, and R. A. Irizarry. 2014. “Minfi: a flexible and comprehensive Bioconductor package for the analysis of Infinium DNA methylation microarrays.” <em>Bioinformatics</em>.</p>
+</div>
 </div>
 </div>
 
@@ -404,7 +531,7 @@ $(document).ready(function () {
   (function () {
     var script = document.createElement("script");
     script.type = "text/javascript";
-    script.src  = "https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
     document.getElementsByTagName("head")[0].appendChild(script);
   })();
 </script>
