@@ -23,8 +23,8 @@
 <link href="site_libs/tocify-1.9.1/jquery.tocify.css" rel="stylesheet" />
 <script src="site_libs/tocify-1.9.1/jquery.tocify.js"></script>
 <script src="site_libs/navigation-1.1/tabsets.js"></script>
-<link href="site_libs/highlightjs-1.1/textmate.css" rel="stylesheet" />
-<script src="site_libs/highlightjs-1.1/highlight.js"></script>
+<link href="site_libs/highlightjs-9.12.0/textmate.css" rel="stylesheet" />
+<script src="site_libs/highlightjs-9.12.0/highlight.js"></script>
 
 <style type="text/css">code{white-space: pre;}</style>
 <style type="text/css">
@@ -33,10 +33,12 @@
   }
 </style>
 <script type="text/javascript">
-if (window.hljs && document.readyState && document.readyState === "complete") {
-   window.setTimeout(function() {
-      hljs.initHighlighting();
-   }, 0);
+if (window.hljs) {
+  hljs.configure({languages: []});
+  hljs.initHighlightingOnLoad();
+  if (document.readyState && document.readyState === "complete") {
+    window.setTimeout(function() { hljs.initHighlighting(); }, 0);
+  }
 }
 </script>
 
@@ -70,9 +72,7 @@ h6 {
 </style>
 
 
-</head>
 
-<body>
 
 <style type = "text/css">
 .main-container {
@@ -91,8 +91,14 @@ img {
 .tabbed-pane {
   padding-top: 12px;
 }
+.html-widget {
+  margin-bottom: 20px;
+}
 button.code-folding-btn:focus {
   outline: none;
+}
+summary {
+  display: list-item;
 }
 </style>
 
@@ -108,7 +114,6 @@ body {
   padding-top: 57px;
   margin-top: -57px;
 }
-
 .section h2 {
   padding-top: 57px;
   margin-top: -57px;
@@ -128,6 +133,43 @@ body {
 .section h6 {
   padding-top: 57px;
   margin-top: -57px;
+}
+.dropdown-submenu {
+  position: relative;
+}
+.dropdown-submenu>.dropdown-menu {
+  top: 0;
+  left: 100%;
+  margin-top: -6px;
+  margin-left: -1px;
+  border-radius: 0 6px 6px 6px;
+}
+.dropdown-submenu:hover>.dropdown-menu {
+  display: block;
+}
+.dropdown-submenu>a:after {
+  display: block;
+  content: " ";
+  float: right;
+  width: 0;
+  height: 0;
+  border-color: transparent;
+  border-style: solid;
+  border-width: 5px 0 5px 5px;
+  border-left-color: #cccccc;
+  margin-top: 5px;
+  margin-right: -10px;
+}
+.dropdown-submenu:hover>a:after {
+  border-left-color: #ffffff;
+}
+.dropdown-submenu.pull-left {
+  float: none;
+}
+.dropdown-submenu.pull-left>.dropdown-menu {
+  left: -100%;
+  margin-left: 10px;
+  border-radius: 6px 0 6px 6px;
 }
 </style>
 
@@ -149,18 +191,75 @@ $(document).ready(function () {
 });
 </script>
 
-
-<div class="container-fluid main-container">
-
 <!-- tabsets -->
+
+<style type="text/css">
+.tabset-dropdown > .nav-tabs {
+  display: inline-table;
+  max-height: 500px;
+  min-height: 44px;
+  overflow-y: auto;
+  background: white;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs > li.active:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li.active:before {
+  content: "&#xe258;";
+  border: none;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs > li.active {
+  display: block;
+}
+
+.tabset-dropdown > .nav-tabs > li > a,
+.tabset-dropdown > .nav-tabs > li > a:focus,
+.tabset-dropdown > .nav-tabs > li > a:hover {
+  border: none;
+  display: inline-block;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li {
+  display: block;
+  float: none;
+}
+
+.tabset-dropdown > .nav-tabs > li {
+  display: none;
+}
+</style>
+
 <script>
 $(document).ready(function () {
   window.buildTabsets("TOC");
 });
+
+$(document).ready(function () {
+  $('.tabset-dropdown > .nav-tabs > li').click(function () {
+    $(this).parent().toggleClass('nav-tabs-open')
+  });
+});
 </script>
 
 <!-- code folding -->
-
 
 
 
@@ -249,6 +348,16 @@ div.tocify {
 
 </style>
 
+
+
+</head>
+
+<body>
+
+
+<div class="container-fluid main-container">
+
+
 <!-- setup 3col/9col grid for toc_float and main content  -->
 <div class="row-fluid">
 <div class="col-xs-12 col-sm-4 col-md-3">
@@ -309,79 +418,63 @@ div.tocify {
 </div>
 
 
-<blockquote>
-<p><strong>TODO extent descriptions</strong></p>
-</blockquote>
+<hr />
 <div id="probe-level-filtering" class="section level1">
 <h1>Probe-level filtering</h1>
-<p>Both the functions <code>probeFiltering</code> and <code>reduce</code> should be used to obtain filtered beta- or M-values.</p>
+<p>We recommend performing probe-filtering by setting unreliably measured probes to NA. Unfortunately, Functional Normalization does not allow NA’s in the <code>RGChannelSet</code>. Therefore, it is best to run normalization and probe-filtering separately and combine the results afterwards using our <code>reduce()</code> function.</p>
+<p>Some observations need to be removed from the dataset since they provide little to no information that could skew analyses. Probes which suffered from low intensity (default: &lt;1) or are based on very few (default: &lt;3) beads are removed, based on a specified cut off.</p>
 <pre class="r"><code>RGset &lt;- probeFiltering(RGset)</code></pre>
 <pre><code>## Calculate and filter on number of beads...</code></pre>
 <pre><code>## On average 0.08% of the probes (622399) have number of beads below 3</code></pre>
 <pre><code>## Calculate and filter on zero intensities...</code></pre>
 <pre><code>## On average 0.002% of the Type II probes (350036) have Red and/or Green intensity below 1</code></pre>
-<pre><code>## On average 0.006% of the Type I probes (92578), measured in Green channel, have intensity below 1</code></pre>
-<pre><code>## On average 0.006% of the Type I probes (178374), measured in Red channel, have intensity below 1</code></pre>
+<pre><code>## On average 0.007% of the Type I probes (92578), measured in Green channel, have intensity below 1</code></pre>
+<pre><code>## On average 0.005% of the Type I probes (178374), measured in Red channel, have intensity below 1</code></pre>
 <pre><code>## Set filtered probes in Red and/or Green channels to NA...</code></pre>
-<div id="number-of-beads" class="section level2">
-<h2>Number of beads</h2>
-<p>Occasionally some probes as measured with a too small number of beads leading to unreliable probe intensities. By default probes intensities are set to NA if the probe intensity is based on less then 3 beads.</p>
-</div>
-<div id="zero-intensities" class="section level2">
-<h2>Zero intensities</h2>
-<p>If there are no beads at all for a certain probe the probe intensity will be exactly zero, these are set to NA, as well.</p>
-<p>Samples which have more then 5% of their probes set to NA, based on the above filter steps, will be removed from the <code>RGChannelSet</code>.</p>
-</div>
+<p>There are differences between probe types that are used in <code>probeFiltering()</code>. Information on these can be extracted and stored using functions from <a href="https://bioconductor.org/packages/release/bioc/html/minfi.html"><strong>minfi</strong></a> <span class="citation">(Aryee et al. 2014)</span>.</p>
+<pre class="r"><code>locusNames &lt;- getManifestInfo(RGset, &quot;locusNames&quot;)
+typeII &lt;- getProbeInfo(RGset, type=&quot;II&quot;)
+typeI &lt;- getProbeInfo(RGset, type=&quot;I&quot;)</code></pre>
+<hr />
 </div>
 <div id="cpg-level-filtering" class="section level1">
 <h1>CpG-level filtering</h1>
-<div id="detection-p-value" class="section level2">
-<h2>detection P-value</h2>
-<p>The negative controls on the 450k array can be used to detect outlying samples e.g., samples that have a significant larger background then average, this is summarized in the so-called detection P-value.</p>
-<p>Detection P-values are calculated using the <code>detectionP</code>-function from <a href="http:/bioconductor.org/packages/minfi"><strong>minfi</strong></a>. By default detection P-values with a value &gt;0.01 are set to NA.</p>
-</div>
-<div id="cross-reactive-probescpgs" class="section level2">
-<h2>Cross reactive probes/CpGs</h2>
-<blockquote>
-<p>THIS WILL BE REPLACE BY <span class="citation">(<span class="citeproc-not-found" data-reference-id="Zhou2017"><strong>???</strong></span>)</span></p>
-</blockquote>
-<p>485,577 assays (482,421 CpG sites, 3091 non-CpG sites and 65 random SNPs)…<span class="citation">(Bibikova et al. 2011)</span></p>
-<p>Furthermore, several probes do not map uniquely to the genome or contain common polymorphisms. Chen <span class="citation">(Chen et al. 2013)</span> analyzed in detail cross-reactive and polymorphic probes. We exclude the set of polymorphic CG and CH probes (42.403) discovered by Chen.</p>
-<p>482,421 CpG sites are measured using two chemistries Type I (135,476) and Type II (350,036). the Type I chemistry uses two probes to measure a CpG site while the Type II measure CpG methylation using one probe. The Type II chemistry was specially designed to measure CpG methylation in low CpG dense regions. There are</p>
-<p>Depending on the methylation status of the probe either of the green or red fluorescence signals is detected a strongest.</p>
-<p>Information on Type I and II probes, address, etc. can be extracted using <a href="http:/bioconductor.org/packages/minfi"><strong>minfi</strong></a>-functionality.</p>
-<pre class="r"><code>library(minfi)
-locusNames &lt;- getManifestInfo(RGset, &quot;locusNames&quot;)
-typeII &lt;- getProbeInfo(RGset, type = &quot;II&quot;)
-nrow(typeII)
-typeI &lt;- getProbeInfo(RGset, type = &quot;I&quot;)
-head(typeI)
-nrow(typeI)</code></pre>
-</div>
-</div>
-<div id="success-rates" class="section level1">
-<h1>Success Rates</h1>
-<p>All these probe filter-steps are implemented in the function <code>filtering</code>.</p>
-<p>RGset containing Red/Green signal intensities are converted to Methylated and Unmethylated signals (see also, <code>?preprocessRaw</code>, from minfi). These can in turn be converted to either beta-values or M-values.</p>
-<pre class="r"><code>betas &lt;- reduce(GRset, RGset, what=&quot;beta&quot;)</code></pre>
+<p>The negative controls on the array can be used to detect outlying samples via the detection p-values, which measure how likely it is a sample’s signal differs from the background. Signals that do not differ substantially (default: p&lt;0.01) are removed. We utilise <code>detectionP()</code> from <a href="https://bioconductor.org/packages/release/bioc/html/minfi.html"><strong>minfi</strong></a> inside our function to achieve this.</p>
+<p>Additionally, samples where a large proportion (default: &gt;5%) of probes were set to NA based on the above probe-level filtering are removed.</p>
+<p>Our function <code>reduce()</code> takes the normalized <code>GRset</code> from the previous section and the filtered <code>RGset</code> created above and returns filtered beta or M-values, which can be passed to the <code>probeMasking()</code> function. If M-values are specified as the output, these are scaled to have a range of 32 instead of to infinite values.</p>
 <pre class="r"><code>mvalues &lt;- reduce(GRset, RGset, what=&quot;M&quot;)</code></pre>
 <pre><code>## Calculate and filter on detection P-value...</code></pre>
-<pre><code>## On average 0.17% of the CpGs (485512) have detection P-value above the threshold 0.01</code></pre>
+<pre><code>## On average 0.23% of the CpGs (485512) have detection P-value above the threshold 0.01</code></pre>
 <pre><code>## Transform to M-values...</code></pre>
 <pre><code>## Set +/-Inf to +/-16...</code></pre>
 <pre><code>## On average 0.1% of the probes (485512) were set to NA in the probe filtering step!</code></pre>
 <pre><code>## Calculate success rates and reduce...</code></pre>
 <pre><code>## Percentage of samples having success rate above 0.95 is 100%</code></pre>
-<pre><code>## Percentage of CpGs having success rate above 0.95 is 99.67%</code></pre>
+<pre><code>## Percentage of CpGs having success rate above 0.95 is 99.31%</code></pre>
+<hr />
+</div>
+<div id="cross-reactive-and-polymorphic-cpgs" class="section level1">
+<h1>Cross-reactive and polymorphic CpGs</h1>
+<p>Several studies <span class="citation">(Chen et al. 2013, <span class="citation">Zhou, Laird, and Shen (2016)</span>)</span> have characterized ambiguous probes on both the 450k and EPIC methylation arrays and made suggestions for removal. We chose to remove probes identified by Zhou et al., since this set is actively maintained and supports both array sizes. Additionally, different sets are specified depending on the reference genome used.</p>
+<p>In total, Zhou et al. suggest removal of probes for a variety of reasons, from ambiguous mapping and cross-reactivity to polymorphisms that interfere with extension. In general, around 60.000 probes are suggested for removal in 450k arrays, and 100.000 for EPIC.</p>
+<p>We developed the <code>probeMasking()</code> function, which removes specified probes from either beta- or M- value matrices. In this instance, 59.415 CpG rows are removed.</p>
+<pre class="r"><code>mvalues &lt;- probeMasking(mvalues, array=&quot;450&quot;, genome=&quot;hg19&quot;)</code></pre>
+<pre><code>## [probeFilterDNAmArray] Extracting probe filter... 
+## [probeFilterDNAmArray] 60466 probes considered for filtering... 
+## [probeFilterDNAmArray] 59415 / 482157 probes removed from the dataset</code></pre>
+<hr />
 </div>
 <div id="references" class="section level1 unnumbered">
 <h1>References</h1>
 <div id="refs" class="references">
-<div id="ref-Bibikova2011">
-<p>Bibikova, M., B. Barnes, C. Tsan, V. Ho, B. Klotzle, J. M. Le, D. Delano, et al. 2011. “High density DNA methylation array with single CpG site resolution.” <em>Genomics</em> 98 (4): 288–95.</p>
+<div id="ref-Aryee2014">
+<p>Aryee, M. J., A. E. Jaffe, H. Corrada-Bravo, C. Ladd-Acosta, A. P. Feinberg, K. D. Hansen, and R. A. Irizarry. 2014. “Minfi: a flexible and comprehensive Bioconductor package for the analysis of Infinium DNA methylation microarrays.” <em>Bioinformatics</em>.</p>
 </div>
 <div id="ref-Chen2013">
 <p>Chen, Y. A., M. Lemire, S. Choufani, D. T. Butcher, D. Grafodatskaya, B. W. Zanke, S. Gallinger, T. J. Hudson, and R. Weksberg. 2013. “Discovery of cross-reactive probes and polymorphic CpGs in the Illumina Infinium HumanMethylation450 microarray.” <em>Epigenetics</em> 8 (2): 203–9.</p>
+</div>
+<div id="ref-Zhou2016">
+<p>Zhou, W., P. W. Laird, and H. Shen. 2016. “Comprehensive characterization, annotation and innovative use of Infinium DNA methylation BeadChip probes.” <em>Nucleic Acids Res.</em>, October.</p>
 </div>
 </div>
 </div>
@@ -411,7 +504,7 @@ $(document).ready(function () {
   (function () {
     var script = document.createElement("script");
     script.type = "text/javascript";
-    script.src  = "https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
     document.getElementsByTagName("head")[0].appendChild(script);
   })();
 </script>

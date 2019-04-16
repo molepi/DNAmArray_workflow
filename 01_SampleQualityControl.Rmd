@@ -79,7 +79,7 @@ RGset <- read.metharray.exp.par(targets, verbose=TRUE, extended=TRUE)
 
 ```{r echo=FALSE}
 library(DNAmArray)
-setwd("C:/Users/Lu/Documents/Elmer Phudd/R/cd/IDATs")
+setwd("C:/Users/ljsinke/Documents/2_r/cd/IDATs")
 RGset <- read.metharray.exp(base=NULL, targets, extended=TRUE)
 ```
 
