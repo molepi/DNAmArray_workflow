@@ -459,6 +459,9 @@ typeI &lt;- getProbeInfo(RGset, type=&quot;I&quot;)</code></pre>
 <p>In total, Zhou et al. suggest removal of probes for a variety of reasons, from ambiguous mapping and cross-reactivity to polymorphisms that interfere with extension. In general, around 60.000 probes are suggested for removal in 450k arrays, and 100.000 for EPIC.</p>
 <p>We developed the <code>probeMasking()</code> function, which removes specified probes from either beta- or M- value matrices. In this instance, 59.415 CpG rows are removed.</p>
 <pre class="r"><code>mvalues &lt;- probeMasking(mvalues, array=&quot;450&quot;, genome=&quot;hg19&quot;)</code></pre>
+<pre><code>## Warning in probeMasking(mvalues, array = &quot;450&quot;, genome = &quot;hg19&quot;): The
+## probeMasking function appears to be out-of-date. Please contact the
+## maintainer.</code></pre>
 <pre><code>## [probeFilterDNAmArray] Extracting probe filter... 
 ## [probeFilterDNAmArray] 60466 probes considered for filtering... 
 ## [probeFilterDNAmArray] 59415 / 482157 probes removed from the dataset</code></pre>
