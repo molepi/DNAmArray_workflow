@@ -15,7 +15,7 @@ Using `densityPlot()` from [**minfi**](https://bioconductor.org/packages/release
 ```{r echo=FALSE}
 load("./data/targets.RData")
 targets$Basename <- substring(targets$supplementary_file,68,95)
-setwd("C:/Users/ljsinke/Documents/2_r/cd/IDATs")
+setwd("C:/Users/Lu/Documents/IDATs")
 library(minfi)
 RGset <- read.metharray.exp(base=NULL, targets, extended=TRUE)
 ```

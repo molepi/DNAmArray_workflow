@@ -2,173 +2,127 @@
 ```{r, child="_setup.Rmd"}
 ```
 
-> **TODO extent discriptions**
-
-# Phenotyping #
-
-## Predict Sex ##
-
-Predict sex based on sex-chromosome beta-value distribution. We use a
-thresholding approach.
-
-```{r sexcheck}
-betas <- (2^mvalues)/(1+2^mvalues)
-betas <- getBeta(RGset)
-library(BBMRIomics)
-pheno <- getView("allPhenotypes", usrpwd=RP3_MDB_USRPWD, url=RP3_MDB)
-pheno <- merge(pheno, targets, by="ids", all.y=TRUE)
-mid <- match(colnames(betas), pheno$run_id)
-predicted <- getSex.DNAmArray(betas)
-assumed <- pheno$Sex[mid]
-assumed[is.na(assumed)] <- 2
-assumed <- as.character(factor(assumed, labels=c("Male", "Female", "Unknown")))
-str(predicted)
-str(assumed)
-print(table(predicted, assumed))
+```{r echo=FALSE, message=FALSE, results='hide'}
+load("./data/targets.RData")
+targets$Basename <- substring(targets$supplementary_file,68,95)
+setwd("C:/Users/Lu/Documents/IDATs")
+library(minfi)
+RGset <- read.metharray.exp(base=NULL, targets, extended=TRUE)
+GRset <- invisible(preprocessFunnorm.DNAmArray(RGset, nPCs=4, keepCN=FALSE))
+RGset <- probeFiltering(RGset)
+mvalues <- reduce(GRset, RGset, what="M")
+mvalues <- probeMasking(mvalues, array="450", genome="hg19")
 ```
 
-## Predict white blood cell composition ##
+***
 
-White blood cell count can be predicted using Houseman's
-method[@Houseman2012] implemented in the
-[**minfi**](http://bioconductor.org/packages/minfi)[@Jaffe2014].
+# Phenotype Prediction #
 
-See also our approach for the imputation of white blood cell
-counts:[wbccPredictor](https://github.com/mvaniterson/wbccPredictor)
+It can be useful to predict phenotypes in your data, either for comparison to assumed categories or to help impute missing values. 
 
-## Predict other phenotypes ##
+### Predict Sex ###
 
-For example chronological age or smoking status.
+The [**DNAmArray**](https://github.com/molepi/DNAmArray) package contains a `getSex.DNAmArray()` function, which predicts the sex of your observations by inspecting intensities of X-chromosome signals. We use the `getBeta()` function from [**minfi**](https://bioconductor.org/packages/release/bioc/html/minfi.html) [@Aryee2014] as before to get the beta-value matrix and then use this to predict sex. If the beta matrix has already undergone probe filtering, it is important to recalculate it as some filtered probes may be used by the sex prediction function.
 
-# Check sample relations using SNP probes #
+```{r}
+betas <- getBeta(RGset)
+predicted <- getSex.DNAmArray(betas)
+predicted <- as.character(factor(predicted))
+table(predicted, useNA="always")
+```
 
-Beta-values of the probes containing SNP can be extract from the RGset
-using [**minfi**](http:/bioconductor.org/packages/minfi)'s `getSnpBeta`-function.
+### Predict White Blood Cell Composition ###
+
+> This function needs adapting for DNAmArray
+
+White blood cell count can be predicted using Houseman's method[@Houseman2012] implemented in the [**minfi**](http://bioconductor.org/packages/minfi)[@Jaffe2014].
+
+See also our approach for the imputation of white blood cell counts:[wbccPredictor](https://github.com/mvaniterson/wbccPredictor)
+
+> Create new functions to predict other phenotypes, such as chronological age or smoking status.
+
+***
+
+# Checking Sample Relationships #
+
+Beta-values of the probes containing SNPs can be extracted from the RGset using [**minfi**](http:/bioconductor.org/packages/minfi)'s `getSnpBeta` function. These can then be converted to alleles using k-means clustering using the `genki()` function from [**wateRmelon**](https://bioconductor.org/packages/release/bioc/html/wateRmelon.html) [@Pidsley2013]. This function returns values of disperson for each of three genotype peaks (AA, AB, and BB). which can be used as a performance metric since technical variation would decrease the tightness of the genotypic peaks.
 
 ```{r getsnps, eval=FALSE}
-betas <- getSnpBeta(RGset)
-dim(betas)
+library(wateRmelon)
+snpBetas <- getSnpBeta(RGset)
+snpBetasVar <- genki(snpBetas)
 ```
 
-```{r cleanning, echo = FALSE, results = 'hide', eval=FALSE}
-rm(RGset); gc()
-```
+> since relabelgenotypes() is deprecated, we need a new way to discover swaps. In the previous version, all DNA samples were correlated with each other to check for unreported relatedness. From the genotypes, identity-by-state was calculated for each SNP and these were summarized by mean and variance. This used the alleleSharing() function from omicsPrint, and was based on an idea from GRR-tool for the detection of sample relationships in genotype data.
 
-Now we convert the beta-values to alleles using K-means clustering. A
-similar approach is taken by [**wateRmelon**](http:/bioconductor.org/packages/wateRmelon).
+***
 
+# Imputating NA Values #
 
-```{r methalleles, eval=FALSE}
-methAlleles <- beta2allele(betas)
-methAlleles[1:5, 1:5]
-dim(methAlleles)
-```
-
-If genotypes are available using the same or an overlapping set of
-SNPs these can be used to confirm the sample identity or to discover
-swaps. To ensure the the same alleles are called the function
-`relabelgenotypes` should be run first.
-
-```{r relabel, eval=FALSE}
-methAlleles <- relabelgenotypes(methAlleles, genoAlleles)
-data <- alleleSharing(methAlleles, genoAlleles)
-```
-
-Here we just correlated all DNA samples with each other to check for
-unreported relatedness. From the genotypes we calculated
-identity-by-state for each SNPs and summarize by mean and variance.
-Based on a idea from GRR-tool [@Abecasis2001] for the detection of
-sample relationship in genotype data.
-
-```{r allelesharing, eval=FALSE}
-data <- alleleSharing(methAlleles)
-dim(data)
-head(data)
-```
-
-```{r kmeans, eval=FALSE}
-km <- kmeans(data[,1:2], centers=matrix(c(tapply(data[,1], data[,5], median),
-                                          tapply(data[,2], data[,5], median)), 2, 2))
-data$predicted <- factor(km$cluster)
-levels(data$predicted) <- c("unrelated", "related")
-table(`Predicted relationship`=data$predicted, `Assumed relationship`=data$relationship)
-head(subset(data[order(data$mean, decreasing=TRUE),], predicted != relationship), n=10)
-```
-
-# Imputation missing probe-values #
-
-Several algorithms do not allow NA's but beta-values and or M-values
-can contain NA's after preprocessing. Either because some probes/CpG
-were specifically set NA or because of transformation from Intensities
-to beta or M-values.
-
-The [**impute**](https://cran.r-project.org/package=imputex) package
-can be used to impute these NA's, for example using the knn approach
-implemented in the `knn.impute`-function[@Troyanskaya2001].
+Several algorithms do not allow NA's but beta-values and or M-values can contain NA's after preprocessing. Either because some probes/CpG were specifically set NA or because of transformation from intensities to beta or M-values. The [**impute**]https://bioconductor.org/packages/release/bioc/html/impute.html) package can be used to impute these values. Below, we use the knn approach implemented by `impute.knn()` from the [**impute**] package [@Troyanskaya2001].
 
 ```{r imputation, results='hide'}
 library(impute)
 mvalues <- impute.knn(as.matrix(mvalues))$data
 ```
 
-# Adding probe information #
+***
 
-We have implemented a small function to map CpG-probes to their
-nearest genes.
+# Probe Annotation #
+
+Our packages contains a `cpgInfo()` function, which can be used to map CpG probes to their nearest genes. 
 
 ```{r}
-cpgs <- head(rownames(mvalues))
-cpgInfo(cpgs, TxDb="TxDb.Hsapiens.UCSC.hg19.knownGene")
+cpgs <- rownames(mvalues)
+cpgInfo <- cpgInfo(cpgs, TxDb="TxDb.Hsapiens.UCSC.hg19.knownGene")
 ```
+
+***
 
 # Construct `SummarizedExperiment` containing DNA methylation data #
 
-It is usefull to store the normalized beta- or M-values together with
-metadata on samples and features as a
-[**SummarizedExperiment**](http://bioconductor.org/packages/SummarizedExperiment).
+It is useful to store the normalized beta- or M-values together with metadata on samples and features as a [**SummarizedExperiment**](http://bioconductor.org/packages/SummarizedExperiment) class object. Using the `getPlatform()` function from [**FDb.InfiniumMethylation.hg19**](https://bioconductor.org/packages/release/data/annotation/html/FDb.InfiniumMethylation.hg19.html), we can annotate the probes. 
 
-Get probe annotation:
-
-```{r se.rowannotation}
+```{r}
 library(FDb.InfiniumMethylation.hg19)
 rowRanges <- getPlatform(platform="HM450", genome="hg19")
 rowRanges
 ```
-Get sample annotation/metadata:
 
-```{r se.colannotation, message=FALSE, results='hide'}
+> Need to fully understand this
+
+```{r se.colannotation, message=FALSE, results='hide', eval=FALSE}
 library(BBMRIomics)
 pheno <- getView("allPhenotypes", usrpwd=RP3_MDB_USRPWD, url=RP3_MDB)
 colData <- merge(pheno, targets, by="ids", all.y=TRUE)
 rownames(colData) <- colData$run_id
 ```
-```{r se.coldata}
+```{r se.coldata, eval=FALSE}
 colData[1:5, 1:5]
 ```
 
-```{r se.sumexp}
+```{r se.sumexp, eval=FALSE}
 mvalues <- makeSE(mvalues, colData, rowRanges, note="Functional Normalized and knn imputed")
 mvalues
 ```
 
-More about [**SummarizedExperiment**](http://bioconductor.org) see:
+You can read more about [**SummarizedExperiment**](http://bioconductor.org/packages/SummarizedExperiment) from the following resources:
 1. [package vignette](http://bioconductor.org/packages/release/bioc/vignettes/SummarizedExperiment/inst/doc/SummarizedExperiment.html)
 2. [course material](http://bioconductor.org/help/course-materials/2012/BiocEurope2012/SummarizedExperiment.pdf)
 3. [BioConductor nature paper](http://www.nature.com/nmeth/journal/v12/n2/full/nmeth.3252.html)
 
+***
 
 # DMR finder #
 
-We have implemented a DMR finder see [@Slieker2013] and `?DMRfinder`
-for more details.
+In our packages, we have implemented a DMR finder in the function `DMRfinder()` [@Slieker2013]. First, genomic features are extracted from the relevant `FeatureDb` object
 
-Here is an example using toy data:
+> Again, I need to look into this
 
-```{r dmrfinder}
-require(FDb.InfiniumMethylation.hg19)
+```{r eval=FALSE}
 feats <- features(FDb.InfiniumMethylation.hg19)
 regions <- feats[seqnames(feats) %in% c("chr21", "chr22")]
-mcols(regions)  <- NULL ##drop unnecessary metadata
+mcols(regions)  <- NULL
 mcols(regions)$crit <- rbinom(length(regions), 1, prob=0.2)
 
 ##input GRanges
@@ -199,5 +153,6 @@ dmrsR == dmrsD
 dmrsV == dmrsD
 ```
 
+***
 
 # References #
