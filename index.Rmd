@@ -1,6 +1,6 @@
 ---
 title: "Streamlined workflow for the quality control, normalization, and bias-free analysis of Illumina methylation array data - The Leiden approach"
-author: Maarten van Iterson, Elmar Tobi, Roderick Slieker, Wouter den Hollander, Koen Dekkers, Rene Luijk, Lucy Sinke, Eline Slagboom, and Bas Heijmans; Department of Molecular Epidemiology, Leiden University Medical Center, Leiden, The Netherlands
+author: Lucy Sinke, Maarten van Iterson, Elmar Tobi, Roderick Slieker, Wouter den Hollander, Koen Dekkers, Rene Luijk, Eline Slagboom, and Bas Heijmans; Department of Biomedical Data Sciences, Leiden University Medical Center, Leiden, The Netherlands
 email: l.j.sinke@lumc.nl
 ---
 
