@@ -9,7 +9,7 @@
 <meta name="generator" content="pandoc" />
 
 
-<meta name="author" content="Maarten van Iterson, Elmar Tobi, Roderick Slieker, Wouter den Hollander, Koen Dekkers, Rene Luijk, Lucy Sinke, Eline Slagboom, and Bas Heijmans; Department of Molecular Epidemiology, Leiden University Medical Center, Leiden, The Netherlands" />
+<meta name="author" content="Lucy Sinke, Maarten van Iterson, Elmar Tobi, Roderick Slieker, Wouter den Hollander, Koen Dekkers, Rene Luijk, Eline Slagboom, and Bas Heijmans; Department of Biomedical Data Science, Leiden University Medical Center, Leiden, The Netherlands" />
 
 
 <title>Streamlined workflow for the quality control, normalization, and bias-free analysis of Illumina methylation array data - The Leiden approach</title>
@@ -416,7 +416,7 @@ div.tocify {
 
 
 <h1 class="title toc-ignore">Streamlined workflow for the quality control, normalization, and bias-free analysis of Illumina methylation array data - The Leiden approach</h1>
-<h4 class="author">Maarten van Iterson, Elmar Tobi, Roderick Slieker, Wouter den Hollander, Koen Dekkers, Rene Luijk, Lucy Sinke, Eline Slagboom, and Bas Heijmans; Department of Molecular Epidemiology, Leiden University Medical Center, Leiden, The Netherlands</h4>
+<h4 class="author">Lucy Sinke, Maarten van Iterson, Elmar Tobi, Roderick Slieker, Wouter den Hollander, Koen Dekkers, Rene Luijk, Eline Slagboom, and Bas Heijmans; Department of Biomedical Data Science, Leiden University Medical Center, Leiden, The Netherlands</h4>
 
 </div>
 
@@ -427,7 +427,7 @@ div.tocify {
 <h1>Introduction</h1>
 <p>Here we provide a complete workflow for the preprocessing and analysis of DNA methylation array data. The workflow combines best practices in the field with in-house developed methodology, and is geared towards large-scale studies, including Epigenome-wide Association Studies (EWAS). Specifically, it is designed for analysis of data obtained from the <a href="https://www.bbmri.nl/samples-images-data">BIOS consortium</a>, which contains multiomics measures from 6 Dutch biobanks comprising ~4000 individuals.</p>
 <p>The <a href="https://github.com/molepi/DNAmArray"><strong>DNAmArray</strong></a>-package contains a series of convenient functions for the quality control, normalization, and analysis of methylation array data. The workflow has been thoroughly tested for the Illumina 450k array but will similarly be applicable to the newer 850k EPIC array pending updates of <a href="https://www.bioconductor.org">BioConductor</a> packages from other groups.</p>
-<p>It is worth noting that this workflow makes extensive use of other <a href="https://www.bioconductor.org">BioConductor</a> packages. For example, <a href="https://github.com/molepi/DNAmArray"><strong>DNAmArray</strong></a> converts IDAT files to an <code>RGset</code> by harnessing functions from <a href="https://bioconductor.org/packages/release/bioc/html/minfi.html"><strong>minfi</strong></a> <span class="citation">(Aryee et al. 2014)</span> and combining them with <a href="https://bioconductor.org/packages/release/bioc/html/BiocParallel.html">BiocParallel</a>. Usually these are installed automatically, but otherwise please refer to the relevant package’s documentation.</p>
+<p>It is worth noting that this workflow makes extensive use of other <a href="https://www.bioconductor.org">BioConductor</a> packages. For example, <a href="https://github.com/molepi/DNAmArray"><strong>DNAmArray</strong></a> converts IDAT files to an <code>RGset</code> by harnessing functions from <a href="https://bioconductor.org/packages/release/bioc/html/minfi.html"><strong>minfi</strong></a> <span class="citation">(Aryee et al. 2014)</span> and combining them with <a href="https://bioconductor.org/packages/release/bioc/html/BiocParallel.html"><strong>BiocParallel</strong></a>. Usually these are installed automatically, but otherwise please refer to the relevant package’s documentation.</p>
 <p>Furthermore, we have also developed packages used by this workflow. <a href="http:/bioconductor.org/packages/MethylAid"><strong>MethylAid</strong></a> <span class="citation">(Iterson et al. 2014)</span> provides a web application to assist in performing interactive sample quality control, and <a href="http:/bioconductor.org/packages/bacon"><strong>bacon</strong></a> <span class="citation">(Iterson, Zwet, and Heijmans 2017)</span> corrects for bias and inflation in ome-wide association studies, such as EWAS.</p>
 <hr />
 </div>

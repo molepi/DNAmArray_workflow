@@ -10,7 +10,7 @@ We recommend performing probe-filtering by setting unreliably measured probes to
 
 Some observations need to be removed from the dataset since they provide little to no information that could skew analyses. Probes which suffered from low intensity (default: <1) or are based on very few (default: <3) beads are removed, based on a specified cut off. 
 
-```{r echo=FALSE, message=FALSE, results='hide'}
+```{r 501start, echo=FALSE, message=FALSE, results='hide'}
 load("./data/targets.RData")
 targets$Basename <- substring(targets$supplementary_file,68,95)
 setwd("C:/Users/Lu/Documents/IDATs")
@@ -19,13 +19,13 @@ RGset <- read.metharray.exp(base=NULL, targets, extended=TRUE)
 GRset <- invisible(preprocessFunnorm.DNAmArray(RGset, nPCs=4, keepCN=FALSE))
 ```
 
-```{r}
+```{r 502filter}
 RGset <- probeFiltering(RGset)
 ```
 
 There are differences between probe types that are used in `probeFiltering()`. Information on these can be extracted and stored using functions from [**minfi**](https://bioconductor.org/packages/release/bioc/html/minfi.html) [@Aryee2014].
 
-```{r}
+```{r 503probeinfo}
 locusNames <- getManifestInfo(RGset, "locusNames")
 typeII <- getProbeInfo(RGset, type="II")
 typeI <- getProbeInfo(RGset, type="I")
@@ -41,7 +41,7 @@ Additionally, samples where a large proportion (default: >5%) of probes were set
 
 Our function `reduce()` takes the normalized `GRset` from the previous section and the filtered `RGset` created above and returns filtered beta or M-values, which can be passed to the `probeMasking()` function. If M-values are specified as the output, these are scaled to have a range of 32 instead of to infinite values.
 
-```{r}
+```{r 504reduce}
 mvalues <- reduce(GRset, RGset, what="M")
 ```
 
@@ -55,7 +55,7 @@ In total, Zhou et al. suggest removal of probes for a variety of reasons, from a
 
 We developed the `probeMasking()` function, which removes specified probes from either beta- or M- value matrices. In this instance, 59.415 CpG rows are removed. 
 
-```{r}
+```{r 505zhoumask}
 mvalues <- probeMasking(mvalues, array="450", genome="hg19")
 ```
 

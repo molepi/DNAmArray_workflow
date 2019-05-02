@@ -4,15 +4,11 @@
 
 ***
 
-On this page, we demonstrate some different methods for inspecting methylation array data with an emphasis on fast, efficient tools for large data sets.
-
-***
-
 # Beta density plots #
 
 Using `densityPlot()` from [**minfi**](https://bioconductor.org/packages/release/bioc/html/minfi.html) [@Aryee2014], we can visualize the per sample average beta-value distribution. This gives us a global impression of the data and allows us to identify possible anomalous samples. We expect this distribution to be bimodal with the peaks representing methylated and unmethylated signals. Any centre peaks should be further investigated for problems, such as ambiguous mapping. 
 
-```{r echo=FALSE}
+```{r 301start, echo=FALSE}
 load("./data/targets.RData")
 targets$Basename <- substring(targets$supplementary_file,68,95)
 setwd("C:/Users/Lu/Documents/IDATs")
@@ -20,14 +16,14 @@ library(minfi)
 RGset <- read.metharray.exp(base=NULL, targets, extended=TRUE)
 ```
 
-```{r}
+```{r 302betaplot}
 library(minfi)
 densityPlot(RGset, main="Beta density plot", xlab="Beta values")
 ``` 
 
 For this data, the density plot is clearly bimodal with no obvious outliers. However, in order to further investigate the beta-values, we store them using the `getBeta()` function. Since some visualisations cannot handle NA values, we use the median to impute these. The `type="Illumina"` option adds 100 to the denominator of the beta-value calculation, preventing NA values being recorded when the methylated and unmethylated signal are both 0.
 
-```{r}
+```{r 303betas}
 beta <- getBeta(RGset, type="Illumina")
 beta[is.na(beta)] <- median(beta, na.rm=TRUE)
 ```
@@ -38,9 +34,9 @@ beta[is.na(beta)] <- median(beta, na.rm=TRUE)
 
 Using the `prcomp_irlba()` function from [**irlba**](https://cran.r-project.org/web/packages/irlba/index.html) we can calculate principal components. By assessing the amount of variance explained by these and visualising them, we can better interpret the data. For example, if there was evidence of clustering this might suggest grouping of samples, such as by sex if sex-chromosomes were not yet excluded. 
 
-```{r}
+```{r 304pcplot}
 library(irlba)
-pc <- prcomp_irlba(t(beta), n=3)
+pc <- prcomp_irlba(t(beta), n=4)
 summary(pc)
 plot(pc$x, main="Principal components plot")
 ```
@@ -55,7 +51,7 @@ Each column in the targets dataframe should be considered as a potential covaria
 
 Homogenous columns can be excluded, as any variables that do not change by definition cannot explain variation in the data. In this instance, the `contact_institute` for all samples is Leiden, so there is no need to investigate a city effect. However, in some instances samples may processed in different cities, meaning that this could introduce a batch effect that needed to be corrected for.
 
-```{r}
+```{r 305heatmapscols}
 df <- apply(targets, 2, function(x) as.numeric(factor(x)))
 keep <- apply(df, 2, sd) > 0
 summary(keep)
@@ -67,7 +63,7 @@ As you can see, 10 columns need to be examined. These include sample-level varia
 
 Correlations between these factors and the principal components is calculated, and then these are visualised using the `pheatmap()` function from [**pheatmap**](https://cran.r-project.org/web/packages/pheatmap/index.html).
 
-```{r heatmap}
+```{r 306heatmapplot}
 library(pheatmap)
 cxy <- cor(pc$x, scale(df))   
 pheatmap(cxy, cluster_rows=FALSE, legend=TRUE, main="Heatmap of correlations")
@@ -81,27 +77,29 @@ Here we see grouping of similar covariates together, with three main considerati
 
 Although more frequently used for moderately-sized data sets, a dendogram can be helpful to visualise clustering. We use `dist()` to compute the distance matrix for the beta values, before implementing hierarchical cluster analysis with `hclust()` from the [**fastcluster**](https://cran.r-project.org/package=fastclust)-package. We then plot this clustering as a horizontal dendogram.
 
-```{r}
+```{r 307dendronorm}
 library(fastcluster)
 sBeta <- getBeta(RGset[,1:16], type="Illumina")
 d <- dist(t(sBeta), method="euclidean")
 fit <- hclust(d, method="average")
 fitdd <- as.dendrogram(fit)
 nodePar <- list(lab.cex=0.8, pch=c(NA, 15), cex=0.8, col="#41819a")
+par(mar=c(3,1,2,11))
 plot(fitdd, main="Cluster Dendogram", horiz=TRUE, nodePar=nodePar, xlab="Height")
 ```
   
 If an observation needs further investigation, we can identify it in the dendogram by highlighting it. 
   
-```{r clusteringhighlight}
+```{r 308dendrored}
 interestObs <- sample(colnames(sBeta), 1)
 colorLeafs <- function(x) {
   if (is.leaf(x) && attr(x, "label") %in% interestObs) {
-    attr(x, "nodePar") <- list(lab.cex=0.8, lab.col="red")
+    attr(x, "nodePar") <- list(lab.cex=0.8, lab.col="red", pch=c(NA,15))
   }
   return(x)
 } 
 dd <- dendrapply(as.dendrogram(fit), colorLeafs)
+par(mar=c(3,1,2,11))
 plot(dd, main="Cluster Dendogram", horiz=TRUE, nodePar=nodePar, xlab="Height")
 ```
 

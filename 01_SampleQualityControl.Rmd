@@ -10,7 +10,7 @@ Using [**GEOquery**](http://bioconductor.org/packages/release/bioc/html/GEOquery
 
 Initially, we use `getGEOSuppFiles()` to download the supplementary data to the current working directory. These consist of an archive containing the raw IDATs alongside some documentation. We extract these and store them in our chosen directory, ready for decompression.
 
-```{r eval=FALSE}
+```{r 201geoquery, eval=FALSE}
 library(GEOquery)
 getGEOSuppFiles("GSE48472")
 untar(tarfile="./GSE48472/GSE48472_RAW.tar", exdir="./IDATs")
@@ -18,7 +18,7 @@ untar(tarfile="./GSE48472/GSE48472_RAW.tar", exdir="./IDATs")
 
 After creating a list of files, we utilise the `gunzip()` function to efficiently unpack the data.
 
-```{r eval=FALSE}
+```{r 202idats, eval=FALSE}
 setwd("./IDATs")
 idat_files <- list.files()
 for(i in 1:length(idat_files)){
@@ -28,7 +28,7 @@ for(i in 1:length(idat_files)){
 
 We then use `getGEO()` to import SOFT format microarray data into R as a large GSE-class list. This contains a multitude of information, but we extract the phenotypic and meta-data of interest. *Please note that any reported parsing errors for the SPOT_ID columns do not interfere with the downstream process*
 
-```{r eval=FALSE}
+```{r 203getgeo, eval=FALSE}
 GSE48472 <- getGEO(GEO="GSE48472")
 targets <- pData(phenoData(GSE48472[[1]]))
 ```
@@ -40,28 +40,30 @@ targets <- pData(phenoData(GSE48472[[1]]))
 We now have the data we need to commence quality control, but some reformatting is needed. The [**MethylAid**](http://bioconductor.org/packages/MethylAid)
 [@Iterson2014] package that we developed requires the targets data frame to store IDAT file root names in a `Basename` column. Sometimes, data comes with a sample sheet to faciliate this, but in this case the information needs to be extracted from the supplementary file column instead.
 
-```{r echo=FALSE}
+```{r 204load, echo=FALSE}
 load("./data/targets.RData")
 ```
 
-```{r}
+```{r 205basename}
 targets$Basename <- substring(targets$supplementary_file,68,95)
 head(targets[c(1,2,34)])
 ```
 
 The following sample quality control steps require the [**MethylAid**](http://bioconductor.org/packages/MethylAid) and [**BiocParallel**](https://bioconductor.org/packages/release/bioc/html/BiocParallel.html) packages. Using parallel processing and/or batches will reduce both memory load and run-times when extracting intensities from IDAT files. Please see the [MethylAid vignette](http://bioconductor.org/packages/release/bioc/vignettes/MethylAid/inst/doc/MethylAid.pdf) for more details.
 
-```{r eval=FALSE}
+```{r 206sdata, eval=FALSE}
 library(MethylAid)
 library(BiocParallel)
 BPPARAM <- MulticoreParam(10)
 sData <- summarize(targets, batchSize=50, BPPARAM=BPPARAM)
 ```
 
-After this `summarize()`, the Shiny web application can be launched to `visualize()` the data and identify outliers. In this instance, there are no apparent outliers, but if found they can be removed from the dataset.
+After this `summarize()`, the Shiny web application can be launched to `visualize()` the data and identify outliers. In this instance, there are no apparent outliers, but if found they can be removed from the dataset. To easier visualise if your data conforms to typical patterns, you can utilise the `MethylAidData` package alongside the `background` option. Darker blue colours indicate regions where many observations are found in the example data, and can serve as a guide for expected peak areas. 
 
-```{r eval=FALSE}
-outliers <- visualize(sData)
+```{r 207methylaid, eval=FALSE}
+library(MethylAidData)
+data(exampleDataLarge)
+outliers <- visualize(sData, background=exampleDataLarge)
 targets <- targets[!(rownames(targets) %in% rownames(outliers)), ]
 ```
 
@@ -71,13 +73,13 @@ targets <- targets[!(rownames(targets) %in% rownames(outliers)), ]
 
 For the rest of the pipeline, our data will need to be available as an `RGChannelSetExtended` object. Reading in large numbers of IDAT files is memory-intensive and time-consuming. Therefore, our [**DNAmArray**](https://github.com/molepi/DNAmArray) package offers the `read.metharray.exp.par()` function, which distributes the IDAT files to each of the workers registered using [**BiocParallel**](https://bioconductor.org/packages/release/bioc/html/BiocParallel.html). It then passes them in batches to `read.metharray.exp()` from [**minfi**](http://bioconductor.org/packages/minfi) [@Aryee2014] and combines the returned `RGset` objects.
 
-```{r eval=FALSE}
+```{r 208rgsetshow, eval=FALSE}
 library(DNAmArray)
 register(MulticoreParam(6))
 RGset <- read.metharray.exp.par(targets, verbose=TRUE, extended=TRUE)
 ```
 
-```{r echo=FALSE}
+```{r 209rgsethide, echo=FALSE}
 library(DNAmArray)
 setwd("C:/Users/Lu/Documents/IDATs")
 RGset <- read.metharray.exp(base=NULL, targets, extended=TRUE)
@@ -87,7 +89,7 @@ Reading data in parallel is subject to errors and debugging is often difficult. 
 
 Our data is now an `RGset` object that can used for further visualisations.
 
-```{r}
+```{r 210rgset}
 RGset
 ```
 

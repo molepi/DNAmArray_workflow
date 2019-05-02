@@ -423,16 +423,14 @@ div.tocify {
 <h1>Principal Components Selection</h1>
 <p>Since the default of selecting only two principal components is often too restrictive for this type of data, our <code>screeplot()</code> function allows visualisation to help select the optimal number. It plots the final principal component for each possible set against the variance that it would explain.</p>
 <pre class="r"><code>pc &lt;- screeplot(RGset)</code></pre>
-<p><img src="03_Normalization_files/figure-html/unnamed-chunk-3-1.png" width="672" /></p>
+<p><img src="03_Normalization_files/figure-html/402screeplot-1.png" width="672" /></p>
 <p>This plot shows a sharp drop-off of variance explained after the fifth principal component. For this reason, we choose to carry out normalization using 4 principal components.</p>
 <hr />
 </div>
 <div id="functional-normalization" class="section level1">
 <h1>Functional normalization</h1>
-<p>Our workflow uses the Functional Normalization approach <span class="citation">(Fortin et al. 2014)</span>, since this includes both NOOB background correction and a dye bias correction step <span class="citation">(Triche et al. 2013)</span>.</p>
-<blockquote>
-<p>Add section justifying choice of normalization technique.</p>
-</blockquote>
+<p>Our workflow uses the Functional Normalization approach <span class="citation">(Fortin et al. 2014)</span>, since this includes both NOOB background correction and a dye bias correction step <span class="citation">(Triche et al. 2013)</span>. Although there has been some suggestion that using the internal bisulfite controls is biased <span class="citation">(Zhou, Laird, and Shen 2016)</span>, this was mostly due to large amounts of non-CpG methylation regions in certain types of samples.</p>
+<p>If analysing methylation data from tissues where there is likely an abundance of non-CpG methylation, such as samples containing neurons, stem cells, or female germ cells <span class="citation">(He and Ecker 2015)</span>, then exploring the effects of utilising different bisulfite controls for normalization would be prudent. In this instance, comparing CpC and TpC probes to assess incomplete conversion might be suitable <span class="citation">(Zhou, Laird, and Shen 2016)</span>.</p>
 <p>By default, functional normalization returns normalized copy number data making the returned <code>GenomicRatioSet</code> twice the size necessary when only beta-values or M-values are required. Therefore, we developed <code>preprocessFunnorm.DNAmArray()</code>, which adds an option not to return these to the <code>preprocessFunnorm()</code> function from <a href="https://bioconductor.org/packages/release/bioc/html/minfi.html"><strong>minfi</strong></a> <span class="citation">(Aryee et al. 2014)</span>.</p>
 <pre class="r"><code>GRset &lt;- preprocessFunnorm.DNAmArray(RGset, nPCs=4, keepCN=FALSE)</code></pre>
 <pre><code>## [preprocessFunnorm] Modified version not returning CN! 
@@ -452,8 +450,14 @@ div.tocify {
 <div id="ref-Fortin2014">
 <p>Fortin, J. P., A. Labbe, M. Lemire, B. W. Zanke, T. J. Hudson, E. J. Fertig, C. M. Greenwood, and K. D. Hansen. 2014. “Functional normalization of 450k methylation array data improves replication in large cancer studies.” <em>Genome Biology</em> 15 (12): 503.</p>
 </div>
+<div id="ref-He2015">
+<p>He, Y., and J. Ecker. 2015. “Non-CG Methylation in the Human Genome.” <em>Annu Rev Genomics Hum Genet</em> 16: 55–77.</p>
+</div>
 <div id="ref-Triche2013">
 <p>Triche, T. J., D. J. Weisenberger, D. Van Den Berg, P. W. Laird, and K. D. Siegmund. 2013. “Low-level processing of Illumina Infinium DNA Methylation BeadArrays.” <em>Nucleic Acids Res.</em> 41 (7): e90.</p>
+</div>
+<div id="ref-Zhou2016">
+<p>Zhou, W., P. W. Laird, and H. Shen. 2016. “Comprehensive characterization, annotation and innovative use of Infinium DNA methylation BeadChip probes.” <em>Nucleic Acids Res.</em>, October.</p>
 </div>
 </div>
 </div>

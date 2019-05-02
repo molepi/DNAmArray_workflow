@@ -1,6 +1,6 @@
 ---
 title: "Streamlined workflow for the quality control, normalization, and bias-free analysis of Illumina methylation array data - The Leiden approach"
-author: Maarten van Iterson, Elmar Tobi, Roderick Slieker, Wouter den Hollander, Koen Dekkers, Rene Luijk, Lucy Sinke, Eline Slagboom, and Bas Heijmans; Department of Molecular Epidemiology, Leiden University Medical Center, Leiden, The Netherlands
+author: Lucy Sinke, Maarten van Iterson, Elmar Tobi, Roderick Slieker, Wouter den Hollander, Koen Dekkers, Rene Luijk, Eline Slagboom, and Bas Heijmans; Department of Biomedical Data Science, Leiden University Medical Center, Leiden, The Netherlands
 email: l.j.sinke@lumc.nl
 ---
 
@@ -27,7 +27,7 @@ applicable to the newer 850k EPIC array pending updates of
 [BioConductor](https://www.bioconductor.org) packages from other
 groups.
 
-It is worth noting that this workflow makes extensive use of other [BioConductor](https://www.bioconductor.org) packages. For example, [**DNAmArray**](https://github.com/molepi/DNAmArray) converts IDAT files to an `RGset` by harnessing functions from [**minfi**](https://bioconductor.org/packages/release/bioc/html/minfi.html) [@Aryee2014] and combining them with [BiocParallel](https://bioconductor.org/packages/release/bioc/html/BiocParallel.html). Usually these are installed
+It is worth noting that this workflow makes extensive use of other [BioConductor](https://www.bioconductor.org) packages. For example, [**DNAmArray**](https://github.com/molepi/DNAmArray) converts IDAT files to an `RGset` by harnessing functions from [**minfi**](https://bioconductor.org/packages/release/bioc/html/minfi.html) [@Aryee2014] and combining them with [**BiocParallel**](https://bioconductor.org/packages/release/bioc/html/BiocParallel.html). Usually these are installed
 automatically, but otherwise please refer to the relevant package's documentation.
 
 Furthermore, we have also developed packages used by this workflow.  [**MethylAid**](http:/bioconductor.org/packages/MethylAid)
@@ -54,7 +54,7 @@ be installed in several ways, and has been successfully for >= R-3.2.0 on variou
 First install the package
 [**devtools**](https://github.com/hadley/devtools). Next use:
 
-```{r devtools, eval=FALSE}
+```{r 101devtools, eval=FALSE}
 library(devtools)
 install_github("molepi/DNAmArray")
 ```
@@ -64,7 +64,7 @@ install_github("molepi/DNAmArray")
 Using [git](https://git-scm.com/), you can `git clone`, build,
 and then install the package from source:
 
-```{r git, engine='bash', eval=FALSE}
+```{r 102git, engine='bash', eval=FALSE}
 git clone git@github.com/molepi/DNAmArray.git
 R CMD build DNAmArray
 R CMD INSTALL DNAmArray_x.y.z.tar.gz
