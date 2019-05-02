@@ -418,10 +418,75 @@ div.tocify {
 </div>
 
 
-<pre><code>## Warning in probeMasking(mvalues, array = &quot;450&quot;, genome = &quot;hg19&quot;): The
+<pre><code>## Warning in probeMasking(betas, array = &quot;450&quot;, genome = &quot;hg19&quot;): The
 ## probeMasking function appears to be out-of-date. Please contact the
 ## maintainer.</code></pre>
 <hr />
+<div id="the-rangedsummarizedexperiment-class" class="section level1">
+<h1>The <code>RangedSummarizedExperiment</code> class</h1>
+<p>Moving further into the pipeline, it will be necessary to have our methylation data stored in a <a href="http://bioconductor.org/packages/SummarizedExperiment"><code>RangedSummarizedExperiment</code></a> class object. Designed to handle microarray data, this class stores observations from multiple samples alongside relevant meta-data, and ensures that both features and phenotypes are kept in-sync when subsetting.</p>
+<p>This matrix-like container is organised with rows representing features, such as genes or exons, which can be accessed using <code>rowRanges()</code>. This function calls a <code>GRanges</code> object describing features and their attributes. The columns of the <code>RangedSummarizedExperiment</code> store information about each sample, and this can be accessed using <code>colData()</code>.</p>
+<p>Lastly, each assay is represented in the third dimension of this matrix-like object and can be shown using the <code>assays()</code> function. Meta-data is then linked to this combination of data frames, and can be accessed with the <code>metadata()</code> command.</p>
+<div id="creating-a-rangedsummarizedexperiment" class="section level3">
+<h3>Creating a <code>RangedSummarizedExperiment</code></h3>
+<p>The <a href="https://bioconductor.org/packages/release/data/annotation/html/FDb.InfiniumMethylation.hg19.html"><strong>FDb.InfiniumMethylation.hg19</strong></a> package contains probe annotations, which can be extracted using the <code>getPlatform()</code> function. To ensure that we apply the previous prove filtering, we use <code>match()</code> to keep only the relevant information.</p>
+<pre class="r"><code>library(FDb.InfiniumMethylation.hg19)
+rowRanges &lt;- getPlatform(platform=&quot;HM450&quot;, genome=&quot;hg19&quot;)</code></pre>
+<pre><code>## Fetching coordinates for hg19...</code></pre>
+<pre class="r"><code>rowRanges[1:10, 1:4]</code></pre>
+<pre><code>## GRanges object with 10 ranges and 4 metadata columns:
+##              seqnames        ranges strand |    addressA    addressB
+##                 &lt;Rle&gt;     &lt;IRanges&gt;  &lt;Rle&gt; | &lt;character&gt; &lt;character&gt;
+##   cg04913815    chr16   60438-60439      * |    24771476            
+##   cg01686861    chr16   60748-60749      * |    36644319    45624454
+##   cg05558259    chr16   61085-61086      * |    65765435            
+##   cg26978960    chr16   62460-62461      * |    28717484            
+##   cg03792876    chr16   73243-73244      * |    42725455            
+##   cg09699726    chr16   91602-91603      * |    34629364            
+##   cg07549526    chr16   91663-91664      * |    65631352    31654409
+##   cg02851049    chr16 101260-101261      * |    38765355            
+##   cg11876012    chr16 101686-101687      * |    47645328            
+##   cg14820573    chr16 102121-102122      * |    36735483            
+##              channel platform
+##                &lt;Rle&gt;    &lt;Rle&gt;
+##   cg04913815    Both    HM450
+##   cg01686861     Red    HM450
+##   cg05558259    Both    HM450
+##   cg26978960    Both    HM450
+##   cg03792876    Both    HM450
+##   cg09699726    Both    HM450
+##   cg07549526     Grn    HM450
+##   cg02851049    Both    HM450
+##   cg11876012    Both     BOTH
+##   cg14820573    Both     BOTH
+##   -------
+##   seqinfo: 24 sequences from hg19 genome</code></pre>
+<pre class="r"><code>rows &lt;- match(rownames(betas), names(rowRanges))</code></pre>
+<p>Now that we have our annotations, we can combine them with our data using the <a href="https://bioconductor.org/packages/release/bioc/html/SummarizedExperiment.html"><strong>SummarizedExperiment</strong></a> package <span class="citation">(<span class="citeproc-not-found" data-reference-id="Morgan2018"><strong>???</strong></span>)</span>. After ensuring that any column subsetting is accounted for, we extract the <code>colData()</code> from our <code>RGset</code>. Finally, the beta values, probe annotations, and sample information is combines into a <code>RangedSummarizedExperiment</code> object using the <code>SummarizedExperiment()</code> function.</p>
+<pre class="r"><code>library(SummarizedExperiment)
+
+cols &lt;- match(colnames(betas), colnames(RGset))
+colData &lt;- colData(RGset[, cols])@listData
+
+methData &lt;- SummarizedExperiment(assays=SimpleList(beta=betas),
+                                 rowRanges=rowRanges[rows], 
+                                 colData = DataFrame(colData))
+methData</code></pre>
+<pre><code>## class: RangedSummarizedExperiment 
+## dim: 422742 56 
+## metadata(0):
+## assays(1): beta
+## rownames(422742): cg01707559 cg03244189 ... ch.22.1008279F
+##   ch.22.47579720R
+## rowData names(10): addressA addressB ... probeEnd probeTarget
+## colnames(56): GSM1179497_5729917059_R01C01
+##   GSM1179498_5729917059_R01C02 ... GSM1179551_7310440085_R01C02
+##   GSM1179552_7310440053_R03C02
+## colData names(35): title geo_accession ... Basename filenames</code></pre>
+<p>You can read more about <a href="http://bioconductor.org/packages/SummarizedExperiment"><strong>SummarizedExperiment</strong></a> from the following resources: 1. <a href="http://bioconductor.org/packages/release/bioc/vignettes/SummarizedExperiment/inst/doc/SummarizedExperiment.html">package vignette</a> 2. <a href="http://bioconductor.org/help/course-materials/2012/BiocEurope2012/SummarizedExperiment.pdf">course material</a> 3. <a href="http://www.nature.com/nmeth/journal/v12/n2/full/nmeth.3252.html">BioConductor nature paper</a></p>
+<hr />
+</div>
+</div>
 <div id="phenotype-prediction" class="section level1">
 <h1>Phenotype Prediction</h1>
 <p>It can be useful to predict phenotypes in your data, either for comparison to assumed categories or to help impute missing values.</p>
@@ -456,7 +521,7 @@ table(predicted, useNA=&quot;always&quot;)</code></pre>
 snpBetas &lt;- getSnpBeta(RGset)
 snpBetasVar &lt;- genki(snpBetas)</code></pre>
 <blockquote>
-<p>since relabelgenotypes() is deprecated, we need a new way to discover swaps. In the previous version, all DNA samples were correlated with each other to check for unreported relatedness. From the genotypes, identity-by-state was calculated for each SNP and these were summarized by mean and variance. This used the alleleSharing() function from omicsPrint, and was based on an idea from GRR-tool for the detection of sample relationships in genotype data.</p>
+<p>use omicsPrint</p>
 </blockquote>
 <hr />
 </div>
@@ -474,69 +539,6 @@ mvalues &lt;- impute.knn(as.matrix(mvalues))$data</code></pre>
 cpgInfo &lt;- cpgInfo(cpgs, TxDb=&quot;TxDb.Hsapiens.UCSC.hg19.knownGene&quot;)</code></pre>
 <pre><code>## Fetching coordinates for hg19...</code></pre>
 <pre><code>## &#39;select()&#39; returned many:1 mapping between keys and columns</code></pre>
-<hr />
-</div>
-<div id="construct-summarizedexperiment-containing-dna-methylation-data" class="section level1">
-<h1>Construct <code>SummarizedExperiment</code> containing DNA methylation data</h1>
-<p>It is useful to store the normalized beta- or M-values together with metadata on samples and features as a <a href="http://bioconductor.org/packages/SummarizedExperiment"><strong>SummarizedExperiment</strong></a> class object. Using the <code>getPlatform()</code> function from <a href="https://bioconductor.org/packages/release/data/annotation/html/FDb.InfiniumMethylation.hg19.html"><strong>FDb.InfiniumMethylation.hg19</strong></a>, we can annotate the probes.</p>
-<pre class="r"><code>library(FDb.InfiniumMethylation.hg19)
-rowRanges &lt;- getPlatform(platform=&quot;HM450&quot;, genome=&quot;hg19&quot;)</code></pre>
-<pre><code>## Fetching coordinates for hg19...</code></pre>
-<pre class="r"><code>rowRanges</code></pre>
-<pre><code>## GRanges object with 485577 ranges and 10 metadata columns:
-##              seqnames            ranges strand |    addressA    addressB
-##                 &lt;Rle&gt;         &lt;IRanges&gt;  &lt;Rle&gt; | &lt;character&gt; &lt;character&gt;
-##   cg04913815    chr16       60438-60439      * |    24771476            
-##   cg01686861    chr16       60748-60749      * |    36644319    45624454
-##   cg05558259    chr16       61085-61086      * |    65765435            
-##   cg26978960    chr16       62460-62461      * |    28717484            
-##   cg03792876    chr16       73243-73244      * |    42725455            
-##          ...      ...               ...    ... .         ...         ...
-##   cg17939569     chrY 27009430-27009431      * |    73757458            
-##   cg13365400     chrY 27210334-27210335      * |    61745505            
-##   cg21106100     chrY 28555536-28555537      * |    56793430            
-##   cg08265308     chrY 28555550-28555551      * |    67794346    26610401
-##   cg14273923     chrY 28555912-28555913      * |    16749405            
-##              channel platform percentGC               sourceSeq probeType
-##                &lt;Rle&gt;    &lt;Rle&gt; &lt;numeric&gt;          &lt;DNAStringSet&gt;     &lt;Rle&gt;
-##   cg04913815    Both    HM450      0.58 TTTCGGTGGT...GTCAGACCCG        cg
-##   cg01686861     Red    HM450      0.76 CGCCCCCAGG...CACGCCCCCC        cg
-##   cg05558259    Both    HM450      0.56 CAGCTAGGGA...TGGCAGCACG        cg
-##   cg26978960    Both    HM450      0.66 CGGCCCAGTA...CTGTCGACTC        cg
-##   cg03792876    Both    HM450      0.64 ATGGAGGCTT...GCAGGTTACG        cg
-##          ...     ...      ...       ...                     ...       ...
-##   cg17939569    Both    HM450      0.42 CGCCTAAATA...AAATCACCGG        cg
-##   cg13365400    Both    HM450      0.44 CGTCACCTGG...CCCTAAGGAC        cg
-##   cg21106100    Both    HM450      0.66 CGGATCTTTC...CTGGCCTCCC        cg
-##   cg08265308     Red    HM450      0.68 CGGCTCCCAA...CATCTTGGCC        cg
-##   cg14273923    Both    HM450      0.48 TGGTATTGGT...ATAATCGTCG        cg
-##               probeStart    probeEnd probeTarget
-##              &lt;character&gt; &lt;character&gt;   &lt;numeric&gt;
-##   cg04913815       60438       60487       60438
-##   cg01686861       60700       60749       60748
-##   cg05558259       61037       61086       61085
-##   cg26978960       62412       62461       62460
-##   cg03792876       73195       73244       73243
-##          ...         ...         ...         ...
-##   cg17939569    27009430    27009479    27009430
-##   cg13365400    27210334    27210383    27210334
-##   cg21106100    28555488    28555537    28555536
-##   cg08265308    28555502    28555551    28555550
-##   cg14273923    28555912    28555961    28555912
-##   -------
-##   seqinfo: 24 sequences from hg19 genome</code></pre>
-<blockquote>
-<p>Need to fully understand this</p>
-</blockquote>
-<pre class="r"><code>library(BBMRIomics)
-pheno &lt;- getView(&quot;allPhenotypes&quot;, usrpwd=RP3_MDB_USRPWD, url=RP3_MDB)
-colData &lt;- merge(pheno, targets, by=&quot;ids&quot;, all.y=TRUE)
-rownames(colData) &lt;- colData$run_id</code></pre>
-<pre class="r"><code>colData[1:5, 1:5]</code></pre>
-<pre class="r"><code>mvalues &lt;- makeSE(mvalues, colData, rowRanges, note=&quot;Functional Normalized and knn imputed&quot;)
-mvalues</code></pre>
-<p>You can read more about <a href="http://bioconductor.org/packages/SummarizedExperiment"><strong>SummarizedExperiment</strong></a> from the following resources: 1. <a href="http://bioconductor.org/packages/release/bioc/vignettes/SummarizedExperiment/inst/doc/SummarizedExperiment.html">package vignette</a> 2. <a href="http://bioconductor.org/help/course-materials/2012/BiocEurope2012/SummarizedExperiment.pdf">course material</a> 3. <a href="http://www.nature.com/nmeth/journal/v12/n2/full/nmeth.3252.html">BioConductor nature paper</a></p>
-<hr />
 </div>
 <div id="dmr-finder" class="section level1">
 <h1>DMR finder</h1>

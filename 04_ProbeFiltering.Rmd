@@ -42,7 +42,7 @@ Additionally, samples where a large proportion (default: >5%) of probes were set
 Our function `reduce()` takes the normalized `GRset` from the previous section and the filtered `RGset` created above and returns filtered beta or M-values, which can be passed to the `probeMasking()` function. If M-values are specified as the output, these are scaled to have a range of 32 instead of to infinite values.
 
 ```{r 504reduce}
-mvalues <- reduce(GRset, RGset, what="M")
+betas <- reduce(GRset, RGset, what="beta")
 ```
 
 ***
@@ -56,7 +56,7 @@ In total, Zhou et al. suggest removal of probes for a variety of reasons, from a
 We developed the `probeMasking()` function, which removes specified probes from either beta- or M- value matrices. In this instance, 59.415 CpG rows are removed. 
 
 ```{r 505zhoumask}
-mvalues <- probeMasking(mvalues, array="450", genome="hg19")
+betas <- probeMasking(betas, array="450", genome="hg19")
 ```
 
 ***
