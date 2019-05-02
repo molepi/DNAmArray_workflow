@@ -2,7 +2,7 @@
 ```{r, child="_setup.Rmd"}
 ```
 
-```{r echo=FALSE, message=FALSE, results='hide'}
+```{r 601start, echo=FALSE, message=FALSE, results='hide'}
 load("./data/targets.RData")
 targets$Basename <- substring(targets$supplementary_file,68,95)
 setwd("C:/Users/Lu/Documents/IDATs")
@@ -10,53 +10,49 @@ library(minfi)
 RGset <- read.metharray.exp(base=NULL, targets, extended=TRUE)
 GRset <- invisible(preprocessFunnorm.DNAmArray(RGset, nPCs=4, keepCN=FALSE))
 RGset <- probeFiltering(RGset)
-mvalues <- reduce(GRset, RGset, what="M")
-mvalues <- invisible(probeMasking(mvalues, array="450", genome="hg19"))
+betas <- reduce(GRset, RGset, what="beta")
+betas <- invisible(probeMasking(betas, array="450", genome="hg19"))
 ```
 
 ***
 
-# The `SummarizedExperiment` class #
+# The `RangedSummarizedExperiment` class #
 
-Moving further into the pipeline, it will be necessary to have our methylation data stored in a [`SummarizedExperiment`](http://bioconductor.org/packages/SummarizedExperiment) class object. Designed to handle microarray data, this class stores observations from multiple samples alongside relevant meta-data, and ensures that both features and phenotypes are kept in-sync when subsetting.
+Moving further into the pipeline, it will be necessary to have our methylation data stored in a [`RangedSummarizedExperiment`](http://bioconductor.org/packages/SummarizedExperiment) class object. Designed to handle microarray data, this class stores observations from multiple samples alongside relevant meta-data, and ensures that both features and phenotypes are kept in-sync when subsetting.
 
-This matrix-like container is organised with rows representing features, such as genes or exons, which can be accessed using `rowData()`. This function calls a 2-dimensional data frame with features as rows and attributes of these features, such as transcript IDs, as columns. The columns of the `SummarizedExperiment` store information about each sample, and this can be accessed using `colData()`. 
+This matrix-like container is organised with rows representing features, such as genes or exons, which can be accessed using `rowRanges()`. This function calls a `GRanges` object describing features and their attributes. The columns of the `RangedSummarizedExperiment` store information about each sample, and this can be accessed using `colData()`. 
 
 Lastly, each assay is represented in the third dimension of this matrix-like object and can be shown using the `assays()` function. Meta-data is then linked to this combination of data frames, and can be accessed with the `metadata()` command. 
 
+### Creating a `RangedSummarizedExperiment` ###
 
+The [**FDb.InfiniumMethylation.hg19**](https://bioconductor.org/packages/release/data/annotation/html/FDb.InfiniumMethylation.hg19.html) package contains probe annotations, which can be extracted using the `getPlatform()` function. To ensure that we apply the previous prove filtering, we use `match()` to keep only the relevant information.
 
-Using the `getPlatform()` function from [**FDb.InfiniumMethylation.hg19**](https://bioconductor.org/packages/release/data/annotation/html/FDb.InfiniumMethylation.hg19.html), we can annotate the probes. 
-
-```{r}
+```{r 602probeannotate}
 library(FDb.InfiniumMethylation.hg19)
 rowRanges <- getPlatform(platform="HM450", genome="hg19")
-rowRanges
+rowRanges[1:10, 1:4]
+rows <- match(rownames(betas), names(rowRanges))
 ```
 
-> Need to fully understand this
+Now that we have our annotations, we can combine them with our data using the [**SummarizedExperiment**](https://bioconductor.org/packages/release/bioc/html/SummarizedExperiment.html) package [@Morgan2018]. After ensuring that any column subsetting is accounted for, we extract the `colData()` from our `RGset`. Finally, the beta values, probe annotations, and sample information is combines into a `RangedSummarizedExperiment` object using the `SummarizedExperiment()` function.
 
-```{r se.colannotation, message=FALSE, results='hide', eval=FALSE}
-library(BBMRIomics)
-pheno <- getView("allPhenotypes", usrpwd=RP3_MDB_USRPWD, url=RP3_MDB)
-colData <- merge(pheno, targets, by="ids", all.y=TRUE)
-rownames(colData) <- colData$run_id
-```
-```{r se.coldata, eval=FALSE}
-colData[1:5, 1:5]
-```
+```{r 603summexp}
+library(SummarizedExperiment)
 
-```{r se.sumexp, eval=FALSE}
-mvalues <- makeSE(mvalues, colData, rowRanges, note="Functional Normalized and knn imputed")
-mvalues
+cols <- match(colnames(betas), colnames(RGset))
+colData <- colData(RGset[, cols])@listData
+
+methData <- SummarizedExperiment(assays=SimpleList(beta=betas),
+                                 rowRanges=rowRanges[rows], 
+                                 colData = DataFrame(colData))
+methData
 ```
 
 You can read more about [**SummarizedExperiment**](http://bioconductor.org/packages/SummarizedExperiment) from the following resources:
 1. [package vignette](http://bioconductor.org/packages/release/bioc/vignettes/SummarizedExperiment/inst/doc/SummarizedExperiment.html)
 2. [course material](http://bioconductor.org/help/course-materials/2012/BiocEurope2012/SummarizedExperiment.pdf)
 3. [BioConductor nature paper](http://www.nature.com/nmeth/journal/v12/n2/full/nmeth.3252.html)
-
-***
 
 ***
 
@@ -68,7 +64,7 @@ It can be useful to predict phenotypes in your data, either for comparison to as
 
 The [**DNAmArray**](https://github.com/molepi/DNAmArray) package contains a `getSex.DNAmArray()` function, which predicts the sex of your observations by inspecting intensities of X-chromosome signals. We use the `getBeta()` function from [**minfi**](https://bioconductor.org/packages/release/bioc/html/minfi.html) [@Aryee2014] as before to get the beta-value matrix and then use this to predict sex. If the beta matrix has already undergone probe filtering, it is important to recalculate it as some filtered probes may be used by the sex prediction function.
 
-```{r}
+```{r 604sexpredict}
 betas <- getBeta(RGset)
 predicted <- getSex.DNAmArray(betas)
 predicted <- as.character(factor(predicted))
