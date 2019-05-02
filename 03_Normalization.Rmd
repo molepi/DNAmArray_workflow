@@ -8,15 +8,15 @@
 
 Since the default of selecting only two principal components is often too restrictive for this type of data, our `screeplot()` function allows visualisation to help select the optimal number. It plots the final principal component for each possible set against the variance that it would explain. 
 
-```{r echo=FALSE, message=FALSE}
+```{r 401start, echo=FALSE, message=FALSE}
 load("./data/targets.RData")
 targets$Basename <- substring(targets$supplementary_file,68,95)
-setwd("C:/Users/ljsinke/Documents/2_r/cd/IDATs")
+setwd("C:/Users/Lu/Documents/IDATs")
 library(minfi)
 RGset <- read.metharray.exp(base=NULL, targets, extended=TRUE)
 ```
 
-```{r}
+```{r 402screeplot}
 pc <- screeplot(RGset)
 ``` 
 
@@ -26,13 +26,13 @@ This plot shows a sharp drop-off of variance explained after the fifth principal
 
 # Functional normalization #
 
-Our workflow uses the Functional Normalization approach [@Fortin2014], since this includes both NOOB background correction and a dye bias correction step [@Triche2013]. 
+Our workflow uses the Functional Normalization approach [@Fortin2014], since this includes both NOOB background correction and a dye bias correction step [@Triche2013]. Although there has been some suggestion that using the internal bisulfite controls is biased [@Zhou2016], this was mostly due to large amounts of non-CpG methylation regions in certain types of samples. 
 
->Add section justifying choice of normalization technique.
+If analysing methylation data from tissues where there is likely an abundance of non-CpG methylation, such as samples containing neurons, stem cells, or female germ cells [@He2015], then exploring the effects of utilising different bisulfite controls for normalization would be prudent. In this instance, comparing CpC and TpC probes to assess incomplete conversion might be suitable [@Zhou2016]. 
 
 By default, functional normalization returns normalized copy number data making the returned `GenomicRatioSet` twice the size necessary when only beta-values or M-values are required. Therefore, we developed `preprocessFunnorm.DNAmArray()`, which adds an option not to return these to the `preprocessFunnorm()` function from [**minfi**](https://bioconductor.org/packages/release/bioc/html/minfi.html) [@Aryee2014].
 
-```{r funnorm}
+```{r 403funnorm}
 GRset <- preprocessFunnorm.DNAmArray(RGset, nPCs=4, keepCN=FALSE)
 ```
 

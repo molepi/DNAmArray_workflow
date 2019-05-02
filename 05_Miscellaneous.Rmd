@@ -11,8 +11,52 @@ RGset <- read.metharray.exp(base=NULL, targets, extended=TRUE)
 GRset <- invisible(preprocessFunnorm.DNAmArray(RGset, nPCs=4, keepCN=FALSE))
 RGset <- probeFiltering(RGset)
 mvalues <- reduce(GRset, RGset, what="M")
-mvalues <- probeMasking(mvalues, array="450", genome="hg19")
+mvalues <- invisible(probeMasking(mvalues, array="450", genome="hg19"))
 ```
+
+***
+
+# The `SummarizedExperiment` class #
+
+Moving further into the pipeline, it will be necessary to have our methylation data stored in a [`SummarizedExperiment`](http://bioconductor.org/packages/SummarizedExperiment) class object. Designed to handle microarray data, this class stores observations from multiple samples alongside relevant meta-data, and ensures that both features and phenotypes are kept in-sync when subsetting.
+
+This matrix-like container is organised with rows representing features, such as genes or exons, which can be accessed using `rowData()`. This function calls a 2-dimensional data frame with features as rows and attributes of these features, such as transcript IDs, as columns. The columns of the `SummarizedExperiment` store information about each sample, and this can be accessed using `colData()`. 
+
+Lastly, each assay is represented in the third dimension of this matrix-like object and can be shown using the `assays()` function. Meta-data is then linked to this combination of data frames, and can be accessed with the `metadata()` command. 
+
+
+
+Using the `getPlatform()` function from [**FDb.InfiniumMethylation.hg19**](https://bioconductor.org/packages/release/data/annotation/html/FDb.InfiniumMethylation.hg19.html), we can annotate the probes. 
+
+```{r}
+library(FDb.InfiniumMethylation.hg19)
+rowRanges <- getPlatform(platform="HM450", genome="hg19")
+rowRanges
+```
+
+> Need to fully understand this
+
+```{r se.colannotation, message=FALSE, results='hide', eval=FALSE}
+library(BBMRIomics)
+pheno <- getView("allPhenotypes", usrpwd=RP3_MDB_USRPWD, url=RP3_MDB)
+colData <- merge(pheno, targets, by="ids", all.y=TRUE)
+rownames(colData) <- colData$run_id
+```
+```{r se.coldata, eval=FALSE}
+colData[1:5, 1:5]
+```
+
+```{r se.sumexp, eval=FALSE}
+mvalues <- makeSE(mvalues, colData, rowRanges, note="Functional Normalized and knn imputed")
+mvalues
+```
+
+You can read more about [**SummarizedExperiment**](http://bioconductor.org/packages/SummarizedExperiment) from the following resources:
+1. [package vignette](http://bioconductor.org/packages/release/bioc/vignettes/SummarizedExperiment/inst/doc/SummarizedExperiment.html)
+2. [course material](http://bioconductor.org/help/course-materials/2012/BiocEurope2012/SummarizedExperiment.pdf)
+3. [BioConductor nature paper](http://www.nature.com/nmeth/journal/v12/n2/full/nmeth.3252.html)
+
+***
 
 ***
 
@@ -53,7 +97,7 @@ snpBetas <- getSnpBeta(RGset)
 snpBetasVar <- genki(snpBetas)
 ```
 
-> since relabelgenotypes() is deprecated, we need a new way to discover swaps. In the previous version, all DNA samples were correlated with each other to check for unreported relatedness. From the genotypes, identity-by-state was calculated for each SNP and these were summarized by mean and variance. This used the alleleSharing() function from omicsPrint, and was based on an idea from GRR-tool for the detection of sample relationships in genotype data.
+> use omicsPrint
 
 ***
 
@@ -77,41 +121,7 @@ cpgs <- rownames(mvalues)
 cpgInfo <- cpgInfo(cpgs, TxDb="TxDb.Hsapiens.UCSC.hg19.knownGene")
 ```
 
-***
 
-# Construct `SummarizedExperiment` containing DNA methylation data #
-
-It is useful to store the normalized beta- or M-values together with metadata on samples and features as a [**SummarizedExperiment**](http://bioconductor.org/packages/SummarizedExperiment) class object. Using the `getPlatform()` function from [**FDb.InfiniumMethylation.hg19**](https://bioconductor.org/packages/release/data/annotation/html/FDb.InfiniumMethylation.hg19.html), we can annotate the probes. 
-
-```{r}
-library(FDb.InfiniumMethylation.hg19)
-rowRanges <- getPlatform(platform="HM450", genome="hg19")
-rowRanges
-```
-
-> Need to fully understand this
-
-```{r se.colannotation, message=FALSE, results='hide', eval=FALSE}
-library(BBMRIomics)
-pheno <- getView("allPhenotypes", usrpwd=RP3_MDB_USRPWD, url=RP3_MDB)
-colData <- merge(pheno, targets, by="ids", all.y=TRUE)
-rownames(colData) <- colData$run_id
-```
-```{r se.coldata, eval=FALSE}
-colData[1:5, 1:5]
-```
-
-```{r se.sumexp, eval=FALSE}
-mvalues <- makeSE(mvalues, colData, rowRanges, note="Functional Normalized and knn imputed")
-mvalues
-```
-
-You can read more about [**SummarizedExperiment**](http://bioconductor.org/packages/SummarizedExperiment) from the following resources:
-1. [package vignette](http://bioconductor.org/packages/release/bioc/vignettes/SummarizedExperiment/inst/doc/SummarizedExperiment.html)
-2. [course material](http://bioconductor.org/help/course-materials/2012/BiocEurope2012/SummarizedExperiment.pdf)
-3. [BioConductor nature paper](http://www.nature.com/nmeth/journal/v12/n2/full/nmeth.3252.html)
-
-***
 
 # DMR finder #
 
