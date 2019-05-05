@@ -41,7 +41,7 @@ summary(pc)
 plot(pc$x, main="Principal components plot")
 ```
 
-In this instance, our principal components explain nearly 65% of the variance in the data and there is no evidence of clustering.
+In this instance, our principal components explain over 70% of the variance in the data and there is no evidence of clustering.
 
 ***
 
