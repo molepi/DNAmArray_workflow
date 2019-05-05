@@ -31,11 +31,11 @@ The [**FDb.InfiniumMethylation.hg19**](https://bioconductor.org/packages/release
 ```{r 602probeannotate}
 library(FDb.InfiniumMethylation.hg19)
 rowRanges <- getPlatform(platform="HM450", genome="hg19")
-rowRanges[1:10, 1:4]
+rowRanges[1:10, 1:2]
 rows <- match(rownames(betas), names(rowRanges))
 ```
 
-Now that we have our annotations, we can combine them with our data using the [**SummarizedExperiment**](https://bioconductor.org/packages/release/bioc/html/SummarizedExperiment.html) package [@Morgan2018]. After ensuring that any column subsetting is accounted for, we extract the `colData()` from our `RGset`. Finally, the beta values, probe annotations, and sample information is combines into a `RangedSummarizedExperiment` object using the `SummarizedExperiment()` function.
+Now that we have our annotations, we can combine them with our data using the [**SummarizedExperiment**](https://bioconductor.org/packages/release/bioc/html/SummarizedExperiment.html) package. After ensuring that any column subsetting is accounted for, we extract the `colData()` from our `RGset`. Finally, the beta values, probe annotations, and sample information is combines into a `RangedSummarizedExperiment` object using the `SummarizedExperiment()` function.
 
 ```{r 603summexp}
 library(SummarizedExperiment)
@@ -73,27 +73,142 @@ table(predicted, useNA="always")
 
 ### Predict White Blood Cell Composition ###
 
-> This function needs adapting for DNAmArray
+White blood cell count can be predicted using Houseman's method[@Houseman2012] implemented in [**minfi**](http://bioconductor.org/packages/minfi)[@Jaffe2014] by the `estimateCellCounts()` function.
 
-White blood cell count can be predicted using Houseman's method[@Houseman2012] implemented in the [**minfi**](http://bioconductor.org/packages/minfi)[@Jaffe2014].
+Alternatively, you can train your own predictor to impute white blood cell counts. In our example data, there is no cell count information for training, but the following code is a template that could be used. More information can be found about this at the [**wbccPredictor**](https://github.com/mvaniterson/wbccPredictor) GitHub.
 
-See also our approach for the imputation of white blood cell counts:[wbccPredictor](https://github.com/mvaniterson/wbccPredictor)
+First, beta values are obtained from the `RangedSummarizedExperiment` object, with CpGs where there are NA values removed. In this instance, there are 26,162 CpGs that have at least one NA, meaning that 396,580 remain.
 
-> Create new functions to predict other phenotypes, such as chronological age or smoking status.
+```{r 605wbccload}
+wbccData <- assays(methData)$beta
+dim(wbccData)
+wbccData[1:10, 1:2]
+
+keep <- apply(wbccData, 1, function(x) all(!is.na(x)))
+table(keep)
+wbccData <- wbccData[keep, ]
+dim(wbccData)
+```
+
+Then, known cell percentages are stored along with relevant covariates, such as age and sex. Complete data is then split into a training and test set, in order to build the predictor. It is possible to split the data using `sample()`, but then there is a risk that patterns in the data will be inherited by the training and test sets. Therefore, we employ stratified splitting using the `sample.split()` function from [**caTools**](https://cran.r-project.org/web/packages/caTools/index.html).
+
+```{r 606wbccset, eval=FALSE}
+cellPercentages <- as.data.frame(colData(methData)[ , c("Neut_Perc", "Lymph_Perc",
+                                                        "Mono_Perc", "Eos_Perc",
+                                                        "Baso_Perc")])
+cellPercentages <- apply(cellPercentages, 2, as.numeric)
+
+covariates <- as.data.frame(colData(methData))
+covariates <- covariates[ , c("Age", "Sex")]
+colnames(covariates) <- c("Age", "Sex")
+
+rownames(covariates) <- rownames(cellPercentages) <- colnames(wbccData) <- colData(methData)$uuid
+nas <- apply(cellPercentages, 1, function(x) any(is.na(x)))
+complete <- which(!nas)
+
+trainID <- sample.split(complete, SplitRatio=2/3)
+testID <- complete[!(complete %in% trainID)]
+
+dataTrain <- wbccData[ , trainID]
+covarTrain <- covariates[trainID, ]
+cellPercTrain <- cellPercentages[trainID, ]
+```
+
+Now that you have your training and test set, you can use the `train()` function from [**wbccPredictor**](https://github.com/mvaniterson/wbccPredictor) to build the predictor. This can then be saved and visualise before testing and use.
+
+```{r 607wbccbuild, eval=FALSE}
+wbccPredictor <- train(dataTrain, covarTrain, cellPerTrain, ncomp=50, validation="CV")
+save(wbccPredictor)
+
+summary(wbccPredictor)
+cumsum(explvar(wbccPredictor))
+barplot(cumsum(explvar(wbccPredictor)), las=2, ylab="Cumulative Variance Explained")
+```
+
+A validation plot is a method to select the number of components to use with the predictor. In the example below, we use 10 components, and then visualise the results with the `plotting()` function.
+
+```{r 608wbccplot, eval=FALSE}
+validationplot(predictor, val.type="R2")
+predicted <- 10^wbccPredictor$fitted.values[ , , 20]-1
+measured <- cellPerTrain
+
+plotting <- function(measured, predicted, xlab="predicted", ylab="measured")
+{
+  op <- par(mfcol=c(3,2), mar=c(4,4,3,1))
+  for(k in 1:ncol(measured))
+  {
+    type <- colnames(measured)[k]
+    cme <- cor(predicted[ , k], measured[ , k])
+    plot(predicted[ , k], measured[ , k], main=paste(type, " (correlation: ", round(cme,4), ")",
+                                                     sep=""), bty="n", pty="s")
+    abline(lm(measured[ , k]~0+predicted[ , k]), col=2, lty=1, lwd=2)
+    abline(0, 1, col="grey", lty=1, lwd=2)
+    grid()
+  }
+  par(op)
+}
+
+plotting(measured, predicted)
+```
+
+Using the test set, the predictor can be tested before using for `prediction()`.
+
+```{r 609wbcctest, eval=FALSE}
+dataTest <- wbccData[ , testID]
+covarTest <- covariated[testID, ]
+cellPerTest <- cellPercentages[testID, ]
+
+predicted <- prediction(predictor, dataTest, covarTest, ncomp=20)
+plotting(cellPerTest, predicted)
+```
+
+> Add these functions to DNAmArray
+
+### Predict chronological age ###
+
+Age can be predicted using Horvath's or Hannum's coefficients with `agep()` from [**wateRmelon**](https://bioconductor.org/packages/release/bioc/html/wateRmelon.html) [@Pidsley2013]. If you use Hannum's, you will need to call the coefficients using `data(hannumCoef)` before prediction.
+
+```{r 610agep}
+library(wateRmelon)
+agep <- agep(betas, method="horvath")
+summary(agep)
+```
 
 ***
 
 # Checking Sample Relationships #
 
-Beta-values of the probes containing SNPs can be extracted from the RGset using [**minfi**](http:/bioconductor.org/packages/minfi)'s `getSnpBeta` function. These can then be converted to alleles using k-means clustering using the `genki()` function from [**wateRmelon**](https://bioconductor.org/packages/release/bioc/html/wateRmelon.html) [@Pidsley2013]. This function returns values of disperson for each of three genotype peaks (AA, AB, and BB). which can be used as a performance metric since technical variation would decrease the tightness of the genotypic peaks.
+Beta-values of the probes containing SNPs can be extracted from the RGset using [**minfi**](http:/bioconductor.org/packages/minfi)'s `getSnpBeta` function. These can then be converted to alleles using k-means clustering using the `genki()` function from [**wateRmelon**](https://bioconductor.org/packages/release/bioc/html/wateRmelon.html). This function returns values of disperson for each of three genotype peaks (AA, AB, and BB). which can be used as a performance metric since technical variation would decrease the tightness of the genotypic peaks.
 
-```{r getsnps, eval=FALSE}
+```{r 611getsnps, eval=FALSE}
 library(wateRmelon)
 snpBetas <- getSnpBeta(RGset)
 snpBetasVar <- genki(snpBetas)
 ```
 
-> use omicsPrint
+[**omicsPrint**](http://bioconductor.org/packages/release/bioc/html/omicsPrint.html)[@Iterson2018] is a package we developed to detect data linkage errors through inspecting sample relations in multiple omics studies. This example uses data where individuals are unrelated, but if you have data on twins, for example, it would detect that and also show any mismatches.
+
+Included with the package is the `hm450.manifest.pop.GoNL` data, which stores SNP probe information in a `GRanges` class object. This is then used to create a subset of the beta values for genotyping. 
+
+```{r 612omicsprint}
+library(omicsPrint)
+data(hm450.manifest.pop.GoNL)
+cpgs <- names(hm450.manifest.pop.GoNL[mcols(hm450.manifest.pop.GoNL)$MASK.snp5.EAS])
+cpgs <- na.omit(match(cpgs, rownames(betas)))
+omicsBetas <- betas[cpgs,]
+omicsBetas[1:10, 1:2]
+```
+
+The function `beta2genotype()` then genotypes the observations by measuring homozygous or heterozygous alleles at these SNP probes. Lastly `alleleSharing()` assesses the relationships between different individuals, which can be unrelated, twins, or identical. The results can then be visualised using the `inferRelations()` function.
+
+```{r 613genotype}
+dnamCalls <- beta2genotype(omicsBetas, assayName="exprs")
+dim(dnamCalls)
+dnamCalls[1:10, 1:2]
+
+omicsData <- alleleSharing(dnamCalls, verbose=TRUE)
+mismatches <- inferRelations(omicsData)
+```
 
 ***
 

@@ -433,8 +433,8 @@ div.tocify {
 <pre class="r"><code>library(FDb.InfiniumMethylation.hg19)
 rowRanges &lt;- getPlatform(platform=&quot;HM450&quot;, genome=&quot;hg19&quot;)</code></pre>
 <pre><code>## Fetching coordinates for hg19...</code></pre>
-<pre class="r"><code>rowRanges[1:10, 1:4]</code></pre>
-<pre><code>## GRanges object with 10 ranges and 4 metadata columns:
+<pre class="r"><code>rowRanges[1:10, 1:2]</code></pre>
+<pre><code>## GRanges object with 10 ranges and 2 metadata columns:
 ##              seqnames        ranges strand |    addressA    addressB
 ##                 &lt;Rle&gt;     &lt;IRanges&gt;  &lt;Rle&gt; | &lt;character&gt; &lt;character&gt;
 ##   cg04913815    chr16   60438-60439      * |    24771476            
@@ -447,22 +447,10 @@ rowRanges &lt;- getPlatform(platform=&quot;HM450&quot;, genome=&quot;hg19&quot;)
 ##   cg02851049    chr16 101260-101261      * |    38765355            
 ##   cg11876012    chr16 101686-101687      * |    47645328            
 ##   cg14820573    chr16 102121-102122      * |    36735483            
-##              channel platform
-##                &lt;Rle&gt;    &lt;Rle&gt;
-##   cg04913815    Both    HM450
-##   cg01686861     Red    HM450
-##   cg05558259    Both    HM450
-##   cg26978960    Both    HM450
-##   cg03792876    Both    HM450
-##   cg09699726    Both    HM450
-##   cg07549526     Grn    HM450
-##   cg02851049    Both    HM450
-##   cg11876012    Both     BOTH
-##   cg14820573    Both     BOTH
 ##   -------
 ##   seqinfo: 24 sequences from hg19 genome</code></pre>
 <pre class="r"><code>rows &lt;- match(rownames(betas), names(rowRanges))</code></pre>
-<p>Now that we have our annotations, we can combine them with our data using the <a href="https://bioconductor.org/packages/release/bioc/html/SummarizedExperiment.html"><strong>SummarizedExperiment</strong></a> package <span class="citation">(<span class="citeproc-not-found" data-reference-id="Morgan2018"><strong>???</strong></span>)</span>. After ensuring that any column subsetting is accounted for, we extract the <code>colData()</code> from our <code>RGset</code>. Finally, the beta values, probe annotations, and sample information is combines into a <code>RangedSummarizedExperiment</code> object using the <code>SummarizedExperiment()</code> function.</p>
+<p>Now that we have our annotations, we can combine them with our data using the <a href="https://bioconductor.org/packages/release/bioc/html/SummarizedExperiment.html"><strong>SummarizedExperiment</strong></a> package. After ensuring that any column subsetting is accounted for, we extract the <code>colData()</code> from our <code>RGset</code>. Finally, the beta values, probe annotations, and sample information is combines into a <code>RangedSummarizedExperiment</code> object using the <code>SummarizedExperiment()</code> function.</p>
 <pre class="r"><code>library(SummarizedExperiment)
 
 cols &lt;- match(colnames(betas), colnames(RGset))
@@ -503,26 +491,171 @@ table(predicted, useNA=&quot;always&quot;)</code></pre>
 </div>
 <div id="predict-white-blood-cell-composition" class="section level3">
 <h3>Predict White Blood Cell Composition</h3>
+<p>White blood cell count can be predicted using Houseman’s method<span class="citation">(Houseman et al. 2012)</span> implemented in <a href="http://bioconductor.org/packages/minfi"><strong>minfi</strong></a><span class="citation">(Jaffe and Irizarry 2014)</span> by the <code>estimateCellCounts()</code> function.</p>
+<p>Alternatively, you can train your own predictor to impute white blood cell counts. In our example data, there is no cell count information for training, but the following code is a template that could be used. More information can be found about this at the <a href="https://github.com/mvaniterson/wbccPredictor"><strong>wbccPredictor</strong></a> GitHub.</p>
+<p>First, beta values are obtained from the <code>RangedSummarizedExperiment</code> object, with CpGs where there are NA values removed. In this instance, there are 26,162 CpGs that have at least one NA, meaning that 396,580 remain.</p>
+<pre class="r"><code>wbccData &lt;- assays(methData)$beta
+dim(wbccData)</code></pre>
+<pre><code>## [1] 422742     56</code></pre>
+<pre class="r"><code>wbccData[1:10, 1:2]</code></pre>
+<pre><code>##            GSM1179497_5729917059_R01C01 GSM1179498_5729917059_R01C02
+## cg01707559                    0.2427893                   0.03954066
+## cg03244189                    0.2540326                   0.06285436
+## cg04689676                    0.2775596                   0.02124109
+## cg14180491                    0.3916605                   0.02714874
+## cg00008945                    0.2450289                   0.01050456
+## cg00011200                    0.4493624                   0.02083858
+## cg00011891                    0.4816901                   0.01569801
+## cg00014152                    0.9511915                   0.92834839
+## cg00016522                    0.4410385                   0.02458719
+## cg00016934                    0.1435423                   0.05071658</code></pre>
+<pre class="r"><code>keep &lt;- apply(wbccData, 1, function(x) all(!is.na(x)))
+table(keep)</code></pre>
+<pre><code>## keep
+##  FALSE   TRUE 
+##  26162 396580</code></pre>
+<pre class="r"><code>wbccData &lt;- wbccData[keep, ]
+dim(wbccData)</code></pre>
+<pre><code>## [1] 396580     56</code></pre>
+<p>Then, known cell percentages are stored along with relevant covariates, such as age and sex. Complete data is then split into a training and test set, in order to build the predictor. It is possible to split the data using <code>sample()</code>, but then there is a risk that patterns in the data will be inherited by the training and test sets. Therefore, we employ stratified splitting using the <code>sample.split()</code> function from <a href="https://cran.r-project.org/web/packages/caTools/index.html"><strong>caTools</strong></a>.</p>
+<pre class="r"><code>cellPercentages &lt;- as.data.frame(colData(methData)[ , c(&quot;Neut_Perc&quot;, &quot;Lymph_Perc&quot;,
+                                                        &quot;Mono_Perc&quot;, &quot;Eos_Perc&quot;,
+                                                        &quot;Baso_Perc&quot;)])
+cellPercentages &lt;- apply(cellPercentages, 2, as.numeric)
+
+covariates &lt;- as.data.frame(colData(methData))
+covariates &lt;- covariates[ , c(&quot;Age&quot;, &quot;Sex&quot;)]
+colnames(covariates) &lt;- c(&quot;Age&quot;, &quot;Sex&quot;)
+
+rownames(covariates) &lt;- rownames(cellPercentages) &lt;- colnames(wbccData) &lt;- colData(methData)$uuid
+nas &lt;- apply(cellPercentages, 1, function(x) any(is.na(x)))
+complete &lt;- which(!nas)
+
+trainID &lt;- sample.split(complete, SplitRatio=2/3)
+testID &lt;- complete[!(complete %in% trainID)]
+
+dataTrain &lt;- wbccData[ , trainID]
+covarTrain &lt;- covariates[trainID, ]
+cellPercTrain &lt;- cellPercentages[trainID, ]</code></pre>
+<p>Now that you have your training and test set, you can use the <code>train()</code> function from <a href="https://github.com/mvaniterson/wbccPredictor"><strong>wbccPredictor</strong></a> to build the predictor. This can then be saved and visualise before testing and use.</p>
+<pre class="r"><code>wbccPredictor &lt;- train(dataTrain, covarTrain, cellPerTrain, ncomp=50, validation=&quot;CV&quot;)
+save(wbccPredictor)
+
+summary(wbccPredictor)
+cumsum(explvar(wbccPredictor))
+barplot(cumsum(explvar(wbccPredictor)), las=2, ylab=&quot;Cumulative Variance Explained&quot;)</code></pre>
+<p>A validation plot is a method to select the number of components to use with the predictor. In the example below, we use 10 components, and then visualise the results with the <code>plotting()</code> function.</p>
+<pre class="r"><code>validationplot(predictor, val.type=&quot;R2&quot;)
+predicted &lt;- 10^wbccPredictor$fitted.values[ , , 20]-1
+measured &lt;- cellPerTrain
+
+plotting &lt;- function(measured, predicted, xlab=&quot;predicted&quot;, ylab=&quot;measured&quot;)
+{
+  op &lt;- par(mfcol=c(3,2), mar=c(4,4,3,1))
+  for(k in 1:ncol(measured))
+  {
+    type &lt;- colnames(measured)[k]
+    cme &lt;- cor(predicted[ , k], measured[ , k])
+    plot(predicted[ , k], measured[ , k], main=paste(type, &quot; (correlation: &quot;, round(cme,4), &quot;)&quot;,
+                                                     sep=&quot;&quot;), bty=&quot;n&quot;, pty=&quot;s&quot;)
+    abline(lm(measured[ , k]~0+predicted[ , k]), col=2, lty=1, lwd=2)
+    abline(0, 1, col=&quot;grey&quot;, lty=1, lwd=2)
+    grid()
+  }
+  par(op)
+}
+
+plotting(measured, predicted)</code></pre>
+<p>Using the test set, the predictor can be tested before using for <code>prediction()</code>.</p>
+<pre class="r"><code>dataTest &lt;- wbccData[ , testID]
+covarTest &lt;- covariated[testID, ]
+cellPerTest &lt;- cellPercentages[testID, ]
+
+predicted &lt;- prediction(predictor, dataTest, covarTest, ncomp=20)
+plotting(cellPerTest, predicted)</code></pre>
 <blockquote>
-<p>This function needs adapting for DNAmArray</p>
+<p>Add these functions to DNAmArray</p>
 </blockquote>
-<p>White blood cell count can be predicted using Houseman’s method<span class="citation">(Houseman et al. 2012)</span> implemented in the <a href="http://bioconductor.org/packages/minfi"><strong>minfi</strong></a><span class="citation">(Jaffe and Irizarry 2014)</span>.</p>
-<p>See also our approach for the imputation of white blood cell counts:<a href="https://github.com/mvaniterson/wbccPredictor">wbccPredictor</a></p>
-<blockquote>
-<p>Create new functions to predict other phenotypes, such as chronological age or smoking status.</p>
-</blockquote>
+</div>
+<div id="predict-chronological-age" class="section level3">
+<h3>Predict chronological age</h3>
+<p>Age can be predicted using Horvath’s or Hannum’s coefficients with <code>agep()</code> from <a href="https://bioconductor.org/packages/release/bioc/html/wateRmelon.html"><strong>wateRmelon</strong></a> <span class="citation">(Pidsley and Schalkwyk 2013)</span>. If you use Hannum’s, you will need to call the coefficients using <code>data(hannumCoef)</code> before prediction.</p>
+<pre class="r"><code>library(wateRmelon)</code></pre>
+<pre><code>## Loading required package: methylumi</code></pre>
+<pre><code>## Loading required package: scales</code></pre>
+<pre><code>## Loading required package: reshape2</code></pre>
+<pre><code>## Loading required package: lumi</code></pre>
+<pre><code>## 
+## Attaching package: &#39;lumi&#39;</code></pre>
+<pre><code>## The following objects are masked from &#39;package:methylumi&#39;:
+## 
+##     estimateM, getHistory</code></pre>
+<pre><code>## Loading required package: ROC</code></pre>
+<pre><code>## Loading required package: illuminaio</code></pre>
+<pre class="r"><code>agep &lt;- agep(betas, method=&quot;horvath&quot;)</code></pre>
+<pre><code>## No coefficients detected, using Horvaths clock</code></pre>
+<pre class="r"><code>summary(agep)</code></pre>
+<pre><code>##        V1       
+##  Min.   : 8.68  
+##  1st Qu.:16.31  
+##  Median :48.30  
+##  Mean   :42.02  
+##  3rd Qu.:57.89  
+##  Max.   :71.18</code></pre>
 <hr />
 </div>
 </div>
 <div id="checking-sample-relationships" class="section level1">
 <h1>Checking Sample Relationships</h1>
-<p>Beta-values of the probes containing SNPs can be extracted from the RGset using <a href="http:/bioconductor.org/packages/minfi"><strong>minfi</strong></a>’s <code>getSnpBeta</code> function. These can then be converted to alleles using k-means clustering using the <code>genki()</code> function from <a href="https://bioconductor.org/packages/release/bioc/html/wateRmelon.html"><strong>wateRmelon</strong></a> <span class="citation">(Pidsley and Schalkwyk 2013)</span>. This function returns values of disperson for each of three genotype peaks (AA, AB, and BB). which can be used as a performance metric since technical variation would decrease the tightness of the genotypic peaks.</p>
+<p>Beta-values of the probes containing SNPs can be extracted from the RGset using <a href="http:/bioconductor.org/packages/minfi"><strong>minfi</strong></a>’s <code>getSnpBeta</code> function. These can then be converted to alleles using k-means clustering using the <code>genki()</code> function from <a href="https://bioconductor.org/packages/release/bioc/html/wateRmelon.html"><strong>wateRmelon</strong></a>. This function returns values of disperson for each of three genotype peaks (AA, AB, and BB). which can be used as a performance metric since technical variation would decrease the tightness of the genotypic peaks.</p>
 <pre class="r"><code>library(wateRmelon)
 snpBetas &lt;- getSnpBeta(RGset)
 snpBetasVar &lt;- genki(snpBetas)</code></pre>
-<blockquote>
-<p>use omicsPrint</p>
-</blockquote>
+<p><a href="http://bioconductor.org/packages/release/bioc/html/omicsPrint.html"><strong>omicsPrint</strong></a><span class="citation">(Iterson and Heijmans 2018)</span> is a package we developed to detect data linkage errors through inspecting sample relations in multiple omics studies. This example uses data where individuals are unrelated, but if you have data on twins, for example, it would detect that and also show any mismatches.</p>
+<p>Included with the package is the <code>hm450.manifest.pop.GoNL</code> data, which stores SNP probe information in a <code>GRanges</code> class object. This is then used to create a subset of the beta values for genotyping.</p>
+<pre class="r"><code>library(omicsPrint)
+data(hm450.manifest.pop.GoNL)
+cpgs &lt;- names(hm450.manifest.pop.GoNL[mcols(hm450.manifest.pop.GoNL)$MASK.snp5.EAS])
+cpgs &lt;- na.omit(match(cpgs, rownames(betas)))
+omicsBetas &lt;- betas[cpgs,]
+omicsBetas[1:10, 1:2]</code></pre>
+<pre><code>##            GSM1179497_5729917059_R01C01 GSM1179498_5729917059_R01C02
+## cg08477687                   0.59751773                   0.43883985
+## cg00645010                   0.28270487                   0.18523023
+## cg11422233                   0.18100114                   0.47472823
+## cg06402284                   0.12687813                   0.08943764
+## cg01551879                   0.04250538                   0.02924197
+## cg20788133                   0.87928465                   0.83623337
+## cg09139287                   0.20644741                   0.16978382
+## cg23100540                   0.32452442                   0.39918395
+## cg23999112                   0.65262660                   0.69994102
+## cg01062849                   0.84575688                   0.85069259</code></pre>
+<p>The function <code>beta2genotype()</code> then genotypes the observations by measuring homozygous or heterozygous alleles at these SNP probes. Lastly <code>alleleSharing()</code> assesses the relationships between different individuals, which can be unrelated, twins, or identical. The results can then be visualised using the <code>inferRelations()</code> function.</p>
+<pre class="r"><code>dnamCalls &lt;- beta2genotype(omicsBetas, assayName=&quot;exprs&quot;)
+dim(dnamCalls)</code></pre>
+<pre><code>## [1] 849  56</code></pre>
+<pre class="r"><code>dnamCalls[1:10, 1:2]</code></pre>
+<pre><code>##            GSM1179497_5729917059_R01C01 GSM1179498_5729917059_R01C02
+## cg03148373                            3                            3
+## cg10625579                            3                            3
+## cg13917577                            2                            3
+## cg14786652                            1                            1
+## cg25544075                            1                            1
+## cg13167158                            3                            3
+## cg12213037                            2                            2
+## cg14418633                            3                            3
+## cg23015118                            1                            1
+## cg08121686                            1                            3</code></pre>
+<pre class="r"><code>omicsData &lt;- alleleSharing(dnamCalls, verbose=TRUE)</code></pre>
+<pre><code>## Hash relations</code></pre>
+<pre><code>## Pruning 849 SNPs ...</code></pre>
+<pre><code>## 0 SNPs removed because of low call rate!</code></pre>
+<pre><code>## 0 samples removed because too few SNPs called!</code></pre>
+<pre><code>## Using 849 polymorphic SNPs to determine allele sharing.</code></pre>
+<pre><code>## Running `square` IBS algorithm!</code></pre>
+<pre><code>## 57 of 1596 (3.57%) ...</code></pre>
+<pre class="r"><code>mismatches &lt;- inferRelations(omicsData)</code></pre>
+<p><img src="05_Miscellaneous_files/figure-html/613genotype-1.png" width="672" /></p>
 <hr />
 </div>
 <div id="imputating-na-values" class="section level1">
@@ -587,6 +720,9 @@ dmrsV == dmrsD</code></pre>
 </div>
 <div id="ref-Houseman2012">
 <p>Houseman, E. A., W. P. Accomando, D. C. Koestler, B. C. Christensen, C. J. Marsit, H. H. Nelson, J. K. Wiencke, and K. T. Kelsey. 2012. “DNA methylation arrays as surrogate measures of cell mixture distribution.” <em>BMC Bioinformatics</em> 13: 86.</p>
+</div>
+<div id="ref-Iterson2018">
+<p>Iterson, Cats van, M., and B.T. Heijmans. 2018. “omicsPrint: Detection of data linkage errors in multiple omics studies.” <em>Bioinformatics</em>.</p>
 </div>
 <div id="ref-Jaffe2014">
 <p>Jaffe, A. E., and R. A. Irizarry. 2014. “Accounting for cellular heterogeneity is critical in epigenome-wide association studies.” <em>Genome Biol.</em> 15 (2): R31.</p>
