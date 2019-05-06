@@ -442,11 +442,10 @@ typeI &lt;- getProbeInfo(RGset, type=&quot;I&quot;)</code></pre>
 <p>The negative controls on the array can be used to detect outlying samples via the detection p-values, which measure how likely it is a sample’s signal differs from the background. Signals that do not differ substantially (default: p&lt;0.01) are removed. We utilise <code>detectionP()</code> from <a href="https://bioconductor.org/packages/release/bioc/html/minfi.html"><strong>minfi</strong></a> inside our function to achieve this.</p>
 <p>Additionally, samples where a large proportion (default: &gt;5%) of probes were set to NA based on the above probe-level filtering are removed.</p>
 <p>Our function <code>reduce()</code> takes the normalized <code>GRset</code> from the previous section and the filtered <code>RGset</code> created above and returns filtered beta or M-values, which can be passed to the <code>probeMasking()</code> function. If M-values are specified as the output, these are scaled to have a range of 32 instead of to infinite values.</p>
-<pre class="r"><code>mvalues &lt;- reduce(GRset, RGset, what=&quot;M&quot;)</code></pre>
+<pre class="r"><code>betas &lt;- reduce(GRset, RGset, what=&quot;beta&quot;)</code></pre>
 <pre><code>## Calculate and filter on detection P-value...</code></pre>
 <pre><code>## On average 0.23% of the CpGs (485512) have detection P-value above the threshold 0.01</code></pre>
-<pre><code>## Transform to M-values...</code></pre>
-<pre><code>## Set +/-Inf to +/-16...</code></pre>
+<pre><code>## Transform to beta-values...</code></pre>
 <pre><code>## On average 0.1% of the probes (485512) were set to NA in the probe filtering step!</code></pre>
 <pre><code>## Calculate success rates and reduce...</code></pre>
 <pre><code>## Percentage of samples having success rate above 0.95 is 100%</code></pre>
@@ -458,10 +457,7 @@ typeI &lt;- getProbeInfo(RGset, type=&quot;I&quot;)</code></pre>
 <p>Several studies <span class="citation">(Chen et al. 2013, <span class="citation">Zhou, Laird, and Shen (2016)</span>)</span> have characterized ambiguous probes on both the 450k and EPIC methylation arrays and made suggestions for removal. We chose to remove probes identified by Zhou et al., since this set is actively maintained and supports both array sizes. Additionally, different sets are specified depending on the reference genome used.</p>
 <p>In total, Zhou et al. suggest removal of probes for a variety of reasons, from ambiguous mapping and cross-reactivity to polymorphisms that interfere with extension. In general, around 60.000 probes are suggested for removal in 450k arrays, and 100.000 for EPIC.</p>
 <p>We developed the <code>probeMasking()</code> function, which removes specified probes from either beta- or M- value matrices. In this instance, 59.415 CpG rows are removed.</p>
-<pre class="r"><code>mvalues &lt;- probeMasking(mvalues, array=&quot;450&quot;, genome=&quot;hg19&quot;)</code></pre>
-<pre><code>## Warning in probeMasking(mvalues, array = &quot;450&quot;, genome = &quot;hg19&quot;): The
-## probeMasking function appears to be out-of-date. Please contact the
-## maintainer.</code></pre>
+<pre class="r"><code>betas &lt;- probeMasking(betas, array=&quot;450&quot;, genome=&quot;hg19&quot;)</code></pre>
 <pre><code>## [probeFilterDNAmArray] Extracting probe filter... 
 ## [probeFilterDNAmArray] 60466 probes considered for filtering... 
 ## [probeFilterDNAmArray] 59415 / 482157 probes removed from the dataset</code></pre>

@@ -5,7 +5,7 @@
 ```{r 601start, echo=FALSE, message=FALSE, results='hide'}
 load("./data/targets.RData")
 targets$Basename <- substring(targets$supplementary_file,68,95)
-setwd("C:/Users/Lu/Documents/IDATs")
+setwd("C:/Users/ljsinke/Documents/r/cd/IDATs")
 library(minfi)
 RGset <- read.metharray.exp(base=NULL, targets, extended=TRUE)
 GRset <- invisible(preprocessFunnorm.DNAmArray(RGset, nPCs=4, keepCN=FALSE))
@@ -62,7 +62,7 @@ It can be useful to predict phenotypes in your data, either for comparison to as
 
 ### Predict Sex ###
 
-The [**DNAmArray**](https://github.com/molepi/DNAmArray) package contains a `getSex.DNAmArray()` function, which predicts the sex of your observations by inspecting intensities of X-chromosome signals. We use the `getBeta()` function from [**minfi**](https://bioconductor.org/packages/release/bioc/html/minfi.html) [@Aryee2014] as before to get the beta-value matrix and then use this to predict sex. If the beta matrix has already undergone probe filtering, it is important to recalculate it as some filtered probes may be used by the sex prediction function.
+The [**DNAmArray**](https://github.com/molepi/DNAmArray) package contains a `getSex.DNAmArray()` function, which predicts the sex of your observations by inspecting intensities of X-chromosome signals. We use the `getBeta()` function from [**minfi**](https://bioconductor.org/packages/release/bioc/html/minfi.html) [@Aryee2014] as before to get the beta-value matrix and then use this to predict sex. Since some filtered probes may be used by the sex prediction function, we recalculate the beta matrix before prediction.
 
 ```{r 604sexpredict}
 betas <- getBeta(RGset)
@@ -73,7 +73,7 @@ table(predicted, useNA="always")
 
 ### Predict White Blood Cell Composition ###
 
-White blood cell count can be predicted using Houseman's method[@Houseman2012] implemented in [**minfi**](http://bioconductor.org/packages/minfi)[@Jaffe2014] by the `estimateCellCounts()` function.
+White blood cell count can be predicted using Houseman's method [@Houseman2012] implemented in [**minfi**](http://bioconductor.org/packages/minfi) [@Jaffe2014] by the `estimateCellCounts()` function.
 
 Alternatively, you can train your own predictor to impute white blood cell counts. In our example data, there is no cell count information for training, but the following code is a template that could be used. More information can be found about this at the [**wbccPredictor**](https://github.com/mvaniterson/wbccPredictor) GitHub.
 
@@ -162,17 +162,19 @@ predicted <- prediction(predictor, dataTest, covarTest, ncomp=20)
 plotting(cellPerTest, predicted)
 ```
 
-> Add these functions to DNAmArray
-
 ### Predict chronological age ###
 
 Age can be predicted using Horvath's or Hannum's coefficients with `agep()` from [**wateRmelon**](https://bioconductor.org/packages/release/bioc/html/wateRmelon.html) [@Pidsley2013]. If you use Hannum's, you will need to call the coefficients using `data(hannumCoef)` before prediction.
 
-```{r 610agep}
+```{r 610agep, message=FALSE, warning=FALSE}
 library(wateRmelon)
 agep <- agep(betas, method="horvath")
-summary(agep)
+library(psych)
+describe(agep[1:36])
+describe(agep[37:56])
 ```
+
+The above two summaries are for autopsy and healthy individuals respectively. In the paper [@Slieker2013], it states that the mean age for cadavers was 65.5 years with an SD of 7.2. The mean age for healthy volunteers was 28 years with an SD of 6.1. The above shows that age predictions using methylation data can be inaccurate and should not be treated as definitive. 
 
 ***
 
@@ -186,11 +188,11 @@ snpBetas <- getSnpBeta(RGset)
 snpBetasVar <- genki(snpBetas)
 ```
 
-[**omicsPrint**](http://bioconductor.org/packages/release/bioc/html/omicsPrint.html)[@Iterson2018] is a package we developed to detect data linkage errors through inspecting sample relations in multiple omics studies. This example uses data where individuals are unrelated, but if you have data on twins, for example, it would detect that and also show any mismatches.
+[**omicsPrint**](http://bioconductor.org/packages/release/bioc/html/omicsPrint.html) [@Iterson2018] is a package we developed to detect data linkage errors through inspecting sample relations in multiple omics studies. This example uses data where individuals are unrelated, but if you have data on twins, for example, it would detect that and also show any mismatches.
 
 Included with the package is the `hm450.manifest.pop.GoNL` data, which stores SNP probe information in a `GRanges` class object. This is then used to create a subset of the beta values for genotyping. 
 
-```{r 612omicsprint}
+```{r 612omicsprint, message=FALSE, warning=FALSE}
 library(omicsPrint)
 data(hm450.manifest.pop.GoNL)
 cpgs <- names(hm450.manifest.pop.GoNL[mcols(hm450.manifest.pop.GoNL)$MASK.snp5.EAS])
@@ -214,31 +216,30 @@ mismatches <- inferRelations(omicsData)
 
 # Imputating NA Values #
 
-Several algorithms do not allow NA's but beta-values and or M-values can contain NA's after preprocessing. Either because some probes/CpG were specifically set NA or because of transformation from intensities to beta or M-values. The [**impute**]https://bioconductor.org/packages/release/bioc/html/impute.html) package can be used to impute these values. Below, we use the knn approach implemented by `impute.knn()` from the [**impute**] package [@Troyanskaya2001].
+Several algorithms do not allow NA's but beta-values and or M-values can contain NA's after preprocessing. Either because some probes/CpG were specifically set NA or because of transformation from intensities to beta or M-values. The [**impute**](https://bioconductor.org/packages/release/bioc/html/impute.html) [@Troyanskaya2001] package can be used to impute these values. Below, we use the knn approach implemented by `impute.knn()` from this package.
 
-```{r imputation, results='hide'}
+```{r 614imputation, results='hide'}
 library(impute)
-mvalues <- impute.knn(as.matrix(mvalues))$data
+betas <- impute.knn(as.matrix(betas))$data
 ```
 
 ***
 
 # Probe Annotation #
 
-Our packages contains a `cpgInfo()` function, which can be used to map CpG probes to their nearest genes. 
+Our package also contains a `cpgInfo()` function, which can be used to map CpG probes to their nearest genes. This utilises the [**TxDb.Hsapiens.UCSC.hg19.knownGene**](http://bioconductor.statistik.tu-dortmund.de/packages/3.6/data/annotation/html/TxDb.Hsapiens.UCSC.hg19.knownGene.html) package, which accesses the USCS annotation databases.
 
-```{r}
-cpgs <- rownames(mvalues)
+```{r 615annotate}
+cpgs <- rownames(betas)
 cpgInfo <- cpgInfo(cpgs, TxDb="TxDb.Hsapiens.UCSC.hg19.knownGene")
+cpgInfo[1:10, 1:7]
 ```
 
-
+***
 
 # DMR finder #
 
-In our packages, we have implemented a DMR finder in the function `DMRfinder()` [@Slieker2013]. First, genomic features are extracted from the relevant `FeatureDb` object
-
-> Again, I need to look into this
+We have implemented a differentially methylated region (DMR) finder in the function `DMRfinder()` [@Slieker2013]. First, genomic features are extracted from the relevant `FeatureDb` as a `GRanges` object.
 
 ```{r eval=FALSE}
 feats <- features(FDb.InfiniumMethylation.hg19)

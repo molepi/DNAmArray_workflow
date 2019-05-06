@@ -13,7 +13,7 @@ Some observations need to be removed from the dataset since they provide little 
 ```{r 501start, echo=FALSE, message=FALSE, results='hide'}
 load("./data/targets.RData")
 targets$Basename <- substring(targets$supplementary_file,68,95)
-setwd("C:/Users/Lu/Documents/IDATs")
+setwd("C:/Users/ljsinke/Documents/r/cd/IDATs")
 library(minfi)
 RGset <- read.metharray.exp(base=NULL, targets, extended=TRUE)
 GRset <- invisible(preprocessFunnorm.DNAmArray(RGset, nPCs=4, keepCN=FALSE))

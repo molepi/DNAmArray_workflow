@@ -58,7 +58,7 @@ BPPARAM <- MulticoreParam(10)
 sData <- summarize(targets, batchSize=50, BPPARAM=BPPARAM)
 ```
 
-After this `summarize()`, the Shiny web application can be launched to `visualize()` the data and identify outliers. In this instance, there are no apparent outliers, but if found they can be removed from the dataset. To easier visualise if your data conforms to typical patterns, you can utilise the `MethylAidData` package alongside the `background` option. Darker blue colours indicate regions where many observations are found in the example data, and can serve as a guide for expected peak areas. 
+After this `summarize()`, the Shiny web application can be launched to `visualize()` the data and identify outliers. In this instance, there are no apparent outliers, but if found they can be removed from the dataset. To easier visualise if your data conforms to typical patterns, you can utilise the [**MethylAidData**](http://bioconductor.org/packages/release/data/experiment/html/MethylAidData.html) package alongside the `background` option. Darker blue colours indicate regions where many observations are found in the example data, and can serve as a guide for expected peak areas. 
 
 ```{r 207methylaid, eval=FALSE}
 library(MethylAidData)
@@ -81,7 +81,7 @@ RGset <- read.metharray.exp.par(targets, verbose=TRUE, extended=TRUE)
 
 ```{r 209rgsethide, echo=FALSE}
 library(DNAmArray)
-setwd("C:/Users/Lu/Documents/IDATs")
+setwd("C:/Users/ljsinke/Documents/r/cd/IDATs")
 RGset <- read.metharray.exp(base=NULL, targets, extended=TRUE)
 ```
 

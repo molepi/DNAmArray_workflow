@@ -454,7 +454,7 @@ head(targets[c(1,2,34)])</code></pre>
 library(BiocParallel)
 BPPARAM &lt;- MulticoreParam(10)
 sData &lt;- summarize(targets, batchSize=50, BPPARAM=BPPARAM)</code></pre>
-<p>After this <code>summarize()</code>, the Shiny web application can be launched to <code>visualize()</code> the data and identify outliers. In this instance, there are no apparent outliers, but if found they can be removed from the dataset. To easier visualise if your data conforms to typical patterns, you can utilise the <code>MethylAidData</code> package alongside the <code>background</code> option. Darker blue colours indicate regions where many observations are found in the example data, and can serve as a guide for expected peak areas.</p>
+<p>After this <code>summarize()</code>, the Shiny web application can be launched to <code>visualize()</code> the data and identify outliers. In this instance, there are no apparent outliers, but if found they can be removed from the dataset. To easier visualise if your data conforms to typical patterns, you can utilise the <a href="http://bioconductor.org/packages/release/data/experiment/html/MethylAidData.html"><strong>MethylAidData</strong></a> package alongside the <code>background</code> option. Darker blue colours indicate regions where many observations are found in the example data, and can serve as a guide for expected peak areas.</p>
 <pre class="r"><code>library(MethylAidData)
 data(exampleDataLarge)
 outliers &lt;- visualize(sData, background=exampleDataLarge)

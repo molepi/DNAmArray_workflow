@@ -426,24 +426,27 @@ div.tocify {
 densityPlot(RGset, main=&quot;Beta density plot&quot;, xlab=&quot;Beta values&quot;)</code></pre>
 <p><img src="02_Visualization_files/figure-html/302betaplot-1.png" width="672" /></p>
 <p>For this data, the density plot is clearly bimodal with no obvious outliers. However, in order to further investigate the beta-values, we store them using the <code>getBeta()</code> function. Since some visualisations cannot handle NA values, we use the median to impute these. The <code>type=&quot;Illumina&quot;</code> option adds 100 to the denominator of the beta-value calculation, preventing NA values being recorded when the methylated and unmethylated signal are both 0.</p>
-<pre class="r"><code>beta &lt;- getBeta(RGset, type=&quot;Illumina&quot;)
-beta[is.na(beta)] &lt;- median(beta, na.rm=TRUE)</code></pre>
+<pre class="r"><code>betas &lt;- getBeta(RGset, type=&quot;Illumina&quot;)
+betas[is.na(betas)] &lt;- median(betas, na.rm=TRUE)</code></pre>
 <hr />
 </div>
 <div id="principal-components-plot" class="section level1">
 <h1>Principal components plot</h1>
-<p>Using the <code>prcomp_irlba()</code> function from <a href="https://cran.r-project.org/web/packages/irlba/index.html"><strong>irlba</strong></a> we can calculate principal components. By assessing the amount of variance explained by these and visualising them, we can better interpret the data. For example, if there was evidence of clustering this might suggest grouping of samples, such as by sex if sex-chromosomes were not yet excluded.</p>
+<p>Using the <code>prcomp_irlba()</code> function from <a href="https://cran.r-project.org/web/packages/irlba/index.html"><strong>irlba</strong></a> we can calculate principal components. By assessing the amount of variance explained by these and visualising them, we can better interpret the data. The package <a href="https://cran.r-project.org/web/packages/ggfortify/index.html"><strong>ggfortify</strong></a> helps <a href="https://ggplot2.tidyverse.org/"><strong>ggplot2</strong></a> interpret PCA objects, allowing <code>prcomp</code> objects to be passed to the <code>autoplot()</code> function.</p>
 <pre class="r"><code>library(irlba)
-pc &lt;- prcomp_irlba(t(beta), n=4)
+pc &lt;- prcomp_irlba(t(betas), n=4)
 summary(pc)</code></pre>
 <pre><code>## Importance of components:
 ##                            PC1     PC2     PC3      PC4
 ## Standard deviation     37.6135 31.0639 20.9449 16.20783
 ## Proportion of Variance  0.3227  0.2201  0.1001  0.05992
 ## Cumulative Proportion   0.3227  0.5428  0.6429  0.70283</code></pre>
-<pre class="r"><code>plot(pc$x, main=&quot;Principal components plot&quot;)</code></pre>
+<pre class="r"><code>library(ggfortify)
+autoplot(pc, data=targets, colour=&quot;source_name_ch1&quot;, main=&quot;Principal components plot&quot;) +
+  theme(plot.title=element_text(size=20, hjust=0.5, margin=margin(0,0,15,0))) +
+  theme(plot.margin=margin(15,0,15,0))</code></pre>
 <p><img src="02_Visualization_files/figure-html/304pcplot-1.png" width="672" /></p>
-<p>In this instance, our principal components explain over 70% of the variance in the data and there is no evidence of clustering.</p>
+<p>In this instance, our principal components explain over 70% of the variance in the data and there is evidence of clustering in the plot. By passing the original data to the <code>autoplot()</code> function using the <code>data</code> option, we can investigate clustering by colouring candidate variables. Our data is from two distinct sources: healthy individuals and cadavers, and these groups are uncovered as the source of our principal component clustering.</p>
 <hr />
 </div>
 <div id="heatmap" class="section level1">
@@ -466,7 +469,7 @@ colnames(df)</code></pre>
 <p>Correlations between these factors and the principal components is calculated, and then these are visualised using the <code>pheatmap()</code> function from <a href="https://cran.r-project.org/web/packages/pheatmap/index.html"><strong>pheatmap</strong></a>.</p>
 <pre class="r"><code>library(pheatmap)
 cxy &lt;- cor(pc$x, scale(df))   
-pheatmap(cxy, cluster_rows=FALSE, legend=TRUE, main=&quot;Heatmap of correlations&quot;)</code></pre>
+pheatmap(cxy, cluster_rows=FALSE, legend=TRUE, main=&quot;Heatmap of correlations&quot;, angle_col=&quot;315&quot;)</code></pre>
 <p><img src="02_Visualization_files/figure-html/306heatmapplot-1.png" width="672" /></p>
 <p>Here we see grouping of similar covariates together, with three main considerations: tissue type, sample-level variations, and batches, including dataset and source. Carrying on analyses separately for each tissue type will likely be sufficient adjust for these variables.</p>
 <hr />
@@ -475,8 +478,8 @@ pheatmap(cxy, cluster_rows=FALSE, legend=TRUE, main=&quot;Heatmap of correlation
 <h1>Dendrogram</h1>
 <p>Although more frequently used for moderately-sized data sets, a dendogram can be helpful to visualise clustering. We use <code>dist()</code> to compute the distance matrix for the beta values, before implementing hierarchical cluster analysis with <code>hclust()</code> from the <a href="https://cran.r-project.org/package=fastclust"><strong>fastcluster</strong></a>-package. We then plot this clustering as a horizontal dendogram.</p>
 <pre class="r"><code>library(fastcluster)
-sBeta &lt;- getBeta(RGset[,1:16], type=&quot;Illumina&quot;)
-d &lt;- dist(t(sBeta), method=&quot;euclidean&quot;)
+subBetas &lt;- getBeta(RGset[,1:16], type=&quot;Illumina&quot;)
+d &lt;- dist(t(subBetas), method=&quot;euclidean&quot;)
 fit &lt;- hclust(d, method=&quot;average&quot;)
 fitdd &lt;- as.dendrogram(fit)
 nodePar &lt;- list(lab.cex=0.8, pch=c(NA, 15), cex=0.8, col=&quot;#41819a&quot;)
@@ -484,7 +487,7 @@ par(mar=c(3,1,2,11))
 plot(fitdd, main=&quot;Cluster Dendogram&quot;, horiz=TRUE, nodePar=nodePar, xlab=&quot;Height&quot;)</code></pre>
 <p><img src="02_Visualization_files/figure-html/307dendronorm-1.png" width="672" /></p>
 <p>If an observation needs further investigation, we can identify it in the dendogram by highlighting it.</p>
-<pre class="r"><code>interestObs &lt;- sample(colnames(sBeta), 1)
+<pre class="r"><code>interestObs &lt;- sample(colnames(subBetas), 1)
 colorLeafs &lt;- function(x) {
   if (is.leaf(x) &amp;&amp; attr(x, &quot;label&quot;) %in% interestObs) {
     attr(x, &quot;nodePar&quot;) &lt;- list(lab.cex=0.8, lab.col=&quot;red&quot;, pch=c(NA,15))
