@@ -3,12 +3,11 @@
 ```
 
 ```{r 601start, echo=FALSE, message=FALSE, results='hide'}
-load("./data/targets.RData")
+load("C:/Users/ljsinke/Documents/git/GitHub/test_workflow/data/targets.RData")
 targets$Basename <- substring(targets$supplementary_file,68,95)
-setwd("C:/Users/ljsinke/Documents/r/cd/IDATs")
 library(minfi)
-RGset <- read.metharray.exp(base=NULL, targets, extended=TRUE)
-GRset <- invisible(preprocessFunnorm.DNAmArray(RGset, nPCs=4, keepCN=FALSE))
+RGset <- read.metharray.exp(base="C:/Users/ljsinke/Documents/r/cd/GSE113018/IDATs", targets, extended=TRUE)
+GRset <- preprocessFunnorm.DNAmArray(RGset, nPCs=4, keepCN=FALSE)
 RGset <- probeFiltering(RGset)
 betas <- reduce(GRset, RGset, what="beta")
 betas <- invisible(probeMasking(betas, array="450", genome="hg19"))
@@ -26,7 +25,7 @@ Lastly, each assay is represented in the third dimension of this matrix-like obj
 
 ### Creating a `RangedSummarizedExperiment` ###
 
-The [**FDb.InfiniumMethylation.hg19**](https://bioconductor.org/packages/release/data/annotation/html/FDb.InfiniumMethylation.hg19.html) package contains probe annotations, which can be extracted using the `getPlatform()` function. To ensure that we apply the previous prove filtering, we use `match()` to keep only the relevant information.
+The [**FDb.InfiniumMethylation.hg19**](https://bioconductor.org/packages/release/data/annotation/html/FDb.InfiniumMethylation.hg19.html) package contains probe annotations, which can be extracted using the `getPlatform()` function. To ensure that we apply the previous probe filtering, we use `match()` to keep only the relevant information.
 
 ```{r 602probeannotate}
 library(FDb.InfiniumMethylation.hg19)
@@ -35,7 +34,7 @@ rowRanges[1:10, 1:2]
 rows <- match(rownames(betas), names(rowRanges))
 ```
 
-Now that we have our annotations, we can combine them with our data using the [**SummarizedExperiment**](https://bioconductor.org/packages/release/bioc/html/SummarizedExperiment.html) package. After ensuring that any column subsetting is accounted for, we extract the `colData()` from our `RGset`. Finally, the beta values, probe annotations, and sample information is combines into a `RangedSummarizedExperiment` object using the `SummarizedExperiment()` function.
+Now that we have our annotations, we can combine them with our data using the [**SummarizedExperiment**](https://bioconductor.org/packages/release/bioc/html/SummarizedExperiment.html) package. After ensuring that any column subsetting is accounted for, we extract the `colData()` from our `RGset`. Finally, the beta values, probe annotations, and sample information are combined into a `RangedSummarizedExperiment` object using the `SummarizedExperiment()` function.
 
 ```{r 603summexp}
 library(SummarizedExperiment)
@@ -50,131 +49,64 @@ methData
 ```
 
 You can read more about [**SummarizedExperiment**](http://bioconductor.org/packages/SummarizedExperiment) from the following resources:
-1. [package vignette](http://bioconductor.org/packages/release/bioc/vignettes/SummarizedExperiment/inst/doc/SummarizedExperiment.html)
-2. [course material](http://bioconductor.org/help/course-materials/2012/BiocEurope2012/SummarizedExperiment.pdf)
-3. [BioConductor nature paper](http://www.nature.com/nmeth/journal/v12/n2/full/nmeth.3252.html)
+- 1. [package vignette](http://bioconductor.org/packages/release/bioc/vignettes/SummarizedExperiment/inst/doc/SummarizedExperiment.html)
+- 2. [course material](http://bioconductor.org/help/course-materials/2012/BiocEurope2012/SummarizedExperiment.pdf)
+- 3. [BioConductor nature paper](http://www.nature.com/nmeth/journal/v12/n2/full/nmeth.3252.html)
 
 ***
 
 # Phenotype Prediction #
 
-It can be useful to predict phenotypes in your data, either for comparison to assumed categories or to help impute missing values. 
-
-### Predict Sex ###
-
-The [**DNAmArray**](https://github.com/molepi/DNAmArray) package contains a `getSex.DNAmArray()` function, which predicts the sex of your observations by inspecting intensities of X-chromosome signals. We use the `getBeta()` function from [**minfi**](https://bioconductor.org/packages/release/bioc/html/minfi.html) [@Aryee2014] as before to get the beta-value matrix and then use this to predict sex. Since some filtered probes may be used by the sex prediction function, we recalculate the beta matrix before prediction.
-
-```{r 604sexpredict}
-betas <- getBeta(RGset)
-predicted <- getSex.DNAmArray(betas)
-predicted <- as.character(factor(predicted))
-table(predicted, useNA="always")
-```
+It can be useful to predict phenotypes in your data, either for comparison to assumed categories or to help impute missing values. We are in the process of training reference-based predictors using the large BIOS data, which includes samples from 6 dutch cohorts and over 4000 individuals. These are described in more detail below, and will be included in the package for use on your own datasets. However, please do be mindful that if the BIOS population vastly differs from your own, the predictive power and accuracy of these will suffer.
 
 ### Predict White Blood Cell Composition ###
 
-White blood cell count can be predicted using Houseman's method [@Houseman2012] implemented in [**minfi**](http://bioconductor.org/packages/minfi) [@Jaffe2014] by the `estimateCellCounts()` function.
+White blood cell count can be predicted using Houseman's method [@Houseman2012] implemented in [**minfi**](http://bioconductor.org/packages/minfi) [@Feinberg2014] by the `estimateCellCounts()` function. Using this partial least squares method, we trained a cell count predictor on the BIOS data.
 
-Alternatively, you can train your own predictor to impute white blood cell counts. In our example data, there is no cell count information for training, but the following code is a template that could be used. More information can be found about this at the [**wbccPredictor**](https://github.com/mvaniterson/wbccPredictor) GitHub.
+### Predict Sex ###
 
-First, beta values are obtained from the `RangedSummarizedExperiment` object, with CpGs where there are NA values removed. In this instance, there are 26,162 CpGs that have at least one NA, meaning that 396,580 remain.
+The [**DNAmArray**](https://github.com/molepi/DNAmArray) package contains a `getSex.DNAmArray()` function, which predicts the sex of your observations by inspecting intensities of X-chromosome signals. We use the `getBeta()` function from [**minfi**](https://bioconductor.org/packages/release/bioc/html/minfi.html) as before to get the beta-value matrix and then use this to predict sex. Since some filtered probes may be used by the sex prediction function, we recalculate the beta matrix before prediction.
 
-```{r 605wbccload}
-wbccData <- assays(methData)$beta
-dim(wbccData)
-wbccData[1:10, 1:2]
+```{r 604sexpredict}
+betas <- getBeta(RGset)
+mid <- match(colnames(betas), targets$Basename)
 
-keep <- apply(wbccData, 1, function(x) all(!is.na(x)))
-table(keep)
-wbccData <- wbccData[keep, ]
-dim(wbccData)
+predictedSex <- getSex.DNAmArray(betas)
+assumedSex <- targets$`gender:ch1`[mid]
+predictedSex <- as.character(factor(predictedSex, labels=c("Female", "Male")))
+assumedSex <- as.character(factor(assumedSex, labels=c("Female", "Male")))
+
+table(predictedSex, assumedSex)
 ```
 
-Then, known cell percentages are stored along with relevant covariates, such as age and sex. Complete data is then split into a training and test set, in order to build the predictor. It is possible to split the data using `sample()`, but then there is a risk that patterns in the data will be inherited by the training and test sets. Therefore, we employ stratified splitting using the `sample.split()` function from [**caTools**](https://cran.r-project.org/web/packages/caTools/index.html).
-
-```{r 606wbccset, eval=FALSE}
-cellPercentages <- as.data.frame(colData(methData)[ , c("Neut_Perc", "Lymph_Perc",
-                                                        "Mono_Perc", "Eos_Perc",
-                                                        "Baso_Perc")])
-cellPercentages <- apply(cellPercentages, 2, as.numeric)
-
-covariates <- as.data.frame(colData(methData))
-covariates <- covariates[ , c("Age", "Sex")]
-colnames(covariates) <- c("Age", "Sex")
-
-rownames(covariates) <- rownames(cellPercentages) <- colnames(wbccData) <- colData(methData)$uuid
-nas <- apply(cellPercentages, 1, function(x) any(is.na(x)))
-complete <- which(!nas)
-
-trainID <- sample.split(complete, SplitRatio=2/3)
-testID <- complete[!(complete %in% trainID)]
-
-dataTrain <- wbccData[ , trainID]
-covarTrain <- covariates[trainID, ]
-cellPercTrain <- cellPercentages[trainID, ]
-```
-
-Now that you have your training and test set, you can use the `train()` function from [**wbccPredictor**](https://github.com/mvaniterson/wbccPredictor) to build the predictor. This can then be saved and visualise before testing and use.
-
-```{r 607wbccbuild, eval=FALSE}
-wbccPredictor <- train(dataTrain, covarTrain, cellPerTrain, ncomp=50, validation="CV")
-save(wbccPredictor)
-
-summary(wbccPredictor)
-cumsum(explvar(wbccPredictor))
-barplot(cumsum(explvar(wbccPredictor)), las=2, ylab="Cumulative Variance Explained")
-```
-
-A validation plot is a method to select the number of components to use with the predictor. In the example below, we use 10 components, and then visualise the results with the `plotting()` function.
-
-```{r 608wbccplot, eval=FALSE}
-validationplot(predictor, val.type="R2")
-predicted <- 10^wbccPredictor$fitted.values[ , , 20]-1
-measured <- cellPerTrain
-
-plotting <- function(measured, predicted, xlab="predicted", ylab="measured")
-{
-  op <- par(mfcol=c(3,2), mar=c(4,4,3,1))
-  for(k in 1:ncol(measured))
-  {
-    type <- colnames(measured)[k]
-    cme <- cor(predicted[ , k], measured[ , k])
-    plot(predicted[ , k], measured[ , k], main=paste(type, " (correlation: ", round(cme,4), ")",
-                                                     sep=""), bty="n", pty="s")
-    abline(lm(measured[ , k]~0+predicted[ , k]), col=2, lty=1, lwd=2)
-    abline(0, 1, col="grey", lty=1, lwd=2)
-    grid()
-  }
-  par(op)
-}
-
-plotting(measured, predicted)
-```
-
-Using the test set, the predictor can be tested before using for `prediction()`.
-
-```{r 609wbcctest, eval=FALSE}
-dataTest <- wbccData[ , testID]
-covarTest <- covariated[testID, ]
-cellPerTest <- cellPercentages[testID, ]
-
-predicted <- prediction(predictor, dataTest, covarTest, ncomp=20)
-plotting(cellPerTest, predicted)
-```
+As you can see, this is complete data, but the predicted and assumed sexes are identical. This means that we can feel increased confidence that no incorrect labelling or mix-ups are present in this variable.
 
 ### Predict chronological age ###
 
-Age can be predicted using Horvath's or Hannum's coefficients with `agep()` from [**wateRmelon**](https://bioconductor.org/packages/release/bioc/html/wateRmelon.html) [@Pidsley2013]. If you use Hannum's, you will need to call the coefficients using `data(hannumCoef)` before prediction.
+Age can be predicted using Horvath's or Hannum's coefficients with `agep()` from [**wateRmelon**](https://bioconductor.org/packages/release/bioc/html/wateRmelon.html). If you use Hannum's, you will need to call the coefficients using `data(hannumCoef)` before prediction. The predicted and assumed ages are then combined into a data frame that can be used to visualize the results.
 
 ```{r 610agep, message=FALSE, warning=FALSE}
 library(wateRmelon)
-agep <- agep(betas, method="horvath")
-library(psych)
-describe(agep[1:36])
-describe(agep[37:56])
+predictedAge <- as.numeric(agep(betas, method="horvath"))
+assumedAge <- as.numeric(targets$`age:ch1`[mid])
+
+ages <- data.frame(Assumed=assumedAge, Predicted=predictedAge)
+head(ages)
 ```
 
-The above two summaries are for autopsy and healthy individuals respectively. In the paper [@Slieker2013], it states that the mean age for cadavers was 65.5 years with an SD of 7.2. The mean age for healthy volunteers was 28 years with an SD of 6.1. The above shows that age predictions using methylation data can be inaccurate and should not be treated as definitive. 
+```{r 610theme, echo=FALSE}
+th3 <- theme(text=element_text(size=12), 
+             panel.border=element_rect(fill=NA, color="#cdcdcd", size=1, linetype=1), 
+             plot.title=element_text(size=20, hjust=0.5, margin=margin(0,0,15,0)), 
+             plot.margin=margin(20,25,25,25))
+```
+
+```{r 610plot}
+ggplot(ages, aes(x=Assumed, y=Predicted)) + ggtitle("Assumed vs. Predicted Age") + th3 +
+  geom_point(shape=16, color="#158cba") + geom_smooth(method=lm, color="#D67D87")
+```
+
+The above graph shows that this prediction follows the general trend of the assumed ages, however the residuals are quite large. It may be possible to develop an improved predictor [@Zhang2018], and we will attempt this using the BIOS data. 
 
 ***
 
@@ -188,7 +120,7 @@ snpBetas <- getSnpBeta(RGset)
 snpBetasVar <- genki(snpBetas)
 ```
 
-[**omicsPrint**](http://bioconductor.org/packages/release/bioc/html/omicsPrint.html) [@Iterson2018] is a package we developed to detect data linkage errors through inspecting sample relations in multiple omics studies. This example uses data where individuals are unrelated, but if you have data on twins, for example, it would detect that and also show any mismatches.
+[**omicsPrint**](http://bioconductor.org/packages/release/bioc/html/omicsPrint.html) [@VanIterson2018] is a package we developed to detect data linkage errors through inspecting sample relations in multiple omics studies. This example uses data where individuals are unrelated, but if you have data on twins, for example, it would detect that and also show any mismatches.
 
 Included with the package is the `hm450.manifest.pop.GoNL` data, which stores SNP probe information in a `GRanges` class object. This is then used to create a subset of the beta values for genotyping. 
 
@@ -216,7 +148,7 @@ mismatches <- inferRelations(omicsData)
 
 # Imputating NA Values #
 
-Several algorithms do not allow NA's but beta-values and or M-values can contain NA's after preprocessing. Either because some probes/CpG were specifically set NA or because of transformation from intensities to beta or M-values. The [**impute**](https://bioconductor.org/packages/release/bioc/html/impute.html) [@Troyanskaya2001] package can be used to impute these values. Below, we use the knn approach implemented by `impute.knn()` from this package.
+Several algorithms do not allow NA's but beta-values and or M-values can contain NA's after preprocessing. Either because some probes/CpG were specifically set NA or because of transformation from intensities to beta or M-values. The [**impute**](https://bioconductor.org/packages/release/bioc/html/impute.html) package can be used to impute these values. Below, we use the knn approach implemented by `impute.knn()` from this package.
 
 ```{r 614imputation, results='hide'}
 library(impute)
@@ -233,46 +165,6 @@ Our package also contains a `cpgInfo()` function, which can be used to map CpG p
 cpgs <- rownames(betas)
 cpgInfo <- cpgInfo(cpgs, TxDb="TxDb.Hsapiens.UCSC.hg19.knownGene")
 cpgInfo[1:10, 1:7]
-```
-
-***
-
-# DMR finder #
-
-We have implemented a differentially methylated region (DMR) finder in the function `DMRfinder()` [@Slieker2013]. First, genomic features are extracted from the relevant `FeatureDb` as a `GRanges` object.
-
-```{r eval=FALSE}
-feats <- features(FDb.InfiniumMethylation.hg19)
-regions <- feats[seqnames(feats) %in% c("chr21", "chr22")]
-mcols(regions)  <- NULL
-mcols(regions)$crit <- rbinom(length(regions), 1, prob=0.2)
-
-##input GRanges
-(dmrsR <- DMRfinder(regions))
-
-##input named-vector
-dmps <- mcols(regions)$crit
-names(dmps) <- names(regions)
-(dmrsV <- DMRfinder(dmps))
-
-##bed-like data.frame
-regions <- as.data.frame(regions)
-regions <- regions[, c("seqnames", "start", "crit")]
-colnames(regions) <- c("chr", "pos", "crit")
-(dmrsD <- DMRfinder(regions))
-
-##all equal
-length(dmrsR)
-length(dmrsV)
-length(dmrsD)
-
-head(dmrsR)
-head(dmrsV)
-head(dmrsD)
-
-dmrsR == dmrsV
-dmrsR == dmrsD
-dmrsV == dmrsD
 ```
 
 ***

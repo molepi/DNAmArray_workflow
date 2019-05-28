@@ -13,7 +13,7 @@ navbar:
       href: 04_ProbeFiltering.html
     - text: "Miscellaneous"
       href: 05_Miscellaneous.html
-    - text: "Ewas"
+    - text: "EWAS"
       href: 06_EWAS.html
   right:
     - text: "About"

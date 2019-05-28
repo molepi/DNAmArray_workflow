@@ -11,19 +11,18 @@ We recommend performing probe-filtering by setting unreliably measured probes to
 Some observations need to be removed from the dataset since they provide little to no information that could skew analyses. Probes which suffered from low intensity (default: <1) or are based on very few (default: <3) beads are removed, based on a specified cut off. 
 
 ```{r 501start, echo=FALSE, message=FALSE, results='hide'}
-load("./data/targets.RData")
+load("C:/Users/ljsinke/Documents/git/GitHub/test_workflow/data/targets.RData")
 targets$Basename <- substring(targets$supplementary_file,68,95)
-setwd("C:/Users/ljsinke/Documents/r/cd/IDATs")
 library(minfi)
-RGset <- read.metharray.exp(base=NULL, targets, extended=TRUE)
-GRset <- invisible(preprocessFunnorm.DNAmArray(RGset, nPCs=4, keepCN=FALSE))
+RGset <- read.metharray.exp(base="C:/Users/ljsinke/Documents/r/cd/GSE113018/IDATs", targets, extended=TRUE)
+GRset <- preprocessFunnorm.DNAmArray(RGset, nPCs=4, keepCN=FALSE)
 ```
 
 ```{r 502filter}
 RGset <- probeFiltering(RGset)
 ```
 
-There are differences between probe types that are used in `probeFiltering()`. Information on these can be extracted and stored using functions from [**minfi**](https://bioconductor.org/packages/release/bioc/html/minfi.html) [@Aryee2014].
+There are differences between probe types that are used in `probeFiltering()`. Information on these can be extracted and stored using functions from [**minfi**](https://bioconductor.org/packages/release/bioc/html/minfi.html) [@Feinberg2014].
 
 ```{r 503probeinfo}
 locusNames <- getManifestInfo(RGset, "locusNames")
@@ -49,11 +48,11 @@ betas <- reduce(GRset, RGset, what="beta")
 
 # Cross-reactive and polymorphic CpGs #
 
-Several studies [@Chen2013, @Zhou2016] have characterized ambiguous probes on both the 450k and EPIC methylation arrays and made suggestions for removal. We chose to remove probes identified by Zhou et al., since this set is actively maintained and supports both array sizes. Additionally, different sets are specified depending on the reference genome used.
+Several studies [@Chen2013, @Zhou2017] have characterized ambiguous probes on both the 450k and EPIC methylation arrays and made suggestions for removal. We chose to remove probes identified by Zhou et al., since this set is actively maintained and supports both array sizes. Additionally, different sets are specified depending on the reference genome used.
 
 In total, Zhou et al. suggest removal of probes for a variety of reasons, from ambiguous mapping and cross-reactivity to polymorphisms that interfere with extension. In general, around 60.000 probes are suggested for removal in 450k arrays, and 100.000 for EPIC. 
 
-We developed the `probeMasking()` function, which removes specified probes from either beta- or M- value matrices. In this instance, 59.415 CpG rows are removed. 
+We developed the `probeMasking()` function, which removes specified probes from either beta- or M- value matrices. In this instance, 59.780 CpG rows are removed. 
 
 ```{r 505zhoumask}
 betas <- probeMasking(betas, array="450", genome="hg19")

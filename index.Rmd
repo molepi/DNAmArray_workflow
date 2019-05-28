@@ -1,13 +1,17 @@
 ---
-title: "Streamlined workflow for the quality control, normalization, and bias-free analysis of Illumina methylation array data - The Leiden approach"
-author: Lucy Sinke, Maarten van Iterson, Elmar Tobi, Roderick Slieker, Wouter den Hollander, Koen Dekkers, Rene Luijk, Eline Slagboom, and Bas Heijmans; Department of Biomedical Data Science, Leiden University Medical Center, Leiden, The Netherlands
+title:  | 
+  | Streamlined workflow for the quality control, normalization, and analysis of Illumina methylation array data
+  | 
+  
+author:  | 
+  | Lucy Sinke, Maarten van Iterson, Davy Cats, and Bas Heijmans
+  | <font size=2 color=#6b6b6b>Molecular Epidemiology, Department of Biomedical Data Sciences, Leiden University Medical Center, Leiden, The Netherlands</font>
+  
 email: l.j.sinke@lumc.nl
 ---
 
 ```{r, child="_setup.Rmd"}
 ```
-
-[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.158908.svg)](https://doi.org/10.5281/zenodo.158908)
 
 ***
 
@@ -27,20 +31,18 @@ applicable to the newer 850k EPIC array pending updates of
 [BioConductor](https://www.bioconductor.org) packages from other
 groups.
 
-It is worth noting that this workflow makes extensive use of other [BioConductor](https://www.bioconductor.org) packages. For example, [**DNAmArray**](https://github.com/molepi/DNAmArray) converts IDAT files to an `RGset` by harnessing functions from [**minfi**](https://bioconductor.org/packages/release/bioc/html/minfi.html) [@Aryee2014] and combining them with [**BiocParallel**](https://bioconductor.org/packages/release/bioc/html/BiocParallel.html). Usually these are installed
+It is worth noting that this workflow makes extensive use of other [BioConductor](https://www.bioconductor.org) packages. For example, the [**DNAmArray**](https://github.com/molepi/DNAmArray) function `read.metharray.exp.par()` converts IDAT files to an `RGset` by harnessing functions from [**minfi**](https://bioconductor.org/packages/release/bioc/html/minfi.html) [@Feinberg2014] and combining them with [**BiocParallel**](https://bioconductor.org/packages/release/bioc/html/BiocParallel.html). Usually the required packages are installed
 automatically, but otherwise please refer to the relevant package's documentation.
 
 Furthermore, we have also developed packages used by this workflow.  [**MethylAid**](http:/bioconductor.org/packages/MethylAid)
-[@Iterson2014] provides a web application to assist in performing interactive sample quality control, and  [**bacon**](http:/bioconductor.org/packages/bacon)
-[@Iterson2017] corrects for bias and inflation in ome-wide association studies, such as EWAS.
+[@Luijk2014] provides a web application to assist in performing interactive sample quality control, and  [**bacon**](http:/bioconductor.org/packages/bacon)
+[@VanIterson2017] corrects for bias and inflation in ome-wide association studies, such as EWAS.
 
 ***
 
 # Example Data #
 
-The [example data](https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE48472) [@Slieker2013] used in this workflow is available from the [NCBI Gene Expression Omnibus](https://www.ncbi.nlm.nih.gov/geo/) (GEO), a public repository of microarray data. It contains genome-wide DNA methylation data from multiple tissues obtained using the Illumina 450k microarray. 
-
-Internal tissue samples (blood, liver, muscle, pancreas, and spleen) were obtained from six cadavers (mean age: 65.5 years), and internal tissue samples (blood, saliva, hair follicle, and buccal swab) were collected from five healthy volunteers (mean age: 28 years).
+The [example data](https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE113018) [@Cobben2019] used in this workflow is available from the [NCBI Gene Expression Omnibus](https://www.ncbi.nlm.nih.gov/geo/) (GEO), a public repository of microarray data. It contains genome-wide DNA methylation data from whole blood obtained using the Illumina 450k microarray. The participants consist of 46 fetal alcohol spectrum disorder (FASD) cases and 92 controls from both a discovery and replication cohort.
 
 ***
 
@@ -52,7 +54,7 @@ be installed in several ways, and has been successfully for >= R-3.2.0 on variou
 ### Install using the **devtools**-package ###
 
 First install the package
-[**devtools**](https://github.com/hadley/devtools). Next use:
+[**devtools**](https://github.com/hadley/devtools), then use the `install_github()` function to fetch the [**DNAmArray**](https://github.com/molepi/DNAmArray) package.
 
 ```{r 101devtools, eval=FALSE}
 library(devtools)
@@ -61,15 +63,13 @@ install_github("molepi/DNAmArray")
 
 ### Install from source using `git/R` ###
 
-Using [git](https://git-scm.com/), you can `git clone`, build,
-and then install the package from source:
+Using [git](https://git-scm.com/), you can `git clone` our repository and then install the package, changing `_x.y.z.` to the version you cloned.
 
-```{r 102git, engine='bash', eval=FALSE}
+```{r 102git, eval=FALSE}
 git clone git@github.com/molepi/DNAmArray.git
 R CMD build DNAmArray
 R CMD INSTALL DNAmArray_x.y.z.tar.gz
 ```
-Change `_x.y.z.` to the proper version you downloaded!
 
 ***
 

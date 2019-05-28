@@ -4,18 +4,11 @@
 
 # Simple EWAS using **limma** #
 
-Our approach for running an EWAS is similar to the approach of
-[**missMethyl**](http://bioconductor.org/packages/missMethyl/). Expect
-that we the empirical Bayes step, because the sample size in an EWAS
-is large enough and there should no added value in running the
-`eBayes`-step?
+Our approach for running an EWAS is similar to the approach of [**missMethyl**](http://bioconductor.org/packages/missMethyl/), except that we skip the empirical Bayes step, because the sample size in an EWAS is large enough and there is no added value in including this.
 
-We assume the data has been normalized, filtered and NA's have been
-imputed. Furthermore, it is very convenient to construct a
-`SummarizedExperiment`-object as described in the previous section.
+We assume the data has been normalized, filtered and NA's have been imputed. Furthermore, it is very convenient to construct a `SummarizedExperiment`-object as described in the previous section.
 
-For example, the model that you would like to run can be added like
-this with the first covariate the phenotype of interest.
+For example, the model that you would like to run can be added like this with the first covariate the phenotype of interest.
 
 ```{r formula}
 metadata(mvalues)$formula <- ~DNA_BloodSampling_Age + Sex + Sentrix_Position + Smoking + Mono_Perc + Baso_Perc + Eos_Perc + Neut_Perc
@@ -24,24 +17,10 @@ metadata(mvalues)$formula <- ~DNA_BloodSampling_Age + Sex + Sentrix_Position + S
 Next, we extract those samples having a complete set of
 covariates. Notice that we subset the `SummarizedExperiment`-object!
 
-
 ```{r complete}
 covariates <- get_all_vars(metadata(mvalues)$formula, data=colData(mvalues))
 nas <- apply(covariates, 1, anyNA)
 mvalues <- mvalues[, !nas]
-```
-
-Remove probes on the X and Y chromosomes and probes containing a SNPs
-or does mapping to multiple locations[@Zhou2016]. 
-
-```{r, snpprobes}
-mvalues <- mvalues[!(seqnames(mvalues) %in% c("chrX", "chrY")),]
-data(hm450.manifest.pop.GoNL) ##From DNAmArray
-hm450.manifest.pop.GoNL
-hm450.manifest.pop.GoNL <- hm450.manifest.pop.GoNL[!is.na(hm450.manifest.pop.GoNL$MASK.general.GoNL) &
-                                                   hm450.manifest.pop.GoNL$MASK.general.GoNL == TRUE, ]
-
-mvalues <- mvalues[!(names(mvalues) %in% names(hm450.manifest.pop.GoNL)),]         
 ```
 
 Now we can run the model like this and we do not have to bother on
