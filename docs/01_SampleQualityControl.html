@@ -493,6 +493,7 @@ targets &lt;-<span class="st"> </span><span class="kw">pData</span>(<span class=
 <h1>Using MethylAid</h1>
 <p>We now have the data we need to commence quality control, but some reformatting is needed. The <a href="http://bioconductor.org/packages/MethylAid"><strong>MethylAid</strong></a> <span class="citation">(Iterson et al. 2014)</span> package that we developed requires the targets data frame to store IDAT file root names in a <code>Basename</code> column. Sometimes, data comes with a sample sheet to faciliate this, but in this case the information needs to be extracted from the supplementary file column instead.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">targets<span class="op">$</span>Basename &lt;-<span class="st"> </span><span class="kw">substring</span>(targets<span class="op">$</span>supplementary_file,<span class="dv">68</span>,<span class="dv">95</span>)
+targets<span class="op">$</span>Sentrix_Position &lt;-<span class="st"> </span><span class="kw">substring</span>(targets<span class="op">$</span>Basename,<span class="dv">23</span>,<span class="dv">28</span>)
 <span class="kw">head</span>(targets[<span class="kw">c</span>(<span class="dv">38</span>,<span class="dv">42</span>,<span class="dv">44</span>)])</code></pre></div>
 <pre><code>##            age:ch1 gender:ch1                     Basename
 ## GSM3092700    17.3     Female GSM3092700_9985178096_R01C01

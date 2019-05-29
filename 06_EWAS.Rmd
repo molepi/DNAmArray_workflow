@@ -2,35 +2,88 @@
 ```{r, child="_setup.Rmd"}
 ```
 
+```{r 701start, echo=FALSE, message=FALSE, results='hide'}
+load("C:/Users/ljsinke/Documents/git/GitHub/test_workflow/data/targets.RData")
+targets$Basename <- substring(targets$supplementary_file,68,95)
+RGset <- read.metharray.exp(base="C:/Users/ljsinke/Documents/r/cd/GSE113018/IDATs", targets, extended=TRUE)
+
+GRset <- preprocessFunnorm.DNAmArray(RGset, nPCs=4, keepCN=FALSE)
+
+RGset <- probeFiltering(RGset)
+betas <- reduce(GRset, RGset, what="beta")
+betas <- probeMasking(betas, array="450", genome="hg19")
+
+assays <- betas
+
+rowRanges <- getPlatform(platform="HM450", genome="hg19")
+rows <- match(rownames(betas), names(rowRanges))
+rowRanges <- rowRanges[rows]
+
+cols <- match(colnames(betas), colnames(RGset))
+colData <- DataFrame(colData(RGset[, cols])@listData)
+
+methData <- SummarizedExperiment(assays=SimpleList(assays=assays),
+                                 rowRanges=rowRanges,
+                                 colData=colData)
+
+library(dplyr)
+
+targets %>% 
+  rename(
+    gender.ch1 = `gender:ch1`,
+    age.ch1 = `age:ch1`
+    )
+```
+
+***
+
 # Simple EWAS using **limma** #
 
 Our approach for running an EWAS is similar to the approach of [**missMethyl**](http://bioconductor.org/packages/missMethyl/), except that we skip the empirical Bayes step, because the sample size in an EWAS is large enough and there is no added value in including this.
 
-We assume the data has been normalized, filtered and NA's have been imputed. Furthermore, it is very convenient to construct a `SummarizedExperiment`-object as described in the previous section.
+We assume the data has been normalized, filtered and NA's have been imputed. Furthermore, it is very convenient to construct a `SummarizedExperiment` class object as described in the previous section. In our data we have cases and controls, and our primary interest is differential methylation between the two. We want to adjust for likely confounders, such as age and sex.
 
-For example, the model that you would like to run can be added like this with the first covariate the phenotype of interest.
-
-```{r formula}
-metadata(mvalues)$formula <- ~DNA_BloodSampling_Age + Sex + Sentrix_Position + Smoking + Mono_Perc + Baso_Perc + Eos_Perc + Neut_Perc
+```{r 702casen}
+table(methData$disease.state.ch1)
 ```
 
-Next, we extract those samples having a complete set of
-covariates. Notice that we subset the `SummarizedExperiment`-object!
+It is important to ensure that all variables are of a type that facilitates model fitting, so age is converted to a continuous variables and all others are treated as factors. The model formula that you would like to run can be added into your data as shown, ensuring that the covariate of interest immediately follows the tilde. 
 
-```{r complete}
-covariates <- get_all_vars(metadata(mvalues)$formula, data=colData(mvalues))
+```{r 703formula}
+ourData <- methData[, methData$disease.state.ch1 %in% c("FASD", "control")]
+
+ourData$disease.state.ch1 <- factor(ourData$disease.state.ch1)
+ourData$gender.ch1 <- factor(ourData$gender.ch1)
+ourData$age.ch1 <- as.numeric(ourData$age.ch1)
+
+metadata(ourData)$formula <- ~disease.state.ch1 + age.ch1 + gender.ch1 
+```
+
+By subsetting our `SummarizedExperiment` object, we can extract covariates with complete information. Sex chromosome probes are also filtered out here.
+
+```{r 704complete}
+covariates <- get_all_vars(metadata(ourData)$formula, data=colData(ourData))
 nas <- apply(covariates, 1, anyNA)
-mvalues <- mvalues[, !nas]
+ourData <- ourData[, !nas]
+
+ourData <- ourData[!(seqnames(ourData) %in% c("chrX", "chrY")),]
 ```
 
-Now we can run the model like this and we do not have to bother on
-sample administration!
+The `design` object is a matrix holding coefficient multipliers for each observation. As you can see, it is very important to check this to be sure that variables are being handled correctly.
 
-```{r ewas}
+```{r 705model}
+design <- model.matrix(metadata(ourData)$formula, data=colData(ourData))
+design[1:10,1:3]
+```
+
+After extracting beta values from our data, we can use the `lmFit()` function from [**limma**](https://bioconductor.org/packages/release/bioc/html/limma.html) to fit the model. Returned p-values are adjusted for multiple testing using the Bonferroni correction, and the CpG sites bearing most significance are returned for inspection.
+
+```{r 706ewas}
+data <- assays(ourData)$assays
+
 library(limma)
-design <- model.matrix(metadata(mvalues)$formula, data=colData(mvalues))
-data <- assays(mvalues)$data
 fit <- lmFit(data, design)
+
 tstat <- fit$coef/fit$stdev.unscaled/fit$sigma
 
 pval <- 2*pnorm(-abs(tstat[,2]))
@@ -46,7 +99,7 @@ recent approach available from cran
 estimate the unobserved covariates. There are other methods as well,
 like, sva, ruv but we prefer this one...
 
-```{r cate}
+```{r cate, eval=FALSE}
 library(cate)
 fa <- cate.fit(design[,2,drop=FALSE], design[,-2], t(data), r = 3, calibrate=FALSE, adj.method="naive")
 ```
@@ -75,7 +128,7 @@ bias often observed in EWAS/TWAS see for more details[@Iterson2017].
 
 For example, we can use it on the EWAS that we just run:
 
-```{r bacon}
+```{r bacon, eval=FALSE}
 library(bacon)
 tstats <- cbind(limma=tstat[,2], cate=as.vector(fa$beta.t))
 library(BiocParallel)

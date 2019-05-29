@@ -38,7 +38,7 @@ targets <- pData(phenoData(GSE113018[[1]]))
 # Using MethylAid #
 
 We now have the data we need to commence quality control, but some reformatting is needed. The [**MethylAid**](http://bioconductor.org/packages/MethylAid)
-[@Luijk2014] package that we developed requires the targets data frame to store IDAT file root names in a `Basename` column. Sometimes, data comes with a sample sheet to faciliate this, but in this case the information needs to be extracted from the supplementary file column instead.
+[@Luijk2014] package that we developed requires the targets data frame to store IDAT file root names in a `Basename` column. Sometimes, data comes with a sample sheet to faciliate this, but in this case the information needs to be extracted from the supplementary file column instead. We also extract Sentrix Position from this information and store it in the `targets` object for later.
 
 ```{r 204load, echo=FALSE}
 load("C:/Users/ljsinke/Documents/git/GitHub/test_workflow/data/targets.RData")
@@ -46,6 +46,7 @@ load("C:/Users/ljsinke/Documents/git/GitHub/test_workflow/data/targets.RData")
 
 ```{r 205basename}
 targets$Basename <- substring(targets$supplementary_file,68,95)
+targets$Sentrix_Position <- substring(targets$Basename,23,28)
 head(targets[c(38,42,44)])
 ```
 

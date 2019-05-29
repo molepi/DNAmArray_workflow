@@ -15,7 +15,7 @@
 
 <script src="site_libs/jquery-1.11.3/jquery.min.js"></script>
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<link href="site_libs/bootstrap-3.3.5/css/spacelab.min.css" rel="stylesheet" />
+<link href="site_libs/bootstrap-3.3.5/css/lumen.min.css" rel="stylesheet" />
 <script src="site_libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
 <script src="site_libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
 <script src="site_libs/bootstrap-3.3.5/shim/respond.min.js"></script>
@@ -23,23 +23,76 @@
 <link href="site_libs/tocify-1.9.1/jquery.tocify.css" rel="stylesheet" />
 <script src="site_libs/tocify-1.9.1/jquery.tocify.js"></script>
 <script src="site_libs/navigation-1.1/tabsets.js"></script>
-<link href="site_libs/highlightjs-1.1/textmate.css" rel="stylesheet" />
-<script src="site_libs/highlightjs-1.1/highlight.js"></script>
+
 
 <style type="text/css">code{white-space: pre;}</style>
+<style type="text/css" data-origin="pandoc">
+div.sourceCode { overflow-x: auto; }
+table.sourceCode, tr.sourceCode, td.lineNumbers, td.sourceCode {
+  margin: 0; padding: 0; vertical-align: baseline; border: none; }
+table.sourceCode { width: 100%; line-height: 100%; background-color: #ffffff; color: #1f1c1b; }
+td.lineNumbers { text-align: right; padding-right: 4px; padding-left: 4px; background-color: #ffffff; color: #a0a0a0; border-right: 1px solid #a0a0a0; }
+td.sourceCode { padding-left: 5px; }
+pre, code { color: #1f1c1b; background-color: #ffffff; }
+code > span.kw { color: #1f1c1b; font-weight: bold; } /* Keyword */
+code > span.dt { color: #0057ae; } /* DataType */
+code > span.dv { color: #b08000; } /* DecVal */
+code > span.bn { color: #b08000; } /* BaseN */
+code > span.fl { color: #b08000; } /* Float */
+code > span.cn { color: #aa5500; } /* Constant */
+code > span.ch { color: #924c9d; } /* Char */
+code > span.sc { color: #3daee9; } /* SpecialChar */
+code > span.st { color: #bf0303; } /* String */
+code > span.vs { color: #bf0303; } /* VerbatimString */
+code > span.ss { color: #ff5500; } /* SpecialString */
+code > span.im { color: #ff5500; } /* Import */
+code > span.co { color: #898887; } /* Comment */
+code > span.do { color: #607880; } /* Documentation */
+code > span.an { color: #ca60ca; } /* Annotation */
+code > span.cv { color: #0095ff; } /* CommentVar */
+code > span.ot { color: #006e28; } /* Other */
+code > span.fu { color: #644a9b; } /* Function */
+code > span.va { color: #0057ae; } /* Variable */
+code > span.cf { color: #1f1c1b; font-weight: bold; } /* ControlFlow */
+code > span.op { color: #1f1c1b; } /* Operator */
+code > span.bu { color: #644a9b; font-weight: bold; } /* BuiltIn */
+code > span.ex { color: #0095ff; font-weight: bold; } /* Extension */
+code > span.pp { color: #006e28; } /* Preprocessor */
+code > span.at { color: #0057ae; } /* Attribute */
+code > span.re { color: #0057ae; } /* RegionMarker */
+code > span.in { color: #b08000; } /* Information */
+code > span.wa { color: #bf0303; } /* Warning */
+code > span.al { color: #bf0303; font-weight: bold; } /* Alert */
+code > span.er { color: #bf0303; text-decoration: underline; } /* Error */
+code > span. { color: #1f1c1b; } /* Normal */
+
+</style>
+<script>
+// apply pandoc div.sourceCode style to pre.sourceCode instead
+(function() {
+  var sheets = document.styleSheets;
+  for (var i = 0; i < sheets.length; i++) {
+    if (sheets[i].ownerNode.dataset["origin"] !== "pandoc") continue;
+    try { var rules = sheets[i].cssRules; } catch (e) { continue; }
+    for (var j = 0; j < rules.length; j++) {
+      var rule = rules[j];
+      // check if there is a div.sourceCode rule
+      if (rule.type !== rule.STYLE_RULE || rule.selectorText !== "div.sourceCode") continue;
+      var style = rule.style.cssText;
+      // check if color or background-color is set
+      if (rule.style.color === '' || rule.style.backgroundColor === '') continue;
+      // replace div.sourceCode by a pre.sourceCode rule
+      sheets[i].deleteRule(j);
+      sheets[i].insertRule('pre.sourceCode{' + style + '}', j);
+    }
+  }
+})();
+</script>
 <style type="text/css">
   pre:not([class]) {
     background-color: white;
   }
 </style>
-<script type="text/javascript">
-if (window.hljs && document.readyState && document.readyState === "complete") {
-   window.setTimeout(function() {
-      hljs.initHighlighting();
-   }, 0);
-}
-</script>
-
 
 
 <style type="text/css">
@@ -69,10 +122,9 @@ h6 {
 }
 </style>
 
+<link rel="stylesheet" href="style.css" type="text/css" />
 
-</head>
 
-<body>
 
 <style type = "text/css">
 .main-container {
@@ -91,8 +143,14 @@ img {
 .tabbed-pane {
   padding-top: 12px;
 }
+.html-widget {
+  margin-bottom: 20px;
+}
 button.code-folding-btn:focus {
   outline: none;
+}
+summary {
+  display: list-item;
 }
 </style>
 
@@ -100,34 +158,70 @@ button.code-folding-btn:focus {
 <style type="text/css">
 /* padding for bootstrap navbar */
 body {
-  padding-top: 52px;
+  padding-top: 54px;
   padding-bottom: 40px;
 }
 /* offset scroll position for anchor links (for fixed navbar)  */
 .section h1 {
-  padding-top: 57px;
-  margin-top: -57px;
+  padding-top: 59px;
+  margin-top: -59px;
 }
-
 .section h2 {
-  padding-top: 57px;
-  margin-top: -57px;
+  padding-top: 59px;
+  margin-top: -59px;
 }
 .section h3 {
-  padding-top: 57px;
-  margin-top: -57px;
+  padding-top: 59px;
+  margin-top: -59px;
 }
 .section h4 {
-  padding-top: 57px;
-  margin-top: -57px;
+  padding-top: 59px;
+  margin-top: -59px;
 }
 .section h5 {
-  padding-top: 57px;
-  margin-top: -57px;
+  padding-top: 59px;
+  margin-top: -59px;
 }
 .section h6 {
-  padding-top: 57px;
-  margin-top: -57px;
+  padding-top: 59px;
+  margin-top: -59px;
+}
+.dropdown-submenu {
+  position: relative;
+}
+.dropdown-submenu>.dropdown-menu {
+  top: 0;
+  left: 100%;
+  margin-top: -6px;
+  margin-left: -1px;
+  border-radius: 0 6px 6px 6px;
+}
+.dropdown-submenu:hover>.dropdown-menu {
+  display: block;
+}
+.dropdown-submenu>a:after {
+  display: block;
+  content: " ";
+  float: right;
+  width: 0;
+  height: 0;
+  border-color: transparent;
+  border-style: solid;
+  border-width: 5px 0 5px 5px;
+  border-left-color: #cccccc;
+  margin-top: 5px;
+  margin-right: -10px;
+}
+.dropdown-submenu:hover>a:after {
+  border-left-color: #ffffff;
+}
+.dropdown-submenu.pull-left {
+  float: none;
+}
+.dropdown-submenu.pull-left>.dropdown-menu {
+  left: -100%;
+  margin-left: 10px;
+  border-radius: 6px 0 6px 6px;
 }
 </style>
 
@@ -149,18 +243,75 @@ $(document).ready(function () {
 });
 </script>
 
-
-<div class="container-fluid main-container">
-
 <!-- tabsets -->
+
+<style type="text/css">
+.tabset-dropdown > .nav-tabs {
+  display: inline-table;
+  max-height: 500px;
+  min-height: 44px;
+  overflow-y: auto;
+  background: white;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs > li.active:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li.active:before {
+  content: "&#xe258;";
+  border: none;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs > li.active {
+  display: block;
+}
+
+.tabset-dropdown > .nav-tabs > li > a,
+.tabset-dropdown > .nav-tabs > li > a:focus,
+.tabset-dropdown > .nav-tabs > li > a:hover {
+  border: none;
+  display: inline-block;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li {
+  display: block;
+  float: none;
+}
+
+.tabset-dropdown > .nav-tabs > li {
+  display: none;
+}
+</style>
+
 <script>
 $(document).ready(function () {
   window.buildTabsets("TOC");
 });
+
+$(document).ready(function () {
+  $('.tabset-dropdown > .nav-tabs > li').click(function () {
+    $(this).parent().toggleClass('nav-tabs-open')
+  });
+});
 </script>
 
 <!-- code folding -->
-
 
 
 
@@ -249,6 +400,16 @@ div.tocify {
 
 </style>
 
+
+
+</head>
+
+<body>
+
+
+<div class="container-fluid main-container">
+
+
 <!-- setup 3col/9col grid for toc_float and main content  -->
 <div class="row-fluid">
 <div class="col-xs-12 col-sm-4 col-md-3">
@@ -289,7 +450,7 @@ div.tocify {
   <a href="05_Miscellaneous.html">Miscellaneous</a>
 </li>
 <li>
-  <a href="06_EWAS.html">Ewas</a>
+  <a href="06_EWAS.html">EWAS</a>
 </li>
       </ul>
       <ul class="nav navbar-nav navbar-right">
@@ -309,340 +470,86 @@ div.tocify {
 </div>
 
 
+<hr />
 <div id="simple-ewas-using-limma" class="section level1">
 <h1>Simple EWAS using <strong>limma</strong></h1>
-<p>Our approach for running an EWAS is similar to the approach of <a href="http://bioconductor.org/packages/missMethyl/"><strong>missMethyl</strong></a>. Expect that we the empirical Bayes step, because the sample size in an EWAS is large enough and there should no added value in running the <code>eBayes</code>-step?</p>
-<p>We assume the data has been normalized, filtered and NA’s have been imputed. Furthermore, it is very convenient to construct a <code>SummarizedExperiment</code>-object as described in the previous section.</p>
-<p>For example, the model that you would like to run can be added like this with the first covariate the phenotype of interest.</p>
-<pre class="r"><code>metadata(mvalues)$formula &lt;- ~DNA_BloodSampling_Age + Sex + Sentrix_Position + Smoking + Mono_Perc + Baso_Perc + Eos_Perc + Neut_Perc</code></pre>
-<p>Next, we extract those samples having a complete set of covariates. Notice that we subset the <code>SummarizedExperiment</code>-object!</p>
-<pre class="r"><code>covariates &lt;- get_all_vars(metadata(mvalues)$formula, data=colData(mvalues))
-nas &lt;- apply(covariates, 1, anyNA)
-mvalues &lt;- mvalues[, !nas]</code></pre>
-<p>Remove probes on the X and Y chromosomes and probes containing a SNPs or does mapping to multiple locations<span class="citation">(Zhou, Laird, and Shen 2016)</span>.</p>
-<pre class="r"><code>mvalues &lt;- mvalues[!(seqnames(mvalues) %in% c(&quot;chrX&quot;, &quot;chrY&quot;)),]
-data(hm450.manifest.pop.GoNL) ##From DNAmArray
-hm450.manifest.pop.GoNL</code></pre>
-<pre><code>## GRanges object with 485577 ranges and 65 metadata columns:
-##              seqnames               ranges strand | MASK.general.AFR
-##                 &lt;Rle&gt;            &lt;IRanges&gt;  &lt;Rle&gt; |        &lt;logical&gt;
-##   cg13869341     chr1       [15865, 15866]      * |             TRUE
-##   cg14008030     chr1       [18827, 18828]      * |             TRUE
-##   cg12045430     chr1       [29407, 29408]      * |             TRUE
-##   cg20826792     chr1       [29425, 29426]      * |             TRUE
-##   cg00381604     chr1       [29435, 29436]      * |             TRUE
-##          ...      ...                  ...    ... .              ...
-##   cg17939569     chrY [27009430, 27009431]      * |             TRUE
-##   cg13365400     chrY [27210334, 27210335]      * |             TRUE
-##   cg21106100     chrY [28555536, 28555537]      * |            FALSE
-##   cg08265308     chrY [28555550, 28555551]      * |            FALSE
-##   cg14273923     chrY [28555912, 28555913]      * |            FALSE
-##              MASK.snp5.AFR MASK.general.EAS MASK.snp5.EAS MASK.general.EUR
-##                  &lt;logical&gt;        &lt;logical&gt;     &lt;logical&gt;        &lt;logical&gt;
-##   cg13869341         FALSE             TRUE         FALSE             TRUE
-##   cg14008030         FALSE             TRUE         FALSE             TRUE
-##   cg12045430         FALSE             TRUE         FALSE             TRUE
-##   cg20826792         FALSE             TRUE         FALSE             TRUE
-##   cg00381604         FALSE             TRUE         FALSE             TRUE
-##          ...           ...              ...           ...              ...
-##   cg17939569         FALSE             TRUE         FALSE             TRUE
-##   cg13365400         FALSE             TRUE         FALSE             TRUE
-##   cg21106100         FALSE            FALSE         FALSE            FALSE
-##   cg08265308         FALSE            FALSE         FALSE            FALSE
-##   cg14273923         FALSE            FALSE         FALSE            FALSE
-##              MASK.snp5.EUR MASK.general.SAS MASK.snp5.SAS MASK.general.AMR
-##                  &lt;logical&gt;        &lt;logical&gt;     &lt;logical&gt;        &lt;logical&gt;
-##   cg13869341         FALSE             TRUE         FALSE             TRUE
-##   cg14008030         FALSE             TRUE         FALSE             TRUE
-##   cg12045430         FALSE             TRUE         FALSE             TRUE
-##   cg20826792         FALSE             TRUE         FALSE             TRUE
-##   cg00381604         FALSE             TRUE         FALSE             TRUE
-##          ...           ...              ...           ...              ...
-##   cg17939569         FALSE             TRUE         FALSE             TRUE
-##   cg13365400         FALSE             TRUE         FALSE             TRUE
-##   cg21106100         FALSE            FALSE         FALSE            FALSE
-##   cg08265308         FALSE            FALSE         FALSE            FALSE
-##   cg14273923         FALSE            FALSE         FALSE            FALSE
-##              MASK.snp5.AMR MASK.general.GWD MASK.snp5.GWD MASK.general.YRI
-##                  &lt;logical&gt;        &lt;logical&gt;     &lt;logical&gt;        &lt;logical&gt;
-##   cg13869341         FALSE             TRUE         FALSE             TRUE
-##   cg14008030         FALSE             TRUE         FALSE             TRUE
-##   cg12045430         FALSE             TRUE         FALSE             TRUE
-##   cg20826792         FALSE             TRUE         FALSE             TRUE
-##   cg00381604         FALSE             TRUE         FALSE             TRUE
-##          ...           ...              ...           ...              ...
-##   cg17939569         FALSE             TRUE         FALSE             TRUE
-##   cg13365400         FALSE             TRUE         FALSE             TRUE
-##   cg21106100         FALSE            FALSE         FALSE            FALSE
-##   cg08265308         FALSE            FALSE         FALSE            FALSE
-##   cg14273923         FALSE            FALSE         FALSE            FALSE
-##              MASK.snp5.YRI MASK.general.TSI MASK.snp5.TSI MASK.general.IBS
-##                  &lt;logical&gt;        &lt;logical&gt;     &lt;logical&gt;        &lt;logical&gt;
-##   cg13869341         FALSE             TRUE         FALSE             TRUE
-##   cg14008030         FALSE             TRUE         FALSE             TRUE
-##   cg12045430         FALSE             TRUE         FALSE             TRUE
-##   cg20826792         FALSE             TRUE         FALSE             TRUE
-##   cg00381604         FALSE             TRUE         FALSE             TRUE
-##          ...           ...              ...           ...              ...
-##   cg17939569         FALSE             TRUE         FALSE             TRUE
-##   cg13365400         FALSE             TRUE         FALSE             TRUE
-##   cg21106100         FALSE            FALSE         FALSE            FALSE
-##   cg08265308         FALSE            FALSE         FALSE            FALSE
-##   cg14273923         FALSE            FALSE         FALSE            FALSE
-##              MASK.snp5.IBS MASK.general.CHS MASK.snp5.CHS MASK.general.PUR
-##                  &lt;logical&gt;        &lt;logical&gt;     &lt;logical&gt;        &lt;logical&gt;
-##   cg13869341         FALSE             TRUE         FALSE             TRUE
-##   cg14008030         FALSE             TRUE         FALSE             TRUE
-##   cg12045430         FALSE             TRUE         FALSE             TRUE
-##   cg20826792         FALSE             TRUE         FALSE             TRUE
-##   cg00381604         FALSE             TRUE         FALSE             TRUE
-##          ...           ...              ...           ...              ...
-##   cg17939569         FALSE             TRUE         FALSE             TRUE
-##   cg13365400         FALSE             TRUE         FALSE             TRUE
-##   cg21106100         FALSE            FALSE         FALSE            FALSE
-##   cg08265308         FALSE            FALSE         FALSE            FALSE
-##   cg14273923         FALSE            FALSE         FALSE            FALSE
-##              MASK.snp5.PUR MASK.general.JPT MASK.snp5.JPT MASK.general.GIH
-##                  &lt;logical&gt;        &lt;logical&gt;     &lt;logical&gt;        &lt;logical&gt;
-##   cg13869341         FALSE             TRUE         FALSE             TRUE
-##   cg14008030         FALSE             TRUE         FALSE             TRUE
-##   cg12045430         FALSE             TRUE         FALSE             TRUE
-##   cg20826792         FALSE             TRUE         FALSE             TRUE
-##   cg00381604         FALSE             TRUE         FALSE             TRUE
-##          ...           ...              ...           ...              ...
-##   cg17939569         FALSE             TRUE         FALSE             TRUE
-##   cg13365400         FALSE             TRUE         FALSE             TRUE
-##   cg21106100         FALSE            FALSE         FALSE            FALSE
-##   cg08265308         FALSE            FALSE         FALSE            FALSE
-##   cg14273923         FALSE            FALSE         FALSE            FALSE
-##              MASK.snp5.GIH MASK.general.CHB MASK.snp5.CHB MASK.general.STU
-##                  &lt;logical&gt;        &lt;logical&gt;     &lt;logical&gt;        &lt;logical&gt;
-##   cg13869341         FALSE             TRUE         FALSE             TRUE
-##   cg14008030         FALSE             TRUE         FALSE             TRUE
-##   cg12045430         FALSE             TRUE         FALSE             TRUE
-##   cg20826792         FALSE             TRUE         FALSE             TRUE
-##   cg00381604         FALSE             TRUE         FALSE             TRUE
-##          ...           ...              ...           ...              ...
-##   cg17939569         FALSE             TRUE         FALSE             TRUE
-##   cg13365400         FALSE             TRUE         FALSE             TRUE
-##   cg21106100         FALSE            FALSE         FALSE            FALSE
-##   cg08265308         FALSE            FALSE         FALSE            FALSE
-##   cg14273923         FALSE            FALSE         FALSE            FALSE
-##              MASK.snp5.STU MASK.general.ITU MASK.snp5.ITU MASK.general.LWK
-##                  &lt;logical&gt;        &lt;logical&gt;     &lt;logical&gt;        &lt;logical&gt;
-##   cg13869341         FALSE             TRUE         FALSE             TRUE
-##   cg14008030         FALSE             TRUE         FALSE             TRUE
-##   cg12045430         FALSE             TRUE         FALSE             TRUE
-##   cg20826792         FALSE             TRUE         FALSE             TRUE
-##   cg00381604         FALSE             TRUE         FALSE             TRUE
-##          ...           ...              ...           ...              ...
-##   cg17939569         FALSE             TRUE         FALSE             TRUE
-##   cg13365400         FALSE             TRUE         FALSE             TRUE
-##   cg21106100         FALSE            FALSE         FALSE            FALSE
-##   cg08265308         FALSE            FALSE         FALSE            FALSE
-##   cg14273923         FALSE            FALSE         FALSE            FALSE
-##              MASK.snp5.LWK MASK.general.KHV MASK.snp5.KHV MASK.general.FIN
-##                  &lt;logical&gt;        &lt;logical&gt;     &lt;logical&gt;        &lt;logical&gt;
-##   cg13869341         FALSE             TRUE         FALSE             TRUE
-##   cg14008030         FALSE             TRUE         FALSE             TRUE
-##   cg12045430         FALSE             TRUE         FALSE             TRUE
-##   cg20826792         FALSE             TRUE         FALSE             TRUE
-##   cg00381604         FALSE             TRUE         FALSE             TRUE
-##          ...           ...              ...           ...              ...
-##   cg17939569         FALSE             TRUE         FALSE             TRUE
-##   cg13365400         FALSE             TRUE         FALSE             TRUE
-##   cg21106100         FALSE            FALSE         FALSE            FALSE
-##   cg08265308         FALSE            FALSE         FALSE            FALSE
-##   cg14273923         FALSE            FALSE         FALSE            FALSE
-##              MASK.snp5.FIN MASK.general.ESN MASK.snp5.ESN MASK.general.CEU
-##                  &lt;logical&gt;        &lt;logical&gt;     &lt;logical&gt;        &lt;logical&gt;
-##   cg13869341         FALSE             TRUE         FALSE             TRUE
-##   cg14008030         FALSE             TRUE         FALSE             TRUE
-##   cg12045430         FALSE             TRUE         FALSE             TRUE
-##   cg20826792         FALSE             TRUE         FALSE             TRUE
-##   cg00381604         FALSE             TRUE         FALSE             TRUE
-##          ...           ...              ...           ...              ...
-##   cg17939569         FALSE             TRUE         FALSE             TRUE
-##   cg13365400         FALSE             TRUE         FALSE             TRUE
-##   cg21106100         FALSE            FALSE         FALSE            FALSE
-##   cg08265308         FALSE            FALSE         FALSE            FALSE
-##   cg14273923         FALSE            FALSE         FALSE            FALSE
-##              MASK.snp5.CEU MASK.general.PJL MASK.snp5.PJL MASK.general.ACB
-##                  &lt;logical&gt;        &lt;logical&gt;     &lt;logical&gt;        &lt;logical&gt;
-##   cg13869341         FALSE             TRUE         FALSE             TRUE
-##   cg14008030         FALSE             TRUE         FALSE             TRUE
-##   cg12045430         FALSE             TRUE         FALSE             TRUE
-##   cg20826792         FALSE             TRUE         FALSE             TRUE
-##   cg00381604         FALSE             TRUE         FALSE             TRUE
-##          ...           ...              ...           ...              ...
-##   cg17939569         FALSE             TRUE         FALSE             TRUE
-##   cg13365400         FALSE             TRUE         FALSE             TRUE
-##   cg21106100         FALSE            FALSE         FALSE            FALSE
-##   cg08265308         FALSE            FALSE         FALSE            FALSE
-##   cg14273923         FALSE            FALSE         FALSE            FALSE
-##              MASK.snp5.ACB MASK.general.CLM MASK.snp5.CLM MASK.general.CDX
-##                  &lt;logical&gt;        &lt;logical&gt;     &lt;logical&gt;        &lt;logical&gt;
-##   cg13869341         FALSE             TRUE         FALSE             TRUE
-##   cg14008030         FALSE             TRUE         FALSE             TRUE
-##   cg12045430         FALSE             TRUE         FALSE             TRUE
-##   cg20826792         FALSE             TRUE         FALSE             TRUE
-##   cg00381604         FALSE             TRUE         FALSE             TRUE
-##          ...           ...              ...           ...              ...
-##   cg17939569         FALSE             TRUE         FALSE             TRUE
-##   cg13365400         FALSE             TRUE         FALSE             TRUE
-##   cg21106100         FALSE            FALSE         FALSE            FALSE
-##   cg08265308         FALSE            FALSE         FALSE            FALSE
-##   cg14273923         FALSE            FALSE         FALSE            FALSE
-##              MASK.snp5.CDX MASK.general.GBR MASK.snp5.GBR MASK.general.BEB
-##                  &lt;logical&gt;        &lt;logical&gt;     &lt;logical&gt;        &lt;logical&gt;
-##   cg13869341         FALSE             TRUE         FALSE             TRUE
-##   cg14008030         FALSE             TRUE         FALSE             TRUE
-##   cg12045430         FALSE             TRUE         FALSE             TRUE
-##   cg20826792         FALSE             TRUE         FALSE             TRUE
-##   cg00381604         FALSE             TRUE         FALSE             TRUE
-##          ...           ...              ...           ...              ...
-##   cg17939569         FALSE             TRUE         FALSE             TRUE
-##   cg13365400         FALSE             TRUE         FALSE             TRUE
-##   cg21106100         FALSE            FALSE         FALSE            FALSE
-##   cg08265308         FALSE            FALSE         FALSE            FALSE
-##   cg14273923         FALSE            FALSE         FALSE            FALSE
-##              MASK.snp5.BEB MASK.general.PEL MASK.snp5.PEL MASK.general.MSL
-##                  &lt;logical&gt;        &lt;logical&gt;     &lt;logical&gt;        &lt;logical&gt;
-##   cg13869341         FALSE             TRUE         FALSE             TRUE
-##   cg14008030         FALSE             TRUE         FALSE             TRUE
-##   cg12045430         FALSE             TRUE         FALSE             TRUE
-##   cg20826792         FALSE             TRUE         FALSE             TRUE
-##   cg00381604         FALSE             TRUE         FALSE             TRUE
-##          ...           ...              ...           ...              ...
-##   cg17939569         FALSE             TRUE         FALSE             TRUE
-##   cg13365400         FALSE             TRUE         FALSE             TRUE
-##   cg21106100         FALSE            FALSE         FALSE            FALSE
-##   cg08265308         FALSE            FALSE         FALSE            FALSE
-##   cg14273923         FALSE            FALSE         FALSE            FALSE
-##              MASK.snp5.MSL MASK.general.MXL MASK.snp5.MXL MASK.general.ASW
-##                  &lt;logical&gt;        &lt;logical&gt;     &lt;logical&gt;        &lt;logical&gt;
-##   cg13869341         FALSE             TRUE         FALSE             TRUE
-##   cg14008030         FALSE             TRUE         FALSE             TRUE
-##   cg12045430         FALSE             TRUE         FALSE             TRUE
-##   cg20826792         FALSE             TRUE         FALSE             TRUE
-##   cg00381604         FALSE             TRUE         FALSE             TRUE
-##          ...           ...              ...           ...              ...
-##   cg17939569         FALSE             TRUE         FALSE             TRUE
-##   cg13365400         FALSE             TRUE         FALSE             TRUE
-##   cg21106100         FALSE            FALSE         FALSE            FALSE
-##   cg08265308         FALSE            FALSE         FALSE            FALSE
-##   cg14273923         FALSE            FALSE         FALSE            FALSE
-##              MASK.snp5.ASW MASK.snp5.GoNL MASK.general.GoNL
-##                  &lt;logical&gt;      &lt;logical&gt;         &lt;logical&gt;
-##   cg13869341         FALSE          FALSE              TRUE
-##   cg14008030         FALSE          FALSE              TRUE
-##   cg12045430         FALSE          FALSE              TRUE
-##   cg20826792         FALSE          FALSE              TRUE
-##   cg00381604         FALSE          FALSE              TRUE
-##          ...           ...            ...               ...
-##   cg17939569         FALSE           &lt;NA&gt;              &lt;NA&gt;
-##   cg13365400         FALSE           &lt;NA&gt;              &lt;NA&gt;
-##   cg21106100         FALSE           &lt;NA&gt;              &lt;NA&gt;
-##   cg08265308         FALSE           &lt;NA&gt;              &lt;NA&gt;
-##   cg14273923         FALSE           &lt;NA&gt;              &lt;NA&gt;
-##              MASK.typeINextBaseSwitchandINDEL.GoNL
-##                                          &lt;logical&gt;
-##   cg13869341                                 FALSE
-##   cg14008030                                 FALSE
-##   cg12045430                                 FALSE
-##   cg20826792                                 FALSE
-##   cg00381604                                 FALSE
-##          ...                                   ...
-##   cg17939569                                  &lt;NA&gt;
-##   cg13365400                                  &lt;NA&gt;
-##   cg21106100                                  &lt;NA&gt;
-##   cg08265308                                  &lt;NA&gt;
-##   cg14273923                                  &lt;NA&gt;
-##   -------
-##   seqinfo: 25 sequences from an unspecified genome; no seqlengths</code></pre>
-<pre class="r"><code>hm450.manifest.pop.GoNL &lt;- hm450.manifest.pop.GoNL[!is.na(hm450.manifest.pop.GoNL$MASK.general.GoNL) &amp;
-                                                   hm450.manifest.pop.GoNL$MASK.general.GoNL == TRUE, ]
+<p>Our approach for running an EWAS is similar to the approach of <a href="http://bioconductor.org/packages/missMethyl/"><strong>missMethyl</strong></a>, except that we skip the empirical Bayes step, because the sample size in an EWAS is large enough and there is no added value in including this.</p>
+<p>We assume the data has been normalized, filtered and NA’s have been imputed. Furthermore, it is very convenient to construct a <code>SummarizedExperiment</code> class object as described in the previous section. In our data we have cases and controls, and our primary interest is differential methylation between the two. We want to adjust for likely confounders, such as age and sex.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">table</span>(methData<span class="op">$</span>disease.state.ch1)</code></pre></div>
+<pre><code>## 
+## control    FASD 
+##      92      46</code></pre>
+<p>It is important to ensure that all variables are of a type that facilitates model fitting, so age is converted to a continuous variables and all others are treated as factors. The model formula that you would like to run can be added into your data as shown, ensuring that the covariate of interest immediately follows the tilde.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">ourData &lt;-<span class="st"> </span>methData[, methData<span class="op">$</span>disease.state.ch1 <span class="op">%in%</span><span class="st"> </span><span class="kw">c</span>(<span class="st">&quot;FASD&quot;</span>, <span class="st">&quot;control&quot;</span>)]
 
-mvalues &lt;- mvalues[!(names(mvalues) %in% names(hm450.manifest.pop.GoNL)),]         </code></pre>
-<p>Now we can run the model like this and we do not have to bother on sample administration!</p>
-<pre class="r"><code>library(limma)
-design &lt;- model.matrix(metadata(mvalues)$formula, data=colData(mvalues))
-data &lt;- assays(mvalues)$data
-fit &lt;- lmFit(data, design)
-tstat &lt;- fit$coef/fit$stdev.unscaled/fit$sigma
+ourData<span class="op">$</span>disease.state.ch1 &lt;-<span class="st"> </span><span class="kw">factor</span>(ourData<span class="op">$</span>disease.state.ch1)
+ourData<span class="op">$</span>gender.ch1 &lt;-<span class="st"> </span><span class="kw">factor</span>(ourData<span class="op">$</span>gender.ch1)
+ourData<span class="op">$</span>age.ch1 &lt;-<span class="st"> </span><span class="kw">as.numeric</span>(ourData<span class="op">$</span>age.ch1)
 
-pval &lt;- 2*pnorm(-abs(tstat[,2]))
-padj &lt;- p.adjust(sort(pval, decreasing=FALSE), method=&quot;bonf&quot;)
-head(padj[padj &lt; 0.05])</code></pre>
-<pre><code>##   cg16867657   cg01974375   cg01904393   cg24724428   cg04875128 
-## 1.279828e-11 2.224456e-06 1.158256e-04 1.328711e-04 5.363346e-04 
-##   cg01486610 
-## 1.411884e-03</code></pre>
+<span class="kw">metadata</span>(ourData)<span class="op">$</span>formula &lt;-<span class="st"> </span><span class="er">~</span>disease.state.ch1 <span class="op">+</span><span class="st"> </span>age.ch1 <span class="op">+</span><span class="st"> </span>gender.ch1 </code></pre></div>
+<p>By subsetting our <code>SummarizedExperiment</code> object, we can extract covariates with complete information. Sex chromosome probes are also filtered out here.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">covariates &lt;-<span class="st"> </span><span class="kw">get_all_vars</span>(<span class="kw">metadata</span>(ourData)<span class="op">$</span>formula, <span class="dt">data=</span><span class="kw">colData</span>(ourData))
+nas &lt;-<span class="st"> </span><span class="kw">apply</span>(covariates, <span class="dv">1</span>, anyNA)
+ourData &lt;-<span class="st"> </span>ourData[, <span class="op">!</span>nas]
+
+ourData &lt;-<span class="st"> </span>ourData[<span class="op">!</span>(<span class="kw">seqnames</span>(ourData) <span class="op">%in%</span><span class="st"> </span><span class="kw">c</span>(<span class="st">&quot;chrX&quot;</span>, <span class="st">&quot;chrY&quot;</span>)),]</code></pre></div>
+<p>The <code>design</code> object is a matrix holding coefficient multipliers for each observation. As you can see, it is very important to check this to be sure that variables are being handled correctly.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">design &lt;-<span class="st"> </span><span class="kw">model.matrix</span>(<span class="kw">metadata</span>(ourData)<span class="op">$</span>formula, <span class="dt">data=</span><span class="kw">colData</span>(ourData))
+design[<span class="dv">1</span><span class="op">:</span><span class="dv">10</span>,<span class="dv">1</span><span class="op">:</span><span class="dv">3</span>]</code></pre></div>
+<pre><code>##                              (Intercept) disease.state.ch1FASD age.ch1
+## GSM3092700_9985178096_R01C01           1                     0    17.3
+## GSM3092701_9985178127_R03C02           1                     0    11.3
+## GSM3092702_9986360109_R02C02           1                     0     9.5
+## GSM3092703_9985178087_R01C01           1                     0    15.0
+## GSM3092704_9985178090_R01C01           1                     0     6.7
+## GSM3092705_9985178090_R04C01           1                     0     8.3
+## GSM3092706_9985178116_R03C02           1                     0     1.3
+## GSM3092707_9986360122_R06C02           1                     0    13.2
+## GSM3092708_9985178127_R01C02           1                     0    10.5
+## GSM3092709_9985178130_R03C01           1                     0    16.1</code></pre>
+<p>After extracting beta values from our data, we can use the <code>lmFit()</code> function from <a href="https://bioconductor.org/packages/release/bioc/html/limma.html"><strong>limma</strong></a> to fit the model. Returned p-values are adjusted for multiple testing using the Bonferroni correction, and the CpG sites bearing most significance are returned for inspection.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">data &lt;-<span class="st"> </span><span class="kw">assays</span>(ourData)<span class="op">$</span>assays
+
+<span class="kw">library</span>(limma)
+fit &lt;-<span class="st"> </span><span class="kw">lmFit</span>(data, design)
+
+tstat &lt;-<span class="st"> </span>fit<span class="op">$</span>coef<span class="op">/</span>fit<span class="op">$</span>stdev.unscaled<span class="op">/</span>fit<span class="op">$</span>sigma
+
+pval &lt;-<span class="st"> </span><span class="dv">2</span><span class="op">*</span><span class="kw">pnorm</span>(<span class="op">-</span><span class="kw">abs</span>(tstat[,<span class="dv">2</span>]))
+padj &lt;-<span class="st"> </span><span class="kw">p.adjust</span>(<span class="kw">sort</span>(pval, <span class="dt">decreasing=</span><span class="ot">FALSE</span>), <span class="dt">method=</span><span class="st">&quot;bonf&quot;</span>)
+<span class="kw">head</span>(padj[padj <span class="op">&lt;</span><span class="st"> </span><span class="fl">0.05</span>])</code></pre></div>
+<pre><code>##   cg00121876   cg04180046   cg22171758   cg21401642   cg14257435 
+## 6.219879e-13 1.119888e-11 1.608237e-11 1.702512e-10 8.998224e-10 
+##   cg18420599 
+## 1.149094e-09</code></pre>
 </div>
 <div id="unobserved-covariates-using-cate" class="section level1">
 <h1>Unobserved covariates using <strong>cate</strong></h1>
 <p>Often unobserved technical or biological covariates can be present. A recent approach available from cran <a href="https://cran.r-project.org/package=cate"><strong>cate</strong></a> is able to estimate the unobserved covariates. There are other methods as well, like, sva, ruv but we prefer this one…</p>
-<pre class="r"><code>library(cate)
-fa &lt;- cate.fit(design[,2,drop=FALSE], design[,-2], t(data), r = 3, calibrate=FALSE, adj.method=&quot;naive&quot;)</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(cate)
+fa &lt;-<span class="st"> </span><span class="kw">cate.fit</span>(design[,<span class="dv">2</span>,<span class="dt">drop=</span><span class="ot">FALSE</span>], design[,<span class="op">-</span><span class="dv">2</span>], <span class="kw">t</span>(data), <span class="dt">r =</span> <span class="dv">3</span>, <span class="dt">calibrate=</span><span class="ot">FALSE</span>, <span class="dt">adj.method=</span><span class="st">&quot;naive&quot;</span>)</code></pre></div>
 <p>Here we assumed the presence of three unobserved covariates but cate has two methods implemented that can estimate the precise number of unobserved covariates. Furthermore, notice that we use <code>calibrate=FALSE</code> as we think the calibration of test-statistics and P values is too conservative. Actually, we propose a different method to control for test-statistic inflation and bias (see next section).</p>
 </div>
 <div id="correct-for-bias-and-inflation" class="section level1">
 <h1>Correct for bias and inflation</h1>
-<p>We developed a package called <a href="http://bioconductor.org/packages/bacon"><strong>bacon</strong></a> to estimate and correct for bias and inflation for EWAS (and TWAS)<span class="citation">(Iterson, Zwet, and Heijmans 2017)</span> it maximizes power while properly controlling the false positive rate. <a href="http://bioconductor.org/packages/bacon"><strong>bacon</strong></a> is based on the estimation of the empirical null distribution using Bayesian statistics. The utility of the tool was illustrated through the application of meta-analysis by performing epigenome- and transcriptome-wide association studies (EWASs/TWASs) on age and smoking which highlighted an overlap in differential methylation and expression of associated genes. It can be used to remove inflation and bias often observed in EWAS/TWAS see for more details<span class="citation">(Iterson, Zwet, and Heijmans 2017)</span>.</p>
+<p>We developed a package called <a href="http://bioconductor.org/packages/bacon"><strong>bacon</strong></a> to estimate and correct for bias and inflation for EWAS (and TWAS)<span class="citation">(<span class="citeproc-not-found" data-reference-id="Iterson2017"><strong>???</strong></span>)</span> it maximizes power while properly controlling the false positive rate. <a href="http://bioconductor.org/packages/bacon"><strong>bacon</strong></a> is based on the estimation of the empirical null distribution using Bayesian statistics. The utility of the tool was illustrated through the application of meta-analysis by performing epigenome- and transcriptome-wide association studies (EWASs/TWASs) on age and smoking which highlighted an overlap in differential methylation and expression of associated genes. It can be used to remove inflation and bias often observed in EWAS/TWAS see for more details<span class="citation">(<span class="citeproc-not-found" data-reference-id="Iterson2017"><strong>???</strong></span>)</span>.</p>
 <p>For example, we can use it on the EWAS that we just run:</p>
-<pre class="r"><code>library(bacon)
-tstats &lt;- cbind(limma=tstat[,2], cate=as.vector(fa$beta.t))
-library(BiocParallel)
-register(MulticoreParam(2))
-bc &lt;- bacon(tstats)</code></pre>
-<pre><code>## Detected 2 workers!
-##  Running in parallel!</code></pre>
-<pre class="r"><code>bc</code></pre>
-<pre><code>## Bacon-object containing 2 set(s) of 432286 test-statistics.
-## ...estimated bias: -0.3,-0.31.
-## ...estimated inflation: 1,1.
-## 
-## Emprical null estimates are based on 5000 iterations with a burnin-period of 2000.</code></pre>
-<pre class="r"><code>print(plot(bc, type=&quot;hist&quot;))</code></pre>
-<pre><code>## `stat_bin()` using `bins = 30`. Pick better value with `binwidth`.</code></pre>
-<pre><code>## Warning: Removed 17292 rows containing non-finite values (stat_bin).</code></pre>
-<pre><code>## Warning: Removed 2 rows containing missing values (geom_bar).</code></pre>
-<pre><code>## Warning: Removed 8646 rows containing missing values (geom_path).
-
-## Warning: Removed 8646 rows containing missing values (geom_path).</code></pre>
-<p><img src="06_EWAS_files/figure-html/bacon-1.png" width="672" /></p>
-<pre class="r"><code>print(plot(bc, type=&quot;qq&quot;))</code></pre>
-<p><img src="06_EWAS_files/figure-html/bacon-2.png" width="672" /></p>
-<pre class="r"><code>pvalsbc &lt;- pval(bc)
-head(pvalsbc[order(pvalsbc[,1]),])</code></pre>
-<pre><code>##                   limma         cate
-## cg16867657 1.876624e-17 1.244169e-17
-## cg01974375 1.429420e-10 1.257519e-10
-## cg24724428 1.462767e-10 1.138040e-10
-## cg04875128 5.816106e-10 4.589333e-10
-## cg23606718 3.375134e-09 2.711770e-09
-## cg15448975 4.228112e-09 3.404992e-09</code></pre>
-<pre class="r"><code>pvals &lt;- pval(bc, FALSE)
-head(pvals[order(pvals[,1]),])</code></pre>
-<pre><code>##                   limma         cate
-## cg16867657 2.960606e-17 2.960606e-17
-## cg01974375 5.145798e-12 5.145798e-12
-## cg01904393 2.679374e-10 2.679374e-10
-## cg24724428 3.073685e-10 3.073685e-10
-## cg04875128 1.240694e-09 1.240694e-09
-## cg01486610 3.266088e-09 3.266088e-09</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(bacon)
+tstats &lt;-<span class="st"> </span><span class="kw">cbind</span>(<span class="dt">limma=</span>tstat[,<span class="dv">2</span>], <span class="dt">cate=</span><span class="kw">as.vector</span>(fa<span class="op">$</span>beta.t))
+<span class="kw">library</span>(BiocParallel)
+<span class="kw">register</span>(<span class="kw">MulticoreParam</span>(<span class="dv">2</span>))
+bc &lt;-<span class="st"> </span><span class="kw">bacon</span>(tstats)
+bc
+<span class="kw">print</span>(<span class="kw">plot</span>(bc, <span class="dt">type=</span><span class="st">&quot;hist&quot;</span>))
+<span class="kw">print</span>(<span class="kw">plot</span>(bc, <span class="dt">type=</span><span class="st">&quot;qq&quot;</span>))
+pvalsbc &lt;-<span class="st"> </span><span class="kw">pval</span>(bc)
+<span class="kw">head</span>(pvalsbc[<span class="kw">order</span>(pvalsbc[,<span class="dv">1</span>]),])
+pvals &lt;-<span class="st"> </span><span class="kw">pval</span>(bc, <span class="ot">FALSE</span>)
+<span class="kw">head</span>(pvals[<span class="kw">order</span>(pvals[,<span class="dv">1</span>]),])</code></pre></div>
 <p>Strong bias is observed so running <a href="http://bioconductor.org/packages/bacon"><strong>bacon</strong></a> should really be considered. There is a small difference in the calculated P values. Running <a href="https://cran.r-project.org/package=cate"><strong>cate</strong></a> did not yielded additional control for bias and inflation in this example.</p>
 </div>
-<div id="references" class="section level1 unnumbered">
+<div id="references" class="section level1">
 <h1>References</h1>
-<div id="refs" class="references">
-<div id="ref-Iterson2017">
-<p>Iterson, M. van, E. W. van Zwet, and B. T. Heijmans. 2017. “Controlling bias and inflation in epigenome- and transcriptome-wide association studies using the empirical null distribution.” <em>Genome Biol.</em> 18 (1): 19.</p>
-</div>
-<div id="ref-Zhou2016">
-<p>Zhou, W., P. W. Laird, and H. Shen. 2016. “Comprehensive characterization, annotation and innovative use of Infinium DNA methylation BeadChip probes.” <em>Nucleic Acids Res.</em>, Oct.</p>
-</div>
-</div>
 </div>
 
 
@@ -670,7 +577,7 @@ $(document).ready(function () {
   (function () {
     var script = document.createElement("script");
     script.type = "text/javascript";
-    script.src  = "https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
     document.getElementsByTagName("head")[0].appendChild(script);
   })();
 </script>
