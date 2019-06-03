@@ -9,10 +9,9 @@
 Using `densityPlot()` from [**minfi**](https://bioconductor.org/packages/release/bioc/html/minfi.html) [@Feinberg2014], we can visualize the per sample average beta-value distribution. This gives us a global impression of the data and allows us to identify possible anomalous samples. We expect this distribution to be bimodal with the peaks representing methylated and unmethylated signals. Any centre peaks should be further investigated for problems, such as ambiguous mapping. 
 
 ```{r 301start, echo=FALSE}
-load("C:/Users/ljsinke/Documents/git/GitHub/test_workflow/data/targets.RData")
-targets$Basename <- substring(targets$supplementary_file,68,95)
-library(minfi)
+load("C:/Users/ljsinke/Documents/git/GitHub/test_workflow/data/targets_mod.RData")
 RGset <- read.metharray.exp(base="C:/Users/ljsinke/Documents/r/cd/GSE113018/IDATs", targets, extended=TRUE)
+
 ggbg <- function() {
   points(0, 0, pch=16, cex=1e6, col="grey90")
   grid(col="white", lty=1)
@@ -39,7 +38,7 @@ betas[is.na(betas)] <- median(betas, na.rm=TRUE)
 Using the `prcomp_irlba()` function from [**irlba**](https://cran.r-project.org/web/packages/irlba/index.html) we can calculate principal components. By assessing the amount of variance explained by these and visualising them, we can better interpret the data. The package [**ggfortify**](https://cran.r-project.org/web/packages/ggfortify/index.html) helps [**ggplot2**](https://ggplot2.tidyverse.org/) interpret PCA objects, allowing `prcomp` objects to be passed to the `autoplot()` function. 
 
 ```{r 304theme, echo=FALSE}
-th <- theme(text=element_text(size=10),
+th1 <- theme(text=element_text(size=10),
             panel.border=element_rect(fill=NA, color="#6b6b6b", size=1, linetype=1),
             plot.title=element_text(size=16, hjust=0.5, margin=margin(0,0,15,0)), 
             plot.margin=margin(15,20,20,20))
@@ -51,7 +50,7 @@ pc <- prcomp_irlba(t(betas), n=6)
 summary(pc)
 
 library(ggfortify)
-autoplot(pc, data=targets, colour="characteristics_ch1", main="Principal components plot") + th
+autoplot(pc, data=targets, colour="sex", main="Principal components plot") + th1
 ```
 
 In this instance, our principal components explain over 50% of the variance in the data and there is evidence of clustering in the plot. By passing the original data to the `autoplot()` function using the `data` option, we can investigate clustering by colouring candidate variables. Our data has yet to undergo probe masking, which removes sex chromosome data, so groups of principal components according to whether an individual is male or female appear in the plot. 
@@ -62,27 +61,29 @@ In this instance, our principal components explain over 50% of the variance in t
 
 Each column in the targets dataframe should be considered as a potential covariate in our models. Both technical and biological factors should be investigated as these may introduce batch effects or be clinically relevant. In order to assess this, we convert each column to a categorical variable whose correlations can be visualised. 
 
-Homogenous columns can be excluded, as any variables that do not change by definition cannot explain variation in the data. In this instance, the `organism_ch1` for all samples is Homo sapiens, so there is no need to investigate a species effect. However, in some instances samples may from different organisms, meaning that this could introduce variation of interest.
+Homogenous columns can be excluded, as any variables that do not change by definition cannot explain variation in the data. In this instance, the `description` for all samples is peripheral whole blood, so there is no need to investigate a tissue effect. However, in some instances samples may be taken from different tissues, and in this type of study analysis must be done separately for each to correctly separate clinically relevant methylation changes from tissue-specific methylation differences. 
 
 ```{r 305heatmapscols}
 df <- apply(targets, 2, function(x) as.numeric(factor(x)))
-keep <- apply(df, 2, sd) > 0
+keep <- apply(df, 2, sd, na.rm=TRUE) > 0
 summary(keep)
+
 df <- df[ , keep]
 colnames(df)
 ```
 
-As you can see, 18 columns need to be examined. These include sample identifiers, such as `title`, `geo_accession`, and our newly created `Basename`, as well as which cohort the participant was from, stored in `source_name_ch1`. Other potential causes of variation are biological, such as `age:ch1`, `gender:ch1`, and `disease state:ch1`.
+As you can see, 10 columns need to be examined. These include sample identifiers, such as `title`, `geo_accession`, and our newly created `Basename`, as well as which `cohort` the participant was from. Other potential causes of variation are biological, such as `age`, `sex`, and `case_control`.
 
-Correlations between these factors and the principal components is calculated, and this correlation matrix is then melted using the `melt()` function from the [**reshape2**](https://cran.r-project.org/web/packages/reshape2/index.html) package. This prepares it for visualization using [**ggplot2**](https://ggplot2.tidyverse.org/).
+Correlations between complete factors and the principal components is calculated, and this correlation matrix is then melted using the `melt()` function from the [**reshape2**](https://cran.r-project.org/web/packages/reshape2/index.html) package. This prepares it for visualization using [**ggplot2**](https://ggplot2.tidyverse.org/).
 
 ```{r 306heatmapplot}
 cxy <- round(cor(pc$x, scale(df)),2)  
-cxy[ ,1:4]
+cxy <- cxy[,colSums(is.na(cxy))<nrow(cxy)]
+cxy
 
 library(reshape2)
 melted_cxy <- melt(cxy)
-head(melted_cxy) 
+head(melted_cxy)
 ```
 
 After some aesthetic preparation of the `theme()`, the correlations can be visualized in a heatmap using [**ggplot2**](https://ggplot2.tidyverse.org/)'s `geom_tile()` option.
@@ -92,7 +93,7 @@ th2 <- scale_fill_gradient2(low = "#158cba", high = "#D67D87", mid = "white",
                                                             midpoint = 0, limit = c(-1,1), 
                                                             name="Pearson's r")
 th3 <- theme(text=element_text(size=12), 
-             panel.border=element_rect(fill=NA, color="#cdcdcd", size=0.5, linetype=1),
+             panel.border=element_rect(fill=NA, color="#adadad", size=0.5, linetype=1),
              panel.background=element_rect(fill="white"), 
              plot.title=element_text(size=20, hjust=0.5, margin=margin(0,0,15,0)), 
              plot.margin=margin(20,25,25,25), 
@@ -106,7 +107,7 @@ th5 <- scale_y_discrete(expand=c(0,0))
 ```{r 306heatmapgg}
 library(ggplot2)
 ggplot(data = melted_cxy, aes(x=Var1, y=Var2, fill=value)) + th2 + th3 + th4 + th5 +
-  geom_tile(colour="#cdcdcd",size=0.5) + ggtitle("Heatmap of Correlations") + labs(x="",y="")
+  geom_tile(colour="#adadad",size=0.5) + ggtitle("Heatmap of Correlations") + labs(x="",y="")
 ```
 
 By examining correlations in the data we can see that there is a strong positive correlation between sex and PC1. This indicates that this PC explains much of the variation causes by sex differences, unsurprisingly given the clustering we observed before.

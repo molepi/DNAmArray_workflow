@@ -389,8 +389,6 @@ div.tocify {
 
 .tocify-subheader .tocify-item {
   font-size: 0.90em;
-  padding-left: 25px;
-  text-indent: 0;
 }
 
 .tocify .list-group-item {
@@ -471,76 +469,22 @@ div.tocify {
 
 
 <hr />
-<div id="the-rangedsummarizedexperiment-class" class="section level1">
-<h1>The <code>RangedSummarizedExperiment</code> class</h1>
-<p>Moving further into the pipeline, it will be necessary to have our methylation data stored in a <a href="http://bioconductor.org/packages/SummarizedExperiment"><code>RangedSummarizedExperiment</code></a> class object. Designed to handle microarray data, this class stores observations from multiple samples alongside relevant meta-data, and ensures that both features and phenotypes are kept in-sync when subsetting.</p>
-<p>This matrix-like container is organised with rows representing features, such as genes or exons, which can be accessed using <code>rowRanges()</code>. This function calls a <code>GRanges</code> object describing features and their attributes. The columns of the <code>RangedSummarizedExperiment</code> store information about each sample, and this can be accessed using <code>colData()</code>.</p>
-<p>Lastly, each assay is represented in the third dimension of this matrix-like object and can be shown using the <code>assays()</code> function. Meta-data is then linked to this combination of data frames, and can be accessed with the <code>metadata()</code> command.</p>
-<div id="creating-a-rangedsummarizedexperiment" class="section level3">
-<h3>Creating a <code>RangedSummarizedExperiment</code></h3>
-<p>The <a href="https://bioconductor.org/packages/release/data/annotation/html/FDb.InfiniumMethylation.hg19.html"><strong>FDb.InfiniumMethylation.hg19</strong></a> package contains probe annotations, which can be extracted using the <code>getPlatform()</code> function. To ensure that we apply the previous probe filtering, we use <code>match()</code> to keep only the relevant information.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(FDb.InfiniumMethylation.hg19)
-rowRanges &lt;-<span class="st"> </span><span class="kw">getPlatform</span>(<span class="dt">platform=</span><span class="st">&quot;HM450&quot;</span>, <span class="dt">genome=</span><span class="st">&quot;hg19&quot;</span>)</code></pre></div>
-<pre><code>## Fetching coordinates for hg19...</code></pre>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">rowRanges[<span class="dv">1</span><span class="op">:</span><span class="dv">10</span>, <span class="dv">1</span><span class="op">:</span><span class="dv">2</span>]</code></pre></div>
-<pre><code>## GRanges object with 10 ranges and 2 metadata columns:
-##              seqnames        ranges strand |    addressA    addressB
-##                 &lt;Rle&gt;     &lt;IRanges&gt;  &lt;Rle&gt; | &lt;character&gt; &lt;character&gt;
-##   cg04913815    chr16   60438-60439      * |    24771476            
-##   cg01686861    chr16   60748-60749      * |    36644319    45624454
-##   cg05558259    chr16   61085-61086      * |    65765435            
-##   cg26978960    chr16   62460-62461      * |    28717484            
-##   cg03792876    chr16   73243-73244      * |    42725455            
-##   cg09699726    chr16   91602-91603      * |    34629364            
-##   cg07549526    chr16   91663-91664      * |    65631352    31654409
-##   cg02851049    chr16 101260-101261      * |    38765355            
-##   cg11876012    chr16 101686-101687      * |    47645328            
-##   cg14820573    chr16 102121-102122      * |    36735483            
-##   -------
-##   seqinfo: 24 sequences from hg19 genome</code></pre>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">rows &lt;-<span class="st"> </span><span class="kw">match</span>(<span class="kw">rownames</span>(betas), <span class="kw">names</span>(rowRanges))</code></pre></div>
-<p>Now that we have our annotations, we can combine them with our data using the <a href="https://bioconductor.org/packages/release/bioc/html/SummarizedExperiment.html"><strong>SummarizedExperiment</strong></a> package. After ensuring that any column subsetting is accounted for, we extract the <code>colData()</code> from our <code>RGset</code>. Finally, the beta values, probe annotations, and sample information are combined into a <code>RangedSummarizedExperiment</code> object using the <code>SummarizedExperiment()</code> function.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(SummarizedExperiment)
-
-cols &lt;-<span class="st"> </span><span class="kw">match</span>(<span class="kw">colnames</span>(betas), <span class="kw">colnames</span>(RGset))
-colData &lt;-<span class="st"> </span><span class="kw">colData</span>(RGset[, cols])<span class="op">@</span>listData
-
-methData &lt;-<span class="st"> </span><span class="kw">SummarizedExperiment</span>(<span class="dt">assays=</span><span class="kw">SimpleList</span>(<span class="dt">beta=</span>betas),
-                                 <span class="dt">rowRanges=</span>rowRanges[rows], 
-                                 <span class="dt">colData =</span> <span class="kw">DataFrame</span>(colData))
-methData</code></pre></div>
-<pre><code>## class: RangedSummarizedExperiment 
-## dim: 423586 138 
-## metadata(0):
-## assays(1): beta
-## rownames(423586): cg01707559 cg03244189 ... ch.22.1008279F
-##   ch.22.47579720R
-## rowData names(10): addressA addressB ... probeEnd probeTarget
-## colnames(138): GSM3092700_9985178096_R01C01
-##   GSM3092701_9985178127_R03C02 ... GSM3093566_9020331152_R05C01
-##   GSM3093567_9020331152_R06C01
-## colData names(45): title geo_accession ... Basename filenames</code></pre>
-<p>You can read more about <a href="http://bioconductor.org/packages/SummarizedExperiment"><strong>SummarizedExperiment</strong></a> from the following resources: - 1. <a href="http://bioconductor.org/packages/release/bioc/vignettes/SummarizedExperiment/inst/doc/SummarizedExperiment.html">package vignette</a> - 2. <a href="http://bioconductor.org/help/course-materials/2012/BiocEurope2012/SummarizedExperiment.pdf">course material</a> - 3. <a href="http://www.nature.com/nmeth/journal/v12/n2/full/nmeth.3252.html">BioConductor nature paper</a></p>
-<hr />
-</div>
-</div>
 <div id="phenotype-prediction" class="section level1">
 <h1>Phenotype Prediction</h1>
-<p>It can be useful to predict phenotypes in your data, either for comparison to assumed categories or to help impute missing values. We are in the process of training reference-based predictors using the large BIOS data, which includes samples from 6 dutch cohorts and over 4000 individuals. These are described in more detail below, and will be included in the package for use on your own datasets. However, please do be mindful that if the BIOS population vastly differs from your own, the predictive power and accuracy of these will suffer.</p>
+<p>It can be useful to predict phenotypes in your data, either for comparison to assumed categories or to help impute missing values. We are in the process of creating predictors for sample cell composition, sex, age, and smoking status. These will either be reference-based predictors using the large BIOS data, which includes samples from 6 dutch cohorts and over 4000 individuals, or ones built using reference-free or semi-supervised methods.</p>
+<p>When created and distributed within this package, you will be able to use them to predict phenotypes in your own datasets. Meanwhile, below some current methods are describe to predict phenotypes in your data.</p>
 <div id="predict-white-blood-cell-composition" class="section level3">
 <h3>Predict White Blood Cell Composition</h3>
-<p>White blood cell count can be predicted using Houseman’s method <span class="citation">(Houseman et al. 2012)</span> implemented in <a href="http://bioconductor.org/packages/minfi"><strong>minfi</strong></a> <span class="citation">(Aryee et al. 2014)</span> by the <code>estimateCellCounts()</code> function. Using this partial least squares method, we trained a cell count predictor on the BIOS data.</p>
+<p>White blood cell count can be predicted using Houseman’s partial least squares method <span class="citation">(Houseman et al. 2012)</span> implemented in <a href="http://bioconductor.org/packages/minfi"><strong>minfi</strong></a> <span class="citation">(Aryee et al. 2014)</span> by the <code>estimateCellCounts()</code> function. This implements a calibration algorithm for deconvoluting heterogenous tissue sources, such as blood, and returns a matrix of composition estimates across all samples and cell types.</p>
 </div>
 <div id="predict-sex" class="section level3">
 <h3>Predict Sex</h3>
 <p>The <a href="https://github.com/molepi/DNAmArray"><strong>DNAmArray</strong></a> package contains a <code>getSex.DNAmArray()</code> function, which predicts the sex of your observations by inspecting intensities of X-chromosome signals. We use the <code>getBeta()</code> function from <a href="https://bioconductor.org/packages/release/bioc/html/minfi.html"><strong>minfi</strong></a> as before to get the beta-value matrix and then use this to predict sex. Since some filtered probes may be used by the sex prediction function, we recalculate the beta matrix before prediction.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">betas &lt;-<span class="st"> </span><span class="kw">getBeta</span>(RGset)
-mid &lt;-<span class="st"> </span><span class="kw">match</span>(<span class="kw">colnames</span>(betas), targets<span class="op">$</span>Basename)
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">betas_sex &lt;-<span class="st"> </span><span class="kw">getBeta</span>(RGset)
+mid &lt;-<span class="st"> </span><span class="kw">match</span>(<span class="kw">colnames</span>(betas_sex), targets<span class="op">$</span>Basename)
 
-predictedSex &lt;-<span class="st"> </span><span class="kw">getSex.DNAmArray</span>(betas)
-assumedSex &lt;-<span class="st"> </span>targets<span class="op">$</span><span class="st">`</span><span class="dt">gender:ch1</span><span class="st">`</span>[mid]
-predictedSex &lt;-<span class="st"> </span><span class="kw">as.character</span>(<span class="kw">factor</span>(predictedSex, <span class="dt">labels=</span><span class="kw">c</span>(<span class="st">&quot;Female&quot;</span>, <span class="st">&quot;Male&quot;</span>)))
-assumedSex &lt;-<span class="st"> </span><span class="kw">as.character</span>(<span class="kw">factor</span>(assumedSex, <span class="dt">labels=</span><span class="kw">c</span>(<span class="st">&quot;Female&quot;</span>, <span class="st">&quot;Male&quot;</span>)))
+predictedSex &lt;-<span class="st"> </span><span class="kw">as.factor</span>(<span class="kw">getSex.DNAmArray</span>(betas_sex))
+assumedSex &lt;-<span class="st"> </span>targets<span class="op">$</span>sex[mid]
 
 <span class="kw">table</span>(predictedSex, assumedSex)</code></pre></div>
 <pre><code>##             assumedSex
@@ -554,21 +498,88 @@ assumedSex &lt;-<span class="st"> </span><span class="kw">as.character</span>(<s
 <p>Age can be predicted using Horvath’s or Hannum’s coefficients with <code>agep()</code> from <a href="https://bioconductor.org/packages/release/bioc/html/wateRmelon.html"><strong>wateRmelon</strong></a>. If you use Hannum’s, you will need to call the coefficients using <code>data(hannumCoef)</code> before prediction. The predicted and assumed ages are then combined into a data frame that can be used to visualize the results.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(wateRmelon)
 predictedAge &lt;-<span class="st"> </span><span class="kw">as.numeric</span>(<span class="kw">agep</span>(betas, <span class="dt">method=</span><span class="st">&quot;horvath&quot;</span>))
-assumedAge &lt;-<span class="st"> </span><span class="kw">as.numeric</span>(targets<span class="op">$</span><span class="st">`</span><span class="dt">age:ch1</span><span class="st">`</span>[mid])
+assumedAge &lt;-<span class="st"> </span><span class="kw">as.numeric</span>(targets<span class="op">$</span>age[mid])
 
 ages &lt;-<span class="st"> </span><span class="kw">data.frame</span>(<span class="dt">Assumed=</span>assumedAge, <span class="dt">Predicted=</span>predictedAge)
 <span class="kw">head</span>(ages)</code></pre></div>
 <pre><code>##   Assumed Predicted
-## 1    17.3 12.107727
-## 2    11.3  5.341659
-## 3     9.5  3.949513
-## 4    15.0 11.939972
-## 5     6.7  4.711793
-## 6     8.3  4.378854</code></pre>
+## 1    17.3 13.072017
+## 2    11.3  6.820242
+## 3     9.5  4.511927
+## 4    15.0 13.046026
+## 5     6.7  5.324749
+## 6     8.3  6.697246</code></pre>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">ggplot</span>(ages, <span class="kw">aes</span>(<span class="dt">x=</span>Assumed, <span class="dt">y=</span>Predicted)) <span class="op">+</span><span class="st"> </span><span class="kw">ggtitle</span>(<span class="st">&quot;Assumed vs. Predicted Age&quot;</span>) <span class="op">+</span><span class="st"> </span>th3 <span class="op">+</span>
 <span class="st">  </span><span class="kw">geom_point</span>(<span class="dt">shape=</span><span class="dv">16</span>, <span class="dt">color=</span><span class="st">&quot;#158cba&quot;</span>) <span class="op">+</span><span class="st"> </span><span class="kw">geom_smooth</span>(<span class="dt">method=</span>lm, <span class="dt">color=</span><span class="st">&quot;#D67D87&quot;</span>)</code></pre></div>
 <p><img src="05_Miscellaneous_files/figure-html/610plot-1.png" width="672" /></p>
-<p>The above graph shows that this prediction follows the general trend of the assumed ages, however the residuals are quite large. It may be possible to develop an improved predictor <span class="citation">(Zhang et al. 2018)</span>, and we will attempt this using the BIOS data.</p>
+<p>The above graph shows that this prediction follows the general trend of the assumed ages, however the residuals are quite large. It may be possible to develop an improved predictor <span class="citation">(Zhang et al. 2018)</span>, and we plan to implement this.</p>
+<hr />
+</div>
+</div>
+<div id="rangedsummarizedexperiment" class="section level1">
+<h1><code>RangedSummarizedExperiment</code></h1>
+<p>Moving further into the pipeline, it will be necessary to have our methylation data stored in a <a href="http://bioconductor.org/packages/SummarizedExperiment"><code>RangedSummarizedExperiment</code></a> class object. Designed to handle microarray data, this class stores observations from multiple samples alongside relevant meta-data, and ensures that both features and phenotypes are kept in-sync when subsetting.</p>
+<p>This matrix-like container is organised with rows representing features, such as genes or exons, which can be accessed using <code>rowRanges()</code>. This function calls a <code>GRanges</code> object describing features and their attributes. The columns of the <code>RangedSummarizedExperiment</code> store information about each sample, and this can be accessed using <code>colData()</code>.</p>
+<p>Lastly, each assay is represented in the third dimension of this matrix-like object and can be shown using the <code>assays()</code> function. Meta-data is then linked to this combination of data frames, and can be accessed with the <code>metadata()</code> command.</p>
+<div id="creating-a-rangedsummarizedexperiment" class="section level3">
+<h3>Creating a <code>RangedSummarizedExperiment</code></h3>
+<p>The <a href="https://bioconductor.org/packages/release/data/annotation/html/FDb.InfiniumMethylation.hg19.html"><strong>FDb.InfiniumMethylation.hg19</strong></a> package contains probe annotations, which can be extracted using the <code>getPlatform()</code> function. To ensure that we apply the previous probe filtering, we use <code>match()</code> to keep only the relevant information.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(FDb.InfiniumMethylation.hg19)
+rowRanges &lt;-<span class="st"> </span><span class="kw">getPlatform</span>(<span class="dt">platform=</span><span class="st">&quot;HM450&quot;</span>, <span class="dt">genome=</span><span class="st">&quot;hg19&quot;</span>)</code></pre></div>
+<pre><code>## Fetching coordinates for hg19...</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">rows &lt;-<span class="st"> </span><span class="kw">match</span>(<span class="kw">rownames</span>(betas), <span class="kw">names</span>(rowRanges))
+rowRanges &lt;-<span class="st"> </span>rowRanges[rows]
+
+rowRanges[,<span class="dv">3</span><span class="op">:</span><span class="dv">4</span>]</code></pre></div>
+<pre><code>## GRanges object with 423586 ranges and 2 metadata columns:
+##                   seqnames            ranges strand | channel platform
+##                      &lt;Rle&gt;         &lt;IRanges&gt;  &lt;Rle&gt; |   &lt;Rle&gt;    &lt;Rle&gt;
+##        cg01707559     chrY   6778695-6778696      * |     Red    HM450
+##        cg03244189     chrY 21238472-21238473      * |     Grn    HM450
+##        cg04792227     chrY 17568097-17568098      * |     Red    HM450
+##        cg14180491     chrY 15016705-15016706      * |     Grn    HM450
+##        cg25032547     chrY 14773536-14773537      * |     Red    HM450
+##               ...      ...               ...    ... .     ...      ...
+##   ch.22.44116734F    chr22          45738070      * |    Both    HM450
+##     ch.22.909671F    chr22          46114168      * |    Both    HM450
+##   ch.22.46830341F    chr22          48451677      * |    Both    HM450
+##    ch.22.1008279F    chr22          48731367      * |    Both    HM450
+##   ch.22.47579720R    chr22          49193714      * |    Both    HM450
+##   -------
+##   seqinfo: 24 sequences from hg19 genome</code></pre>
+<p>Now that we have our annotations, we can combine them with our data using the <a href="https://bioconductor.org/packages/release/bioc/html/SummarizedExperiment.html"><strong>SummarizedExperiment</strong></a> package. After ensuring that any column subsetting is accounted for, we extract the <code>colData()</code> from our <code>RGset</code>. Finally, the beta values, probe annotations, and sample information are combined into a <code>RangedSummarizedExperiment</code> object using the <code>SummarizedExperiment()</code> function.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(SummarizedExperiment)
+
+cols &lt;-<span class="st"> </span><span class="kw">match</span>(<span class="kw">colnames</span>(betas), <span class="kw">colnames</span>(RGset))
+colData &lt;-<span class="st"> </span><span class="kw">DataFrame</span>(<span class="kw">colData</span>(RGset[, cols])<span class="op">@</span>listData)
+
+methData &lt;-<span class="st"> </span><span class="kw">SummarizedExperiment</span>(<span class="dt">assays=</span><span class="kw">SimpleList</span>(<span class="dt">betas=</span>betas),
+                                 <span class="dt">rowRanges=</span>rowRanges,
+                                 <span class="dt">colData=</span>colData)
+methData</code></pre></div>
+<pre><code>## class: RangedSummarizedExperiment 
+## dim: 423586 138 
+## metadata(0):
+## assays(1): betas
+## rownames(423586): cg01707559 cg03244189 ... ch.22.1008279F
+##   ch.22.47579720R
+## rowData names(10): addressA addressB ... probeEnd probeTarget
+## colnames(138): GSM3092700_9985178096_R01C01
+##   GSM3092701_9985178127_R03C02 ... GSM3093566_9020331152_R05C01
+##   GSM3093567_9020331152_R06C01
+## colData names(37): title geo_accession ... Basename filenames</code></pre>
+You can read more about <a href="http://bioconductor.org/packages/SummarizedExperiment"><strong>SummarizedExperiment</strong></a> from the following resources:
+<ul>
+<li>
+<a href="http://bioconductor.org/packages/release/bioc/vignettes/SummarizedExperiment/inst/doc/SummarizedExperiment.html">package vignette</a>
+</li>
+<li>
+<a href="http://bioconductor.org/help/course-materials/2012/BiocEurope2012/SummarizedExperiment.pdf">course material</a>
+</li>
+<li>
+<a href="http://www.nature.com/nmeth/journal/v12/n2/full/nmeth.3252.html">BioConductor nature paper</a>
+</li>
+</ul>
 <hr />
 </div>
 </div>
@@ -578,52 +589,6 @@ ages &lt;-<span class="st"> </span><span class="kw">data.frame</span>(<span clas
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(wateRmelon)
 snpBetas &lt;-<span class="st"> </span><span class="kw">getSnpBeta</span>(RGset)
 snpBetasVar &lt;-<span class="st"> </span><span class="kw">genki</span>(snpBetas)</code></pre></div>
-<p><a href="http://bioconductor.org/packages/release/bioc/html/omicsPrint.html"><strong>omicsPrint</strong></a> <span class="citation">(Van Iterson et al. 2018)</span> is a package we developed to detect data linkage errors through inspecting sample relations in multiple omics studies. This example uses data where individuals are unrelated, but if you have data on twins, for example, it would detect that and also show any mismatches.</p>
-<p>Included with the package is the <code>hm450.manifest.pop.GoNL</code> data, which stores SNP probe information in a <code>GRanges</code> class object. This is then used to create a subset of the beta values for genotyping.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(omicsPrint)
-<span class="kw">data</span>(hm450.manifest.pop.GoNL)
-cpgs &lt;-<span class="st"> </span><span class="kw">names</span>(hm450.manifest.pop.GoNL[<span class="kw">mcols</span>(hm450.manifest.pop.GoNL)<span class="op">$</span>MASK.snp5.EAS])
-cpgs &lt;-<span class="st"> </span><span class="kw">na.omit</span>(<span class="kw">match</span>(cpgs, <span class="kw">rownames</span>(betas)))
-omicsBetas &lt;-<span class="st"> </span>betas[cpgs,]
-omicsBetas[<span class="dv">1</span><span class="op">:</span><span class="dv">10</span>, <span class="dv">1</span><span class="op">:</span><span class="dv">2</span>]</code></pre></div>
-<pre><code>##            GSM3092700_9985178096_R01C01 GSM3092701_9985178127_R03C02
-## cg08477687                   0.57171216                   0.57340242
-## cg00645010                   0.24643615                   0.32681420
-## cg11422233                   0.14063955                   0.13474866
-## cg06402284                   0.06962435                   0.08141825
-## cg01551879                   0.03872920                   0.04622407
-## cg20788133                   0.80971844                   0.83957784
-## cg09139287                   0.56352808                   0.32561464
-## cg23100540                   0.32947931                   0.38723776
-## cg23999112                   0.75425515                   0.76118107
-## cg01062849                   0.90289728                   0.90511892</code></pre>
-<p>The function <code>beta2genotype()</code> then genotypes the observations by measuring homozygous or heterozygous alleles at these SNP probes. Lastly <code>alleleSharing()</code> assesses the relationships between different individuals, which can be unrelated, twins, or identical. The results can then be visualised using the <code>inferRelations()</code> function.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">dnamCalls &lt;-<span class="st"> </span><span class="kw">beta2genotype</span>(omicsBetas, <span class="dt">assayName=</span><span class="st">&quot;exprs&quot;</span>)
-<span class="kw">dim</span>(dnamCalls)</code></pre></div>
-<pre><code>## [1] 750 138</code></pre>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">dnamCalls[<span class="dv">1</span><span class="op">:</span><span class="dv">10</span>, <span class="dv">1</span><span class="op">:</span><span class="dv">2</span>]</code></pre></div>
-<pre><code>##            GSM3092700_9985178096_R01C01 GSM3092701_9985178127_R03C02
-## cg12213037                            2                            3
-## cg19405842                            2                            1
-## cg01296877                            2                            3
-## cg21783012                            2                            2
-## cg10091792                            3                            3
-## cg04882216                            3                            3
-## cg26422465                            2                            1
-## cg00345083                            2                            2
-## cg15075357                            1                            1
-## cg13928473                            1                            3</code></pre>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">omicsData &lt;-<span class="st"> </span><span class="kw">alleleSharing</span>(dnamCalls, <span class="dt">verbose=</span><span class="ot">TRUE</span>)</code></pre></div>
-<pre><code>## Hash relations</code></pre>
-<pre><code>## Pruning 750 SNPs ...</code></pre>
-<pre><code>## 0 SNPs removed because of low call rate!</code></pre>
-<pre><code>## 0 samples removed because too few SNPs called!</code></pre>
-<pre><code>## Using 750 polymorphic SNPs to determine allele sharing.</code></pre>
-<pre><code>## Running `square` IBS algorithm!</code></pre>
-<pre><code>## 139 of 9591 (1.45%) ...</code></pre>
-<pre><code>## 8851 of 9591 (92.28%) ...</code></pre>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">mismatches &lt;-<span class="st"> </span><span class="kw">inferRelations</span>(omicsData)</code></pre></div>
-<p><img src="05_Miscellaneous_files/figure-html/613genotype-1.png" width="672" /></p>
 <hr />
 </div>
 <div id="imputating-na-values" class="section level1">
@@ -631,8 +596,6 @@ omicsBetas[<span class="dv">1</span><span class="op">:</span><span class="dv">10
 <p>Several algorithms do not allow NA’s but beta-values and or M-values can contain NA’s after preprocessing. Either because some probes/CpG were specifically set NA or because of transformation from intensities to beta or M-values. The <a href="https://bioconductor.org/packages/release/bioc/html/impute.html"><strong>impute</strong></a> package can be used to impute these values. Below, we use the knn approach implemented by <code>impute.knn()</code> from this package.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(impute)
 betas &lt;-<span class="st"> </span><span class="kw">impute.knn</span>(<span class="kw">as.matrix</span>(betas))<span class="op">$</span>data</code></pre></div>
-<pre><code>## Warning in knnimp(x, k, maxmiss = rowmax, maxp = maxp): 7 rows with more than 50 % entries missing;
-##  mean imputation used for these rows</code></pre>
 <hr />
 </div>
 <div id="probe-annotation" class="section level1">
@@ -643,17 +606,17 @@ cpgInfo &lt;-<span class="st"> </span><span class="kw">cpgInfo</span>(cpgs, <spa
 <pre><code>## Fetching coordinates for hg19...</code></pre>
 <pre><code>## &#39;select()&#39; returned many:1 mapping between keys and columns</code></pre>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">cpgInfo[<span class="dv">1</span><span class="op">:</span><span class="dv">10</span>, <span class="dv">1</span><span class="op">:</span><span class="dv">7</span>]</code></pre></div>
-<pre><code>##            seqnames    start      end  width strand gene_id   SYMBOL
-## cg00050873     chrY  9215731  9368285 152555      +  728137    TSPY3
-## cg00212031     chrY 21094585 21239302 144718      -   83869   TTTY14
-## cg00213748     chrY  8551411  8551919    509      -  252950   TTTY18
-## cg00214611     chrY 15815447 15817902   2456      +    9087   TMSB4Y
-## cg00455876     chrY  9215731  9368285 152555      +  728137    TSPY3
-## cg01707559     chrY  6778727  6959724 180998      +   90665    TBL1Y
-## cg02004872     chrY 15815447 15817902   2456      +    9087   TMSB4Y
-## cg02011394     chrY  9187189  9362885 175697      -  252946 FAM197Y2
-## cg02050847     chrY 22917954 22942918  24965      +  140032   RPS4Y2
-## cg02233190     chrY 22737611 22755040  17430      +    9086   EIF1AY</code></pre>
+<pre><code>##            seqnames     start       end  width strand gene_id SYMBOL
+## cg01707559     chrY   6778727   6959724 180998      +   90665  TBL1Y
+## cg03244189     chrY  21094585  21239302 144718      -   83869 TTTY14
+## cg04792227     chrY  16634488  16955848 321361      +   22829 NLGN4Y
+## cg14180491     chrY  15016019  15032390  16372      +    8653  DDX3Y
+## cg25032547     chrY  14774298  14804153  29856      +   64595 TTTY15
+## cg00008945     chrX  80369200  80457441  88242      -   79366  HMGN5
+## cg00011200     chrX  48380164  48387104   6941      +   10682    EBP
+## cg00011891     chrX 153712056 153714932   2877      -    8266  UBL4A
+## cg00014152     chrX  48455880  48463582   7703      +   64743  WDR13
+## cg00016522     chrX 149737047 149841616 104570      +    4534   MTM1</code></pre>
 <hr />
 </div>
 <div id="references" class="section level1 unnumbered">
@@ -664,9 +627,6 @@ cpgInfo &lt;-<span class="st"> </span><span class="kw">cpgInfo</span>(cpgs, <spa
 </div>
 <div id="ref-Houseman2012">
 <p>Houseman, Eugene Andres, William P Accomando, Devin C Koestler, Brock C Christensen, Carmen J Marsit, Heather H Nelson, John K Wiencke, and Karl T Kelsey. 2012. “DNA methylation arrays as surrogate measures of cell mixture distribution.” <em>BMC Bioinformatics</em> 13 (1). BioMed Central: 86. doi:<a href="https://doi.org/10.1186/1471-2105-13-86">10.1186/1471-2105-13-86</a>.</p>
-</div>
-<div id="ref-VanIterson2018">
-<p>Van Iterson, Maarten, Davy Cats, Paul Hop, and Bastiaan T Heijmans. 2018. “OmicsPrint: Detection of data linkage errors in multiple omics studies.” Edited by Oliver Stegle. <em>Bioinformatics</em> 34 (12). Oxford University Press: 2142–3. doi:<a href="https://doi.org/10.1093/bioinformatics/bty062">10.1093/bioinformatics/bty062</a>.</p>
 </div>
 <div id="ref-Zhang2018">
 <p>Zhang, Qian, Costanza L. Vallerga, Rosie M Walker, Tian Lin, Anjali K. Henders, Grant W. Montgomery, Ji He, et al. 2018. “Improved prediction of chronological age from DNA methylation limits it as a biomarker of ageing.” <em>bioRxiv</em>, October. Cold Spring Harbor Laboratory, 327890. doi:<a href="https://doi.org/10.1101/327890">10.1101/327890</a>.</p>

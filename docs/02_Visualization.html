@@ -495,7 +495,7 @@ pc &lt;-<span class="st"> </span><span class="kw">prcomp_irlba</span>(<span clas
 ## Proportion of Variance  0.2303  0.1136 0.06509 0.05182 0.02732 0.0156
 ## Cumulative Proportion   0.2303  0.3439 0.40903 0.46085 0.48817 0.5038</code></pre>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(ggfortify)
-<span class="kw">autoplot</span>(pc, <span class="dt">data=</span>targets, <span class="dt">colour=</span><span class="st">&quot;characteristics_ch1&quot;</span>, <span class="dt">main=</span><span class="st">&quot;Principal components plot&quot;</span>) <span class="op">+</span><span class="st"> </span>th</code></pre></div>
+<span class="kw">autoplot</span>(pc, <span class="dt">data=</span>targets, <span class="dt">colour=</span><span class="st">&quot;sex&quot;</span>, <span class="dt">main=</span><span class="st">&quot;Principal components plot&quot;</span>) <span class="op">+</span><span class="st"> </span>th1</code></pre></div>
 <p><img src="02_Visualization_files/figure-html/304pcplot-1.png" width="672" /></p>
 <p>In this instance, our principal components explain over 50% of the variance in the data and there is evidence of clustering in the plot. By passing the original data to the <code>autoplot()</code> function using the <code>data</code> option, we can investigate clustering by colouring candidate variables. Our data has yet to undergo probe masking, which removes sex chromosome data, so groups of principal components according to whether an individual is male or female appear in the plot.</p>
 <hr />
@@ -503,37 +503,32 @@ pc &lt;-<span class="st"> </span><span class="kw">prcomp_irlba</span>(<span clas
 <div id="heatmap" class="section level1">
 <h1>Heatmap</h1>
 <p>Each column in the targets dataframe should be considered as a potential covariate in our models. Both technical and biological factors should be investigated as these may introduce batch effects or be clinically relevant. In order to assess this, we convert each column to a categorical variable whose correlations can be visualised.</p>
-<p>Homogenous columns can be excluded, as any variables that do not change by definition cannot explain variation in the data. In this instance, the <code>organism_ch1</code> for all samples is Homo sapiens, so there is no need to investigate a species effect. However, in some instances samples may from different organisms, meaning that this could introduce variation of interest.</p>
+<p>Homogenous columns can be excluded, as any variables that do not change by definition cannot explain variation in the data. In this instance, the <code>description</code> for all samples is peripheral whole blood, so there is no need to investigate a tissue effect. However, in some instances samples may be taken from different tissues, and in this type of study analysis must be done separately for each to correctly separate clinically relevant methylation changes from tissue-specific methylation differences.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">df &lt;-<span class="st"> </span><span class="kw">apply</span>(targets, <span class="dv">2</span>, <span class="cf">function</span>(x) <span class="kw">as.numeric</span>(<span class="kw">factor</span>(x)))
-keep &lt;-<span class="st"> </span><span class="kw">apply</span>(df, <span class="dv">2</span>, sd) <span class="op">&gt;</span><span class="st"> </span><span class="dv">0</span>
+keep &lt;-<span class="st"> </span><span class="kw">apply</span>(df, <span class="dv">2</span>, sd, <span class="dt">na.rm=</span><span class="ot">TRUE</span>) <span class="op">&gt;</span><span class="st"> </span><span class="dv">0</span>
 <span class="kw">summary</span>(keep)</code></pre></div>
 <pre><code>##    Mode   FALSE    TRUE 
-## logical      26      18</code></pre>
+## logical      26      10</code></pre>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">df &lt;-<span class="st"> </span>df[ , keep]
 <span class="kw">colnames</span>(df)</code></pre></div>
-<pre><code>##  [1] &quot;title&quot;                 &quot;geo_accession&quot;        
-##  [3] &quot;source_name_ch1&quot;       &quot;characteristics_ch1&quot;  
-##  [5] &quot;characteristics_ch1.1&quot; &quot;characteristics_ch1.2&quot;
-##  [7] &quot;characteristics_ch1.3&quot; &quot;characteristics_ch1.4&quot;
-##  [9] &quot;characteristics_ch1.5&quot; &quot;supplementary_file&quot;   
-## [11] &quot;supplementary_file.1&quot;  &quot;age:ch1&quot;              
-## [13] &quot;cns:ch1&quot;               &quot;disease state:ch1&quot;    
-## [15] &quot;facial:ch1&quot;            &quot;gender:ch1&quot;           
-## [17] &quot;growth:ch1&quot;            &quot;Basename&quot;</code></pre>
-<p>As you can see, 18 columns need to be examined. These include sample identifiers, such as <code>title</code>, <code>geo_accession</code>, and our newly created <code>Basename</code>, as well as which cohort the participant was from, stored in <code>source_name_ch1</code>. Other potential causes of variation are biological, such as <code>age:ch1</code>, <code>gender:ch1</code>, and <code>disease state:ch1</code>.</p>
-<p>Correlations between these factors and the principal components is calculated, and this correlation matrix is then melted using the <code>melt()</code> function from the <a href="https://cran.r-project.org/web/packages/reshape2/index.html"><strong>reshape2</strong></a> package. This prepares it for visualization using <a href="https://ggplot2.tidyverse.org/"><strong>ggplot2</strong></a>.</p>
+<pre><code>##  [1] &quot;title&quot;         &quot;geo_accession&quot; &quot;cohort&quot;        &quot;age&quot;          
+##  [5] &quot;cns&quot;           &quot;case_control&quot;  &quot;facial&quot;        &quot;sex&quot;          
+##  [9] &quot;growth&quot;        &quot;Basename&quot;</code></pre>
+<p>As you can see, 10 columns need to be examined. These include sample identifiers, such as <code>title</code>, <code>geo_accession</code>, and our newly created <code>Basename</code>, as well as which <code>cohort</code> the participant was from. Other potential causes of variation are biological, such as <code>age</code>, <code>sex</code>, and <code>case_control</code>.</p>
+<p>Correlations between complete factors and the principal components is calculated, and this correlation matrix is then melted using the <code>melt()</code> function from the <a href="https://cran.r-project.org/web/packages/reshape2/index.html"><strong>reshape2</strong></a> package. This prepares it for visualization using <a href="https://ggplot2.tidyverse.org/"><strong>ggplot2</strong></a>.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">cxy &lt;-<span class="st"> </span><span class="kw">round</span>(<span class="kw">cor</span>(pc<span class="op">$</span>x, <span class="kw">scale</span>(df)),<span class="dv">2</span>)  
-cxy[ ,<span class="dv">1</span><span class="op">:</span><span class="dv">4</span>]</code></pre></div>
-<pre><code>##     title geo_accession source_name_ch1 characteristics_ch1
-## PC1  0.22         -0.29           -0.15                1.00
-## PC2  0.17          0.00           -0.15                0.02
-## PC3 -0.44          0.43            0.62                0.07
-## PC4 -0.46          0.56            0.71               -0.04
-## PC5  0.18          0.00           -0.13               -0.02
-## PC6 -0.09          0.10            0.06               -0.02</code></pre>
+cxy &lt;-<span class="st"> </span>cxy[,<span class="kw">colSums</span>(<span class="kw">is.na</span>(cxy))<span class="op">&lt;</span><span class="kw">nrow</span>(cxy)]
+cxy</code></pre></div>
+<pre><code>##     title geo_accession cohort   age case_control   sex Basename
+## PC1  0.22         -0.29  -0.15  0.01         0.03  1.00    -0.29
+## PC2  0.17          0.00  -0.15 -0.31         0.33  0.02     0.00
+## PC3 -0.44          0.43   0.62 -0.17        -0.05  0.07     0.43
+## PC4 -0.46          0.56   0.71 -0.48        -0.06 -0.04     0.56
+## PC5  0.18          0.00  -0.13 -0.56         0.13 -0.02     0.00
+## PC6 -0.09          0.10   0.06 -0.03         0.06 -0.02     0.10</code></pre>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(reshape2)
 melted_cxy &lt;-<span class="st"> </span><span class="kw">melt</span>(cxy)
-<span class="kw">head</span>(melted_cxy) </code></pre></div>
+<span class="kw">head</span>(melted_cxy)</code></pre></div>
 <pre><code>##   Var1  Var2 value
 ## 1  PC1 title  0.22
 ## 2  PC2 title  0.17
@@ -544,7 +539,7 @@ melted_cxy &lt;-<span class="st"> </span><span class="kw">melt</span>(cxy)
 <p>After some aesthetic preparation of the <code>theme()</code>, the correlations can be visualized in a heatmap using <a href="https://ggplot2.tidyverse.org/"><strong>ggplot2</strong></a>’s <code>geom_tile()</code> option.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(ggplot2)
 <span class="kw">ggplot</span>(<span class="dt">data =</span> melted_cxy, <span class="kw">aes</span>(<span class="dt">x=</span>Var1, <span class="dt">y=</span>Var2, <span class="dt">fill=</span>value)) <span class="op">+</span><span class="st"> </span>th2 <span class="op">+</span><span class="st"> </span>th3 <span class="op">+</span><span class="st"> </span>th4 <span class="op">+</span><span class="st"> </span>th5 <span class="op">+</span>
-<span class="st">  </span><span class="kw">geom_tile</span>(<span class="dt">colour=</span><span class="st">&quot;#cdcdcd&quot;</span>,<span class="dt">size=</span><span class="fl">0.5</span>) <span class="op">+</span><span class="st"> </span><span class="kw">ggtitle</span>(<span class="st">&quot;Heatmap of Correlations&quot;</span>) <span class="op">+</span><span class="st"> </span><span class="kw">labs</span>(<span class="dt">x=</span><span class="st">&quot;&quot;</span>,<span class="dt">y=</span><span class="st">&quot;&quot;</span>)</code></pre></div>
+<span class="st">  </span><span class="kw">geom_tile</span>(<span class="dt">colour=</span><span class="st">&quot;#adadad&quot;</span>,<span class="dt">size=</span><span class="fl">0.5</span>) <span class="op">+</span><span class="st"> </span><span class="kw">ggtitle</span>(<span class="st">&quot;Heatmap of Correlations&quot;</span>) <span class="op">+</span><span class="st"> </span><span class="kw">labs</span>(<span class="dt">x=</span><span class="st">&quot;&quot;</span>,<span class="dt">y=</span><span class="st">&quot;&quot;</span>)</code></pre></div>
 <p><img src="02_Visualization_files/figure-html/306heatmapgg-1.png" width="672" /></p>
 <p>By examining correlations in the data we can see that there is a strong positive correlation between sex and PC1. This indicates that this PC explains much of the variation causes by sex differences, unsurprisingly given the clustering we observed before.</p>
 <hr />

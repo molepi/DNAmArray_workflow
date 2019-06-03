@@ -492,16 +492,7 @@ targets &lt;-<span class="st"> </span><span class="kw">pData</span>(<span class=
 <div id="using-methylaid" class="section level1">
 <h1>Using MethylAid</h1>
 <p>We now have the data we need to commence quality control, but some reformatting is needed. The <a href="http://bioconductor.org/packages/MethylAid"><strong>MethylAid</strong></a> <span class="citation">(Iterson et al. 2014)</span> package that we developed requires the targets data frame to store IDAT file root names in a <code>Basename</code> column. Sometimes, data comes with a sample sheet to faciliate this, but in this case the information needs to be extracted from the supplementary file column instead.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">targets<span class="op">$</span>Basename &lt;-<span class="st"> </span><span class="kw">substring</span>(targets<span class="op">$</span>supplementary_file,<span class="dv">68</span>,<span class="dv">95</span>)
-targets<span class="op">$</span>Sentrix_Position &lt;-<span class="st"> </span><span class="kw">substring</span>(targets<span class="op">$</span>Basename,<span class="dv">23</span>,<span class="dv">28</span>)
-<span class="kw">head</span>(targets[<span class="kw">c</span>(<span class="dv">38</span>,<span class="dv">42</span>,<span class="dv">44</span>)])</code></pre></div>
-<pre><code>##            age:ch1 gender:ch1                     Basename
-## GSM3092700    17.3     Female GSM3092700_9985178096_R01C01
-## GSM3092701    11.3     Female GSM3092701_9985178127_R03C02
-## GSM3092702     9.5       Male GSM3092702_9986360109_R02C02
-## GSM3092703      15       Male GSM3092703_9985178087_R01C01
-## GSM3092704     6.7       Male GSM3092704_9985178090_R01C01
-## GSM3092705     8.3     Female GSM3092705_9985178090_R04C01</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">targets<span class="op">$</span>Basename &lt;-<span class="st"> </span><span class="kw">substring</span>(targets<span class="op">$</span>supplementary_file,<span class="dv">68</span>,<span class="dv">95</span>)</code></pre></div>
 <p>The following sample quality control steps require the <a href="http://bioconductor.org/packages/MethylAid"><strong>MethylAid</strong></a> and <a href="https://bioconductor.org/packages/release/bioc/html/BiocParallel.html"><strong>BiocParallel</strong></a> packages. Using parallel processing and/or batches will reduce both memory load and run-times when extracting intensities from IDAT files. Please see the <a href="http://bioconductor.org/packages/release/bioc/vignettes/MethylAid/inst/doc/MethylAid.pdf">MethylAid vignette</a> for more details.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(MethylAid)
 <span class="kw">library</span>(BiocParallel)
@@ -514,6 +505,20 @@ outliers &lt;-<span class="st"> </span><span class="kw">visualize</span>(sData, 
 targets &lt;-<span class="st"> </span>targets[<span class="op">!</span>(<span class="kw">rownames</span>(targets) <span class="op">%in%</span><span class="st"> </span><span class="kw">rownames</span>(outliers)), ]</code></pre></div>
 <hr />
 </div>
+<div id="preparing-targets" class="section level1">
+<h1>Preparing <code>targets</code></h1>
+<p>Before progressing further, it can help to take some time to get familiar with the <code>targets</code> data frame, removing duplicate information and converting variables to relevant classes.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">head</span>(targets[<span class="kw">c</span>(<span class="dv">30</span>,<span class="dv">32</span>,<span class="dv">34</span>,<span class="dv">36</span>)])</code></pre></div>
+<pre><code>##             age case_control    sex                     Basename
+## GSM3092700 17.3      control Female GSM3092700_9985178096_R01C01
+## GSM3092701 11.3      control Female GSM3092701_9985178127_R03C02
+## GSM3092702  9.5      control   Male GSM3092702_9986360109_R02C02
+## GSM3092703 15.0      control   Male GSM3092703_9985178087_R01C01
+## GSM3092704  6.7      control   Male GSM3092704_9985178090_R01C01
+## GSM3092705  8.3      control Female GSM3092705_9985178090_R04C01</code></pre>
+<p>This data frame consists of 138 observations, with 46 fetal alcohol spectrum disorder (FASD) cases and 92 controls, and phenotypic information for 36 variables is stored after cleaning. This includes values that quantify the severity of FASD in cases, such as <code>facial</code>, <code>growth</code>, and <code>cns</code>, as well as covariates we want to adjust for in the analysis, like <code>age</code> and <code>sex</code>.</p>
+<hr />
+</div>
 <div id="creating-an-rgset" class="section level1">
 <h1>Creating an <code>RGset</code></h1>
 <p>For the rest of the pipeline, our data will need to be available as an <code>RGChannelSetExtended</code> object. Reading in large numbers of IDAT files is memory-intensive and time-consuming. Therefore, our <a href="https://github.com/molepi/DNAmArray"><strong>DNAmArray</strong></a> package offers the <code>read.metharray.exp.par()</code> function, which distributes the IDAT files to each of the workers registered using <a href="https://bioconductor.org/packages/release/bioc/html/BiocParallel.html"><strong>BiocParallel</strong></a>. It then passes them in batches to <code>read.metharray.exp()</code> from <a href="http://bioconductor.org/packages/minfi"><strong>minfi</strong></a> <span class="citation">(Aryee et al. 2014)</span> and combines the returned <code>RGset</code> objects.</p>
@@ -521,7 +526,7 @@ targets &lt;-<span class="st"> </span>targets[<span class="op">!</span>(<span cl
 <span class="kw">register</span>(<span class="kw">MulticoreParam</span>(<span class="dv">6</span>))
 RGset &lt;-<span class="st"> </span><span class="kw">read.metharray.exp.par</span>(targets, <span class="dt">verbose=</span><span class="ot">TRUE</span>, <span class="dt">extended=</span><span class="ot">TRUE</span>)</code></pre></div>
 <p>Reading data in parallel is subject to errors and debugging is often difficult. Recently, <a href="https://bioconductor.org/packages/release/bioc/html/BiocParallel.html"><strong>BiocParallel</strong></a> has been extended with a comprehensive set of functions for debugging on various parallel architectures. If problems arise, we recommend using <code>BatchJobsParam()</code> with the <code>log=TRUE</code> option in order to facilitate resolution.</p>
-<p>Our data is now an <code>RGset</code> object that can used for visualization.</p>
+<p>Our data is now an <code>RGset</code> object that can used for visualization. You can see below that inside this object the <code>colData</code> holds the same information as <code>targets</code>, and that there are 5 <code>assay</code> layers. The annotation information tells us that the methylation was measured using a 450k array and that hg19 is the reference genome.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">RGset</code></pre></div>
 <pre><code>## class: RGChannelSetExtended 
 ## dim: 622399 138 

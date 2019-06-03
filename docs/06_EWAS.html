@@ -389,8 +389,6 @@ div.tocify {
 
 .tocify-subheader .tocify-item {
   font-size: 0.90em;
-  padding-left: 25px;
-  text-indent: 0;
 }
 
 .tocify .list-group-item {
@@ -475,18 +473,14 @@ div.tocify {
 <h1>Simple EWAS using <strong>limma</strong></h1>
 <p>Our approach for running an EWAS is similar to the approach of <a href="http://bioconductor.org/packages/missMethyl/"><strong>missMethyl</strong></a>, except that we skip the empirical Bayes step, because the sample size in an EWAS is large enough and there is no added value in including this.</p>
 <p>We assume the data has been normalized, filtered and NA’s have been imputed. Furthermore, it is very convenient to construct a <code>SummarizedExperiment</code> class object as described in the previous section. In our data we have cases and controls, and our primary interest is differential methylation between the two. We want to adjust for likely confounders, such as age and sex.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">table</span>(methData<span class="op">$</span>disease.state.ch1)</code></pre></div>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">table</span>(methData<span class="op">$</span>case_control)</code></pre></div>
 <pre><code>## 
 ## control    FASD 
 ##      92      46</code></pre>
 <p>It is important to ensure that all variables are of a type that facilitates model fitting, so age is converted to a continuous variables and all others are treated as factors. The model formula that you would like to run can be added into your data as shown, ensuring that the covariate of interest immediately follows the tilde.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">ourData &lt;-<span class="st"> </span>methData[, methData<span class="op">$</span>disease.state.ch1 <span class="op">%in%</span><span class="st"> </span><span class="kw">c</span>(<span class="st">&quot;FASD&quot;</span>, <span class="st">&quot;control&quot;</span>)]
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">ourData &lt;-<span class="st"> </span>methData[, methData<span class="op">$</span>case_control <span class="op">%in%</span><span class="st"> </span><span class="kw">c</span>(<span class="st">&quot;FASD&quot;</span>, <span class="st">&quot;control&quot;</span>)]
 
-ourData<span class="op">$</span>disease.state.ch1 &lt;-<span class="st"> </span><span class="kw">factor</span>(ourData<span class="op">$</span>disease.state.ch1)
-ourData<span class="op">$</span>gender.ch1 &lt;-<span class="st"> </span><span class="kw">factor</span>(ourData<span class="op">$</span>gender.ch1)
-ourData<span class="op">$</span>age.ch1 &lt;-<span class="st"> </span><span class="kw">as.numeric</span>(ourData<span class="op">$</span>age.ch1)
-
-<span class="kw">metadata</span>(ourData)<span class="op">$</span>formula &lt;-<span class="st"> </span><span class="er">~</span>disease.state.ch1 <span class="op">+</span><span class="st"> </span>age.ch1 <span class="op">+</span><span class="st"> </span>gender.ch1 </code></pre></div>
+<span class="kw">metadata</span>(ourData)<span class="op">$</span>formula &lt;-<span class="st"> </span><span class="er">~</span>case_control <span class="op">+</span><span class="st"> </span>age <span class="op">+</span><span class="st"> </span>sex</code></pre></div>
 <p>By subsetting our <code>SummarizedExperiment</code> object, we can extract covariates with complete information. Sex chromosome probes are also filtered out here.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">covariates &lt;-<span class="st"> </span><span class="kw">get_all_vars</span>(<span class="kw">metadata</span>(ourData)<span class="op">$</span>formula, <span class="dt">data=</span><span class="kw">colData</span>(ourData))
 nas &lt;-<span class="st"> </span><span class="kw">apply</span>(covariates, <span class="dv">1</span>, anyNA)
@@ -495,7 +489,7 @@ ourData &lt;-<span class="st"> </span>ourData[, <span class="op">!</span>nas]
 ourData &lt;-<span class="st"> </span>ourData[<span class="op">!</span>(<span class="kw">seqnames</span>(ourData) <span class="op">%in%</span><span class="st"> </span><span class="kw">c</span>(<span class="st">&quot;chrX&quot;</span>, <span class="st">&quot;chrY&quot;</span>)),]</code></pre></div>
 <p>The <code>design</code> object is a matrix holding coefficient multipliers for each observation. As you can see, it is very important to check this to be sure that variables are being handled correctly.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">design &lt;-<span class="st"> </span><span class="kw">model.matrix</span>(<span class="kw">metadata</span>(ourData)<span class="op">$</span>formula, <span class="dt">data=</span><span class="kw">colData</span>(ourData))
-design[<span class="dv">1</span><span class="op">:</span><span class="dv">10</span>,<span class="dv">1</span><span class="op">:</span><span class="dv">3</span>]</code></pre></div>
+design[<span class="dv">1</span><span class="op">:</span><span class="dv">10</span>,<span class="dv">1</span><span class="op">:</span><span class="dv">4</span>]</code></pre></div>
 <pre><code>##                              (Intercept) disease.state.ch1FASD age.ch1
 ## GSM3092700_9985178096_R01C01           1                     0    17.3
 ## GSM3092701_9985178127_R03C02           1                     0    11.3
@@ -506,7 +500,18 @@ design[<span class="dv">1</span><span class="op">:</span><span class="dv">10</sp
 ## GSM3092706_9985178116_R03C02           1                     0     1.3
 ## GSM3092707_9986360122_R06C02           1                     0    13.2
 ## GSM3092708_9985178127_R01C02           1                     0    10.5
-## GSM3092709_9985178130_R03C01           1                     0    16.1</code></pre>
+## GSM3092709_9985178130_R03C01           1                     0    16.1
+##                              gender.ch1Male
+## GSM3092700_9985178096_R01C01              0
+## GSM3092701_9985178127_R03C02              0
+## GSM3092702_9986360109_R02C02              1
+## GSM3092703_9985178087_R01C01              1
+## GSM3092704_9985178090_R01C01              1
+## GSM3092705_9985178090_R04C01              0
+## GSM3092706_9985178116_R03C02              1
+## GSM3092707_9986360122_R06C02              1
+## GSM3092708_9985178127_R01C02              1
+## GSM3092709_9985178130_R03C01              1</code></pre>
 <p>After extracting beta values from our data, we can use the <code>lmFit()</code> function from <a href="https://bioconductor.org/packages/release/bioc/html/limma.html"><strong>limma</strong></a> to fit the model. Returned p-values are adjusted for multiple testing using the Bonferroni correction, and the CpG sites bearing most significance are returned for inspection.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">data &lt;-<span class="st"> </span><span class="kw">assays</span>(ourData)<span class="op">$</span>assays
 
@@ -523,33 +528,26 @@ padj &lt;-<span class="st"> </span><span class="kw">p.adjust</span>(<span class=
 ##   cg18420599 
 ## 1.149094e-09</code></pre>
 </div>
-<div id="unobserved-covariates-using-cate" class="section level1">
-<h1>Unobserved covariates using <strong>cate</strong></h1>
-<p>Often unobserved technical or biological covariates can be present. A recent approach available from cran <a href="https://cran.r-project.org/package=cate"><strong>cate</strong></a> is able to estimate the unobserved covariates. There are other methods as well, like, sva, ruv but we prefer this one…</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(cate)
-fa &lt;-<span class="st"> </span><span class="kw">cate.fit</span>(design[,<span class="dv">2</span>,<span class="dt">drop=</span><span class="ot">FALSE</span>], design[,<span class="op">-</span><span class="dv">2</span>], <span class="kw">t</span>(data), <span class="dt">r =</span> <span class="dv">3</span>, <span class="dt">calibrate=</span><span class="ot">FALSE</span>, <span class="dt">adj.method=</span><span class="st">&quot;naive&quot;</span>)</code></pre></div>
-<p>Here we assumed the presence of three unobserved covariates but cate has two methods implemented that can estimate the precise number of unobserved covariates. Furthermore, notice that we use <code>calibrate=FALSE</code> as we think the calibration of test-statistics and P values is too conservative. Actually, we propose a different method to control for test-statistic inflation and bias (see next section).</p>
-</div>
 <div id="correct-for-bias-and-inflation" class="section level1">
 <h1>Correct for bias and inflation</h1>
-<p>We developed a package called <a href="http://bioconductor.org/packages/bacon"><strong>bacon</strong></a> to estimate and correct for bias and inflation for EWAS (and TWAS)<span class="citation">(<span class="citeproc-not-found" data-reference-id="Iterson2017"><strong>???</strong></span>)</span> it maximizes power while properly controlling the false positive rate. <a href="http://bioconductor.org/packages/bacon"><strong>bacon</strong></a> is based on the estimation of the empirical null distribution using Bayesian statistics. The utility of the tool was illustrated through the application of meta-analysis by performing epigenome- and transcriptome-wide association studies (EWASs/TWASs) on age and smoking which highlighted an overlap in differential methylation and expression of associated genes. It can be used to remove inflation and bias often observed in EWAS/TWAS see for more details<span class="citation">(<span class="citeproc-not-found" data-reference-id="Iterson2017"><strong>???</strong></span>)</span>.</p>
-<p>For example, we can use it on the EWAS that we just run:</p>
+<p>We developed a package called <a href="http://bioconductor.org/packages/bacon"><strong>bacon</strong></a> to estimate and correct for bias and inflation for EWAS (and TWAS)<span class="citation">(Iterson et al. 2017)</span> it maximizes power while properly controlling the false positive rate. <a href="http://bioconductor.org/packages/bacon"><strong>bacon</strong></a> is based on the estimation of the empirical null distribution using Bayesian statistics.</p>
+<p>The utility of the tool was illustrated through the application of meta-analysis by performing epigenome- and transcriptome-wide association studies (EWASs/TWASs) on age and smoking which highlighted an overlap in differential methylation and expression of associated genes. It can be used to remove inflation and bias often observed in EWAS/TWAS see for more details<span class="citation">(Iterson et al. 2017)</span>.</p>
+<p>For example, we can use it on the EWAS that we have just run.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(bacon)
-tstats &lt;-<span class="st"> </span><span class="kw">cbind</span>(<span class="dt">limma=</span>tstat[,<span class="dv">2</span>], <span class="dt">cate=</span><span class="kw">as.vector</span>(fa<span class="op">$</span>beta.t))
 <span class="kw">library</span>(BiocParallel)
 <span class="kw">register</span>(<span class="kw">MulticoreParam</span>(<span class="dv">2</span>))
-bc &lt;-<span class="st"> </span><span class="kw">bacon</span>(tstats)
-bc
-<span class="kw">print</span>(<span class="kw">plot</span>(bc, <span class="dt">type=</span><span class="st">&quot;hist&quot;</span>))
-<span class="kw">print</span>(<span class="kw">plot</span>(bc, <span class="dt">type=</span><span class="st">&quot;qq&quot;</span>))
-pvalsbc &lt;-<span class="st"> </span><span class="kw">pval</span>(bc)
-<span class="kw">head</span>(pvalsbc[<span class="kw">order</span>(pvalsbc[,<span class="dv">1</span>]),])
-pvals &lt;-<span class="st"> </span><span class="kw">pval</span>(bc, <span class="ot">FALSE</span>)
-<span class="kw">head</span>(pvals[<span class="kw">order</span>(pvals[,<span class="dv">1</span>]),])</code></pre></div>
-<p>Strong bias is observed so running <a href="http://bioconductor.org/packages/bacon"><strong>bacon</strong></a> should really be considered. There is a small difference in the calculated P values. Running <a href="https://cran.r-project.org/package=cate"><strong>cate</strong></a> did not yielded additional control for bias and inflation in this example.</p>
+
+<span class="kw">library</span>(bacon)
+bc &lt;-<span class="st"> </span><span class="kw">bacon</span>(tstat[,<span class="dv">2</span>])
+bc</code></pre></div>
 </div>
-<div id="references" class="section level1">
+<div id="references" class="section level1 unnumbered">
 <h1>References</h1>
+<div id="refs" class="references">
+<div id="ref-VanIterson2017">
+<p>Iterson, Maarten van, Erik W. van Zwet, Bastiaan T. Heijmans, Peter A.C. ’t Hoen, Joyce van Meurs, Rick Jansen, Lude Franke, et al. 2017. “Controlling bias and inflation in epigenome- and transcriptome-wide association studies using the empirical null distribution.” <em>Genome Biology</em> 18 (1). BioMed Central: 19. doi:<a href="https://doi.org/10.1186/s13059-016-1131-9">10.1186/s13059-016-1131-9</a>.</p>
+</div>
+</div>
 </div>
 
 

@@ -9,9 +9,7 @@
 Since the default of selecting only two principal components is often too restrictive for this type of data, our `screeplot()` function allows visualisation of eigenvalues to help select the optimal number. Often you will see a drop-off in proportion of variance explained after a certain number of principal components, and this can indicate an efficient cut-off. 
 
 ```{r 401start, echo=FALSE, message=FALSE}
-load("C:/Users/ljsinke/Documents/git/GitHub/test_workflow/data/targets.RData")
-targets$Basename <- substring(targets$supplementary_file,68,95)
-library(minfi)
+load("C:/Users/ljsinke/Documents/git/GitHub/test_workflow/data/targets_mod.RData")
 RGset <- read.metharray.exp(base="C:/Users/ljsinke/Documents/r/cd/GSE113018/IDATs", targets, extended=TRUE)
 ```
 
@@ -34,9 +32,12 @@ By default, functional normalization returns normalized copy number data making 
 
 ```{r 403funnorm}
 GRset <- preprocessFunnorm.DNAmArray(RGset, nPCs=4, keepCN=FALSE)
+GRset
 ```
 
 This function returns beta-values calculated with an offset of 100, similar to specifying `getBeta()` with option `type='Illumina'`. If required, these can be transformed to M-values using [**minfi**](https://bioconductor.org/packages/release/bioc/html/minfi.html)'s `getM()` which applies a logit2-transformation to the beta-values.
+
+From inspecting the `GenomicRatioSet` object, you can see that there is one `Beta` assay, with methylation values for 485,512 CpG sites. 
 
 ***
 

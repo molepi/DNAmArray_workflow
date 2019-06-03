@@ -491,7 +491,26 @@ pc &lt;-<span class="st"> </span><span class="kw">screeplot</span>(RGset)</code>
 ## [preprocessFunnorm] Mapping to genome
 ## [preprocessFunnorm] Quantile extraction
 ## [preprocessFunnorm] Normalization</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">GRset</code></pre></div>
+<pre><code>## class: GenomicRatioSet 
+## dim: 485512 138 
+## metadata(0):
+## assays(1): Beta
+## rownames(485512): cg13869341 cg14008030 ... cg08265308 cg14273923
+## rowData names(0):
+## colnames(138): GSM3092700_9985178096_R01C01
+##   GSM3092701_9985178127_R03C02 ... GSM3093566_9020331152_R05C01
+##   GSM3093567_9020331152_R06C01
+## colData names(40): title geo_accession ... yMed predictedSex
+## Annotation
+##   array: IlluminaHumanMethylation450k
+##   annotation: ilmn12.hg19
+## Preprocessing
+##   Method: NA
+##   minfi version: NA
+##   Manifest version: NA</code></pre>
 <p>This function returns beta-values calculated with an offset of 100, similar to specifying <code>getBeta()</code> with option <code>type='Illumina'</code>. If required, these can be transformed to M-values using <a href="https://bioconductor.org/packages/release/bioc/html/minfi.html"><strong>minfi</strong></a>’s <code>getM()</code> which applies a logit2-transformation to the beta-values.</p>
+<p>From inspecting the <code>GenomicRatioSet</code> object, you can see that there is one <code>Beta</code> assay, with methylation values for 485,512 CpG sites.</p>
 <hr />
 </div>
 <div id="references" class="section level1 unnumbered">
