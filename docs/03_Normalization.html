@@ -389,8 +389,6 @@ div.tocify {
 
 .tocify-subheader .tocify-item {
   font-size: 0.90em;
-  padding-left: 25px;
-  text-indent: 0;
 }
 
 .tocify .list-group-item {
@@ -482,8 +480,8 @@ pc &lt;-<span class="st"> </span><span class="kw">screeplot</span>(RGset)</code>
 </div>
 <div id="functional-normalization" class="section level1">
 <h1>Functional normalization</h1>
-<p>Our workflow uses the Functional Normalization approach <span class="citation">(K. D. Hansen et al. 2014)</span>, since this includes both NOOB background correction and a dye bias correction step <span class="citation">(Triche et al. 2013)</span>. This method uses internal control probes, which are independent and not designed to measure biological differences.</p>
-<p>Although there has been some suggestion that using the internal bisulfite controls is biased <span class="citation">(Zhou, Laird, and Shen 2017)</span>, this was mostly due to large amounts of non-CpG methylation, which in the vast majority of samples is rare <span class="citation">(He and Ecker 2015)</span>. Functional Normalization has been shown to outperform most, if not all, current normalization methods <span class="citation">(J. P. Fortin, Triche, and Hansen 2017)</span>.</p>
+<p>Our workflow uses the Functional Normalization approach <span class="citation">(K. D. Hansen et al. 2014)</span>, which exploits internal control probes designed to detect technical variations without assaying biological differences. It has been shown to perform favourably when compared to other approaches <span class="citation">(Heiss and Brenner 2015, <span class="citation">Liu and Siegmund (2016)</span>)</span>.</p>
+<p>Using the internal control probes avoids the problems associated with global normalization methods, where biological variation can be mistaken for a technical effect and removed. This is especially important in studies where groups are expected to have differential methylomes, such as multiple tissue studies <span class="citation">(Min et al. 2018)</span>.</p>
 <p>By default, functional normalization returns normalized copy number data making the returned <code>GenomicRatioSet</code> twice the size necessary when only beta-values or M-values are required. Therefore, we developed <code>preprocessFunnorm.DNAmArray()</code>, which adds an option not to return these to the <code>preprocessFunnorm()</code> function from <a href="https://bioconductor.org/packages/release/bioc/html/minfi.html"><strong>minfi</strong></a> <span class="citation">(Aryee et al. 2014)</span>.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">GRset &lt;-<span class="st"> </span><span class="kw">preprocessFunnorm.DNAmArray</span>(RGset, <span class="dt">nPCs=</span><span class="dv">4</span>, <span class="dt">keepCN=</span><span class="ot">FALSE</span>)</code></pre></div>
 <pre><code>## [preprocessFunnorm] Modified version not returning CN! 
@@ -519,20 +517,17 @@ pc &lt;-<span class="st"> </span><span class="kw">screeplot</span>(RGset)</code>
 <div id="ref-Feinberg2014">
 <p>Aryee, Martin J., Andrew E. Jaffe, Hector Corrada-Bravo, Christine Ladd-Acosta, Andrew P. Feinberg, Kasper D. Hansen, and Rafael A. Irizarry. 2014. “Minfi: A flexible and comprehensive Bioconductor package for the analysis of Infinium DNA methylation microarrays.” <em>Bioinformatics</em> 30 (10). Oxford University Press: 1363–9. doi:<a href="https://doi.org/10.1093/bioinformatics/btu049">10.1093/bioinformatics/btu049</a>.</p>
 </div>
-<div id="ref-Fortin2017">
-<p>Fortin, Jean Philippe, Timothy J Triche, and Kasper D Hansen. 2017. “Preprocessing, normalization and integration of the Illumina HumanMethylationEPIC array with minfi.” <em>Bioinformatics</em> 33 (4). Oxford University Press: 558–60. doi:<a href="https://doi.org/10.1093/bioinformatics/btw691">10.1093/bioinformatics/btw691</a>.</p>
-</div>
 <div id="ref-Hansen2014">
 <p>Hansen, Kasper D, Mathieu Lemire, Thomas J Hudson, Elana J Fertig, Celia MT Greenwood, Jean-Philippe Fortin, Aurélie Labbe, and Brent W Zanke. 2014. “Functional normalization of 450k methylation array data improves replication in large cancer studies.” <em>Genome Biology</em> 15 (11). BioMed Central: 503. doi:<a href="https://doi.org/10.1186/s13059-014-0503-2">10.1186/s13059-014-0503-2</a>.</p>
 </div>
-<div id="ref-He2015">
-<p>He, Yupeng, and Joseph R Ecker. 2015. “Non-CG Methylation in the Human Genome.” <em>Annual Review of Genomics and Human Genetics</em> 16. NIH Public Access: 55–77. doi:<a href="https://doi.org/10.1146/annurev-genom-090413-025437">10.1146/annurev-genom-090413-025437</a>.</p>
+<div id="ref-Heiss2015">
+<p>Heiss, Jonathan A, and Hermann Brenner. 2015. “Between-array normalization for 450K data.” <em>Frontiers in Genetics</em> 6. Frontiers Media SA: 92. doi:<a href="https://doi.org/10.3389/fgene.2015.00092">10.3389/fgene.2015.00092</a>.</p>
 </div>
-<div id="ref-Triche2013">
-<p>Triche, Timothy J, Daniel J Weisenberger, David Van Den Berg, Peter W Laird, and Kimberly D. Siegmund. 2013. “Low-level processing of Illumina Infinium DNA Methylation BeadArrays.” <em>Nucleic Acids Research</em> 41 (7). Oxford University Press: e90. doi:<a href="https://doi.org/10.1093/nar/gkt090">10.1093/nar/gkt090</a>.</p>
+<div id="ref-Liu2016">
+<p>Liu, Jie, and Kimberly D. Siegmund. 2016. “An evaluation of processing methods for HumanMethylation450 BeadChip data.” <em>BMC Genomics</em> 17 (1). BioMed Central: 469. doi:<a href="https://doi.org/10.1186/s12864-016-2819-7">10.1186/s12864-016-2819-7</a>.</p>
 </div>
-<div id="ref-Zhou2017">
-<p>Zhou, Wanding, Peter W. Laird, and Hui Shen. 2017. “Comprehensive characterization, annotation and innovative use of Infinium DNA methylation BeadChip probes.” <em>Nucleic Acids Research</em> 45 (4). Oxford University Press: e22. doi:<a href="https://doi.org/10.1093/nar/gkw967">10.1093/nar/gkw967</a>.</p>
+<div id="ref-Min2018">
+<p>Min, J L, G Hemani, G Davey Smith, C Relton, and M Suderman. 2018. “Meffil: efficient normalization and analysis of very large DNA methylation datasets.” <em>Bioinformatics (Oxford, England)</em> 34 (23). Oxford University Press: 3983–9. doi:<a href="https://doi.org/10.1093/bioinformatics/bty476">10.1093/bioinformatics/bty476</a>.</p>
 </div>
 </div>
 </div>

@@ -17,25 +17,13 @@ email: l.j.sinke@lumc.nl
 
 # Introduction #
 
-Here we provide a complete workflow for the preprocessing and analysis
-of DNA methylation array data. The workflow combines best practices in
-the field with in-house developed methodology, and is geared towards
-large-scale studies, including Epigenome-wide Association Studies
-(EWAS). Specifically, it is designed for analysis of data obtained from the [BIOS consortium](https://www.bbmri.nl/samples-images-data), which contains multiomics measures from 6 Dutch biobanks comprising ~4000 individuals.
+Here we provide a complete workflow for the preprocessing and analysis of DNA methylation array data. The workflow combines best practices in the field with in-house developed methodology, and is geared towards large-scale studies, including Epigenome-wide Association Studies (EWAS). Specifically, it is designed for analysis of data obtained from the [BIOS consortium](https://www.bbmri.nl/samples-images-data), which contains multiomics measures from 6 Dutch biobanks comprising ~4000 individuals.
 
-The [**DNAmArray**](https://github.com/molepi/DNAmArray)-package
-contains a series of convenient functions for the quality control,
-normalization, and analysis of methylation array data. The workflow has
-been thoroughly tested for the Illumina 450k array but will similarly be
-applicable to the newer 850k EPIC array pending updates of
-[BioConductor](https://www.bioconductor.org) packages from other
-groups.
+The [**DNAmArray**](https://github.com/molepi/DNAmArray)-package contains a series of convenient functions for the quality control, normalization, and analysis of methylation array data. The workflow has been thoroughly tested for the Illumina 450k array but will similarly be applicable to the newer 850k EPIC array pending updates of [BioConductor](https://www.bioconductor.org) packages from other groups.
 
-It is worth noting that this workflow makes extensive use of other [BioConductor](https://www.bioconductor.org) packages. For example, the [**DNAmArray**](https://github.com/molepi/DNAmArray) function `read.metharray.exp.par()` converts IDAT files to an `RGset` by harnessing functions from [**minfi**](https://bioconductor.org/packages/release/bioc/html/minfi.html) [@Feinberg2014] and combining them with [**BiocParallel**](https://bioconductor.org/packages/release/bioc/html/BiocParallel.html). Usually the required packages are installed
-automatically, but otherwise please refer to the relevant package's documentation.
+It is worth noting that this workflow makes extensive use of other [BioConductor](https://www.bioconductor.org) packages. For example, the [**DNAmArray**](https://github.com/molepi/DNAmArray) function `read.metharray.exp.par()` converts IDAT files to an `RGset` by harnessing functions from [**minfi**](https://bioconductor.org/packages/release/bioc/html/minfi.html) [@Feinberg2014] and combining them with [**BiocParallel**](https://bioconductor.org/packages/release/bioc/html/BiocParallel.html). Usually the required packages are installed automatically, but otherwise please refer to the relevant package's documentation.
 
-Furthermore, we have also developed packages used by this workflow.  [**MethylAid**](http:/bioconductor.org/packages/MethylAid)
-[@Luijk2014] provides a web application to assist in performing interactive sample quality control, and  [**bacon**](http:/bioconductor.org/packages/bacon)
+Furthermore, we have also developed packages used by this workflow.  [**MethylAid**](http:/bioconductor.org/packages/MethylAid) [@Luijk2014] provides a web application to assist in performing interactive sample quality control, and  [**bacon**](http:/bioconductor.org/packages/bacon)
 [@VanIterson2017] corrects for bias and inflation in ome-wide association studies, such as EWAS.
 
 ***
@@ -48,13 +36,11 @@ The [example data](https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE113018)
 
 # Installation #
   
-The [**DNAmArray**](https://github.com/molepi/DNAmArray)-package can
-be installed in several ways, and has been successfully for >= R-3.2.0 on various Linux-builds and for >= R-3.5.3 on Windows.
+The [**DNAmArray**](https://github.com/molepi/DNAmArray)-package can be installed in several ways, and has been successfully for >= R-3.2.0 on various Linux-builds and for >= R-3.5.3 on Windows.
 
 ### Install using the **devtools**-package ###
 
-First install the package
-[**devtools**](https://github.com/hadley/devtools), then use the `install_github()` function to fetch the [**DNAmArray**](https://github.com/molepi/DNAmArray) package.
+First install the package [**devtools**](https://github.com/hadley/devtools), then use the `install_github()` function to fetch the [**DNAmArray**](https://github.com/molepi/DNAmArray) package.
 
 ```{r 101devtools, eval=FALSE}
 library(devtools)

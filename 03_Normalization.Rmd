@@ -24,9 +24,9 @@ This plot shows that only a small amount of variance is explained after the four
 
 # Functional normalization #
 
-Our workflow uses the Functional Normalization approach [@Hansen2014], since this includes both NOOB background correction and a dye bias correction step [@Triche2013]. This method uses internal control probes, which are independent and not designed to measure biological differences. 
+Our workflow uses the Functional Normalization approach [@Hansen2014], which exploits internal control probes designed to detect technical variations without assaying biological differences. It has been shown to perform favourably when compared to other approaches [@Heiss2015, @Liu2016]. 
 
-Although there has been some suggestion that using the internal bisulfite controls is biased [@Zhou2017], this was mostly due to large amounts of non-CpG methylation, which in the vast majority of samples is rare [@He2015]. Functional Normalization has been shown to outperform most, if not all, current normalization methods [@Fortin2017].
+Using the internal control probes avoids the problems associated with global normalization methods, where biological variation can be mistaken for a technical effect and removed. This is especially important in studies where groups are expected to have differential methylomes, such as multiple tissue studies [@Min2018]. 
 
 By default, functional normalization returns normalized copy number data making the returned `GenomicRatioSet` twice the size necessary when only beta-values or M-values are required. Therefore, we developed `preprocessFunnorm.DNAmArray()`, which adds an option not to return these to the `preprocessFunnorm()` function from [**minfi**](https://bioconductor.org/packages/release/bioc/html/minfi.html) [@Feinberg2014].
 
