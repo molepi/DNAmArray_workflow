@@ -389,8 +389,6 @@ div.tocify {
 
 .tocify-subheader .tocify-item {
   font-size: 0.90em;
-  padding-left: 25px;
-  text-indent: 0;
 }
 
 .tocify .list-group-item {
@@ -517,15 +515,14 @@ keep &lt;-<span class="st"> </span><span class="kw">apply</span>(df, <span class
 <p>As you can see, 10 columns need to be examined. These include sample identifiers, such as <code>title</code>, <code>geo_accession</code>, and our newly created <code>Basename</code>, as well as which <code>cohort</code> the participant was from. Other potential causes of variation are biological, such as <code>age</code>, <code>sex</code>, and <code>case_control</code>.</p>
 <p>Correlations between complete factors and the principal components is calculated, and this correlation matrix is then melted using the <code>melt()</code> function from the <a href="https://cran.r-project.org/web/packages/reshape2/index.html"><strong>reshape2</strong></a> package. This prepares it for visualization using <a href="https://ggplot2.tidyverse.org/"><strong>ggplot2</strong></a>.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">cxy &lt;-<span class="st"> </span><span class="kw">round</span>(<span class="kw">cor</span>(pc<span class="op">$</span>x, <span class="kw">scale</span>(df)),<span class="dv">2</span>)  
-cxy &lt;-<span class="st"> </span>cxy[,<span class="kw">colSums</span>(<span class="kw">is.na</span>(cxy))<span class="op">&lt;</span><span class="kw">nrow</span>(cxy)]
-cxy</code></pre></div>
-<pre><code>##     title geo_accession cohort   age case_control   sex Basename
-## PC1  0.22         -0.29  -0.15  0.01         0.03  1.00    -0.29
-## PC2  0.17          0.00  -0.15 -0.31         0.33  0.02     0.00
-## PC3 -0.44          0.43   0.62 -0.17        -0.05  0.07     0.43
-## PC4 -0.46          0.56   0.71 -0.48        -0.06 -0.04     0.56
-## PC5  0.18          0.00  -0.13 -0.56         0.13 -0.02     0.00
-## PC6 -0.09          0.10   0.06 -0.03         0.06 -0.02     0.10</code></pre>
+cxy[ , <span class="dv">1</span><span class="op">:</span><span class="dv">9</span>]</code></pre></div>
+<pre><code>##     title geo_accession cohort   age cns case_control facial   sex growth
+## PC1  0.22         -0.29  -0.15  0.01  NA         0.03     NA  1.00     NA
+## PC2  0.17          0.00  -0.15 -0.31  NA         0.33     NA  0.02     NA
+## PC3 -0.44          0.43   0.62 -0.17  NA        -0.05     NA  0.07     NA
+## PC4 -0.46          0.56   0.71 -0.48  NA        -0.06     NA -0.04     NA
+## PC5  0.18          0.00  -0.13 -0.56  NA         0.13     NA -0.02     NA
+## PC6 -0.09          0.10   0.06 -0.03  NA         0.06     NA -0.02     NA</code></pre>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(reshape2)
 melted_cxy &lt;-<span class="st"> </span><span class="kw">melt</span>(cxy)
 <span class="kw">head</span>(melted_cxy)</code></pre></div>

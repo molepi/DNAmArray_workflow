@@ -78,8 +78,7 @@ Correlations between complete factors and the principal components is calculated
 
 ```{r 306heatmapplot}
 cxy <- round(cor(pc$x, scale(df)),2)  
-cxy <- cxy[,colSums(is.na(cxy))<nrow(cxy)]
-cxy
+cxy[ , 1:9]
 
 library(reshape2)
 melted_cxy <- melt(cxy)
