@@ -2,6 +2,38 @@
 ```{r, child="_setup.Rmd"}
 ```
 
+```{r 601start, echo=FALSE, message=FALSE, results='hide'}
+load("C:/Users/ljsinke/Documents/git/GitHub/test_workflow/data/targets_mod.RData")
+RGset <- read.metharray.exp(base="C:/Users/ljsinke/Documents/r/cd/GSE113018/IDATs", targets, extended=TRUE)
+```
+
+***
+
+# Imputation #
+
+In order to further visualize the data, we store the beta values using the `getBeta()` function from [**minfi**](https://bioconductor.org/packages/release/bioc/html/minfi.html) [@Feinberg2014]. The `type="Illumina"` option adds 100 to the denominator of the beta-value calculation, preventing NA values being recorded when the methylated and unmethylated signal are both 0.
+
+```{r 303betas}
+betas <- getBeta(RGset, type="Illumina")
+```
+
+Methylation profiles often contain multiple missing values, which can be assumed to be missing at random (MAR), since they are likely due to random experimental and technology-related errors, rather than associated with methylation status. 
+
+Imputation of these values is beneficial for multiple visualizations and algorithms, but its importance is highlighted in the use of predictors that rely on values from only a subset of CpGs. In these instances, the effect of a few missing sites could vastly alter estimated age, for example. 
+
+DNA methylation values represent a limited-range continuous variable, for which many standard imputation methods are theoretically suitable. However, they struggle with larger datasets due to a lack of computational efficiency. For this reason, specific strategies have been developed to handle missing methylation data [@Mazumder2010, @Josse2012, @DiLena2019].
+
+The method that we advise using is [**MethyLImp**](https://github.com/pdilena/methyLImp) [@DiLena2019]. This iterative algorithm exploits the high inter-sample correlation seen in methylation data [@Zhang2017], capturing it using linear regression. This method is both computationally efficient and has been shown to perform better than all current alternatives, whilst not requiring post-imputation truncation [@DiLena2019]. 
+
+You will need to install the package from the GitHub linked using `install_github()` as before. Since the input matrix is assumed to have CpGs as columns and observations as rows, in most cases you will need to transpose your beta matrix both before and after imputation.
+
+```{r 614imputation, results='hide'}
+library(methyLImp)
+
+betas <- methyLImp(t(betas))
+betas <- t(betas)
+```
+
 ***
 
 # Beta density plots #
@@ -24,12 +56,7 @@ par(mar=c(4,4,3,2), mgp=c(2.5,1,0), cex.main=1.5, font.main="1", fg="#6b6b6b", c
 densityPlot(RGset, main="Beta density plot", xlab="Beta values", panel.first=ggbg()) 
 ``` 
 
-For this data, the density plot is clearly bimodal with no obvious outliers. However, in order to further investigate the beta-values, we store them using the `getBeta()` function. Since some visualisations cannot handle NA values, we use the median to impute these. The `type="Illumina"` option adds 100 to the denominator of the beta-value calculation, preventing NA values being recorded when the methylated and unmethylated signal are both 0.
-
-```{r 303betas}
-betas <- getBeta(RGset, type="Illumina")
-betas[is.na(betas)] <- median(betas, na.rm=TRUE)
-```
+For this data, the density plot is clearly bimodal with no obvious outliers. 
 
 ***
 
@@ -65,14 +92,14 @@ Homogenous columns can be excluded, as any variables that do not change by defin
 
 ```{r 305heatmapscols}
 df <- apply(targets, 2, function(x) as.numeric(factor(x)))
-keep <- apply(df, 2, sd, na.rm=TRUE) > 0
+keep <- apply(df, 2, sd) > 0
 summary(keep)
 
 df <- df[ , keep]
 colnames(df)
 ```
 
-As you can see, 10 columns need to be examined. These include sample identifiers, such as `title`, `geo_accession`, and our newly created `Basename`, as well as which `cohort` the participant was from. Other potential causes of variation are biological, such as `age`, `sex`, and `case_control`.
+As you can see, 9 columns need to be examined. These include sample identifiers, such as `title` and our newly created `Basename`, as well as which `cohort` the participant was from. Other potential causes of variation are biological, such as `age`, `sex`, and `cc_status`.
 
 Correlations between complete factors and the principal components is calculated, and this correlation matrix is then melted using the `melt()` function from the [**reshape2**](https://cran.r-project.org/web/packages/reshape2/index.html) package. This prepares it for visualization using [**ggplot2**](https://ggplot2.tidyverse.org/).
 
@@ -85,7 +112,7 @@ melted_cxy <- melt(cxy)
 head(melted_cxy)
 ```
 
-After some aesthetic preparation of the `theme()`, the correlations can be visualized in a heatmap using [**ggplot2**](https://ggplot2.tidyverse.org/)'s `geom_tile()` option.
+After some aesthetic preparation of the `theme()`, the correlations can be visualized in a heatmap using [**ggplot2**](https://ggplot2.tidyverse.org/)'s `geom_tile()` function.
 
 ```{r 306heatmaptheme, echo=FALSE}
 th2 <- scale_fill_gradient2(low = "#158cba", high = "#D67D87", mid = "white", 

@@ -124,14 +124,6 @@ snpBetasVar <- genki(snpBetas)
 
 ***
 
-# Imputating NA Values #
-
-Several algorithms do not allow NA's but beta-values and or M-values can contain NA's after preprocessing. Either because some probes/CpG were specifically set NA or because of transformation from intensities to beta or M-values. The [**impute**](https://bioconductor.org/packages/release/bioc/html/impute.html) package can be used to impute these values. Below, we use the knn approach implemented by `impute.knn()` from this package.
-
-```{r 614imputation, results='hide'}
-library(impute)
-betas <- impute.knn(as.matrix(betas))$data
-```
 
 ***
 

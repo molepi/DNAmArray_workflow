@@ -389,8 +389,6 @@ div.tocify {
 
 .tocify-subheader .tocify-item {
   font-size: 0.90em;
-  padding-left: 25px;
-  text-indent: 0;
 }
 
 .tocify .list-group-item {
@@ -477,8 +475,8 @@ div.tocify {
 <hr />
 <div id="introduction" class="section level1">
 <h1>Introduction</h1>
-<p>Here we provide a complete workflow for the preprocessing and analysis of DNA methylation array data. The workflow combines best practices in the field with in-house developed methodology, and is geared towards large-scale studies, including Epigenome-wide Association Studies (EWAS). Specifically, it is designed for analysis of data obtained from the <a href="https://www.bbmri.nl/samples-images-data">BIOS consortium</a>, which contains multiomics measures from 6 Dutch biobanks comprising ~4000 individuals.</p>
-<p>The <a href="https://github.com/molepi/DNAmArray"><strong>DNAmArray</strong></a>-package contains a series of convenient functions for the quality control, normalization, and analysis of methylation array data. The workflow has been thoroughly tested for the Illumina 450k array but will similarly be applicable to the newer 850k EPIC array pending updates of <a href="https://www.bioconductor.org">BioConductor</a> packages from other groups.</p>
+<p>Here we provide a complete workflow for the preprocessing and analysis of DNA methylation array data. The workflow combines best practices in the field with in-house developed methodology, and is geared towards large-scale studies, including Epigenome-wide Association Studies (EWAS). Its development was informed by our research analysing <a href="https://www.bbmri.nl/samples-images-data">BIOS consortium</a> data, which contains multiomics measures from 6 Dutch biobanks comprising ~4000 individuals <span class="citation">(Dekkers et al. 2016, <span class="citation">R. C. Slieker et al. (2016)</span>, <span class="citation">Bonder et al. (2017)</span>, <span class="citation">Luijk et al. (2018)</span>)</span> .</p>
+<p>The <a href="https://github.com/molepi/DNAmArray"><strong>DNAmArray</strong></a>-package contains a series of convenient functions for the quality control, normalization, and analysis of methylation array data. The workflow has been thoroughly tested for the Illumina 450k array but is similarly applicable to the newer 850k EPIC array.</p>
 <p>It is worth noting that this workflow makes extensive use of other <a href="https://www.bioconductor.org">BioConductor</a> packages. For example, the <a href="https://github.com/molepi/DNAmArray"><strong>DNAmArray</strong></a> function <code>read.metharray.exp.par()</code> converts IDAT files to an <code>RGset</code> by harnessing functions from <a href="https://bioconductor.org/packages/release/bioc/html/minfi.html"><strong>minfi</strong></a> <span class="citation">(Aryee et al. 2014)</span> and combining them with <a href="https://bioconductor.org/packages/release/bioc/html/BiocParallel.html"><strong>BiocParallel</strong></a>. Usually the required packages are installed automatically, but otherwise please refer to the relevant package’s documentation.</p>
 <p>Furthermore, we have also developed packages used by this workflow. <a href="http:/bioconductor.org/packages/MethylAid"><strong>MethylAid</strong></a> <span class="citation">(Iterson et al. 2014)</span> provides a web application to assist in performing interactive sample quality control, and <a href="http:/bioconductor.org/packages/bacon"><strong>bacon</strong></a> <span class="citation">(Iterson et al. 2017)</span> corrects for bias and inflation in ome-wide association studies, such as EWAS.</p>
 <hr />
@@ -512,14 +510,26 @@ R CMD INSTALL DNAmArray_x.y.z.tar.gz</code></pre></div>
 <div id="ref-Feinberg2014">
 <p>Aryee, Martin J., Andrew E. Jaffe, Hector Corrada-Bravo, Christine Ladd-Acosta, Andrew P. Feinberg, Kasper D. Hansen, and Rafael A. Irizarry. 2014. “Minfi: A flexible and comprehensive Bioconductor package for the analysis of Infinium DNA methylation microarrays.” <em>Bioinformatics</em> 30 (10). Oxford University Press: 1363–9. doi:<a href="https://doi.org/10.1093/bioinformatics/btu049">10.1093/bioinformatics/btu049</a>.</p>
 </div>
+<div id="ref-Bonder2017">
+<p>Bonder, Marc Jan, René Luijk, Daria V Zhernakova, Matthijs Moed, Patrick Deelen, Martijn Vermaat, Maarten van Iterson, et al. 2017. “Disease variants alter transcription factor levels and methylation of their binding sites.” <em>Nature Genetics</em> 49 (1). Nature Publishing Group: 131–38. doi:<a href="https://doi.org/10.1038/ng.3721">10.1038/ng.3721</a>.</p>
+</div>
 <div id="ref-Cobben2019">
 <p>Cobben, Jan M., Izabela M. Krzyzewska, Andrea Venema, Adri N. Mul, Abeltje Polstra, Alex V. Postma, Robert Smigiel, et al. 2019. “DNA-methylation abundantly associates with fetal alcohol spectrum disorder and its subphenotypes.” <em>Epigenomics</em>, March. Future Science Ltd London, UK, epi–2018–0221. doi:<a href="https://doi.org/10.2217/epi-2018-0221">10.2217/epi-2018-0221</a>.</p>
+</div>
+<div id="ref-Dekkers2016">
+<p>Dekkers, Koen F., Maarten van Iterson, Roderick C. Slieker, Matthijs H. Moed, Marc Jan Bonder, Michiel van Galen, Hailiang Mei, et al. 2016. “Blood lipids influence DNA methylation in circulating cells.” <em>Genome Biology</em> 17 (1). BioMed Central: 138. doi:<a href="https://doi.org/10.1186/s13059-016-1000-6">10.1186/s13059-016-1000-6</a>.</p>
 </div>
 <div id="ref-Luijk2014">
 <p>Iterson, Maarten van, Elmar W. Tobi, Roderick C. Slieker, Wouter Den Hollander, René Luijk, P. Eline Slagboom, and Bastiaan T. Heijmans. 2014. “MethylAid: Visual and interactive quality control of large Illumina 450k datasets.” <em>Bioinformatics</em> 30 (23). Oxford University Press: 3435–7. doi:<a href="https://doi.org/10.1093/bioinformatics/btu566">10.1093/bioinformatics/btu566</a>.</p>
 </div>
 <div id="ref-VanIterson2017">
 <p>Iterson, Maarten van, Erik W. van Zwet, Bastiaan T. Heijmans, Peter A.C. ’t Hoen, Joyce van Meurs, Rick Jansen, Lude Franke, et al. 2017. “Controlling bias and inflation in epigenome- and transcriptome-wide association studies using the empirical null distribution.” <em>Genome Biology</em> 18 (1). BioMed Central: 19. doi:<a href="https://doi.org/10.1186/s13059-016-1131-9">10.1186/s13059-016-1131-9</a>.</p>
+</div>
+<div id="ref-Luijk2018">
+<p>Luijk, René, Haoyu Wu, Cavin K Ward-Caviness, Eilis Hannon, Elena Carnero-Montoro, Josine L. Min, Pooja Mandaviya, et al. 2018. “Autosomal genetic variation is associated with DNA methylation in regions variably escaping X-chromosome inactivation.” <em>Nature Communications</em> 9. Nature Publishing Group. doi:<a href="https://doi.org/10.1038/S41467-018-05714-3">10.1038/S41467-018-05714-3</a>.</p>
+</div>
+<div id="ref-Slieker2016">
+<p>Slieker, Roderick C, Maarten van Iterson, René Luijk, Marian Beekman, Daria V Zhernakova, Matthijs H Moed, Hailiang Mei, et al. 2016. “Age-related accrual of methylomic variability is linked to fundamental ageing mechanisms.” <em>Genome Biology</em> 17 (1). BioMed Central: 191. doi:<a href="https://doi.org/10.1186/s13059-016-1053-6">10.1186/s13059-016-1053-6</a>.</p>
 </div>
 </div>
 </div>

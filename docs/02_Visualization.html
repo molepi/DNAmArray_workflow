@@ -469,6 +469,21 @@ div.tocify {
 
 
 <hr />
+<div id="imputation" class="section level1">
+<h1>Imputation</h1>
+<p>In order to further visualize the data, we store the beta values using the <code>getBeta()</code> function from <a href="https://bioconductor.org/packages/release/bioc/html/minfi.html"><strong>minfi</strong></a> <span class="citation">(Aryee et al. 2014)</span>. The <code>type=&quot;Illumina&quot;</code> option adds 100 to the denominator of the beta-value calculation, preventing NA values being recorded when the methylated and unmethylated signal are both 0.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">betas &lt;-<span class="st"> </span><span class="kw">getBeta</span>(RGset, <span class="dt">type=</span><span class="st">&quot;Illumina&quot;</span>)</code></pre></div>
+<p>Methylation profiles often contain multiple missing values, which can be assumed to be missing at random (MAR), since they are likely due to random experimental and technology-related errors, rather than associated with methylation status.</p>
+<p>Imputation of these values is beneficial for multiple visualizations and algorithms, but its importance is highlighted in the use of predictors that rely on values from only a subset of CpGs. In these instances, the effect of a few missing sites could vastly alter estimated age, for example.</p>
+<p>DNA methylation values represent a limited-range continuous variable, for which many standard imputation methods are theoretically suitable. However, they struggle with larger datasets due to a lack of computational efficiency. For this reason, specific strategies have been developed to handle missing methylation data <span class="citation">(Mazumder et al. 2010, <span class="citation">Josse and Husson (2012)</span>, <span class="citation">Di Lena et al. (2019)</span>)</span>.</p>
+<p>The method that we advise using is <a href="https://github.com/pdilena/methyLImp"><strong>MethyLImp</strong></a> <span class="citation">(Di Lena et al. 2019)</span>. This iterative algorithm exploits the high inter-sample correlation seen in methylation data <span class="citation">(Zhang et al. 2017)</span>, capturing it using linear regression. This method is both computationally efficient and has been shown to perform better than all current alternatives, whilst not requiring post-imputation truncation <span class="citation">(Di Lena et al. 2019)</span>.</p>
+<p>You will need to install the package from the GitHub linked using <code>install_github()</code> as before. Since the input matrix is assumed to have CpGs as columns and observations as rows, in most cases you will need to transpose your beta matrix both before and after imputation.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(methyLImp)
+
+betas &lt;-<span class="st"> </span><span class="kw">methyLImp</span>(<span class="kw">t</span>(betas))
+betas &lt;-<span class="st"> </span><span class="kw">t</span>(betas)</code></pre></div>
+<hr />
+</div>
 <div id="beta-density-plots" class="section level1">
 <h1>Beta density plots</h1>
 <p>Using <code>densityPlot()</code> from <a href="https://bioconductor.org/packages/release/bioc/html/minfi.html"><strong>minfi</strong></a> <span class="citation">(Aryee et al. 2014)</span>, we can visualize the per sample average beta-value distribution. This gives us a global impression of the data and allows us to identify possible anomalous samples. We expect this distribution to be bimodal with the peaks representing methylated and unmethylated signals. Any centre peaks should be further investigated for problems, such as ambiguous mapping.</p>
@@ -476,9 +491,7 @@ div.tocify {
 <span class="kw">par</span>(<span class="dt">mar=</span><span class="kw">c</span>(<span class="dv">4</span>,<span class="dv">4</span>,<span class="dv">3</span>,<span class="dv">2</span>), <span class="dt">mgp=</span><span class="kw">c</span>(<span class="fl">2.5</span>,<span class="dv">1</span>,<span class="dv">0</span>), <span class="dt">cex.main=</span><span class="fl">1.5</span>, <span class="dt">font.main=</span><span class="st">&quot;1&quot;</span>, <span class="dt">fg=</span><span class="st">&quot;#6b6b6b&quot;</span>, <span class="dt">col.main=</span><span class="st">&quot;#4b4b4b&quot;</span>)
 <span class="kw">densityPlot</span>(RGset, <span class="dt">main=</span><span class="st">&quot;Beta density plot&quot;</span>, <span class="dt">xlab=</span><span class="st">&quot;Beta values&quot;</span>, <span class="dt">panel.first=</span><span class="kw">ggbg</span>()) </code></pre></div>
 <p><img src="02_Visualization_files/figure-html/302betaplot-1.png" width="672" /></p>
-<p>For this data, the density plot is clearly bimodal with no obvious outliers. However, in order to further investigate the beta-values, we store them using the <code>getBeta()</code> function. Since some visualisations cannot handle NA values, we use the median to impute these. The <code>type=&quot;Illumina&quot;</code> option adds 100 to the denominator of the beta-value calculation, preventing NA values being recorded when the methylated and unmethylated signal are both 0.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">betas &lt;-<span class="st"> </span><span class="kw">getBeta</span>(RGset, <span class="dt">type=</span><span class="st">&quot;Illumina&quot;</span>)
-betas[<span class="kw">is.na</span>(betas)] &lt;-<span class="st"> </span><span class="kw">median</span>(betas, <span class="dt">na.rm=</span><span class="ot">TRUE</span>)</code></pre></div>
+<p>For this data, the density plot is clearly bimodal with no obvious outliers.</p>
 <hr />
 </div>
 <div id="principal-components-plot" class="section level1">
@@ -503,37 +516,36 @@ pc &lt;-<span class="st"> </span><span class="kw">prcomp_irlba</span>(<span clas
 <p>Each column in the targets dataframe should be considered as a potential covariate in our models. Both technical and biological factors should be investigated as these may introduce batch effects or be clinically relevant. In order to assess this, we convert each column to a categorical variable whose correlations can be visualised.</p>
 <p>Homogenous columns can be excluded, as any variables that do not change by definition cannot explain variation in the data. In this instance, the <code>description</code> for all samples is peripheral whole blood, so there is no need to investigate a tissue effect. However, in some instances samples may be taken from different tissues, and in this type of study analysis must be done separately for each to correctly separate clinically relevant methylation changes from tissue-specific methylation differences.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">df &lt;-<span class="st"> </span><span class="kw">apply</span>(targets, <span class="dv">2</span>, <span class="cf">function</span>(x) <span class="kw">as.numeric</span>(<span class="kw">factor</span>(x)))
-keep &lt;-<span class="st"> </span><span class="kw">apply</span>(df, <span class="dv">2</span>, sd, <span class="dt">na.rm=</span><span class="ot">TRUE</span>) <span class="op">&gt;</span><span class="st"> </span><span class="dv">0</span>
+keep &lt;-<span class="st"> </span><span class="kw">apply</span>(df, <span class="dv">2</span>, sd) <span class="op">&gt;</span><span class="st"> </span><span class="dv">0</span>
 <span class="kw">summary</span>(keep)</code></pre></div>
 <pre><code>##    Mode   FALSE    TRUE 
-## logical      26      10</code></pre>
+## logical      25       9</code></pre>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">df &lt;-<span class="st"> </span>df[ , keep]
 <span class="kw">colnames</span>(df)</code></pre></div>
-<pre><code>##  [1] &quot;title&quot;         &quot;geo_accession&quot; &quot;cohort&quot;        &quot;age&quot;          
-##  [5] &quot;cns&quot;           &quot;case_control&quot;  &quot;facial&quot;        &quot;sex&quot;          
-##  [9] &quot;growth&quot;        &quot;Basename&quot;</code></pre>
-<p>As you can see, 10 columns need to be examined. These include sample identifiers, such as <code>title</code>, <code>geo_accession</code>, and our newly created <code>Basename</code>, as well as which <code>cohort</code> the participant was from. Other potential causes of variation are biological, such as <code>age</code>, <code>sex</code>, and <code>case_control</code>.</p>
+<pre><code>## [1] &quot;title&quot;     &quot;cohort&quot;    &quot;age&quot;       &quot;cns&quot;       &quot;cc_status&quot; &quot;facial&quot;   
+## [7] &quot;sex&quot;       &quot;growth&quot;    &quot;Basename&quot;</code></pre>
+<p>As you can see, 9 columns need to be examined. These include sample identifiers, such as <code>title</code> and our newly created <code>Basename</code>, as well as which <code>cohort</code> the participant was from. Other potential causes of variation are biological, such as <code>age</code>, <code>sex</code>, and <code>cc_status</code>.</p>
 <p>Correlations between complete factors and the principal components is calculated, and this correlation matrix is then melted using the <code>melt()</code> function from the <a href="https://cran.r-project.org/web/packages/reshape2/index.html"><strong>reshape2</strong></a> package. This prepares it for visualization using <a href="https://ggplot2.tidyverse.org/"><strong>ggplot2</strong></a>.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">cxy &lt;-<span class="st"> </span><span class="kw">round</span>(<span class="kw">cor</span>(pc<span class="op">$</span>x, <span class="kw">scale</span>(df)),<span class="dv">2</span>)  
 cxy[ , <span class="dv">1</span><span class="op">:</span><span class="dv">9</span>]</code></pre></div>
-<pre><code>##     title geo_accession cohort   age cns case_control facial   sex growth
-## PC1  0.22         -0.29  -0.15  0.01  NA         0.03     NA  1.00     NA
-## PC2  0.17          0.00  -0.15 -0.31  NA         0.33     NA  0.02     NA
-## PC3 -0.44          0.43   0.62 -0.17  NA        -0.05     NA  0.07     NA
-## PC4 -0.46          0.56   0.71 -0.48  NA        -0.06     NA -0.04     NA
-## PC5  0.18          0.00  -0.13 -0.56  NA         0.13     NA -0.02     NA
-## PC6 -0.09          0.10   0.06 -0.03  NA         0.06     NA -0.02     NA</code></pre>
+<pre><code>##     title cohort   age   cns cc_status facial   sex growth Basename
+## PC1 -0.22   0.15 -0.01  0.09     -0.03   0.04 -1.00   0.06     0.29
+## PC2 -0.17   0.15  0.31  0.24     -0.33   0.30 -0.02   0.27     0.00
+## PC3  0.44  -0.62  0.17 -0.13      0.05   0.00 -0.07   0.01    -0.43
+## PC4 -0.46   0.71 -0.48 -0.04     -0.06   0.02 -0.04   0.03     0.56
+## PC5  0.18  -0.13 -0.56 -0.05      0.13  -0.09 -0.02  -0.07     0.00
+## PC6  0.09  -0.06  0.03  0.04     -0.06   0.06  0.02  -0.01    -0.10</code></pre>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(reshape2)
 melted_cxy &lt;-<span class="st"> </span><span class="kw">melt</span>(cxy)
 <span class="kw">head</span>(melted_cxy)</code></pre></div>
 <pre><code>##   Var1  Var2 value
-## 1  PC1 title  0.22
-## 2  PC2 title  0.17
-## 3  PC3 title -0.44
+## 1  PC1 title -0.22
+## 2  PC2 title -0.17
+## 3  PC3 title  0.44
 ## 4  PC4 title -0.46
 ## 5  PC5 title  0.18
-## 6  PC6 title -0.09</code></pre>
-<p>After some aesthetic preparation of the <code>theme()</code>, the correlations can be visualized in a heatmap using <a href="https://ggplot2.tidyverse.org/"><strong>ggplot2</strong></a>’s <code>geom_tile()</code> option.</p>
+## 6  PC6 title  0.09</code></pre>
+<p>After some aesthetic preparation of the <code>theme()</code>, the correlations can be visualized in a heatmap using <a href="https://ggplot2.tidyverse.org/"><strong>ggplot2</strong></a>’s <code>geom_tile()</code> function.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(ggplot2)
 <span class="kw">ggplot</span>(<span class="dt">data =</span> melted_cxy, <span class="kw">aes</span>(<span class="dt">x=</span>Var1, <span class="dt">y=</span>Var2, <span class="dt">fill=</span>value)) <span class="op">+</span><span class="st"> </span>th2 <span class="op">+</span><span class="st"> </span>th3 <span class="op">+</span><span class="st"> </span>th4 <span class="op">+</span><span class="st"> </span>th5 <span class="op">+</span>
 <span class="st">  </span><span class="kw">geom_tile</span>(<span class="dt">colour=</span><span class="st">&quot;#adadad&quot;</span>,<span class="dt">size=</span><span class="fl">0.5</span>) <span class="op">+</span><span class="st"> </span><span class="kw">ggtitle</span>(<span class="st">&quot;Heatmap of Correlations&quot;</span>) <span class="op">+</span><span class="st"> </span><span class="kw">labs</span>(<span class="dt">x=</span><span class="st">&quot;&quot;</span>,<span class="dt">y=</span><span class="st">&quot;&quot;</span>)</code></pre></div>
@@ -570,6 +582,18 @@ nodePar &lt;-<span class="st"> </span><span class="kw">list</span>(<span class="
 <div id="refs" class="references">
 <div id="ref-Feinberg2014">
 <p>Aryee, Martin J., Andrew E. Jaffe, Hector Corrada-Bravo, Christine Ladd-Acosta, Andrew P. Feinberg, Kasper D. Hansen, and Rafael A. Irizarry. 2014. “Minfi: A flexible and comprehensive Bioconductor package for the analysis of Infinium DNA methylation microarrays.” <em>Bioinformatics</em> 30 (10). Oxford University Press: 1363–9. doi:<a href="https://doi.org/10.1093/bioinformatics/btu049">10.1093/bioinformatics/btu049</a>.</p>
+</div>
+<div id="ref-DiLena2019">
+<p>Di Lena, Pietro, Claudia Sala, Andrea Prodi, and Christine Nardini. 2019. “Missing value estimation methods for DNA methylation data.” Edited by Jonathan Wren. <em>Bioinformatics</em>, February. doi:<a href="https://doi.org/10.1093/bioinformatics/btz134">10.1093/bioinformatics/btz134</a>.</p>
+</div>
+<div id="ref-Josse2012">
+<p>Josse, Julie, and François Husson. 2012. “Handling missing values in exploratory multivariate data analysis methods.” <a href="https://hal.archives-ouvertes.fr/hal-00811888" class="uri">https://hal.archives-ouvertes.fr/hal-00811888</a>.</p>
+</div>
+<div id="ref-Mazumder2010">
+<p>Mazumder, Rahul, Trevor Hastie, Hastie@stanford Edu, Robert Tibshirani, Tibs@stanford Edu, and Tommi Jaakkola. 2010. “Spectral Regularization Algorithms for Learning Large Incomplete Matrices.” Vol. 11. <a href="https://web.stanford.edu/{~}hastie/Papers/mazumder10a.pdf" class="uri">https://web.stanford.edu/{~}hastie/Papers/mazumder10a.pdf</a>.</p>
+</div>
+<div id="ref-Zhang2017">
+<p>Zhang, Ling, Wen Jun Xie, Sirui Liu, Luming Meng, Chan Gu, and Yi Qin Gao. 2017. “DNA Methylation Landscape Reflects the Spatial Organization of Chromatin in Different Cells.” <em>Biophysical Journal</em> 113 (7). The Biophysical Society: 1395. doi:<a href="https://doi.org/10.1016/J.BPJ.2017.08.019">10.1016/J.BPJ.2017.08.019</a>.</p>
 </div>
 </div>
 </div>

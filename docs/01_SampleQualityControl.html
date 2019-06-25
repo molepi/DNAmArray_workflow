@@ -389,8 +389,6 @@ div.tocify {
 
 .tocify-subheader .tocify-item {
   font-size: 0.90em;
-  padding-left: 25px;
-  text-indent: 0;
 }
 
 .tocify .list-group-item {
@@ -508,14 +506,14 @@ targets &lt;-<span class="st"> </span>targets[<span class="op">!</span>(<span cl
 <div id="preparing-targets" class="section level1">
 <h1>Preparing <code>targets</code></h1>
 <p>Before progressing further, it can help to take some time to get familiar with the <code>targets</code> data frame, removing duplicate information and converting variables to relevant classes.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">head</span>(targets[<span class="kw">c</span>(<span class="dv">30</span>,<span class="dv">32</span>,<span class="dv">34</span>,<span class="dv">36</span>)])</code></pre></div>
-<pre><code>##             age case_control    sex                     Basename
-## GSM3092700 17.3      control Female GSM3092700_9985178096_R01C01
-## GSM3092701 11.3      control Female GSM3092701_9985178127_R03C02
-## GSM3092702  9.5      control   Male GSM3092702_9986360109_R02C02
-## GSM3092703 15.0      control   Male GSM3092703_9985178087_R01C01
-## GSM3092704  6.7      control   Male GSM3092704_9985178090_R01C01
-## GSM3092705  8.3      control Female GSM3092705_9985178090_R04C01</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">head</span>(targets[<span class="kw">c</span>(<span class="dv">28</span>,<span class="dv">30</span>,<span class="dv">32</span>,<span class="dv">34</span>)])</code></pre></div>
+<pre><code>##             age cc_status    sex                     Basename
+## GSM3092700 17.3   control Female GSM3092700_9985178096_R01C01
+## GSM3092701 11.3   control Female GSM3092701_9985178127_R03C02
+## GSM3092702  9.5   control   Male GSM3092702_9986360109_R02C02
+## GSM3092703 15.0   control   Male GSM3092703_9985178087_R01C01
+## GSM3092704  6.7   control   Male GSM3092704_9985178090_R01C01
+## GSM3092705  8.3   control Female GSM3092705_9985178090_R04C01</code></pre>
 <p>This data frame consists of 138 observations, with 46 fetal alcohol spectrum disorder (FASD) cases and 92 controls, and phenotypic information for 36 variables is stored after cleaning. This includes values that quantify the severity of FASD in cases, such as <code>facial</code>, <code>growth</code>, and <code>cns</code>, as well as covariates we want to adjust for in the analysis, like <code>age</code> and <code>sex</code>.</p>
 <hr />
 </div>
@@ -537,7 +535,7 @@ RGset &lt;-<span class="st"> </span><span class="kw">read.metharray.exp.par</spa
 ## colnames(138): GSM3092700_9985178096_R01C01
 ##   GSM3092701_9985178127_R03C02 ... GSM3093566_9020331152_R05C01
 ##   GSM3093567_9020331152_R06C01
-## colData names(45): title geo_accession ... Basename filenames
+## colData names(35): title public_date ... Basename filenames
 ## Annotation
 ##   array: IlluminaHumanMethylation450k
 ##   annotation: ilmn12.hg19</code></pre>

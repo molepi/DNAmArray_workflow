@@ -73,7 +73,7 @@ load("C:/Users/ljsinke/Documents/git/GitHub/test_workflow/data/targets_mod.RData
 ```
 
 ``` {r 205structure}
-head(targets[c(30,32,34,36)])
+head(targets[c(28,30,32,34)])
 ```
 
 This data frame consists of 138 observations, with 46 fetal alcohol spectrum disorder (FASD) cases and 92 controls, and phenotypic information for 36 variables is stored after cleaning. This includes values that quantify the severity of FASD in cases, such as `facial`, `growth`, and `cns`, as well as covariates we want to adjust for in the analysis, like `age` and `sex`.
