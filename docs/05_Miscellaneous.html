@@ -433,7 +433,7 @@ div.tocify {
     <div id="navbar" class="navbar-collapse collapse">
       <ul class="nav navbar-nav">
         <li>
-  <a href="01_SampleQualityControl.html">Quality control</a>
+  <a href="01_SampleQualityControl.html">Sample-level QC</a>
 </li>
 <li>
   <a href="02_Visualization.html">Visualizations</a>
@@ -442,10 +442,10 @@ div.tocify {
   <a href="03_Normalization.html">Normalization</a>
 </li>
 <li>
-  <a href="04_ProbeFiltering.html">Probe filtering</a>
+  <a href="04_ProbeFiltering.html">Probe Filtering</a>
 </li>
 <li>
-  <a href="05_Miscellaneous.html">Miscellaneous</a>
+  <a href="05_Miscellaneous.html">Predictions</a>
 </li>
 <li>
   <a href="06_EWAS.html">EWAS</a>
@@ -469,6 +469,19 @@ div.tocify {
 
 
 <hr />
+<div id="imputation" class="section level1">
+<h1>Imputation</h1>
+<p>Methylation profiles often contain multiple missing values, which can be assumed to be missing at random (MAR), since they are likely due to random experimental and technology-related errors, rather than associated with methylation status.</p>
+<p>Imputation of these values is beneficial for multiple algorithms, but its importance is highlighted in the use of predictors that rely on values from only a subset of CpGs. In these instances, the effect of a few missing sites could vastly alter estimated age, for example.</p>
+<p>DNA methylation values represent a limited-range continuous variable, for which many standard imputation methods are theoretically suitable. However, they struggle with larger datasets due to a lack of computational efficiency. For this reason, specific strategies have been developed to handle missing methylation data <span class="citation">(Mazumder et al. 2010, <span class="citation">Josse and Husson (2012)</span>, <span class="citation">Di Lena et al. (2019)</span>)</span>.</p>
+<p>The method that we advise using is <a href="https://github.com/pdilena/methyLImp"><strong>MethyLImp</strong></a> <span class="citation">(Di Lena et al. 2019)</span>. This iterative algorithm exploits the high inter-sample correlation seen in methylation data <span class="citation">(L. Zhang et al. 2017)</span>, capturing it using linear regression. This method is both computationally efficient and has been shown to perform better than all current alternatives, whilst not requiring post-imputation truncation <span class="citation">(Di Lena et al. 2019)</span>.</p>
+<p>You will need to install the package from the GitHub linked using <code>install_github()</code> as before. Since the input matrix is assumed to have CpGs as columns and observations as rows, in most cases you will need to transpose your beta matrix both before and after imputation.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(methyLImp)
+
+betas &lt;-<span class="st"> </span><span class="kw">methyLImp</span>(<span class="kw">t</span>(betas))
+betas &lt;-<span class="st"> </span><span class="kw">t</span>(betas)</code></pre></div>
+<hr />
+</div>
 <div id="phenotype-prediction" class="section level1">
 <h1>Phenotype Prediction</h1>
 <p>It can be useful to predict phenotypes in your data, either for comparison to assumed categories or to help impute missing values. We are in the process of creating predictors for sample cell composition, sex, age, and smoking status. These will either be reference-based predictors using the large BIOS data, which includes samples from 6 dutch cohorts and over 4000 individuals, or ones built using reference-free or semi-supervised methods.</p>
@@ -512,7 +525,7 @@ ages &lt;-<span class="st"> </span><span class="kw">data.frame</span>(<span clas
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">ggplot</span>(ages, <span class="kw">aes</span>(<span class="dt">x=</span>Assumed, <span class="dt">y=</span>Predicted)) <span class="op">+</span><span class="st"> </span><span class="kw">ggtitle</span>(<span class="st">&quot;Assumed vs. Predicted Age&quot;</span>) <span class="op">+</span><span class="st"> </span>th3 <span class="op">+</span>
 <span class="st">  </span><span class="kw">geom_point</span>(<span class="dt">shape=</span><span class="dv">16</span>, <span class="dt">color=</span><span class="st">&quot;#158cba&quot;</span>) <span class="op">+</span><span class="st"> </span><span class="kw">geom_smooth</span>(<span class="dt">method=</span>lm, <span class="dt">color=</span><span class="st">&quot;#D67D87&quot;</span>)</code></pre></div>
 <p><img src="05_Miscellaneous_files/figure-html/610plot-1.png" width="672" /></p>
-<p>The above graph shows that this prediction follows the general trend of the assumed ages, however the residuals are quite large. It may be possible to develop an improved predictor <span class="citation">(Zhang et al. 2018)</span>, and we plan to implement this.</p>
+<p>The above graph shows that this prediction follows the general trend of the assumed ages, however the residuals are quite large. It may be possible to develop an improved predictor <span class="citation">(Q. Zhang et al. 2018)</span>, and we plan to implement this.</p>
 <hr />
 </div>
 </div>
@@ -567,7 +580,7 @@ methData</code></pre></div>
 ## colnames(138): GSM3092700_9985178096_R01C01
 ##   GSM3092701_9985178127_R03C02 ... GSM3093566_9020331152_R05C01
 ##   GSM3093567_9020331152_R06C01
-## colData names(37): title geo_accession ... Basename filenames</code></pre>
+## colData names(35): title public_date ... Basename filenames</code></pre>
 You can read more about <a href="http://bioconductor.org/packages/SummarizedExperiment"><strong>SummarizedExperiment</strong></a> from the following resources:
 <ul>
 <li>
@@ -591,42 +604,26 @@ snpBetas &lt;-<span class="st"> </span><span class="kw">getSnpBeta</span>(RGset)
 snpBetasVar &lt;-<span class="st"> </span><span class="kw">genki</span>(snpBetas)</code></pre></div>
 <hr />
 </div>
-<div id="imputating-na-values" class="section level1">
-<h1>Imputating NA Values</h1>
-<p>Several algorithms do not allow NA’s but beta-values and or M-values can contain NA’s after preprocessing. Either because some probes/CpG were specifically set NA or because of transformation from intensities to beta or M-values. The <a href="https://bioconductor.org/packages/release/bioc/html/impute.html"><strong>impute</strong></a> package can be used to impute these values. Below, we use the knn approach implemented by <code>impute.knn()</code> from this package.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(impute)
-betas &lt;-<span class="st"> </span><span class="kw">impute.knn</span>(<span class="kw">as.matrix</span>(betas))<span class="op">$</span>data</code></pre></div>
-<hr />
-</div>
-<div id="probe-annotation" class="section level1">
-<h1>Probe Annotation</h1>
-<p>Our package also contains a <code>cpgInfo()</code> function, which can be used to map CpG probes to their nearest genes. This utilises the <a href="http://bioconductor.statistik.tu-dortmund.de/packages/3.6/data/annotation/html/TxDb.Hsapiens.UCSC.hg19.knownGene.html"><strong>TxDb.Hsapiens.UCSC.hg19.knownGene</strong></a> package, which accesses the USCS annotation databases.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">cpgs &lt;-<span class="st"> </span><span class="kw">rownames</span>(betas)
-cpgInfo &lt;-<span class="st"> </span><span class="kw">cpgInfo</span>(cpgs, <span class="dt">TxDb=</span><span class="st">&quot;TxDb.Hsapiens.UCSC.hg19.knownGene&quot;</span>)</code></pre></div>
-<pre><code>## Fetching coordinates for hg19...</code></pre>
-<pre><code>## &#39;select()&#39; returned many:1 mapping between keys and columns</code></pre>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">cpgInfo[<span class="dv">1</span><span class="op">:</span><span class="dv">10</span>, <span class="dv">1</span><span class="op">:</span><span class="dv">7</span>]</code></pre></div>
-<pre><code>##            seqnames     start       end  width strand gene_id SYMBOL
-## cg01707559     chrY   6778727   6959724 180998      +   90665  TBL1Y
-## cg03244189     chrY  21094585  21239302 144718      -   83869 TTTY14
-## cg04792227     chrY  16634488  16955848 321361      +   22829 NLGN4Y
-## cg14180491     chrY  15016019  15032390  16372      +    8653  DDX3Y
-## cg25032547     chrY  14774298  14804153  29856      +   64595 TTTY15
-## cg00008945     chrX  80369200  80457441  88242      -   79366  HMGN5
-## cg00011200     chrX  48380164  48387104   6941      +   10682    EBP
-## cg00011891     chrX 153712056 153714932   2877      -    8266  UBL4A
-## cg00014152     chrX  48455880  48463582   7703      +   64743  WDR13
-## cg00016522     chrX 149737047 149841616 104570      +    4534   MTM1</code></pre>
-<hr />
-</div>
 <div id="references" class="section level1 unnumbered">
 <h1>References</h1>
 <div id="refs" class="references">
 <div id="ref-Feinberg2014">
 <p>Aryee, Martin J., Andrew E. Jaffe, Hector Corrada-Bravo, Christine Ladd-Acosta, Andrew P. Feinberg, Kasper D. Hansen, and Rafael A. Irizarry. 2014. “Minfi: A flexible and comprehensive Bioconductor package for the analysis of Infinium DNA methylation microarrays.” <em>Bioinformatics</em> 30 (10). Oxford University Press: 1363–9. doi:<a href="https://doi.org/10.1093/bioinformatics/btu049">10.1093/bioinformatics/btu049</a>.</p>
 </div>
+<div id="ref-DiLena2019">
+<p>Di Lena, Pietro, Claudia Sala, Andrea Prodi, and Christine Nardini. 2019. “Missing value estimation methods for DNA methylation data.” Edited by Jonathan Wren. <em>Bioinformatics</em>, February. doi:<a href="https://doi.org/10.1093/bioinformatics/btz134">10.1093/bioinformatics/btz134</a>.</p>
+</div>
 <div id="ref-Houseman2012">
 <p>Houseman, Eugene Andres, William P Accomando, Devin C Koestler, Brock C Christensen, Carmen J Marsit, Heather H Nelson, John K Wiencke, and Karl T Kelsey. 2012. “DNA methylation arrays as surrogate measures of cell mixture distribution.” <em>BMC Bioinformatics</em> 13 (1). BioMed Central: 86. doi:<a href="https://doi.org/10.1186/1471-2105-13-86">10.1186/1471-2105-13-86</a>.</p>
+</div>
+<div id="ref-Josse2012">
+<p>Josse, Julie, and François Husson. 2012. “Handling missing values in exploratory multivariate data analysis methods.” <a href="https://hal.archives-ouvertes.fr/hal-00811888" class="uri">https://hal.archives-ouvertes.fr/hal-00811888</a>.</p>
+</div>
+<div id="ref-Mazumder2010">
+<p>Mazumder, Rahul, Trevor Hastie, Hastie@stanford Edu, Robert Tibshirani, Tibs@stanford Edu, and Tommi Jaakkola. 2010. “Spectral Regularization Algorithms for Learning Large Incomplete Matrices.” Vol. 11. <a href="https://web.stanford.edu/{~}hastie/Papers/mazumder10a.pdf" class="uri">https://web.stanford.edu/{~}hastie/Papers/mazumder10a.pdf</a>.</p>
+</div>
+<div id="ref-Zhang2017">
+<p>Zhang, Ling, Wen Jun Xie, Sirui Liu, Luming Meng, Chan Gu, and Yi Qin Gao. 2017. “DNA Methylation Landscape Reflects the Spatial Organization of Chromatin in Different Cells.” <em>Biophysical Journal</em> 113 (7). The Biophysical Society: 1395. doi:<a href="https://doi.org/10.1016/J.BPJ.2017.08.019">10.1016/J.BPJ.2017.08.019</a>.</p>
 </div>
 <div id="ref-Zhang2018">
 <p>Zhang, Qian, Costanza L. Vallerga, Rosie M Walker, Tian Lin, Anjali K. Henders, Grant W. Montgomery, Ji He, et al. 2018. “Improved prediction of chronological age from DNA methylation limits it as a biomarker of ageing.” <em>bioRxiv</em>, October. Cold Spring Harbor Laboratory, 327890. doi:<a href="https://doi.org/10.1101/327890">10.1101/327890</a>.</p>

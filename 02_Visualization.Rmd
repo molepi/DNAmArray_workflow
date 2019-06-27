@@ -9,29 +9,12 @@ RGset <- read.metharray.exp(base="C:/Users/ljsinke/Documents/r/cd/GSE113018/IDAT
 
 ***
 
-# Imputation #
+# Beta values #
 
-In order to further visualize the data, we store the beta values using the `getBeta()` function from [**minfi**](https://bioconductor.org/packages/release/bioc/html/minfi.html) [@Feinberg2014]. The `type="Illumina"` option adds 100 to the denominator of the beta-value calculation, preventing NA values being recorded when the methylated and unmethylated signal are both 0.
+In order to further visualize the data, we store the beta values using the `getBeta()` function from [**minfi**](https://bioconductor.org/packages/rel ease/bioc/html/minfi.html) [@Feinberg2014]. The `type="Illumina"` option adds 100 to the denominator of the beta-value calculation, preventing NA values being recorded when the methylated and unmethylated signal are both 0.
 
 ```{r 303betas}
 betas <- getBeta(RGset, type="Illumina")
-```
-
-Methylation profiles often contain multiple missing values, which can be assumed to be missing at random (MAR), since they are likely due to random experimental and technology-related errors, rather than associated with methylation status. 
-
-Imputation of these values is beneficial for multiple visualizations and algorithms, but its importance is highlighted in the use of predictors that rely on values from only a subset of CpGs. In these instances, the effect of a few missing sites could vastly alter estimated age, for example. 
-
-DNA methylation values represent a limited-range continuous variable, for which many standard imputation methods are theoretically suitable. However, they struggle with larger datasets due to a lack of computational efficiency. For this reason, specific strategies have been developed to handle missing methylation data [@Mazumder2010, @Josse2012, @DiLena2019].
-
-The method that we advise using is [**MethyLImp**](https://github.com/pdilena/methyLImp) [@DiLena2019]. This iterative algorithm exploits the high inter-sample correlation seen in methylation data [@Zhang2017], capturing it using linear regression. This method is both computationally efficient and has been shown to perform better than all current alternatives, whilst not requiring post-imputation truncation [@DiLena2019]. 
-
-You will need to install the package from the GitHub linked using `install_github()` as before. Since the input matrix is assumed to have CpGs as columns and observations as rows, in most cases you will need to transpose your beta matrix both before and after imputation.
-
-```{r 614imputation, results='hide'}
-library(methyLImp)
-
-betas <- methyLImp(t(betas))
-betas <- t(betas)
 ```
 
 ***

@@ -389,8 +389,6 @@ div.tocify {
 
 .tocify-subheader .tocify-item {
   font-size: 0.90em;
-  padding-left: 25px;
-  text-indent: 0;
 }
 
 .tocify .list-group-item {
@@ -435,7 +433,7 @@ div.tocify {
     <div id="navbar" class="navbar-collapse collapse">
       <ul class="nav navbar-nav">
         <li>
-  <a href="01_SampleQualityControl.html">Quality control</a>
+  <a href="01_SampleQualityControl.html">Sample-level QC</a>
 </li>
 <li>
   <a href="02_Visualization.html">Visualizations</a>
@@ -444,10 +442,10 @@ div.tocify {
   <a href="03_Normalization.html">Normalization</a>
 </li>
 <li>
-  <a href="04_ProbeFiltering.html">Probe filtering</a>
+  <a href="04_ProbeFiltering.html">Probe Filtering</a>
 </li>
 <li>
-  <a href="05_Miscellaneous.html">Miscellaneous</a>
+  <a href="05_Miscellaneous.html">Predictions</a>
 </li>
 <li>
   <a href="06_EWAS.html">EWAS</a>
@@ -471,42 +469,42 @@ div.tocify {
 
 
 <hr />
-<div id="probe-level-filtering" class="section level1">
-<h1>Probe-level filtering</h1>
+<div id="filtering-on-intensities" class="section level1">
+<h1>Filtering on Intensities</h1>
 <p>We recommend performing probe-filtering by setting unreliably measured probes to NA. Unfortunately, Functional Normalization does not allow NA’s in the <code>RGChannelSet</code>. Therefore, it is best to run normalization and probe-filtering separately and combine the results afterwards using our <code>reduce()</code> function.</p>
-<p>Some observations need to be removed from the dataset since they provide little to no information that could skew analyses. Probes which suffered from low intensity (default: &lt;1) or are based on very few (default: &lt;3) beads are removed, based on a specified cut off.</p>
+<p>Some observations need to be removed from the dataset since they provide little to no information that could skew analyses. Probes which have zero intensity or are based on very few (default: &lt;3) beads are removed, based on a specified cut off.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">RGset &lt;-<span class="st"> </span><span class="kw">probeFiltering</span>(RGset)</code></pre></div>
-<pre><code>## Calculate and filter on number of beads...</code></pre>
-<pre><code>## On average 0.07% of the probes (622399) have number of beads below 3</code></pre>
-<pre><code>## Calculate and filter on zero intensities...</code></pre>
-<pre><code>## On average 0.004% of the Type II probes (350036) have Red and/or Green intensity below 1</code></pre>
-<pre><code>## On average 0.009% of the Type I probes (92578), measured in Green channel, have intensity below 1</code></pre>
-<pre><code>## On average 0.008% of the Type I probes (178374), measured in Red channel, have intensity below 1</code></pre>
-<pre><code>## Set filtered probes in Red and/or Green channels to NA...</code></pre>
-<pre><code>## ... done 100 out of 138 ...</code></pre>
+<pre><code>## Calculate and filter on number of beads... 
+## On average  0.07 % of the probes ( 622399 ) have number of beads below  3 
+## Calculate and filter on zero intensities... 
+## On average  0.004 % of the Type II probes ( 350036 ) have Red and/or Green intensity below 1 
+## On average  0.009 % of the Type I probes ( 92578 ), measured in Green channel, have intensity below 1 
+## On average  0.008 % of the Type I probes ( 178374 ), measured in Red channel, have intensity below 1 
+## Set filtered probes in Red and/or Green channels to NA... 
+## ... done  100  out of  138  ...</code></pre>
 <p>There are differences between probe types that are used in <code>probeFiltering()</code>. Information on these can be extracted and stored using functions from <a href="https://bioconductor.org/packages/release/bioc/html/minfi.html"><strong>minfi</strong></a> <span class="citation">(Aryee et al. 2014)</span>.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">locusNames &lt;-<span class="st"> </span><span class="kw">getManifestInfo</span>(RGset, <span class="st">&quot;locusNames&quot;</span>)
 typeII &lt;-<span class="st"> </span><span class="kw">getProbeInfo</span>(RGset, <span class="dt">type=</span><span class="st">&quot;II&quot;</span>)
 typeI &lt;-<span class="st"> </span><span class="kw">getProbeInfo</span>(RGset, <span class="dt">type=</span><span class="st">&quot;I&quot;</span>)</code></pre></div>
 <hr />
 </div>
-<div id="cpg-level-filtering" class="section level1">
-<h1>CpG-level filtering</h1>
+<div id="detection-p-values" class="section level1">
+<h1>Detection p-values</h1>
 <p>The negative controls on the array can be used to detect outlying samples via the detection p-values, which measure how likely it is a sample’s signal differs from the background. Signals that do not differ substantially (default: p&lt;0.01) are removed. We utilise <code>detectionP()</code> from <a href="https://bioconductor.org/packages/release/bioc/html/minfi.html"><strong>minfi</strong></a> inside our function to achieve this. Additionally, samples where a large proportion (default: &gt;5%) of probes were set to NA based on the above probe-level filtering are removed.</p>
 <p>Our function <code>reduce()</code> takes the normalized <code>GRset</code> from the previous section and the filtered <code>RGset</code> created above and returns filtered beta or M-values, which can be passed to the <code>probeMasking()</code> function. If M-values are specified as the output, these are scaled to have a range of 32 instead of to infinite values.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">betas &lt;-<span class="st"> </span><span class="kw">reduce</span>(GRset, RGset, <span class="dt">what=</span><span class="st">&quot;beta&quot;</span>)</code></pre></div>
-<pre><code>## Calculate and filter on detection P-value...</code></pre>
-<pre><code>## On average 0.14% of the CpGs (485512) have detection P-value above the threshold 0.01</code></pre>
-<pre><code>## Transform to beta-values...</code></pre>
-<pre><code>## On average 0.09% of the probes (485512) were set to NA in the probe filtering step!</code></pre>
-<pre><code>## Calculate success rates and reduce...</code></pre>
-<pre><code>## Percentage of samples having success rate above 0.95 is 100%</code></pre>
-<pre><code>## Percentage of CpGs having success rate above 0.95 is 99.56%</code></pre>
+<pre><code>## Calculate and filter on detection P-value... 
+## On average  0.14 % of the CpGs ( 485512 ) have detection P-value above the threshold  0.01 
+## Transform to  beta -values... 
+## On average  0.09 % of the probes ( 485512 ) were set to NA in the probe filtering step! 
+## Calculate success rates and reduce... 
+## Percentage of samples having success rate above  0.95  is  100 % 
+## Percentage of CpGs having success rate above  0.95  is  99.56 %</code></pre>
 <hr />
 </div>
-<div id="cross-reactivity-and-polymorphism" class="section level1">
-<h1>Cross-reactivity and polymorphism</h1>
-<p>Several studies <span class="citation">(Chen et al. 2013, <span class="citation">Zhou, Laird, and Shen (2017)</span>)</span> have characterized ambiguous probes on both the 450k and EPIC methylation arrays and made suggestions for removal. We chose to remove probes identified by Zhou et al., since this set is actively maintained and supports both array sizes. Additionally, different sets are specified depending on the reference genome used.</p>
+<div id="ambiguous-probes" class="section level1">
+<h1>Ambiguous probes</h1>
+<p>Several studies <span class="citation">(Chen et al. 2013, <span class="citation">Zhou, Laird, and Shen (2017)</span>)</span> have characterized cross-reactive and polymorphic probes on both the 450k and EPIC methylation arrays and made suggestions for removal. We chose to remove probes identified by Zhou et al., since this set is actively maintained and supports both array sizes. Additionally, different sets are specified depending on the reference genome used.</p>
 <p>In total, Zhou et al. suggest removal of probes for a variety of reasons, from ambiguous mapping and cross-reactivity to polymorphisms that interfere with extension. In general, around 60.000 probes are suggested for removal in 450k arrays, and 100.000 for EPIC.</p>
 <p>We developed the <code>probeMasking()</code> function, which removes specified probes from either beta- or M- value matrices. In this instance, 59.780 CpG rows are removed.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">betas &lt;-<span class="st"> </span><span class="kw">probeMasking</span>(betas, <span class="dt">array=</span><span class="st">&quot;450&quot;</span>, <span class="dt">genome=</span><span class="st">&quot;hg19&quot;</span>)</code></pre></div>

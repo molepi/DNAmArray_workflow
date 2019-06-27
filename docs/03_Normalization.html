@@ -433,7 +433,7 @@ div.tocify {
     <div id="navbar" class="navbar-collapse collapse">
       <ul class="nav navbar-nav">
         <li>
-  <a href="01_SampleQualityControl.html">Quality control</a>
+  <a href="01_SampleQualityControl.html">Sample-level QC</a>
 </li>
 <li>
   <a href="02_Visualization.html">Visualizations</a>
@@ -442,10 +442,10 @@ div.tocify {
   <a href="03_Normalization.html">Normalization</a>
 </li>
 <li>
-  <a href="04_ProbeFiltering.html">Probe filtering</a>
+  <a href="04_ProbeFiltering.html">Probe Filtering</a>
 </li>
 <li>
-  <a href="05_Miscellaneous.html">Miscellaneous</a>
+  <a href="05_Miscellaneous.html">Predictions</a>
 </li>
 <li>
   <a href="06_EWAS.html">EWAS</a>
@@ -469,6 +469,12 @@ div.tocify {
 
 
 <hr />
+<div id="introduction" class="section level1">
+<h1>Introduction</h1>
+<p>Our workflow uses the Functional Normalization approach <span class="citation">(K. D. Hansen et al. 2014)</span>, which exploits internal control probes designed to detect technical variations without assaying biological differences. It has been shown to perform favourably when compared to other approaches <span class="citation">(Heiss and Brenner 2015, <span class="citation">Liu and Siegmund (2016)</span>)</span>.</p>
+<p>Using the internal control probes avoids the problems associated with global normalization methods, where biological variation can be mistaken for a technical effect and removed. This is especially important in studies where groups are expected to have differential methylomes, such as multiple tissue studies <span class="citation">(Min et al. 2018)</span>.</p>
+<hr />
+</div>
 <div id="principal-components-selection" class="section level1">
 <h1>Principal Components Selection</h1>
 <p>Since the default of selecting only two principal components is often too restrictive for this type of data, our <code>screeplot()</code> function allows visualisation of eigenvalues to help select the optimal number. Often you will see a drop-off in proportion of variance explained after a certain number of principal components, and this can indicate an efficient cut-off.</p>
@@ -479,11 +485,9 @@ pc &lt;-<span class="st"> </span><span class="kw">screeplot</span>(RGset)</code>
 <hr />
 </div>
 <div id="functional-normalization" class="section level1">
-<h1>Functional normalization</h1>
-<p>Our workflow uses the Functional Normalization approach <span class="citation">(K. D. Hansen et al. 2014)</span>, which exploits internal control probes designed to detect technical variations without assaying biological differences. It has been shown to perform favourably when compared to other approaches <span class="citation">(Heiss and Brenner 2015, <span class="citation">Liu and Siegmund (2016)</span>)</span>.</p>
-<p>Using the internal control probes avoids the problems associated with global normalization methods, where biological variation can be mistaken for a technical effect and removed. This is especially important in studies where groups are expected to have differential methylomes, such as multiple tissue studies <span class="citation">(Min et al. 2018)</span>.</p>
+<h1>Functional Normalization</h1>
 <p>By default, functional normalization returns normalized copy number data making the returned <code>GenomicRatioSet</code> twice the size necessary when only beta-values or M-values are required. Therefore, we developed <code>preprocessFunnorm.DNAmArray()</code>, which adds an option not to return these to the <code>preprocessFunnorm()</code> function from <a href="https://bioconductor.org/packages/release/bioc/html/minfi.html"><strong>minfi</strong></a> <span class="citation">(Aryee et al. 2014)</span>.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">GRset &lt;-<span class="st"> </span><span class="kw">preprocessFunnorm.DNAmArray</span>(RGset, <span class="dt">nPCs=</span><span class="dv">4</span>, <span class="dt">keepCN=</span><span class="ot">FALSE</span>)</code></pre></div>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">GRset &lt;-<span class="st"> </span><span class="kw">preprocessFunnorm.DNAmArray</span>(RGset, <span class="dt">nPCs=</span><span class="dv">6</span>, <span class="dt">keepCN=</span><span class="ot">FALSE</span>)</code></pre></div>
 <pre><code>## [preprocessFunnorm] Modified version not returning CN! 
 ## [preprocessFunnorm] Background and dye bias correction with noob 
 ## [preprocessFunnorm] Mapping to genome
@@ -499,7 +503,7 @@ pc &lt;-<span class="st"> </span><span class="kw">screeplot</span>(RGset)</code>
 ## colnames(138): GSM3092700_9985178096_R01C01
 ##   GSM3092701_9985178127_R03C02 ... GSM3093566_9020331152_R05C01
 ##   GSM3093567_9020331152_R06C01
-## colData names(40): title geo_accession ... yMed predictedSex
+## colData names(38): title public_date ... yMed predictedSex
 ## Annotation
 ##   array: IlluminaHumanMethylation450k
 ##   annotation: ilmn12.hg19

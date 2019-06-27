@@ -22,6 +22,19 @@ methData <- SummarizedExperiment(assays=SimpleList(betas=betas),
                                  colData=colData)
 ```
 
+
+***
+
+# Probe Annotation #
+
+Our package also contains a `cpgInfo()` function, which can be used to map CpG probes to their nearest genes. This utilises the [**TxDb.Hsapiens.UCSC.hg19.knownGene**](http://bioconductor.statistik.tu-dortmund.de/packages/3.6/data/annotation/html/TxDb.Hsapiens.UCSC.hg19.knownGene.html) package, which accesses the USCS annotation databases.
+
+```{r 615annotate}
+cpgs <- rownames(betas)
+cpgInfo <- cpgInfo(cpgs, TxDb="TxDb.Hsapiens.UCSC.hg19.knownGene")
+cpgInfo[1:10, 1:7]
+```
+
 ***
 
 # Simple EWAS using **limma** #

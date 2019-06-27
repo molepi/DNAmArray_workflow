@@ -4,11 +4,11 @@
 
 ***
 
-# Probe-level filtering #
+# Filtering on Intensities #
 
 We recommend performing probe-filtering by setting unreliably measured probes to NA. Unfortunately, Functional Normalization does not allow NA's in the `RGChannelSet`. Therefore, it is best to run normalization and probe-filtering separately and combine the results afterwards using our `reduce()` function. 
 
-Some observations need to be removed from the dataset since they provide little to no information that could skew analyses. Probes which suffered from low intensity (default: <1) or are based on very few (default: <3) beads are removed, based on a specified cut off. 
+Some observations need to be removed from the dataset since they provide little to no information that could skew analyses. Probes which have zero intensity or are based on very few (default: <3) beads are removed, based on a specified cut off. 
 
 ```{r 501start, echo=FALSE, message=FALSE, results='hide'}
 load("C:/Users/ljsinke/Documents/git/GitHub/test_workflow/data/targets_mod.RData")
@@ -30,7 +30,7 @@ typeI <- getProbeInfo(RGset, type="I")
 
 ***
 
-# CpG-level filtering
+# Detection p-values #
 
 The negative controls on the array can be used to detect outlying samples via the detection p-values, which measure how likely it is a sample's signal differs from the background. Signals that do not differ substantially (default: p<0.01) are removed. We utilise `detectionP()` from [**minfi**](https://bioconductor.org/packages/release/bioc/html/minfi.html) inside our function to achieve this. 
 Additionally, samples where a large proportion (default: >5%) of probes were set to NA based on the above probe-level filtering are removed. 
@@ -43,9 +43,9 @@ betas <- reduce(GRset, RGset, what="beta")
 
 ***
 
-# Cross-reactivity and polymorphism #
+# Ambiguous probes #
 
-Several studies [@Chen2013, @Zhou2017] have characterized ambiguous probes on both the 450k and EPIC methylation arrays and made suggestions for removal. We chose to remove probes identified by Zhou et al., since this set is actively maintained and supports both array sizes. Additionally, different sets are specified depending on the reference genome used.
+Several studies [@Chen2013, @Zhou2017] have characterized cross-reactive and polymorphic probes on both the 450k and EPIC methylation arrays and made suggestions for removal. We chose to remove probes identified by Zhou et al., since this set is actively maintained and supports both array sizes. Additionally, different sets are specified depending on the reference genome used.
 
 In total, Zhou et al. suggest removal of probes for a variety of reasons, from ambiguous mapping and cross-reactivity to polymorphisms that interfere with extension. In general, around 60.000 probes are suggested for removal in 450k arrays, and 100.000 for EPIC. 
 

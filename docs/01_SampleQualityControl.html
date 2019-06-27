@@ -433,7 +433,7 @@ div.tocify {
     <div id="navbar" class="navbar-collapse collapse">
       <ul class="nav navbar-nav">
         <li>
-  <a href="01_SampleQualityControl.html">Quality control</a>
+  <a href="01_SampleQualityControl.html">Sample-level QC</a>
 </li>
 <li>
   <a href="02_Visualization.html">Visualizations</a>
@@ -442,10 +442,10 @@ div.tocify {
   <a href="03_Normalization.html">Normalization</a>
 </li>
 <li>
-  <a href="04_ProbeFiltering.html">Probe filtering</a>
+  <a href="04_ProbeFiltering.html">Probe Filtering</a>
 </li>
 <li>
-  <a href="05_Miscellaneous.html">Miscellaneous</a>
+  <a href="05_Miscellaneous.html">Predictions</a>
 </li>
 <li>
   <a href="06_EWAS.html">EWAS</a>
@@ -469,8 +469,9 @@ div.tocify {
 
 
 <hr />
-<div id="downloading-geo-example-data" class="section level1">
-<h1>Downloading GEO example data</h1>
+<div id="importing-idats" class="section level1">
+<h1>Importing IDATs</h1>
+<p>The first step of any analysis of microarray data involves importing the raw intensity files into your software program. In this example, we show how to import raw IDAT files from GEO into R, but similar strategies can be employed for all Illumina methylation array files when using R.</p>
 <p>Using <a href="http://bioconductor.org/packages/release/bioc/html/GEOquery.html"><strong>GEOquery</strong></a> <span class="citation">(Davis and Meltzer 2007)</span>, you can download the <a href="https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE113018">example data</a> <span class="citation">(Cobben et al. 2019)</span>. This package contains functions that bridge the gap between between <a href="https://www.bioconductor.org">BioConductor</a> tools and <a href="https://www.ncbi.nlm.nih.gov/geo/">GEO</a>, which is a public repository of microarray data.</p>
 <p>Initially, we use <code>getGEOSuppFiles()</code> to download the supplementary data to the current working directory. These consist of an archive containing the raw IDATs alongside some documentation. We extract these and store them in our chosen directory, ready for decompression.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(GEOquery)
@@ -478,10 +479,7 @@ div.tocify {
 <span class="kw">untar</span>(<span class="dt">tarfile=</span><span class="st">&quot;./GSE113018/GSE113018_RAW.tar&quot;</span>, <span class="dt">exdir=</span><span class="st">&quot;./GSE113018/IDATs&quot;</span>)</code></pre></div>
 <p>After creating a list of files, we utilise the <code>gunzip()</code> function to efficiently unpack the data.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">setwd</span>(<span class="st">&quot;./GSE113018/IDATs&quot;</span>)
-idat_files &lt;-<span class="st"> </span><span class="kw">list.files</span>()
-<span class="cf">for</span>(i <span class="cf">in</span> <span class="dv">1</span><span class="op">:</span><span class="kw">length</span>(idat_files)){
-  <span class="kw">gunzip</span>(<span class="dt">filename=</span>idat_files[i], <span class="dt">destname=</span><span class="kw">gsub</span>(<span class="st">&quot;[.]gz$&quot;</span>, <span class="st">&quot;&quot;</span>, idat_files[i]))
-}</code></pre></div>
+<span class="kw">sapply</span>(<span class="kw">list.files</span>(), gunzip)</code></pre></div>
 <p>We then use <code>getGEO()</code> to import SOFT format microarray data into R as a large GSE-class list. This contains a multitude of information, but we extract the phenotypic and meta-data of interest.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">GSE113018 &lt;-<span class="st"> </span><span class="kw">getGEO</span>(<span class="dt">GEO=</span><span class="st">&quot;GSE113018&quot;</span>)
 targets &lt;-<span class="st"> </span><span class="kw">pData</span>(<span class="kw">phenoData</span>(GSE113018[[<span class="dv">1</span>]]))</code></pre></div>
