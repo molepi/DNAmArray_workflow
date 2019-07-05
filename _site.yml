@@ -9,12 +9,16 @@ navbar:
       href: 02_Visualization.html
     - text: "Normalization"      
       href: 03_Normalization.html
-    - text: "Probe Filtering"      
+    - text: "Probe-level QC"      
       href: 04_ProbeFiltering.html
-    - text: "Predictions"
-      href: 05_Miscellaneous.html
+    - text: "Imputation"
+      href: 05_Impute.html
+    - text: "Predictors"
+      href: 06_Predict.html
+    - text: "Probe Masking"
+      href: 07_Masking.html
     - text: "EWAS"
-      href: 06_EWAS.html
+      href: 08_EWAS.html
   right:
     - text: "About"
       href: about.html

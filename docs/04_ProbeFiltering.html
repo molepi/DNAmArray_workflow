@@ -442,13 +442,19 @@ div.tocify {
   <a href="03_Normalization.html">Normalization</a>
 </li>
 <li>
-  <a href="04_ProbeFiltering.html">Probe Filtering</a>
+  <a href="04_ProbeFiltering.html">Probe-level QC</a>
 </li>
 <li>
-  <a href="05_Miscellaneous.html">Predictions</a>
+  <a href="05_Impute.html">Imputation</a>
 </li>
 <li>
-  <a href="06_EWAS.html">EWAS</a>
+  <a href="06_Predict.html">Predictors</a>
+</li>
+<li>
+  <a href="07_Masking.html">Probe Masking</a>
+</li>
+<li>
+  <a href="08_EWAS.html">EWAS</a>
 </li>
       </ul>
       <ul class="nav navbar-nav navbar-right">
@@ -502,29 +508,11 @@ typeI &lt;-<span class="st"> </span><span class="kw">getProbeInfo</span>(RGset, 
 ## Percentage of CpGs having success rate above  0.95  is  99.56 %</code></pre>
 <hr />
 </div>
-<div id="ambiguous-probes" class="section level1">
-<h1>Ambiguous probes</h1>
-<p>Several studies <span class="citation">(Chen et al. 2013, <span class="citation">Zhou, Laird, and Shen (2017)</span>)</span> have characterized cross-reactive and polymorphic probes on both the 450k and EPIC methylation arrays and made suggestions for removal. We chose to remove probes identified by Zhou et al., since this set is actively maintained and supports both array sizes. Additionally, different sets are specified depending on the reference genome used.</p>
-<p>In total, Zhou et al. suggest removal of probes for a variety of reasons, from ambiguous mapping and cross-reactivity to polymorphisms that interfere with extension. In general, around 60.000 probes are suggested for removal in 450k arrays, and 100.000 for EPIC.</p>
-<p>We developed the <code>probeMasking()</code> function, which removes specified probes from either beta- or M- value matrices. In this instance, 59.780 CpG rows are removed.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">betas &lt;-<span class="st"> </span><span class="kw">probeMasking</span>(betas, <span class="dt">array=</span><span class="st">&quot;450&quot;</span>, <span class="dt">genome=</span><span class="st">&quot;hg19&quot;</span>)</code></pre></div>
-<pre><code>## [probeFilterDNAmArray] Extracting probe filter... 
-## [probeFilterDNAmArray] 60466 probes considered for filtering... 
-## [probeFilterDNAmArray] 59780 / 483366 probes removed from the dataset</code></pre>
-<p>Looking at all types of probe filtering, 61,926 sites were removed, reducing the total number to 423,586. The vast majority of these were cross-reactive or polymorphic CpGs.</p>
-<hr />
-</div>
 <div id="references" class="section level1 unnumbered">
 <h1>References</h1>
 <div id="refs" class="references">
 <div id="ref-Feinberg2014">
 <p>Aryee, Martin J., Andrew E. Jaffe, Hector Corrada-Bravo, Christine Ladd-Acosta, Andrew P. Feinberg, Kasper D. Hansen, and Rafael A. Irizarry. 2014. “Minfi: A flexible and comprehensive Bioconductor package for the analysis of Infinium DNA methylation microarrays.” <em>Bioinformatics</em> 30 (10). Oxford University Press: 1363–9. doi:<a href="https://doi.org/10.1093/bioinformatics/btu049">10.1093/bioinformatics/btu049</a>.</p>
-</div>
-<div id="ref-Chen2013">
-<p>Chen, Yi An, Mathieu Lemire, Sanaa Choufani, Darci T Butcher, Daria Grafodatskaya, Brent W Zanke, Steven Gallinger, Thomas J Hudson, and Rosanna Weksberg. 2013. “Discovery of cross-reactive probes and polymorphic CpGs in the Illumina Infinium HumanMethylation450 microarray.” <em>Epigenetics</em> 8 (2). Taylor &amp; Francis: 203–9. doi:<a href="https://doi.org/10.4161/epi.23470">10.4161/epi.23470</a>.</p>
-</div>
-<div id="ref-Zhou2017">
-<p>Zhou, Wanding, Peter W. Laird, and Hui Shen. 2017. “Comprehensive characterization, annotation and innovative use of Infinium DNA methylation BeadChip probes.” <em>Nucleic Acids Research</em> 45 (4). Oxford University Press: e22. doi:<a href="https://doi.org/10.1093/nar/gkw967">10.1093/nar/gkw967</a>.</p>
 </div>
 </div>
 </div>

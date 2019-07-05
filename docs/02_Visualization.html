@@ -442,13 +442,19 @@ div.tocify {
   <a href="03_Normalization.html">Normalization</a>
 </li>
 <li>
-  <a href="04_ProbeFiltering.html">Probe Filtering</a>
+  <a href="04_ProbeFiltering.html">Probe-level QC</a>
 </li>
 <li>
-  <a href="05_Miscellaneous.html">Predictions</a>
+  <a href="05_Impute.html">Imputation</a>
 </li>
 <li>
-  <a href="06_EWAS.html">EWAS</a>
+  <a href="06_Predict.html">Predictors</a>
+</li>
+<li>
+  <a href="07_Masking.html">Probe Masking</a>
+</li>
+<li>
+  <a href="08_EWAS.html">EWAS</a>
 </li>
       </ul>
       <ul class="nav navbar-nav navbar-right">
@@ -471,7 +477,7 @@ div.tocify {
 <hr />
 <div id="beta-values" class="section level1">
 <h1>Beta values</h1>
-<p>In order to further visualize the data, we store the beta values using the <code>getBeta()</code> function from <a href="https://bioconductor.org/packages/release/bioc/html/minfi.html"><strong>minfi</strong></a> <span class="citation">(Aryee et al. 2014)</span>. The <code>type=&quot;Illumina&quot;</code> option adds 100 to the denominator of the beta-value calculation, preventing NA values being recorded when the methylated and unmethylated signal are both 0.</p>
+<p>In order to further visualize the data, we store the beta values using the <code>getBeta()</code> function from <a href="https://bioconductor.org/packages/rel%20ease/bioc/html/minfi.html"><strong>minfi</strong></a> <span class="citation">(Aryee et al. 2014)</span>. The <code>type=&quot;Illumina&quot;</code> option adds 100 to the denominator of the beta-value calculation, preventing NA values being recorded when the methylated and unmethylated signal are both 0.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">betas &lt;-<span class="st"> </span><span class="kw">getBeta</span>(RGset, <span class="dt">type=</span><span class="st">&quot;Illumina&quot;</span>)</code></pre></div>
 <hr />
 </div>

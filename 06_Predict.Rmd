@@ -1,0 +1,104 @@
+
+```{r, child="_setup.Rmd"}
+```
+
+```{r 601start, echo=FALSE, message=FALSE, results='hide'}
+load("C:/Users/ljsinke/Documents/git/GitHub/test_workflow/data/targets_mod.RData")
+RGset <- read.metharray.exp(base="C:/Users/ljsinke/Documents/r/cd/GSE113018/IDATs", targets, extended=TRUE)
+GRset <- preprocessFunnorm.DNAmArray(RGset, nPCs=4, keepCN=FALSE)
+RGset <- probeFiltering(RGset)
+betas <- reduce(GRset, RGset, what="beta")
+
+library(missMDA)
+betas <- imputePCA(betas)
+betas <- betas$completeObs
+betas[betas<0] <- 0
+betas[betas>1] <- 1
+```
+
+***
+
+# Phenotype Prediction #
+
+It can be useful to predict phenotypes in your data, either for comparison to assumed categories or to help impute missing values. We are in the process of creating predictors for sample cell composition, sex, age, and smoking status. These will either be reference-based predictors using the large BIOS data, which includes samples from 6 dutch cohorts and over 4000 individuals, or ones built using reference-free or semi-supervised methods. When created and distributed within this package, you will be able to use them to predict phenotypes in your own datasets. 
+
+Meanwhile, below some current methods are describe to predict phenotypes in your data. It is important to carry out predictions prior to probe masking, as many probes masked for analysis (e.g. those on sex chromosomes) are still useful for predicting phenotypes. Additionally, we advise imputing missing vaues before phenotype prediction, since many predictors use only a subset of available probes and missing data can seriously impact accuracy. 
+
+### Predict White Blood Cell Composition ###
+
+White blood cell count can be predicted using Houseman's partial least squares method [@Houseman2012] implemented in [**minfi**](http://bioconductor.org/packages/minfi) [@Feinberg2014] by the `estimateCellCounts()` function. This implements a calibration algorithm for deconvoluting heterogenous tissue sources, such as blood, and returns a matrix of composition estimates across all samples and cell types. 
+
+### Predict Sex ###
+
+The [**DNAmArray**](https://github.com/molepi/DNAmArray) package contains a `getSex.DNAmArray()` function, which predicts the sex of your observations by inspecting intensities of X-chromosome signals. 
+
+```{r 604sexpredict}
+mid <- match(colnames(betas), targets$Basename)
+
+predictedSex <- as.factor(getSex.DNAmArray(betas))
+assumedSex <- targets$sex[mid]
+
+table(predictedSex, assumedSex)
+```
+
+As you can see, this is complete data, but the predicted and assumed sexes are identical. This means that we can feel increased confidence that no incorrect labelling or mix-ups are present.
+
+### Predict chronological age ###
+
+Age can be predicted using Horvath's or Hannum's coefficients with `agep()` from [**wateRmelon**](https://bioconductor.org/packages/release/bioc/html/wateRmelon.html). If you use Hannum's, you will need to call the coefficients using `data(hannumCoef)` before prediction. The predicted and assumed ages are then combined into a data frame that can be used to visualize the results.
+
+```{r 610agep, message=FALSE, warning=FALSE}
+library(wateRmelon)
+predictedAge <- as.numeric(agep(betas, method="horvath"))
+assumedAge <- as.numeric(targets$age[mid])
+
+ages <- data.frame(Assumed=assumedAge, Predicted=predictedAge)
+head(ages)
+```
+
+```{r 610theme, echo=FALSE}
+th3 <- theme(text=element_text(size=12), 
+             panel.border=element_rect(fill=NA, color="#cdcdcd", size=1, linetype=1), 
+             plot.title=element_text(size=20, hjust=0.5, margin=margin(0,0,15,0)), 
+             plot.margin=margin(20,25,25,25))
+```
+
+```{r 610plot}
+ggplot(ages, aes(x=Assumed, y=Predicted)) + ggtitle("Assumed vs. Predicted Age") + th3 +
+  geom_point(shape=16, color="#158cba") + geom_smooth(method=lm, color="#D67D87")
+```
+
+The above graph shows that this prediction follows the general trend of the assumed ages, however the residuals are quite large. It may be possible to develop an improved predictor [@Zhang2018], and we plan to implement this.
+
+***
+
+# Checking Sample Relationships #
+
+[**omicsPrint**](http://bioconductor.org/packages/release/bioc/html/omicsPrint.html) [@VanIterson2018] is a package we developed to detect data linkage errors through inspecting sample relations in multiple omics studies. Included with the package is the `hm450.manifest.pop.GoNL` data, which stores SNP probe information in a `GRanges` class object. This is then used to create a subset of the beta values for genotyping. 
+
+```{r 612omicsprint, message=FALSE, warning=FALSE}
+library(omicsPrint)
+data(hm450.manifest.pop.GoNL)
+
+cpgs <- names(hm450.manifest.pop.GoNL[mcols(hm450.manifest.pop.GoNL)$MASK.snp5.EAS])
+cpgs <- na.omit(match(cpgs, rownames(betas)))
+omicsBetas <- betas[cpgs,]
+omicsBetas[1:10, 1:2]
+```
+
+The function `beta2genotype()` then genotypes the observations by measuring homozygous or heterozygous alleles at these SNP probes. Lastly `alleleSharing()` assesses the relationships between different individuals, which can be unrelated, twins, or identical. The results can then be visualised using the `inferRelations()` function.
+
+```{r 613genotype}
+dnamCalls <- beta2genotype(omicsBetas, assayName="exprs")
+dim(dnamCalls)
+dnamCalls[1:10, 1:2]
+
+omicsData <- alleleSharing(dnamCalls, verbose=TRUE)
+mismatches <- inferRelations(omicsData)
+```
+
+Since there are no twins or relatives in our data, all observations are shown as unrelated. In data with sample relationships, this would be shown in the above graph as green or black clusters [@VanIterson2018]. It is important to carry out this type of visualization before probe-filtering as otherwise the genotyping will be based on very few SNPs. 
+
+***
+
+# References #

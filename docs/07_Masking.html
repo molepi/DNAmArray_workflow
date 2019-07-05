@@ -470,72 +470,103 @@ div.tocify {
 
 
 
-<h1 class="title toc-ignore"><div style="white-space: pre-line;">Streamlined workflow for the quality control, normalization, and analysis of Illumina methylation array data
-</div></h1>
-<h4 class="author"><div style="white-space: pre-line;">Lucy Sinke, Maarten van Iterson, Davy Cats, and Bas Heijmans
-<font size=2 color=#6b6b6b>Molecular Epidemiology, Department of Biomedical Data Sciences, Leiden University Medical Center, Leiden, The Netherlands</font></div></h4>
 
 </div>
 
 
 <hr />
-<div id="introduction" class="section level1">
-<h1>Introduction</h1>
-<p>Here we provide a complete workflow for the preprocessing and analysis of DNA methylation array data. The workflow combines best practices in the field with in-house developed methodology, and is geared towards large-scale studies, including Epigenome-wide Association Studies (EWAS). Its development was informed by our research analysing <a href="https://www.bbmri.nl/samples-images-data">BIOS consortium</a> data, which contains multiomics measures from 6 Dutch biobanks comprising ~4000 individuals <span class="citation">(Dekkers et al. 2016, <span class="citation">R. C. Slieker et al. (2016)</span>, <span class="citation">Bonder et al. (2017)</span>, <span class="citation">Luijk et al. (2018)</span>)</span> .</p>
-<p>The <a href="https://github.com/molepi/DNAmArray"><strong>DNAmArray</strong></a>-package contains a series of convenient functions for the quality control, normalization, and analysis of methylation array data. The workflow has been thoroughly tested for the Illumina 450k array but is similarly applicable to the newer 850k EPIC array.</p>
-<p>It is worth noting that this workflow makes extensive use of other <a href="https://www.bioconductor.org">BioConductor</a> packages. For example, the <a href="https://github.com/molepi/DNAmArray"><strong>DNAmArray</strong></a> function <code>read.metharray.exp.par()</code> converts IDAT files to an <code>RGset</code> by harnessing functions from <a href="https://bioconductor.org/packages/release/bioc/html/minfi.html"><strong>minfi</strong></a> <span class="citation">(Aryee et al. 2014)</span> and combining them with <a href="https://bioconductor.org/packages/release/bioc/html/BiocParallel.html"><strong>BiocParallel</strong></a>. Usually the required packages are installed automatically, but otherwise please refer to the relevant package’s documentation.</p>
-<p>Furthermore, we have also developed packages used by this workflow. <a href="http:/bioconductor.org/packages/MethylAid"><strong>MethylAid</strong></a> <span class="citation">(Iterson et al. 2014)</span> provides a web application to assist in performing interactive sample quality control, and <a href="http:/bioconductor.org/packages/bacon"><strong>bacon</strong></a> <span class="citation">(Iterson et al. 2017)</span> corrects for bias and inflation in ome-wide association studies, such as EWAS.</p>
+<div id="ambiguous-probes" class="section level1">
+<h1>Ambiguous probes</h1>
+<p>Several studies <span class="citation">(Chen et al. 2013, <span class="citation">Zhou, Laird, and Shen (2017)</span>)</span> have characterized cross-reactive and polymorphic probes on both the 450k and EPIC methylation arrays and made suggestions for removal. We chose to remove probes identified by Zhou et al., since this set is actively maintained and supports both array sizes. Additionally, different sets are specified depending on the reference genome used.</p>
+<p>In total, Zhou et al. suggest removal of probes for a variety of reasons, from ambiguous mapping and cross-reactivity to polymorphisms that interfere with extension. In general, around 60.000 probes are suggested for removal in 450k arrays, and 100.000 for EPIC.</p>
+<p>We developed the <code>probeMasking()</code> function, which removes specified probes from either beta- or M- value matrices. In this instance, 59,780 CpG rows are removed.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">betas &lt;-<span class="st"> </span><span class="kw">probeMasking</span>(betas, <span class="dt">array=</span><span class="st">&quot;450&quot;</span>, <span class="dt">genome=</span><span class="st">&quot;hg19&quot;</span>)</code></pre></div>
+<pre><code>## [probeFilterDNAmArray] Extracting probe filter... 
+## [probeFilterDNAmArray] 60466 probes considered for filtering... 
+## [probeFilterDNAmArray] 59780 / 483366 probes removed from the dataset</code></pre>
 <hr />
 </div>
-<div id="example-data" class="section level1">
-<h1>Example Data</h1>
-<p>The <a href="https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE113018">example data</a> <span class="citation">(Cobben et al. 2019)</span> used in this workflow is available from the <a href="https://www.ncbi.nlm.nih.gov/geo/">NCBI Gene Expression Omnibus</a> (GEO), a public repository of microarray data. It contains genome-wide DNA methylation data from whole blood obtained using the Illumina 450k microarray. The participants consist of 46 fetal alcohol spectrum disorder (FASD) cases and 92 controls from both a discovery and replication cohort.</p>
+<div id="rangedsummarizedexperiment" class="section level1">
+<h1><code>RangedSummarizedExperiment</code></h1>
+<p>Moving further into the pipeline, it will be necessary to have our methylation data stored in a <a href="http://bioconductor.org/packages/SummarizedExperiment"><code>RangedSummarizedExperiment</code></a> class object. Designed to handle microarray data, this class stores observations from multiple samples alongside relevant meta-data, and ensures that both features and phenotypes are kept in-sync when subsetting.</p>
+<p>This matrix-like container is organised with rows representing features, such as genes or exons, which can be accessed using <code>rowRanges()</code>. This function calls a <code>GRanges</code> object describing features and their attributes. The columns of the <code>RangedSummarizedExperiment</code> store information about each sample, and this can be accessed using <code>colData()</code>.</p>
+<p>Lastly, each assay is represented in the third dimension of this matrix-like object and can be shown using the <code>assays()</code> function. Meta-data is then linked to this combination of data frames, and can be accessed with the <code>metadata()</code> command.</p>
+<div id="creating-a-rangedsummarizedexperiment" class="section level3">
+<h3>Creating a <code>RangedSummarizedExperiment</code></h3>
+<p>The <a href="https://bioconductor.org/packages/release/data/annotation/html/FDb.InfiniumMethylation.hg19.html"><strong>FDb.InfiniumMethylation.hg19</strong></a> package contains probe annotations, which can be extracted using the <code>getPlatform()</code> function. To ensure that we apply the previous probe filtering, we use <code>match()</code> to keep only the relevant information.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(FDb.InfiniumMethylation.hg19)
+rowRanges &lt;-<span class="st"> </span><span class="kw">getPlatform</span>(<span class="dt">platform=</span><span class="st">&quot;HM450&quot;</span>, <span class="dt">genome=</span><span class="st">&quot;hg19&quot;</span>)</code></pre></div>
+<pre><code>## Fetching coordinates for hg19...</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">rows &lt;-<span class="st"> </span><span class="kw">match</span>(<span class="kw">rownames</span>(betas), <span class="kw">names</span>(rowRanges))
+rowRanges &lt;-<span class="st"> </span>rowRanges[rows]
+
+rowRanges[,<span class="dv">3</span><span class="op">:</span><span class="dv">4</span>]</code></pre></div>
+<pre><code>## GRanges object with 423586 ranges and 2 metadata columns:
+##                   seqnames            ranges strand | channel platform
+##                      &lt;Rle&gt;         &lt;IRanges&gt;  &lt;Rle&gt; |   &lt;Rle&gt;    &lt;Rle&gt;
+##        cg01707559     chrY   6778695-6778696      * |     Red    HM450
+##        cg03244189     chrY 21238472-21238473      * |     Grn    HM450
+##        cg04792227     chrY 17568097-17568098      * |     Red    HM450
+##        cg14180491     chrY 15016705-15016706      * |     Grn    HM450
+##        cg25032547     chrY 14773536-14773537      * |     Red    HM450
+##               ...      ...               ...    ... .     ...      ...
+##   ch.22.44116734F    chr22          45738070      * |    Both    HM450
+##     ch.22.909671F    chr22          46114168      * |    Both    HM450
+##   ch.22.46830341F    chr22          48451677      * |    Both    HM450
+##    ch.22.1008279F    chr22          48731367      * |    Both    HM450
+##   ch.22.47579720R    chr22          49193714      * |    Both    HM450
+##   -------
+##   seqinfo: 24 sequences from hg19 genome</code></pre>
+<p>Now that we have our annotations, we can combine them with our data using the <a href="https://bioconductor.org/packages/release/bioc/html/SummarizedExperiment.html"><strong>SummarizedExperiment</strong></a> package. After ensuring that any column subsetting is accounted for, we extract the <code>colData()</code> from our <code>RGset</code>. Finally, the beta values, probe annotations, and sample information are combined into a <code>RangedSummarizedExperiment</code> object using the <code>SummarizedExperiment()</code> function.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(SummarizedExperiment)
+
+cols &lt;-<span class="st"> </span><span class="kw">match</span>(<span class="kw">colnames</span>(betas), <span class="kw">colnames</span>(RGset))
+colData &lt;-<span class="st"> </span><span class="kw">DataFrame</span>(<span class="kw">colData</span>(RGset[, cols])<span class="op">@</span>listData)
+
+methData &lt;-<span class="st"> </span><span class="kw">SummarizedExperiment</span>(<span class="dt">assays=</span><span class="kw">SimpleList</span>(<span class="dt">betas=</span>betas),
+                                 <span class="dt">rowRanges=</span>rowRanges,
+                                 <span class="dt">colData=</span>colData)
+methData</code></pre></div>
+<pre><code>## class: RangedSummarizedExperiment 
+## dim: 423586 138 
+## metadata(0):
+## assays(1): betas
+## rownames(423586): cg01707559 cg03244189 ... ch.22.1008279F
+##   ch.22.47579720R
+## rowData names(10): addressA addressB ... probeEnd probeTarget
+## colnames(138): GSM3092700_9985178096_R01C01
+##   GSM3092701_9985178127_R03C02 ... GSM3093566_9020331152_R05C01
+##   GSM3093567_9020331152_R06C01
+## colData names(35): title public_date ... Basename filenames</code></pre>
+You can read more about <a href="http://bioconductor.org/packages/SummarizedExperiment"><strong>SummarizedExperiment</strong></a> from the following resources:
+<ul>
+<li>
+<a href="http://bioconductor.org/packages/release/bioc/vignettes/SummarizedExperiment/inst/doc/SummarizedExperiment.html">Package vignette</a>
+</li>
+<li>
+<a href="http://bioconductor.org/help/course-materials/2012/BiocEurope2012/SummarizedExperiment.pdf">Course material</a>
+</li>
+<li>
+<a href="http://www.nature.com/nmeth/journal/v12/n2/full/nmeth.3252.html">BioConductor nature paper</a>
+</li>
+</ul>
 <hr />
 </div>
-<div id="installation" class="section level1">
-<h1>Installation</h1>
-<p>The <a href="https://github.com/molepi/DNAmArray"><strong>DNAmArray</strong></a>-package can be installed in several ways, and has been successfully for &gt;= R-3.2.0 on various Linux-builds and for &gt;= R-3.5.3 on Windows.</p>
-<div id="install-using-the-devtools-package" class="section level3">
-<h3>Install using the <strong>devtools</strong>-package</h3>
-<p>First install the package <a href="https://github.com/hadley/devtools"><strong>devtools</strong></a>, then use the <code>install_github()</code> function to fetch the <a href="https://github.com/molepi/DNAmArray"><strong>DNAmArray</strong></a> package.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(devtools)
-<span class="kw">install_github</span>(<span class="st">&quot;molepi/DNAmArray&quot;</span>)</code></pre></div>
 </div>
-<div id="install-from-source-using-gitr" class="section level3">
-<h3>Install from source using <code>git/R</code></h3>
-<p>Using <a href="https://git-scm.com/">git</a>, you can <code>git clone</code> our repository and then install the package, changing <code>_x.y.z.</code> to the version you cloned.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">git clone git<span class="op">@</span>github.com<span class="op">/</span>molepi<span class="op">/</span>DNAmArray.git
-R CMD build DNAmArray
-R CMD INSTALL DNAmArray_x.y.z.tar.gz</code></pre></div>
+<div id="sex-chromosomal-probes" class="section level1">
+<h1>Sex Chromosomal Probes</h1>
+<p>Having a <code>RangedSummarizedExperiment</code> class object expedites masking sex chromosomal probes. It is important in most EWAS analyses to remove these as failing to do so can confound inferences.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">methData &lt;-<span class="st"> </span>methData[<span class="op">!</span>(<span class="kw">seqnames</span>(methData) <span class="op">%in%</span><span class="st"> </span><span class="kw">c</span>(<span class="st">&quot;chrX&quot;</span>, <span class="st">&quot;chrY&quot;</span>)),]</code></pre></div>
 <hr />
-</div>
 </div>
 <div id="references" class="section level1 unnumbered">
 <h1>References</h1>
 <div id="refs" class="references">
-<div id="ref-Feinberg2014">
-<p>Aryee, Martin J., Andrew E. Jaffe, Hector Corrada-Bravo, Christine Ladd-Acosta, Andrew P. Feinberg, Kasper D. Hansen, and Rafael A. Irizarry. 2014. “Minfi: A flexible and comprehensive Bioconductor package for the analysis of Infinium DNA methylation microarrays.” <em>Bioinformatics</em> 30 (10). Oxford University Press: 1363–9. doi:<a href="https://doi.org/10.1093/bioinformatics/btu049">10.1093/bioinformatics/btu049</a>.</p>
+<div id="ref-Chen2013">
+<p>Chen, Yi An, Mathieu Lemire, Sanaa Choufani, Darci T Butcher, Daria Grafodatskaya, Brent W Zanke, Steven Gallinger, Thomas J Hudson, and Rosanna Weksberg. 2013. “Discovery of cross-reactive probes and polymorphic CpGs in the Illumina Infinium HumanMethylation450 microarray.” <em>Epigenetics</em> 8 (2). Taylor &amp; Francis: 203–9. doi:<a href="https://doi.org/10.4161/epi.23470">10.4161/epi.23470</a>.</p>
 </div>
-<div id="ref-Bonder2017">
-<p>Bonder, Marc Jan, René Luijk, Daria V Zhernakova, Matthijs Moed, Patrick Deelen, Martijn Vermaat, Maarten van Iterson, et al. 2017. “Disease variants alter transcription factor levels and methylation of their binding sites.” <em>Nature Genetics</em> 49 (1). Nature Publishing Group: 131–38. doi:<a href="https://doi.org/10.1038/ng.3721">10.1038/ng.3721</a>.</p>
-</div>
-<div id="ref-Cobben2019">
-<p>Cobben, Jan M., Izabela M. Krzyzewska, Andrea Venema, Adri N. Mul, Abeltje Polstra, Alex V. Postma, Robert Smigiel, et al. 2019. “DNA-methylation abundantly associates with fetal alcohol spectrum disorder and its subphenotypes.” <em>Epigenomics</em>, March. Future Science Ltd London, UK, epi–2018–0221. doi:<a href="https://doi.org/10.2217/epi-2018-0221">10.2217/epi-2018-0221</a>.</p>
-</div>
-<div id="ref-Dekkers2016">
-<p>Dekkers, Koen F., Maarten van Iterson, Roderick C. Slieker, Matthijs H. Moed, Marc Jan Bonder, Michiel van Galen, Hailiang Mei, et al. 2016. “Blood lipids influence DNA methylation in circulating cells.” <em>Genome Biology</em> 17 (1). BioMed Central: 138. doi:<a href="https://doi.org/10.1186/s13059-016-1000-6">10.1186/s13059-016-1000-6</a>.</p>
-</div>
-<div id="ref-Luijk2014">
-<p>Iterson, Maarten van, Elmar W. Tobi, Roderick C. Slieker, Wouter Den Hollander, René Luijk, P. Eline Slagboom, and Bastiaan T. Heijmans. 2014. “MethylAid: Visual and interactive quality control of large Illumina 450k datasets.” <em>Bioinformatics</em> 30 (23). Oxford University Press: 3435–7. doi:<a href="https://doi.org/10.1093/bioinformatics/btu566">10.1093/bioinformatics/btu566</a>.</p>
-</div>
-<div id="ref-VanIterson2017">
-<p>Iterson, Maarten van, Erik W. van Zwet, Bastiaan T. Heijmans, Peter A.C. ’t Hoen, Joyce van Meurs, Rick Jansen, Lude Franke, et al. 2017. “Controlling bias and inflation in epigenome- and transcriptome-wide association studies using the empirical null distribution.” <em>Genome Biology</em> 18 (1). BioMed Central: 19. doi:<a href="https://doi.org/10.1186/s13059-016-1131-9">10.1186/s13059-016-1131-9</a>.</p>
-</div>
-<div id="ref-Luijk2018">
-<p>Luijk, René, Haoyu Wu, Cavin K Ward-Caviness, Eilis Hannon, Elena Carnero-Montoro, Josine L. Min, Pooja Mandaviya, et al. 2018. “Autosomal genetic variation is associated with DNA methylation in regions variably escaping X-chromosome inactivation.” <em>Nature Communications</em> 9. Nature Publishing Group. doi:<a href="https://doi.org/10.1038/S41467-018-05714-3">10.1038/S41467-018-05714-3</a>.</p>
-</div>
-<div id="ref-Slieker2016">
-<p>Slieker, Roderick C, Maarten van Iterson, René Luijk, Marian Beekman, Daria V Zhernakova, Matthijs H Moed, Hailiang Mei, et al. 2016. “Age-related accrual of methylomic variability is linked to fundamental ageing mechanisms.” <em>Genome Biology</em> 17 (1). BioMed Central: 191. doi:<a href="https://doi.org/10.1186/s13059-016-1053-6">10.1186/s13059-016-1053-6</a>.</p>
+<div id="ref-Zhou2017">
+<p>Zhou, Wanding, Peter W. Laird, and Hui Shen. 2017. “Comprehensive characterization, annotation and innovative use of Infinium DNA methylation BeadChip probes.” <em>Nucleic Acids Research</em> 45 (4). Oxford University Press: e22. doi:<a href="https://doi.org/10.1093/nar/gkw967">10.1093/nar/gkw967</a>.</p>
 </div>
 </div>
 </div>

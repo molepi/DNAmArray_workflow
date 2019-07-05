@@ -1,0 +1,609 @@
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+
+<meta charset="utf-8" />
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="generator" content="pandoc" />
+
+
+
+
+<title></title>
+
+<script src="site_libs/jquery-1.11.3/jquery.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="site_libs/bootstrap-3.3.5/css/lumen.min.css" rel="stylesheet" />
+<script src="site_libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/respond.min.js"></script>
+<script src="site_libs/jqueryui-1.11.4/jquery-ui.min.js"></script>
+<link href="site_libs/tocify-1.9.1/jquery.tocify.css" rel="stylesheet" />
+<script src="site_libs/tocify-1.9.1/jquery.tocify.js"></script>
+<script src="site_libs/navigation-1.1/tabsets.js"></script>
+
+
+<style type="text/css">code{white-space: pre;}</style>
+<style type="text/css" data-origin="pandoc">
+div.sourceCode { overflow-x: auto; }
+table.sourceCode, tr.sourceCode, td.lineNumbers, td.sourceCode {
+  margin: 0; padding: 0; vertical-align: baseline; border: none; }
+table.sourceCode { width: 100%; line-height: 100%; background-color: #ffffff; color: #1f1c1b; }
+td.lineNumbers { text-align: right; padding-right: 4px; padding-left: 4px; background-color: #ffffff; color: #a0a0a0; border-right: 1px solid #a0a0a0; }
+td.sourceCode { padding-left: 5px; }
+pre, code { color: #1f1c1b; background-color: #ffffff; }
+code > span.kw { color: #1f1c1b; font-weight: bold; } /* Keyword */
+code > span.dt { color: #0057ae; } /* DataType */
+code > span.dv { color: #b08000; } /* DecVal */
+code > span.bn { color: #b08000; } /* BaseN */
+code > span.fl { color: #b08000; } /* Float */
+code > span.cn { color: #aa5500; } /* Constant */
+code > span.ch { color: #924c9d; } /* Char */
+code > span.sc { color: #3daee9; } /* SpecialChar */
+code > span.st { color: #bf0303; } /* String */
+code > span.vs { color: #bf0303; } /* VerbatimString */
+code > span.ss { color: #ff5500; } /* SpecialString */
+code > span.im { color: #ff5500; } /* Import */
+code > span.co { color: #898887; } /* Comment */
+code > span.do { color: #607880; } /* Documentation */
+code > span.an { color: #ca60ca; } /* Annotation */
+code > span.cv { color: #0095ff; } /* CommentVar */
+code > span.ot { color: #006e28; } /* Other */
+code > span.fu { color: #644a9b; } /* Function */
+code > span.va { color: #0057ae; } /* Variable */
+code > span.cf { color: #1f1c1b; font-weight: bold; } /* ControlFlow */
+code > span.op { color: #1f1c1b; } /* Operator */
+code > span.bu { color: #644a9b; font-weight: bold; } /* BuiltIn */
+code > span.ex { color: #0095ff; font-weight: bold; } /* Extension */
+code > span.pp { color: #006e28; } /* Preprocessor */
+code > span.at { color: #0057ae; } /* Attribute */
+code > span.re { color: #0057ae; } /* RegionMarker */
+code > span.in { color: #b08000; } /* Information */
+code > span.wa { color: #bf0303; } /* Warning */
+code > span.al { color: #bf0303; font-weight: bold; } /* Alert */
+code > span.er { color: #bf0303; text-decoration: underline; } /* Error */
+code > span. { color: #1f1c1b; } /* Normal */
+
+</style>
+<script>
+// apply pandoc div.sourceCode style to pre.sourceCode instead
+(function() {
+  var sheets = document.styleSheets;
+  for (var i = 0; i < sheets.length; i++) {
+    if (sheets[i].ownerNode.dataset["origin"] !== "pandoc") continue;
+    try { var rules = sheets[i].cssRules; } catch (e) { continue; }
+    for (var j = 0; j < rules.length; j++) {
+      var rule = rules[j];
+      // check if there is a div.sourceCode rule
+      if (rule.type !== rule.STYLE_RULE || rule.selectorText !== "div.sourceCode") continue;
+      var style = rule.style.cssText;
+      // check if color or background-color is set
+      if (rule.style.color === '' || rule.style.backgroundColor === '') continue;
+      // replace div.sourceCode by a pre.sourceCode rule
+      sheets[i].deleteRule(j);
+      sheets[i].insertRule('pre.sourceCode{' + style + '}', j);
+    }
+  }
+})();
+</script>
+<style type="text/css">
+  pre:not([class]) {
+    background-color: white;
+  }
+</style>
+
+
+<style type="text/css">
+h1 {
+  font-size: 34px;
+}
+h1.title {
+  font-size: 38px;
+}
+h2 {
+  font-size: 30px;
+}
+h3 {
+  font-size: 24px;
+}
+h4 {
+  font-size: 18px;
+}
+h5 {
+  font-size: 16px;
+}
+h6 {
+  font-size: 12px;
+}
+.table th:not([align]) {
+  text-align: left;
+}
+</style>
+
+<link rel="stylesheet" href="style.css" type="text/css" />
+
+
+
+<style type = "text/css">
+.main-container {
+  max-width: 940px;
+  margin-left: auto;
+  margin-right: auto;
+}
+code {
+  color: inherit;
+  background-color: rgba(0, 0, 0, 0.04);
+}
+img {
+  max-width:100%;
+  height: auto;
+}
+.tabbed-pane {
+  padding-top: 12px;
+}
+.html-widget {
+  margin-bottom: 20px;
+}
+button.code-folding-btn:focus {
+  outline: none;
+}
+summary {
+  display: list-item;
+}
+</style>
+
+
+<style type="text/css">
+/* padding for bootstrap navbar */
+body {
+  padding-top: 54px;
+  padding-bottom: 40px;
+}
+/* offset scroll position for anchor links (for fixed navbar)  */
+.section h1 {
+  padding-top: 59px;
+  margin-top: -59px;
+}
+.section h2 {
+  padding-top: 59px;
+  margin-top: -59px;
+}
+.section h3 {
+  padding-top: 59px;
+  margin-top: -59px;
+}
+.section h4 {
+  padding-top: 59px;
+  margin-top: -59px;
+}
+.section h5 {
+  padding-top: 59px;
+  margin-top: -59px;
+}
+.section h6 {
+  padding-top: 59px;
+  margin-top: -59px;
+}
+.dropdown-submenu {
+  position: relative;
+}
+.dropdown-submenu>.dropdown-menu {
+  top: 0;
+  left: 100%;
+  margin-top: -6px;
+  margin-left: -1px;
+  border-radius: 0 6px 6px 6px;
+}
+.dropdown-submenu:hover>.dropdown-menu {
+  display: block;
+}
+.dropdown-submenu>a:after {
+  display: block;
+  content: " ";
+  float: right;
+  width: 0;
+  height: 0;
+  border-color: transparent;
+  border-style: solid;
+  border-width: 5px 0 5px 5px;
+  border-left-color: #cccccc;
+  margin-top: 5px;
+  margin-right: -10px;
+}
+.dropdown-submenu:hover>a:after {
+  border-left-color: #ffffff;
+}
+.dropdown-submenu.pull-left {
+  float: none;
+}
+.dropdown-submenu.pull-left>.dropdown-menu {
+  left: -100%;
+  margin-left: 10px;
+  border-radius: 6px 0 6px 6px;
+}
+</style>
+
+<script>
+// manage active state of menu based on current page
+$(document).ready(function () {
+  // active menu anchor
+  href = window.location.pathname
+  href = href.substr(href.lastIndexOf('/') + 1)
+  if (href === "")
+    href = "index.html";
+  var menuAnchor = $('a[href="' + href + '"]');
+
+  // mark it active
+  menuAnchor.parent().addClass('active');
+
+  // if it's got a parent navbar menu mark it active as well
+  menuAnchor.closest('li.dropdown').addClass('active');
+});
+</script>
+
+<!-- tabsets -->
+
+<style type="text/css">
+.tabset-dropdown > .nav-tabs {
+  display: inline-table;
+  max-height: 500px;
+  min-height: 44px;
+  overflow-y: auto;
+  background: white;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs > li.active:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li.active:before {
+  content: "&#xe258;";
+  border: none;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs > li.active {
+  display: block;
+}
+
+.tabset-dropdown > .nav-tabs > li > a,
+.tabset-dropdown > .nav-tabs > li > a:focus,
+.tabset-dropdown > .nav-tabs > li > a:hover {
+  border: none;
+  display: inline-block;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li {
+  display: block;
+  float: none;
+}
+
+.tabset-dropdown > .nav-tabs > li {
+  display: none;
+}
+</style>
+
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+
+$(document).ready(function () {
+  $('.tabset-dropdown > .nav-tabs > li').click(function () {
+    $(this).parent().toggleClass('nav-tabs-open')
+  });
+});
+</script>
+
+<!-- code folding -->
+
+
+
+<script>
+$(document).ready(function ()  {
+
+    // move toc-ignore selectors from section div to header
+    $('div.section.toc-ignore')
+        .removeClass('toc-ignore')
+        .children('h1,h2,h3,h4,h5').addClass('toc-ignore');
+
+    // establish options
+    var options = {
+      selectors: "h1,h2",
+      theme: "bootstrap3",
+      context: '.toc-content',
+      hashGenerator: function (text) {
+        return text.replace(/[.\\/?&!#<>]/g, '').replace(/\s/g, '_').toLowerCase();
+      },
+      ignoreSelector: ".toc-ignore",
+      scrollTo: 0
+    };
+    options.showAndHide = true;
+    options.smoothScroll = true;
+
+    // tocify
+    var toc = $("#TOC").tocify(options).data("toc-tocify");
+});
+</script>
+
+<style type="text/css">
+
+#TOC {
+  margin: 25px 0px 20px 0px;
+}
+@media (max-width: 768px) {
+#TOC {
+  position: relative;
+  width: 100%;
+}
+}
+
+
+.toc-content {
+  padding-left: 30px;
+  padding-right: 40px;
+}
+
+div.main-container {
+  max-width: 1200px;
+}
+
+div.tocify {
+  width: 20%;
+  max-width: 260px;
+  max-height: 85%;
+}
+
+@media (min-width: 768px) and (max-width: 991px) {
+  div.tocify {
+    width: 25%;
+  }
+}
+
+@media (max-width: 767px) {
+  div.tocify {
+    width: 100%;
+    max-width: none;
+  }
+}
+
+.tocify ul, .tocify li {
+  line-height: 20px;
+}
+
+.tocify-subheader .tocify-item {
+  font-size: 0.90em;
+}
+
+.tocify .list-group-item {
+  border-radius: 0px;
+}
+
+
+</style>
+
+
+
+</head>
+
+<body>
+
+
+<div class="container-fluid main-container">
+
+
+<!-- setup 3col/9col grid for toc_float and main content  -->
+<div class="row-fluid">
+<div class="col-xs-12 col-sm-4 col-md-3">
+<div id="TOC" class="tocify">
+</div>
+</div>
+
+<div class="toc-content col-xs-12 col-sm-8 col-md-9">
+
+
+
+
+<div class="navbar navbar-default  navbar-fixed-top" role="navigation">
+  <div class="container">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="index.html">DNAmArray</a>
+    </div>
+    <div id="navbar" class="navbar-collapse collapse">
+      <ul class="nav navbar-nav">
+        <li>
+  <a href="01_SampleQualityControl.html">Sample-level QC</a>
+</li>
+<li>
+  <a href="02_Visualization.html">Visualizations</a>
+</li>
+<li>
+  <a href="03_Normalization.html">Normalization</a>
+</li>
+<li>
+  <a href="04_ProbeFiltering.html">Probe-level QC</a>
+</li>
+<li>
+  <a href="05_Impute.html">Imputation</a>
+</li>
+<li>
+  <a href="06_Predict.html">Predictors</a>
+</li>
+<li>
+  <a href="07_Masking.html">Probe Masking</a>
+</li>
+<li>
+  <a href="08_EWAS.html">EWAS</a>
+</li>
+      </ul>
+      <ul class="nav navbar-nav navbar-right">
+        <li>
+  <a href="about.html">About</a>
+</li>
+      </ul>
+    </div><!--/.nav-collapse -->
+  </div><!--/.container -->
+</div><!--/.navbar -->
+
+<div class="fluid-row" id="header">
+
+
+
+
+</div>
+
+
+<hr />
+<div id="ewas-using-cate" class="section level1">
+<h1>EWAS using <code>cate</code></h1>
+<p>The package <a href="https://cran.r-project.org/web/packages/cate/index.html"><strong>cate</strong></a> uses high dimensional factor analysis to adjust for measured and unmeasured confounding in multiple hypothesis testing. Unmeasured confounders, which are correlated with both methylation and case-control status, can bias the results from association tests. This makes this method superior to using <a href="https://bioconductor.org/packages/release/bioc/html/limma.html"><strong>limma</strong></a>, since it both corrects for technical variation and performs robust linear regression.</p>
+<p>We advise using <a href="https://cran.r-project.org/web/packages/cate/index.html"><strong>cate</strong></a> over PCA, since you can specify that factors should be independent of the outcome of interest. This is not the case in PCA, which can result in biological variation being removed.</p>
+<p>The first step in running an EWAS is to make sure that you have information on all your confounders, and that these are stored in a design matrix. This matrix should be created using the <code>model.matrix()</code> function, so that variables are treated correctly.</p>
+<p>For example, below we create an indicator for <code>Sentrix_Position</code>. Since this is a factor variable, our design matrix should have a column for each possible value, with binary indicators for each observation. The formula that will be used for our EWAS is stored inside the <code>RangedSummarizeExperiment</code> and called when creating the design matrix, after ensuring that none of the covariates contain missing values.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">methData<span class="op">$</span>Sentrix_Position &lt;-<span class="st"> </span><span class="kw">substr</span>(methData<span class="op">$</span>Basename,<span class="dv">23</span>,<span class="dv">28</span>)
+<span class="kw">xtabs</span>(<span class="op">~</span>methData<span class="op">$</span>Sentrix_Position)</code></pre></div>
+<pre><code>## methData$Sentrix_Position
+## R01C01 R01C02 R02C01 R02C02 R03C01 R03C02 R04C01 R04C02 R05C01 R05C02 
+##     14     14     13     11      8     11     12     13     10     12 
+## R06C01 R06C02 
+##     12      8</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">metadata</span>(methData)<span class="op">$</span>formula &lt;-<span class="st"> </span><span class="er">~</span>cc_status <span class="op">+</span><span class="st"> </span>age <span class="op">+</span><span class="st"> </span>sex <span class="op">+</span><span class="st"> </span>Sentrix_Position
+covariates &lt;-<span class="st"> </span><span class="kw">get_all_vars</span>(<span class="kw">metadata</span>(methData)<span class="op">$</span>formula, <span class="dt">data=</span><span class="kw">colData</span>(methData))
+
+nas &lt;-<span class="st"> </span><span class="kw">apply</span>(covariates, <span class="dv">1</span>, anyNA)
+methData &lt;-<span class="st"> </span>methData[, <span class="op">!</span>nas]
+
+design &lt;-<span class="st"> </span><span class="kw">model.matrix</span>(<span class="kw">metadata</span>(methData)<span class="op">$</span>formula, <span class="dt">data=</span><span class="kw">colData</span>(methData))
+design[<span class="dv">1</span><span class="op">:</span><span class="dv">5</span>, <span class="dv">1</span><span class="op">:</span><span class="dv">3</span>]</code></pre></div>
+<pre><code>##                              (Intercept) cc_statusFASD  age
+## GSM3092700_9985178096_R01C01           1             0 17.3
+## GSM3092701_9985178127_R03C02           1             0 11.3
+## GSM3092702_9986360109_R02C02           1             0  9.5
+## GSM3092703_9985178087_R01C01           1             0 15.0
+## GSM3092704_9985178090_R01C01           1             0  6.7</code></pre>
+<p>To correct for such confounders, we must estimate their number using the <code>est.confounder.num()</code> function from <a href="https://cran.r-project.org/web/packages/cate/index.html"><strong>cate</strong></a>. In order to correctly input the arguments of this function you need to specify the variable of interest, which in this instance is case-control status, followed by a formula indicating that all other variables except the intercept are known confounders. This function also needs the design matrix as a data frame, the transposed beta values, and an indication of what methods and number of iterations you want to use.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(cate)
+beta.cate &lt;-<span class="st"> </span><span class="kw">t</span>(<span class="kw">assays</span>(methData)<span class="op">$</span>betas)
+
+factor.num &lt;-<span class="st"> </span><span class="kw">est.confounder.num</span>(<span class="op">~</span><span class="st"> </span>cc_statusFASD <span class="op">|</span><span class="st"> </span>. <span class="op">-</span><span class="st"> </span>cc_statusFASD <span class="op">+</span><span class="st"> </span><span class="dv">0</span>,
+                                 <span class="kw">as.data.frame</span>(design), beta.cate,
+                                 <span class="dt">method =</span> <span class="st">&quot;bcv&quot;</span>, <span class="dt">bcv.plot =</span> <span class="ot">FALSE</span>,
+                                 <span class="dt">rmax =</span> <span class="dv">30</span>, <span class="dt">nRepeat =</span> <span class="dv">20</span>)
+factor.num<span class="op">$</span>r</code></pre></div>
+<pre><code>## [1] 10</code></pre>
+<p>In this instance, it is suggested we correct for 10 unmeasured confounders. To implement this, we use the <code>cate.fit()</code> function, as shown below. The output object stores the beta values, estimated test statistics, and relevant p-values, and top hits can be viewed after using the Bonferonni correction to adjust for multiple testing.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">results.cate &lt;-<span class="st"> </span><span class="kw">cate.fit</span>(design[,<span class="dv">2</span>,<span class="dt">drop=</span><span class="ot">FALSE</span>], design[,<span class="op">-</span><span class="dv">2</span>], beta.cate, 
+                         <span class="dt">r =</span> <span class="dv">10</span>, <span class="dt">calibrate=</span><span class="ot">FALSE</span>, <span class="dt">adj.method=</span><span class="st">&quot;naive&quot;</span>)
+
+padj.cate &lt;-<span class="st"> </span><span class="kw">p.adjust</span>(<span class="kw">sort</span>(results.cate<span class="op">$</span>beta.p.value[,<span class="dv">1</span>], <span class="dt">decreasing=</span><span class="ot">FALSE</span>), <span class="dt">method=</span><span class="st">&quot;bonf&quot;</span>)
+
+<span class="kw">head</span>(padj.cate[padj.cate <span class="op">&lt;</span><span class="st"> </span><span class="fl">0.05</span>])</code></pre></div>
+<pre><code>##   cg00121876   cg04180046   cg18420599   cg14257435   cg21401642 
+## 0.000000e+00 0.000000e+00 1.837375e-10 3.674749e-10 8.268186e-10 
+##   cg02017109 
+## 9.186873e-10</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">length</span>(padj.cate[padj.cate <span class="op">&lt;</span><span class="st"> </span><span class="fl">0.05</span>])</code></pre></div>
+<pre><code>## [1] 537</code></pre>
+<hr />
+</div>
+<div id="alternatives" class="section level1">
+<h1>Alternatives</h1>
+<p><a href="https://bioconductor.org/packages/release/bioc/html/limma.html"><strong>Limma</strong></a> is a package with excellent documentation that can be useful for smaller samples, due to the optional empirical Bayes step. It is worth mentioning that we do not advise using <a href="https://bioconductor.org/packages/release/bioc/html/limma.html"><strong>limma</strong></a> for RNAseq data, since it requires the VOOM transformation, which performs badly for smaller sample sizes. Instead, we suggest using <a href="https://bioconductor.org/packages/release/bioc/html/edgeR.html"><strong>edgeR</strong></a> or <a href="https://bioconductor.org/packages/release/bioc/html/DESeq.html"><strong>DEseq</strong></a> for smaller RNAseq datasets.</p>
+<p>Running <a href="https://bioconductor.org/packages/release/bioc/html/limma.html"><strong>limma</strong></a> is similar to running <a href="https://cran.r-project.org/web/packages/cate/index.html"><strong>cate</strong></a>, except that the beta matrix does not need transposing and test statistics and p-values need to be manually derived.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">beta.limma &lt;-<span class="st"> </span><span class="kw">assays</span>(methData)<span class="op">$</span>betas
+
+<span class="kw">library</span>(limma)
+fit &lt;-<span class="st"> </span><span class="kw">lmFit</span>(beta.limma, design)
+
+tstat &lt;-<span class="st"> </span>fit<span class="op">$</span>coef<span class="op">/</span>fit<span class="op">$</span>stdev.unscaled<span class="op">/</span>fit<span class="op">$</span>sigma
+pval &lt;-<span class="st"> </span><span class="dv">2</span><span class="op">*</span><span class="kw">pnorm</span>(<span class="op">-</span><span class="kw">abs</span>(tstat[,<span class="dv">2</span>]))
+padj &lt;-<span class="st"> </span><span class="kw">p.adjust</span>(<span class="kw">sort</span>(pval, <span class="dt">decreasing=</span><span class="ot">FALSE</span>), <span class="dt">method=</span><span class="st">&quot;bonf&quot;</span>)
+
+<span class="kw">head</span>(padj[padj <span class="op">&lt;</span><span class="st"> </span><span class="fl">0.05</span>])</code></pre></div>
+<pre><code>##   cg00121876   cg04180046   cg18420599   cg14257435   cg21401642 
+## 9.849193e-12 1.456967e-11 1.523935e-10 3.267809e-10 8.418477e-10 
+##   cg02017109 
+## 9.439371e-10</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">length</span>(padj[padj <span class="op">&lt;</span><span class="st"> </span><span class="fl">0.05</span>])</code></pre></div>
+<pre><code>## [1] 537</code></pre>
+<p>Linear mixed models and linear models can both work well for performing EWAS and, when looking solely at top hits, are unlikely to differ greatly from results obtained using <a href="https://cran.r-project.org/web/packages/cate/index.html"><strong>cate</strong></a> or <a href="https://bioconductor.org/packages/release/bioc/html/limma.html"><strong>limma</strong></a>.</p>
+<hr />
+</div>
+<div id="probe-annotation" class="section level1">
+<h1>Probe Annotation</h1>
+<p>Our package also contains a <code>cpgInfo()</code> function, which can be used to map CpG probes to their nearest genes. This utilises the <a href="http://bioconductor.statistik.tu-dortmund.de/packages/3.6/data/annotation/html/TxDb.Hsapiens.UCSC.hg19.knownGene.html"><strong>TxDb.Hsapiens.UCSC.hg19.knownGene</strong></a> package, which accesses the USCS annotation databases.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">cpgs &lt;-<span class="st"> </span><span class="kw">rownames</span>(betas)
+cpgInfo &lt;-<span class="st"> </span><span class="kw">cpgInfo</span>(cpgs, <span class="dt">TxDb=</span><span class="st">&quot;TxDb.Hsapiens.UCSC.hg19.knownGene&quot;</span>)</code></pre></div>
+<pre><code>## Fetching coordinates for hg19...</code></pre>
+<pre><code>## &#39;select()&#39; returned many:1 mapping between keys and columns</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">cpgInfo[<span class="dv">1</span><span class="op">:</span><span class="dv">10</span>, <span class="dv">1</span><span class="op">:</span><span class="dv">7</span>]</code></pre></div>
+<pre><code>##            seqnames     start       end  width strand gene_id SYMBOL
+## cg01707559     chrY   6778727   6959724 180998      +   90665  TBL1Y
+## cg03244189     chrY  21094585  21239302 144718      -   83869 TTTY14
+## cg04792227     chrY  16634488  16955848 321361      +   22829 NLGN4Y
+## cg14180491     chrY  15016019  15032390  16372      +    8653  DDX3Y
+## cg25032547     chrY  14774298  14804153  29856      +   64595 TTTY15
+## cg00008945     chrX  80369200  80457441  88242      -   79366  HMGN5
+## cg00011200     chrX  48380164  48387104   6941      +   10682    EBP
+## cg00011891     chrX 153712056 153714932   2877      -    8266  UBL4A
+## cg00014152     chrX  48455880  48463582   7703      +   64743  WDR13
+## cg00016522     chrX 149737047 149841616 104570      +    4534   MTM1</code></pre>
+<hr />
+</div>
+<div id="references" class="section level1">
+<h1>References</h1>
+</div>
+
+
+
+</div>
+</div>
+
+</div>
+
+<script>
+
+// add bootstrap table styles to pandoc tables
+function bootstrapStylePandocTables() {
+  $('tr.header').parent('thead').parent('table').addClass('table table-condensed');
+}
+$(document).ready(function () {
+  bootstrapStylePandocTables();
+});
+
+
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>

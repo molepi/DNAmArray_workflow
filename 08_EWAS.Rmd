@@ -1,0 +1,121 @@
+
+```{r, child="_setup.Rmd"}
+```
+
+```{r 701start, echo=FALSE, message=FALSE, results='hide'}
+load("C:/Users/ljsinke/Documents/git/GitHub/test_workflow/data/targets_mod.RData")
+RGset <- read.metharray.exp(base="C:/Users/ljsinke/Documents/r/cd/GSE113018/IDATs", targets, extended=TRUE)
+GRset <- preprocessFunnorm.DNAmArray(RGset, nPCs=4, keepCN=FALSE)
+RGset <- probeFiltering(RGset)
+betas <- reduce(GRset, RGset, what="beta")
+
+library(missMDA)
+betas <- imputePCA(betas)
+betas <- betas$completeObs
+betas[betas<0] <- 0
+betas[betas>1] <- 1
+
+betas <- probeMasking(betas, array="450", genome="hg19")
+rowRanges <- getPlatform(platform="HM450", genome="hg19")
+rows <- match(rownames(betas), names(rowRanges))
+rowRanges <- rowRanges[rows]
+cols <- match(colnames(betas), colnames(RGset))
+colData <- DataFrame(colData(RGset[, cols])@listData)
+
+methData <- SummarizedExperiment(assays=SimpleList(betas=betas),
+                                 rowRanges=rowRanges,
+                                 colData=colData)
+methData <- methData[!(seqnames(methData) %in% c("chrX", "chrY")),]
+```
+
+***
+
+# EWAS using `cate` #
+
+The package [**cate**](https://cran.r-project.org/web/packages/cate/index.html) uses high dimensional factor analysis to adjust for measured and unmeasured confounding in multiple hypothesis testing. Unmeasured confounders, which are correlated with both methylation and case-control status, can bias the results from association tests. This makes this method superior to using [**limma**](https://bioconductor.org/packages/release/bioc/html/limma.html), since it both corrects for technical variation and performs robust linear regression.
+
+We advise using [**cate**](https://cran.r-project.org/web/packages/cate/index.html) over PCA, since you can specify that factors should be independent of the outcome of interest. This is not the case in PCA, which can result in biological variation being removed. 
+
+The first step in running an EWAS is to make sure that you have information on all your confounders, and that these are stored in a design matrix. This matrix should be created using the `model.matrix()` function, so that variables are treated correctly. 
+
+For example, below we create an indicator for `Sentrix_Position`. Since this is a factor variable, our design matrix should have a column for each possible value, with binary indicators for each observation. The formula that will be used for our EWAS is stored inside the `RangedSummarizeExperiment` and called when creating the design matrix, after ensuring that none of the covariates contain missing values.
+
+``` {r designmatrix}
+methData$Sentrix_Position <- substr(methData$Basename,23,28)
+xtabs(~methData$Sentrix_Position)
+
+metadata(methData)$formula <- ~cc_status + age + sex + Sentrix_Position
+covariates <- get_all_vars(metadata(methData)$formula, data=colData(methData))
+
+nas <- apply(covariates, 1, anyNA)
+methData <- methData[, !nas]
+
+design <- model.matrix(metadata(methData)$formula, data=colData(methData))
+design[1:5, 1:3]
+```
+
+To correct for such confounders, we must estimate their number using the `est.confounder.num()` function from [**cate**](https://cran.r-project.org/web/packages/cate/index.html). In order to correctly input the arguments of this function you need to specify the variable of interest, which in this instance is case-control status, followed by a formula indicating that all other variables except the intercept are known confounders. This function also needs the design matrix as a data frame, the transposed beta values, and an indication of what methods and number of iterations you want to use. 
+
+``` {r estimaten}
+library(cate)
+beta.cate <- t(assays(methData)$betas)
+
+factor.num <- est.confounder.num(~ cc_statusFASD | . - cc_statusFASD + 0,
+                                 as.data.frame(design), beta.cate,
+                                 method = "bcv", bcv.plot = FALSE,
+                                 rmax = 30, nRepeat = 20)
+factor.num$r
+```
+
+In this instance, it is suggested we correct for 10 unmeasured confounders. To implement this, we use the `cate.fit()` function, as shown below. The output object stores the beta values, estimated test statistics, and relevant p-values, and top hits can be viewed after using the Bonferonni correction to adjust for multiple testing.
+
+``` {r cate}
+results.cate <- cate.fit(design[,2,drop=FALSE], design[,-2], beta.cate, 
+                         r = 10, calibrate=FALSE, adj.method="naive")
+
+padj.cate <- p.adjust(sort(results.cate$beta.p.value[,1], decreasing=FALSE), method="bonf")
+
+head(padj.cate[padj.cate < 0.05])
+length(padj.cate[padj.cate < 0.05])
+```
+
+***
+
+# Alternatives #
+
+[**Limma**](https://bioconductor.org/packages/release/bioc/html/limma.html) is a package with excellent documentation that can be useful for smaller samples, due to the optional empirical Bayes step. It is worth mentioning that we do not advise using [**limma**](https://bioconductor.org/packages/release/bioc/html/limma.html) for RNAseq data, since it requires the VOOM transformation, which performs badly for smaller sample sizes. Instead, we suggest using [**edgeR**](https://bioconductor.org/packages/release/bioc/html/edgeR.html) or [**DEseq**](https://bioconductor.org/packages/release/bioc/html/DESeq.html) for smaller RNAseq datasets. 
+
+Running [**limma**](https://bioconductor.org/packages/release/bioc/html/limma.html) is similar to running [**cate**](https://cran.r-project.org/web/packages/cate/index.html), except that the beta matrix does not need transposing and test statistics and p-values need to be manually derived.
+
+```{r 706ewas}
+beta.limma <- assays(methData)$betas
+
+library(limma)
+fit <- lmFit(beta.limma, design)
+
+tstat <- fit$coef/fit$stdev.unscaled/fit$sigma
+pval <- 2*pnorm(-abs(tstat[,2]))
+padj <- p.adjust(sort(pval, decreasing=FALSE), method="bonf")
+
+head(padj[padj < 0.05])
+length(padj[padj < 0.05])
+```
+
+Linear mixed models and linear models can both work well for performing EWAS and, when looking solely at top hits, are unlikely to differ greatly from results obtained using [**cate**](https://cran.r-project.org/web/packages/cate/index.html) or [**limma**](https://bioconductor.org/packages/release/bioc/html/limma.html).
+
+
+***
+
+# Probe Annotation #
+
+Our package also contains a `cpgInfo()` function, which can be used to map CpG probes to their nearest genes. This utilises the [**TxDb.Hsapiens.UCSC.hg19.knownGene**](http://bioconductor.statistik.tu-dortmund.de/packages/3.6/data/annotation/html/TxDb.Hsapiens.UCSC.hg19.knownGene.html) package, which accesses the USCS annotation databases.
+
+```{r 615annotate}
+cpgs <- rownames(betas)
+cpgInfo <- cpgInfo(cpgs, TxDb="TxDb.Hsapiens.UCSC.hg19.knownGene")
+cpgInfo[1:10, 1:7]
+```
+
+***
+
+# References #
