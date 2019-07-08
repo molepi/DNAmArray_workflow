@@ -1,6 +1,7 @@
 html_document:
-    theme: spacelab
-    highlight: textmate
+    theme: lumen
+    highlight: kate
+    css: style.css
     toc: true
     toc_depth: 2
     toc_float: true

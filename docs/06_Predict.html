@@ -1,0 +1,624 @@
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+
+<meta charset="utf-8" />
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="generator" content="pandoc" />
+
+
+
+
+<title></title>
+
+<script src="site_libs/jquery-1.11.3/jquery.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="site_libs/bootstrap-3.3.5/css/lumen.min.css" rel="stylesheet" />
+<script src="site_libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/respond.min.js"></script>
+<script src="site_libs/jqueryui-1.11.4/jquery-ui.min.js"></script>
+<link href="site_libs/tocify-1.9.1/jquery.tocify.css" rel="stylesheet" />
+<script src="site_libs/tocify-1.9.1/jquery.tocify.js"></script>
+<script src="site_libs/navigation-1.1/tabsets.js"></script>
+
+
+<style type="text/css">code{white-space: pre;}</style>
+<style type="text/css" data-origin="pandoc">
+div.sourceCode { overflow-x: auto; }
+table.sourceCode, tr.sourceCode, td.lineNumbers, td.sourceCode {
+  margin: 0; padding: 0; vertical-align: baseline; border: none; }
+table.sourceCode { width: 100%; line-height: 100%; background-color: #ffffff; color: #1f1c1b; }
+td.lineNumbers { text-align: right; padding-right: 4px; padding-left: 4px; background-color: #ffffff; color: #a0a0a0; border-right: 1px solid #a0a0a0; }
+td.sourceCode { padding-left: 5px; }
+pre, code { color: #1f1c1b; background-color: #ffffff; }
+code > span.kw { color: #1f1c1b; font-weight: bold; } /* Keyword */
+code > span.dt { color: #0057ae; } /* DataType */
+code > span.dv { color: #b08000; } /* DecVal */
+code > span.bn { color: #b08000; } /* BaseN */
+code > span.fl { color: #b08000; } /* Float */
+code > span.cn { color: #aa5500; } /* Constant */
+code > span.ch { color: #924c9d; } /* Char */
+code > span.sc { color: #3daee9; } /* SpecialChar */
+code > span.st { color: #bf0303; } /* String */
+code > span.vs { color: #bf0303; } /* VerbatimString */
+code > span.ss { color: #ff5500; } /* SpecialString */
+code > span.im { color: #ff5500; } /* Import */
+code > span.co { color: #898887; } /* Comment */
+code > span.do { color: #607880; } /* Documentation */
+code > span.an { color: #ca60ca; } /* Annotation */
+code > span.cv { color: #0095ff; } /* CommentVar */
+code > span.ot { color: #006e28; } /* Other */
+code > span.fu { color: #644a9b; } /* Function */
+code > span.va { color: #0057ae; } /* Variable */
+code > span.cf { color: #1f1c1b; font-weight: bold; } /* ControlFlow */
+code > span.op { color: #1f1c1b; } /* Operator */
+code > span.bu { color: #644a9b; font-weight: bold; } /* BuiltIn */
+code > span.ex { color: #0095ff; font-weight: bold; } /* Extension */
+code > span.pp { color: #006e28; } /* Preprocessor */
+code > span.at { color: #0057ae; } /* Attribute */
+code > span.re { color: #0057ae; } /* RegionMarker */
+code > span.in { color: #b08000; } /* Information */
+code > span.wa { color: #bf0303; } /* Warning */
+code > span.al { color: #bf0303; font-weight: bold; } /* Alert */
+code > span.er { color: #bf0303; text-decoration: underline; } /* Error */
+code > span. { color: #1f1c1b; } /* Normal */
+
+</style>
+<script>
+// apply pandoc div.sourceCode style to pre.sourceCode instead
+(function() {
+  var sheets = document.styleSheets;
+  for (var i = 0; i < sheets.length; i++) {
+    if (sheets[i].ownerNode.dataset["origin"] !== "pandoc") continue;
+    try { var rules = sheets[i].cssRules; } catch (e) { continue; }
+    for (var j = 0; j < rules.length; j++) {
+      var rule = rules[j];
+      // check if there is a div.sourceCode rule
+      if (rule.type !== rule.STYLE_RULE || rule.selectorText !== "div.sourceCode") continue;
+      var style = rule.style.cssText;
+      // check if color or background-color is set
+      if (rule.style.color === '' || rule.style.backgroundColor === '') continue;
+      // replace div.sourceCode by a pre.sourceCode rule
+      sheets[i].deleteRule(j);
+      sheets[i].insertRule('pre.sourceCode{' + style + '}', j);
+    }
+  }
+})();
+</script>
+<style type="text/css">
+  pre:not([class]) {
+    background-color: white;
+  }
+</style>
+
+
+<style type="text/css">
+h1 {
+  font-size: 34px;
+}
+h1.title {
+  font-size: 38px;
+}
+h2 {
+  font-size: 30px;
+}
+h3 {
+  font-size: 24px;
+}
+h4 {
+  font-size: 18px;
+}
+h5 {
+  font-size: 16px;
+}
+h6 {
+  font-size: 12px;
+}
+.table th:not([align]) {
+  text-align: left;
+}
+</style>
+
+<link rel="stylesheet" href="style.css" type="text/css" />
+
+
+
+<style type = "text/css">
+.main-container {
+  max-width: 940px;
+  margin-left: auto;
+  margin-right: auto;
+}
+code {
+  color: inherit;
+  background-color: rgba(0, 0, 0, 0.04);
+}
+img {
+  max-width:100%;
+  height: auto;
+}
+.tabbed-pane {
+  padding-top: 12px;
+}
+.html-widget {
+  margin-bottom: 20px;
+}
+button.code-folding-btn:focus {
+  outline: none;
+}
+summary {
+  display: list-item;
+}
+</style>
+
+
+<style type="text/css">
+/* padding for bootstrap navbar */
+body {
+  padding-top: 54px;
+  padding-bottom: 40px;
+}
+/* offset scroll position for anchor links (for fixed navbar)  */
+.section h1 {
+  padding-top: 59px;
+  margin-top: -59px;
+}
+.section h2 {
+  padding-top: 59px;
+  margin-top: -59px;
+}
+.section h3 {
+  padding-top: 59px;
+  margin-top: -59px;
+}
+.section h4 {
+  padding-top: 59px;
+  margin-top: -59px;
+}
+.section h5 {
+  padding-top: 59px;
+  margin-top: -59px;
+}
+.section h6 {
+  padding-top: 59px;
+  margin-top: -59px;
+}
+.dropdown-submenu {
+  position: relative;
+}
+.dropdown-submenu>.dropdown-menu {
+  top: 0;
+  left: 100%;
+  margin-top: -6px;
+  margin-left: -1px;
+  border-radius: 0 6px 6px 6px;
+}
+.dropdown-submenu:hover>.dropdown-menu {
+  display: block;
+}
+.dropdown-submenu>a:after {
+  display: block;
+  content: " ";
+  float: right;
+  width: 0;
+  height: 0;
+  border-color: transparent;
+  border-style: solid;
+  border-width: 5px 0 5px 5px;
+  border-left-color: #cccccc;
+  margin-top: 5px;
+  margin-right: -10px;
+}
+.dropdown-submenu:hover>a:after {
+  border-left-color: #ffffff;
+}
+.dropdown-submenu.pull-left {
+  float: none;
+}
+.dropdown-submenu.pull-left>.dropdown-menu {
+  left: -100%;
+  margin-left: 10px;
+  border-radius: 6px 0 6px 6px;
+}
+</style>
+
+<script>
+// manage active state of menu based on current page
+$(document).ready(function () {
+  // active menu anchor
+  href = window.location.pathname
+  href = href.substr(href.lastIndexOf('/') + 1)
+  if (href === "")
+    href = "index.html";
+  var menuAnchor = $('a[href="' + href + '"]');
+
+  // mark it active
+  menuAnchor.parent().addClass('active');
+
+  // if it's got a parent navbar menu mark it active as well
+  menuAnchor.closest('li.dropdown').addClass('active');
+});
+</script>
+
+<!-- tabsets -->
+
+<style type="text/css">
+.tabset-dropdown > .nav-tabs {
+  display: inline-table;
+  max-height: 500px;
+  min-height: 44px;
+  overflow-y: auto;
+  background: white;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs > li.active:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li.active:before {
+  content: "&#xe258;";
+  border: none;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs > li.active {
+  display: block;
+}
+
+.tabset-dropdown > .nav-tabs > li > a,
+.tabset-dropdown > .nav-tabs > li > a:focus,
+.tabset-dropdown > .nav-tabs > li > a:hover {
+  border: none;
+  display: inline-block;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li {
+  display: block;
+  float: none;
+}
+
+.tabset-dropdown > .nav-tabs > li {
+  display: none;
+}
+</style>
+
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+
+$(document).ready(function () {
+  $('.tabset-dropdown > .nav-tabs > li').click(function () {
+    $(this).parent().toggleClass('nav-tabs-open')
+  });
+});
+</script>
+
+<!-- code folding -->
+
+
+
+<script>
+$(document).ready(function ()  {
+
+    // move toc-ignore selectors from section div to header
+    $('div.section.toc-ignore')
+        .removeClass('toc-ignore')
+        .children('h1,h2,h3,h4,h5').addClass('toc-ignore');
+
+    // establish options
+    var options = {
+      selectors: "h1,h2",
+      theme: "bootstrap3",
+      context: '.toc-content',
+      hashGenerator: function (text) {
+        return text.replace(/[.\\/?&!#<>]/g, '').replace(/\s/g, '_').toLowerCase();
+      },
+      ignoreSelector: ".toc-ignore",
+      scrollTo: 0
+    };
+    options.showAndHide = true;
+    options.smoothScroll = true;
+
+    // tocify
+    var toc = $("#TOC").tocify(options).data("toc-tocify");
+});
+</script>
+
+<style type="text/css">
+
+#TOC {
+  margin: 25px 0px 20px 0px;
+}
+@media (max-width: 768px) {
+#TOC {
+  position: relative;
+  width: 100%;
+}
+}
+
+
+.toc-content {
+  padding-left: 30px;
+  padding-right: 40px;
+}
+
+div.main-container {
+  max-width: 1200px;
+}
+
+div.tocify {
+  width: 20%;
+  max-width: 260px;
+  max-height: 85%;
+}
+
+@media (min-width: 768px) and (max-width: 991px) {
+  div.tocify {
+    width: 25%;
+  }
+}
+
+@media (max-width: 767px) {
+  div.tocify {
+    width: 100%;
+    max-width: none;
+  }
+}
+
+.tocify ul, .tocify li {
+  line-height: 20px;
+}
+
+.tocify-subheader .tocify-item {
+  font-size: 0.90em;
+}
+
+.tocify .list-group-item {
+  border-radius: 0px;
+}
+
+
+</style>
+
+
+
+</head>
+
+<body>
+
+
+<div class="container-fluid main-container">
+
+
+<!-- setup 3col/9col grid for toc_float and main content  -->
+<div class="row-fluid">
+<div class="col-xs-12 col-sm-4 col-md-3">
+<div id="TOC" class="tocify">
+</div>
+</div>
+
+<div class="toc-content col-xs-12 col-sm-8 col-md-9">
+
+
+
+
+<div class="navbar navbar-default  navbar-fixed-top" role="navigation">
+  <div class="container">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="index.html">DNAmArray</a>
+    </div>
+    <div id="navbar" class="navbar-collapse collapse">
+      <ul class="nav navbar-nav">
+        <li>
+  <a href="01_SampleQualityControl.html">Sample-level QC</a>
+</li>
+<li>
+  <a href="02_Visualization.html">Visualizations</a>
+</li>
+<li>
+  <a href="03_Normalization.html">Normalization</a>
+</li>
+<li>
+  <a href="04_ProbeFiltering.html">Probe-level QC</a>
+</li>
+<li>
+  <a href="05_Impute.html">Imputation</a>
+</li>
+<li>
+  <a href="06_Predict.html">Predictors</a>
+</li>
+<li>
+  <a href="07_Masking.html">Probe Masking</a>
+</li>
+<li>
+  <a href="08_EWAS.html">EWAS</a>
+</li>
+      </ul>
+      <ul class="nav navbar-nav navbar-right">
+        <li>
+  <a href="about.html">About</a>
+</li>
+      </ul>
+    </div><!--/.nav-collapse -->
+  </div><!--/.container -->
+</div><!--/.navbar -->
+
+<div class="fluid-row" id="header">
+
+
+
+
+</div>
+
+
+<hr />
+<div id="phenotype-prediction" class="section level1">
+<h1>Phenotype Prediction</h1>
+<p>It can be useful to predict phenotypes in your data, either for comparison to assumed categories or to help impute missing values. We are in the process of creating predictors for sample cell composition, sex, age, and smoking status. These will either be reference-based predictors using the large BIOS data, which includes samples from 6 dutch cohorts and over 4000 individuals, or ones built using reference-free or semi-supervised methods. When created and distributed within this package, you will be able to use them to predict phenotypes in your own datasets.</p>
+<p>Meanwhile, below some current methods are describe to predict phenotypes in your data. It is important to carry out predictions prior to probe masking, as many probes masked for analysis (e.g. those on sex chromosomes) are still useful for predicting phenotypes. Additionally, we advise imputing missing vaues before phenotype prediction, since many predictors use only a subset of available probes and missing data can seriously impact accuracy.</p>
+<div id="predict-white-blood-cell-composition" class="section level3">
+<h3>Predict White Blood Cell Composition</h3>
+<p>White blood cell count can be predicted using Houseman’s partial least squares method <span class="citation">(Houseman et al. 2012)</span> implemented in <a href="http://bioconductor.org/packages/minfi"><strong>minfi</strong></a> <span class="citation">(Aryee et al. 2014)</span> by the <code>estimateCellCounts()</code> function. This implements a calibration algorithm for deconvoluting heterogenous tissue sources, such as blood, and returns a matrix of composition estimates across all samples and cell types.</p>
+</div>
+<div id="predict-sex" class="section level3">
+<h3>Predict Sex</h3>
+<p>The <a href="https://github.com/molepi/DNAmArray"><strong>DNAmArray</strong></a> package contains a <code>getSex.DNAmArray()</code> function, which predicts the sex of your observations by inspecting intensities of X-chromosome signals.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">mid &lt;-<span class="st"> </span><span class="kw">match</span>(<span class="kw">colnames</span>(betas), targets<span class="op">$</span>Basename)
+
+predictedSex &lt;-<span class="st"> </span><span class="kw">as.factor</span>(<span class="kw">getSex.DNAmArray</span>(betas))
+assumedSex &lt;-<span class="st"> </span>targets<span class="op">$</span>sex[mid]
+
+<span class="kw">table</span>(predictedSex, assumedSex)</code></pre></div>
+<pre><code>##             assumedSex
+## predictedSex Female Male
+##       Female     55    0
+##       Male        0   83</code></pre>
+<p>As you can see, this is complete data, but the predicted and assumed sexes are identical. This means that we can feel increased confidence that no incorrect labelling or mix-ups are present.</p>
+</div>
+<div id="predict-chronological-age" class="section level3">
+<h3>Predict chronological age</h3>
+<p>Age can be predicted using Horvath’s or Hannum’s coefficients with <code>agep()</code> from <a href="https://bioconductor.org/packages/release/bioc/html/wateRmelon.html"><strong>wateRmelon</strong></a>. If you use Hannum’s, you will need to call the coefficients using <code>data(hannumCoef)</code> before prediction. The predicted and assumed ages are then combined into a data frame that can be used to visualize the results.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(wateRmelon)
+predictedAge &lt;-<span class="st"> </span><span class="kw">as.numeric</span>(<span class="kw">agep</span>(betas, <span class="dt">method=</span><span class="st">&quot;horvath&quot;</span>))
+assumedAge &lt;-<span class="st"> </span><span class="kw">as.numeric</span>(targets<span class="op">$</span>age[mid])
+
+ages &lt;-<span class="st"> </span><span class="kw">data.frame</span>(<span class="dt">Assumed=</span>assumedAge, <span class="dt">Predicted=</span>predictedAge)
+<span class="kw">head</span>(ages)</code></pre></div>
+<pre><code>##   Assumed Predicted
+## 1    17.3 12.690759
+## 2    11.3  6.590704
+## 3     9.5  4.289528
+## 4    15.0 12.434893
+## 5     6.7  5.149112
+## 6     8.3  6.355387</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">ggplot</span>(ages, <span class="kw">aes</span>(<span class="dt">x=</span>Assumed, <span class="dt">y=</span>Predicted)) <span class="op">+</span><span class="st"> </span><span class="kw">ggtitle</span>(<span class="st">&quot;Assumed vs. Predicted Age&quot;</span>) <span class="op">+</span><span class="st"> </span>th3 <span class="op">+</span>
+<span class="st">  </span><span class="kw">geom_point</span>(<span class="dt">shape=</span><span class="dv">16</span>, <span class="dt">color=</span><span class="st">&quot;#158cba&quot;</span>) <span class="op">+</span><span class="st"> </span><span class="kw">geom_smooth</span>(<span class="dt">method=</span>lm, <span class="dt">color=</span><span class="st">&quot;#D67D87&quot;</span>)</code></pre></div>
+<p><img src="06_Predict_files/figure-html/610plot-1.png" width="672" /></p>
+<p>The above graph shows that this prediction follows the general trend of the assumed ages, however the residuals are quite large. It may be possible to develop an improved predictor <span class="citation">(Zhang et al. 2018)</span>, and we plan to implement this.</p>
+<hr />
+</div>
+</div>
+<div id="checking-sample-relationships" class="section level1">
+<h1>Checking Sample Relationships</h1>
+<p><a href="http://bioconductor.org/packages/release/bioc/html/omicsPrint.html"><strong>omicsPrint</strong></a> <span class="citation">(Van Iterson et al. 2018)</span> is a package we developed to detect data linkage errors through inspecting sample relations in multiple omics studies. Included with the package is the <code>hm450.manifest.pop.GoNL</code> data, which stores SNP probe information in a <code>GRanges</code> class object. This is then used to create a subset of the beta values for genotyping.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(omicsPrint)
+<span class="kw">data</span>(hm450.manifest.pop.GoNL)
+
+cpgs &lt;-<span class="st"> </span><span class="kw">names</span>(hm450.manifest.pop.GoNL[<span class="kw">mcols</span>(hm450.manifest.pop.GoNL)<span class="op">$</span>MASK.snp5.EAS])
+cpgs &lt;-<span class="st"> </span><span class="kw">na.omit</span>(<span class="kw">match</span>(cpgs, <span class="kw">rownames</span>(betas)))
+omicsBetas &lt;-<span class="st"> </span>betas[cpgs,]
+omicsBetas[<span class="dv">1</span><span class="op">:</span><span class="dv">10</span>, <span class="dv">1</span><span class="op">:</span><span class="dv">2</span>]</code></pre></div>
+<pre><code>##            GSM3092700_9985178096_R01C01 GSM3092701_9985178127_R03C02
+## cg08477687                   0.58371057                   0.54257778
+## cg00645010                   0.19857654                   0.23899306
+## cg11422233                   0.10683499                   0.07821968
+## cg06402284                   0.03418095                   0.03347987
+## cg01551879                   0.01796217                   0.01982204
+## cg20788133                   0.81499457                   0.77767489
+## cg09139287                   0.55052639                   0.24205695
+## cg23100540                   0.29549112                   0.30679943
+## cg23999112                   0.77908865                   0.75507487
+## cg01062849                   0.92704109                   0.89834978</code></pre>
+<p>The function <code>beta2genotype()</code> then genotypes the observations by measuring homozygous or heterozygous alleles at these SNP probes. Lastly <code>alleleSharing()</code> assesses the relationships between different individuals, which can be unrelated, twins, or identical. The results can then be visualised using the <code>inferRelations()</code> function.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">dnamCalls &lt;-<span class="st"> </span><span class="kw">beta2genotype</span>(omicsBetas, <span class="dt">assayName=</span><span class="st">&quot;exprs&quot;</span>)
+<span class="kw">dim</span>(dnamCalls)</code></pre></div>
+<pre><code>## [1] 835 138</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">dnamCalls[<span class="dv">1</span><span class="op">:</span><span class="dv">10</span>, <span class="dv">1</span><span class="op">:</span><span class="dv">2</span>]</code></pre></div>
+<pre><code>##            GSM3092700_9985178096_R01C01 GSM3092701_9985178127_R03C02
+## cg12213037                            2                            3
+## cg19405842                            2                            1
+## cg01296877                            2                            3
+## cg21783012                            2                            2
+## cg10091792                            3                            3
+## cg08121686                            2                            3
+## cg04882216                            3                            3
+## cg26422465                            2                            1
+## cg00345083                            2                            2
+## cg15075357                            1                            1</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">omicsData &lt;-<span class="st"> </span><span class="kw">alleleSharing</span>(dnamCalls, <span class="dt">verbose=</span><span class="ot">TRUE</span>)</code></pre></div>
+<pre><code>## Hash relations</code></pre>
+<pre><code>## Pruning 835 SNPs ...</code></pre>
+<pre><code>## 0 SNPs removed because of low call rate!</code></pre>
+<pre><code>## 0 samples removed because too few SNPs called!</code></pre>
+<pre><code>## Using 835 polymorphic SNPs to determine allele sharing.</code></pre>
+<pre><code>## Running `square` IBS algorithm!</code></pre>
+<pre><code>## 139 of 9591 (1.45%) ...</code></pre>
+<pre><code>## 8851 of 9591 (92.28%) ...</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">mismatches &lt;-<span class="st"> </span><span class="kw">inferRelations</span>(omicsData)</code></pre></div>
+<p><img src="06_Predict_files/figure-html/613genotype-1.png" width="672" /></p>
+<p>Since there are no twins or relatives in our data, all observations are shown as unrelated. In data with sample relationships, this would be shown in the above graph as green or black clusters <span class="citation">(Van Iterson et al. 2018)</span>. It is important to carry out this type of visualization before probe-filtering as otherwise the genotyping will be based on very few SNPs.</p>
+<hr />
+</div>
+<div id="references" class="section level1 unnumbered">
+<h1>References</h1>
+<div id="refs" class="references">
+<div id="ref-Feinberg2014">
+<p>Aryee, Martin J., Andrew E. Jaffe, Hector Corrada-Bravo, Christine Ladd-Acosta, Andrew P. Feinberg, Kasper D. Hansen, and Rafael A. Irizarry. 2014. “Minfi: A flexible and comprehensive Bioconductor package for the analysis of Infinium DNA methylation microarrays.” <em>Bioinformatics</em> 30 (10). Oxford University Press: 1363–9. doi:<a href="https://doi.org/10.1093/bioinformatics/btu049">10.1093/bioinformatics/btu049</a>.</p>
+</div>
+<div id="ref-Houseman2012">
+<p>Houseman, Eugene Andres, William P Accomando, Devin C Koestler, Brock C Christensen, Carmen J Marsit, Heather H Nelson, John K Wiencke, and Karl T Kelsey. 2012. “DNA methylation arrays as surrogate measures of cell mixture distribution.” <em>BMC Bioinformatics</em> 13 (1). BioMed Central: 86. doi:<a href="https://doi.org/10.1186/1471-2105-13-86">10.1186/1471-2105-13-86</a>.</p>
+</div>
+<div id="ref-VanIterson2018">
+<p>Van Iterson, Maarten, Davy Cats, Paul Hop, and Bastiaan T Heijmans. 2018. “OmicsPrint: Detection of data linkage errors in multiple omics studies.” Edited by Oliver Stegle. <em>Bioinformatics</em> 34 (12). Oxford University Press: 2142–3. doi:<a href="https://doi.org/10.1093/bioinformatics/bty062">10.1093/bioinformatics/bty062</a>.</p>
+</div>
+<div id="ref-Zhang2018">
+<p>Zhang, Qian, Costanza L. Vallerga, Rosie M Walker, Tian Lin, Anjali K. Henders, Grant W. Montgomery, Ji He, et al. 2018. “Improved prediction of chronological age from DNA methylation limits it as a biomarker of ageing.” <em>bioRxiv</em>, October. Cold Spring Harbor Laboratory, 327890. doi:<a href="https://doi.org/10.1101/327890">10.1101/327890</a>.</p>
+</div>
+</div>
+</div>
+
+
+
+</div>
+</div>
+
+</div>
+
+<script>
+
+// add bootstrap table styles to pandoc tables
+function bootstrapStylePandocTables() {
+  $('tr.header').parent('thead').parent('table').addClass('table table-condensed');
+}
+$(document).ready(function () {
+  bootstrapStylePandocTables();
+});
+
+
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>

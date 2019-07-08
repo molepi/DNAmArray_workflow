@@ -2,101 +2,156 @@
 ```{r, child="_setup.Rmd"}
 ```
 
-# Different ways to visualize DNAm array data #
+```{r 601start, echo=FALSE, message=FALSE, results='hide'}
+load("C:/Users/ljsinke/Documents/git/GitHub/test_workflow/data/targets_mod.RData")
+RGset <- read.metharray.exp(base="C:/Users/ljsinke/Documents/r/cd/GSE113018/IDATs", targets, extended=TRUE)
+```
 
-Here we show different ways to inspect DNAm array data with emphasis
-on fast and efficient tools for large data sets.
+***
 
-# Beta densities #
+# Beta values #
 
-To get a global impression of the beta-value distribution and to see
-if there are outlying samples the per sample average beta-value
-distribution can be plotted. For example, using `densityPlot` from
-[**minfi**](http://bioconductor.org/packages/minfi).
+In order to further visualize the data, we store the beta values using the `getBeta()` function from [**minfi**](https://bioconductor.org/packages/rel ease/bioc/html/minfi.html) [@Feinberg2014]. The `type="Illumina"` option adds 100 to the denominator of the beta-value calculation, preventing NA values being recorded when the methylated and unmethylated signal are both 0.
 
-```{r}
+```{r 303betas}
+betas <- getBeta(RGset, type="Illumina")
+```
+
+***
+
+# Beta density plots #
+
+Using `densityPlot()` from [**minfi**](https://bioconductor.org/packages/release/bioc/html/minfi.html) [@Feinberg2014], we can visualize the per sample average beta-value distribution. This gives us a global impression of the data and allows us to identify possible anomalous samples. We expect this distribution to be bimodal with the peaks representing methylated and unmethylated signals. Any centre peaks should be further investigated for problems, such as ambiguous mapping. 
+
+```{r 301start, echo=FALSE}
+load("C:/Users/ljsinke/Documents/git/GitHub/test_workflow/data/targets_mod.RData")
+RGset <- read.metharray.exp(base="C:/Users/ljsinke/Documents/r/cd/GSE113018/IDATs", targets, extended=TRUE)
+
+ggbg <- function() {
+  points(0, 0, pch=16, cex=1e6, col="grey90")
+  grid(col="white", lty=1)
+}
+```
+
+```{r 302betaplot}
 library(minfi)
-densityPlot(RGset[, 1:10], main = "Beta", xlab = "Beta")
+par(mar=c(4,4,3,2), mgp=c(2.5,1,0), cex.main=1.5, font.main="1", fg="#6b6b6b", col.main="#4b4b4b")
+densityPlot(RGset, main="Beta density plot", xlab="Beta values", panel.first=ggbg()) 
 ``` 
+
+For this data, the density plot is clearly bimodal with no obvious outliers. 
+
+***
 
 # Principal components plot #
 
-A plot of the first principal components can be used for exploratory
-data analysis. The
-[**irlba**](https://cran.r-project.org/package=irlba)-package provides
-an efficient algorithm for the calculation of principal components.
+Using the `prcomp_irlba()` function from [**irlba**](https://cran.r-project.org/web/packages/irlba/index.html) we can calculate principal components. By assessing the amount of variance explained by these and visualising them, we can better interpret the data. The package [**ggfortify**](https://cran.r-project.org/web/packages/ggfortify/index.html) helps [**ggplot2**](https://ggplot2.tidyverse.org/) interpret PCA objects, allowing `prcomp` objects to be passed to the `autoplot()` function. 
 
-> NOTE: The irlba-algorithm doesn't allow any NA's
-
-```{r irlba}
-library(irlba)
-beta <- getBeta(RGset, type="Illumina")
-beta[is.na(beta)] <- median(beta, na.rm=TRUE)
-pc <- prcomp_irlba(t(beta), n=3)
-summary(pc)
-plot(pc$x)
+```{r 304theme, echo=FALSE}
+th1 <- theme(text=element_text(size=10),
+            panel.border=element_rect(fill=NA, color="#6b6b6b", size=1, linetype=1),
+            plot.title=element_text(size=16, hjust=0.5, margin=margin(0,0,15,0)), 
+            plot.margin=margin(15,20,20,20))
 ```
 
-The first principale component explains almost 50% of the variation
-and two groups of samples appear; these are male and female samples!
-Often probes on the sex-chromosomes are excluded before principale
-component analysis (or other analyzes).
+```{r 304pcplot}
+library(irlba)
+pc <- prcomp_irlba(t(betas), n=6)
+summary(pc)
 
-> NOTE: `getBeta` extracts Methylated and Unmethylated intensities and
-> converts them to beta-values by default using M/(M+U), whereas,
-> `type="Illumina"` adds 100 to the denominator which prevents
-> beta-values becoming NA if both M and U are exactly zero.
+library(ggfortify)
+autoplot(pc, data=targets, colour="sex", main="Principal components plot") + th1
+```
+
+In this instance, our principal components explain over 50% of the variance in the data and there is evidence of clustering in the plot. By passing the original data to the `autoplot()` function using the `data` option, we can investigate clustering by colouring candidate variables. Our data has yet to undergo probe masking, which removes sex chromosome data, so groups of principal components according to whether an individual is male or female appear in the plot. 
+
+***
 
 # Heatmap #
 
-A heatmap of correlations of the previously calculated principale
-components with technical/biological covariates to indicate which
-covariates should be included in association study.
+Each column in the targets dataframe should be considered as a potential covariate in our models. Both technical and biological factors should be investigated as these may introduce batch effects or be clinically relevant. In order to assess this, we convert each column to a categorical variable whose correlations can be visualised. 
 
-```{r heatmap}
-library(pheatmap)
+Homogenous columns can be excluded, as any variables that do not change by definition cannot explain variation in the data. In this instance, the `description` for all samples is peripheral whole blood, so there is no need to investigate a tissue effect. However, in some instances samples may be taken from different tissues, and in this type of study analysis must be done separately for each to correctly separate clinically relevant methylation changes from tissue-specific methylation differences. 
+
+```{r 305heatmapscols}
 df <- apply(targets, 2, function(x) as.numeric(factor(x)))
-keep <- apply(df, 2, sd) > 0    
-cxy <- cor(pc$x, scale(df[, keep]))   
-pheatmap(cxy, cluster_rows=FALSE)
+keep <- apply(df, 2, sd) > 0
+summary(keep)
+
+df <- df[ , keep]
+colnames(df)
 ```
+
+As you can see, 9 columns need to be examined. These include sample identifiers, such as `title` and our newly created `Basename`, as well as which `cohort` the participant was from. Other potential causes of variation are biological, such as `age`, `sex`, and `cc_status`.
+
+Correlations between complete factors and the principal components is calculated, and this correlation matrix is then melted using the `melt()` function from the [**reshape2**](https://cran.r-project.org/web/packages/reshape2/index.html) package. This prepares it for visualization using [**ggplot2**](https://ggplot2.tidyverse.org/).
+
+```{r 306heatmapplot}
+cxy <- round(cor(pc$x, scale(df)),2)  
+cxy[ , 1:9]
+
+library(reshape2)
+melted_cxy <- melt(cxy)
+head(melted_cxy)
+```
+
+After some aesthetic preparation of the `theme()`, the correlations can be visualized in a heatmap using [**ggplot2**](https://ggplot2.tidyverse.org/)'s `geom_tile()` function.
+
+```{r 306heatmaptheme, echo=FALSE}
+th2 <- scale_fill_gradient2(low = "#158cba", high = "#D67D87", mid = "white", 
+                                                            midpoint = 0, limit = c(-1,1), 
+                                                            name="Pearson's r")
+th3 <- theme(text=element_text(size=12), 
+             panel.border=element_rect(fill=NA, color="#adadad", size=0.5, linetype=1),
+             panel.background=element_rect(fill="white"), 
+             plot.title=element_text(size=20, hjust=0.5, margin=margin(0,0,15,0)), 
+             plot.margin=margin(20,25,25,25), 
+             panel.grid=element_line(size=1, linetype=1, color="black"),
+             axis.ticks=element_line(size=0.4),
+             plot.background=element_blank())
+th4 <- scale_x_discrete(expand=c(0,0))
+th5 <- scale_y_discrete(expand=c(0,0))
+```
+
+```{r 306heatmapgg}
+library(ggplot2)
+ggplot(data = melted_cxy, aes(x=Var1, y=Var2, fill=value)) + th2 + th3 + th4 + th5 +
+  geom_tile(colour="#adadad",size=0.5) + ggtitle("Heatmap of Correlations") + labs(x="",y="")
+```
+
+By examining correlations in the data we can see that there is a strong positive correlation between sex and PC1. This indicates that this PC explains much of the variation causes by sex differences, unsurprisingly given the clustering we observed before.
+
+***
 
 # Dendrogram #
 
-Another approach, often used in expression data, for exploratory data
-analysis is clustering of the data and visualizing using a
-dendrogram. Although, this might be more appropriated for data sets
-with moderated sample sizes, the
-[**fastclust**](https://cran.r-project.org/package=fastclust)-package
-is efficient in generating the hierarchical clustering.
+Although more frequently used for moderately-sized data sets, a dendogram can be helpful to visualise clustering. We use `dist()` to compute the distance matrix for the beta values, before implementing hierarchical cluster analysis with `hclust()` from the [**fastcluster**](https://cran.r-project.org/package=fastclust)-package. 
 
-```{r clustering}
+```{r 307dendronorm}
 library(fastcluster)
-beta <- getBeta(RGset[,1:16], type="Illumina")
-d <- dist(t(beta),method="euclidean")
+sBeta <- getBeta(RGset[,1:16], type="Illumina")
+d <- dist(t(sBeta), method="euclidean")
 fit <- hclust(d, method="average")
-plot(fit)
 ```
-  
-Highlighting a suspected outlier can be convenient.
-  
-```{r clusteringhighlight}
-Interesting <- sample(colnames(beta),1)
+
+We can highlight an observation of interest and then visualize using a dendrogram. Here, we randomly sample one observation using `sample()` and then colour this red with the `ColorLeafs` function. We then convert the data to a `dendrogram` format and `plot()` it.
+
+```{r 307dendrodraw}
+interestObs <- sample(colnames(sBeta), 1)
 colorLeafs <- function(x) {
-  if (is.leaf(x) && attr(x, "label") %in% Interesting) {
-    attr(x, "nodePar") <- list(lab.col="red", pch=NA)
+  if (is.leaf(x) && attr(x, "label") %in% interestObs) {
+    attr(x, "nodePar") <- list(lab.cex=0.8, lab.col="#D67D87")
   }
   return(x)
 } 
-dd <- dendrapply(as.dendrogram(fit), colorLeafs)
-op <- par(mar=c(10,4,4,2))
-plot(dd)
+
+fitdd <- dendrapply(as.dendrogram(fit), colorLeafs)
+nodePar <- list(lab.cex=0.8, cex=0.8, col="#41819a", pch = c(NA, 19))
+par(mar=c(5,2,4,12), mgp=c(2.5,1,0), cex.main=1.5, font.main="1", fg="#6b6b6b", col.main="#4b4b4b")
+
+plot(fitdd, main="Cluster Dendogram", horiz=TRUE, nodePar=nodePar, xlab="Height")
 ```
 
+***
 
-```{r echo=FALSE}
-par(op)
-```
-
-
-
+# References #

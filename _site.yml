@@ -3,18 +3,22 @@ output_dir: "docs"
 navbar:
   title: "DNAmArray"
   left:
-    - text: "Quality control"      
+    - text: "Sample-level QC"      
       href: 01_SampleQualityControl.html
     - text: "Visualizations"      
       href: 02_Visualization.html
     - text: "Normalization"      
       href: 03_Normalization.html
-    - text: "Probe filtering"      
+    - text: "Probe-level QC"      
       href: 04_ProbeFiltering.html
-    - text: "Miscellaneous"
-      href: 05_Miscellaneous.html
-    - text: "Ewas"
-      href: 06_EWAS.html
+    - text: "Imputation"
+      href: 05_Impute.html
+    - text: "Predictors"
+      href: 06_Predict.html
+    - text: "Probe Masking"
+      href: 07_Masking.html
+    - text: "EWAS"
+      href: 08_EWAS.html
   right:
     - text: "About"
       href: about.html

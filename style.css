@@ -1,0 +1,72 @@
+@import url('https://fonts.googleapis.com/css?family=Open+Sans:400,700');
+
+h1 {
+  font-size: 26px;
+  color: #4b4b4b;
+  font-family: "Source Sans Pro", "Helvetica Neue", Helvetica, Arial, sans-serif;
+}
+h1.title {
+  padding-top: 20px;
+  font-size: 30px;
+  color: #4b4b4b;
+}
+
+h2 {
+  font-size: 22px;
+  color: #4b4b4b;
+}
+h3 {
+  font-size: 20px;
+  color: #4b4b4b;
+}
+
+h4 {
+color: #4b4b4b;
+line-height: 1.3;
+}
+
+body {
+background-color: #ededed;
+font-size: 14px;
+font-family: "Open Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
+color: #4b4b4b;
+}
+
+.navbar {
+background-color: #fdfdfd;
+border: 4px solid #fdfdfd;
+margin-bottom: 40px;
+}
+
+.navbar-brand {
+font-size: 20px;
+color: #D67D87 !important;
+}
+
+div.tocify {
+border-radius: 0px;
+}
+
+#TOC {
+margin-top: 50px !important;
+}
+
+pre {
+border-radius: 0px;
+background-color: #fdfdfd;
+border: 1px solid #6b6b6b;
+}
+
+hr {
+border-top: 1px solid #cbcbcb;
+}
+
+img {
+border: 1px solid #cbcbcb;
+width: 70%;
+padding: 5px;
+background-color: white;
+display: block;
+margin-left: auto;
+margin-right: auto;
+}

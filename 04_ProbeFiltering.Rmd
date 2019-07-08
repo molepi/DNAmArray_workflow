@@ -2,99 +2,45 @@
 ```{r, child="_setup.Rmd"}
 ```
 
-> **TODO extent descriptions** 
+***
 
-# Probe-level filtering #
+# Filtering on Intensities #
 
-Both the functions `probeFiltering` and `reduce` should be used to
-obtain filtered beta- or M-values.
+We recommend performing probe-filtering by setting unreliably measured probes to NA. Unfortunately, Functional Normalization does not allow NA's in the `RGChannelSet`. Therefore, it is best to run normalization and probe-filtering separately and combine the results afterwards using our `reduce()` function. 
 
-```{r probefiltering}
+Some observations need to be removed from the dataset since they provide little to no information that could skew analyses. Probes which have zero intensity or are based on very few (default: <3) beads are removed, based on a specified cut off. 
+
+```{r 501start, echo=FALSE, message=FALSE, results='hide'}
+load("C:/Users/ljsinke/Documents/git/GitHub/test_workflow/data/targets_mod.RData")
+RGset <- read.metharray.exp(base="C:/Users/ljsinke/Documents/r/cd/GSE113018/IDATs", targets, extended=TRUE)
+GRset <- preprocessFunnorm.DNAmArray(RGset, nPCs=4, keepCN=FALSE)
+```
+
+```{r 502filter}
 RGset <- probeFiltering(RGset)
 ```
 
-## Number of beads ##
+There are differences between probe types that are used in `probeFiltering()`. Information on these can be extracted and stored using functions from [**minfi**](https://bioconductor.org/packages/release/bioc/html/minfi.html) [@Feinberg2014].
 
-Occasionally some probes as measured with a too small number of beads
-leading to unreliable probe intensities. By default probes intensities
-are set to NA if the probe intensity is based on less then 3 beads. 
-
-## Zero intensities ##
-
-If there are no beads at all for a certain probe the probe intensity will
-be exactly zero, these are set to NA, as well.
-
-Samples which have more then 5% of their probes set to NA, based on
-the above filter steps, will be removed from the `RGChannelSet`.
-
-# CpG-level filtering #
-
-## detection P-value ##
-
-The negative controls on the 450k array can be used to detect outlying
-samples e.g., samples that have a significant larger background then
-average, this is summarized in the so-called detection
-P-value.
-
-Detection P-values are calculated using the `detectionP`-function from
-[**minfi**](http:/bioconductor.org/packages/minfi). By default detection
-P-values with a value >0.01 are set to NA.
-
-## Cross reactive probes/CpGs ##
-
->THIS WILL BE REPLACE BY [@Zhou2017]
-
-485,577 assays (482,421 CpG sites, 3091 non-CpG sites and 65 random
-SNPs)...[@Bibikova2011]
-
-Furthermore, several probes do not map uniquely to the genome or
-contain common polymorphisms. Chen \emph{et al.}[@Chen2013] analyzed
-in detail cross-reactive and polymorphic probes. We exclude the set of
-polymorphic CG and CH probes (42.403) discovered by Chen.
-
-482,421 CpG sites are measured using two chemistries Type I (135,476) and Type
-II (350,036). the Type I chemistry uses two probes to measure a CpG site
-while the Type II measure CpG methylation using one probe. The Type II
-chemistry was specially designed to measure CpG methylation in low CpG
-dense regions. There are 
-
-Depending on the methylation status of the probe either of the green
-or red fluorescence signals is detected a strongest.
-
-Information on Type I and II probes, address, etc. can be extracted
-using [**minfi**](http:/bioconductor.org/packages/minfi)-functionality.
-
-```{r, eval=FALSE}
-library(minfi)
+```{r 503probeinfo}
 locusNames <- getManifestInfo(RGset, "locusNames")
-typeII <- getProbeInfo(RGset, type = "II")
-nrow(typeII)
-typeI <- getProbeInfo(RGset, type = "I")
-head(typeI)
-nrow(typeI)
+typeII <- getProbeInfo(RGset, type="II")
+typeI <- getProbeInfo(RGset, type="I")
 ```
 
-# Success Rates #
+***
 
-All these probe filter-steps are implemented in the function
-`filtering`.
+# Detection p-values #
 
-RGset containing Red/Green signal intensities are converted to
-Methylated and Unmethylated signals (see also, `?preprocessRaw`, from
-minfi). These can in turn be converted to either beta-values or
-M-values.
+The negative controls on the array can be used to detect outlying samples via the detection p-values, which measure how likely it is a sample's signal differs from the background. Signals that do not differ substantially (default: p<0.01) are removed. We utilise `detectionP()` from [**minfi**](https://bioconductor.org/packages/release/bioc/html/minfi.html) inside our function to achieve this. 
+Additionally, samples where a large proportion (default: >5%) of probes were set to NA based on the above probe-level filtering are removed. 
 
+Our function `reduce()` takes the normalized `GRset` from the previous section and the filtered `RGset` created above and returns filtered beta or M-values, which can be passed to the `probeMasking()` function. If M-values are specified as the output, these are scaled to have a range of 32 instead of to infinite values.
 
-```{r reduce2beta, eval=FALSE}
+```{r 504reduce}
 betas <- reduce(GRset, RGset, what="beta")
 ```
 
-```{r reduce2mvalues}
-mvalues <- reduce(GRset, RGset, what="M")
-```
-
-```{r cleanup, echo = FALSE, results = 'hide'}
-rm(GRset); gc()
-```
+***
 
 # References #

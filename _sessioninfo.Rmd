@@ -1,6 +1,6 @@
 
 This web-site is generated with
-[**rmarkdown**](http://rmarkdown.rstudio.com/index.html)
+[**R Markdown**](http://rmarkdown.rstudio.com/index.html)
 on `r format(Sys.time(), '%d %B, %Y')` using R-version and packages: 
 
 ```{r, echo=FALSE}

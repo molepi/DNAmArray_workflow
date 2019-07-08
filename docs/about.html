@@ -15,7 +15,7 @@
 
 <script src="site_libs/jquery-1.11.3/jquery.min.js"></script>
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<link href="site_libs/bootstrap-3.3.5/css/spacelab.min.css" rel="stylesheet" />
+<link href="site_libs/bootstrap-3.3.5/css/lumen.min.css" rel="stylesheet" />
 <script src="site_libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
 <script src="site_libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
 <script src="site_libs/bootstrap-3.3.5/shim/respond.min.js"></script>
@@ -23,22 +23,7 @@
 <link href="site_libs/tocify-1.9.1/jquery.tocify.css" rel="stylesheet" />
 <script src="site_libs/tocify-1.9.1/jquery.tocify.js"></script>
 <script src="site_libs/navigation-1.1/tabsets.js"></script>
-<link href="site_libs/highlightjs-1.1/textmate.css" rel="stylesheet" />
-<script src="site_libs/highlightjs-1.1/highlight.js"></script>
 
-<style type="text/css">code{white-space: pre;}</style>
-<style type="text/css">
-  pre:not([class]) {
-    background-color: white;
-  }
-</style>
-<script type="text/javascript">
-if (window.hljs && document.readyState && document.readyState === "complete") {
-   window.setTimeout(function() {
-      hljs.initHighlighting();
-   }, 0);
-}
-</script>
 
 
 
@@ -69,10 +54,9 @@ h6 {
 }
 </style>
 
+<link rel="stylesheet" href="style.css" type="text/css" />
 
-</head>
 
-<body>
 
 <style type = "text/css">
 .main-container {
@@ -91,8 +75,14 @@ img {
 .tabbed-pane {
   padding-top: 12px;
 }
+.html-widget {
+  margin-bottom: 20px;
+}
 button.code-folding-btn:focus {
   outline: none;
+}
+summary {
+  display: list-item;
 }
 </style>
 
@@ -100,34 +90,70 @@ button.code-folding-btn:focus {
 <style type="text/css">
 /* padding for bootstrap navbar */
 body {
-  padding-top: 52px;
+  padding-top: 54px;
   padding-bottom: 40px;
 }
 /* offset scroll position for anchor links (for fixed navbar)  */
 .section h1 {
-  padding-top: 57px;
-  margin-top: -57px;
+  padding-top: 59px;
+  margin-top: -59px;
 }
-
 .section h2 {
-  padding-top: 57px;
-  margin-top: -57px;
+  padding-top: 59px;
+  margin-top: -59px;
 }
 .section h3 {
-  padding-top: 57px;
-  margin-top: -57px;
+  padding-top: 59px;
+  margin-top: -59px;
 }
 .section h4 {
-  padding-top: 57px;
-  margin-top: -57px;
+  padding-top: 59px;
+  margin-top: -59px;
 }
 .section h5 {
-  padding-top: 57px;
-  margin-top: -57px;
+  padding-top: 59px;
+  margin-top: -59px;
 }
 .section h6 {
-  padding-top: 57px;
-  margin-top: -57px;
+  padding-top: 59px;
+  margin-top: -59px;
+}
+.dropdown-submenu {
+  position: relative;
+}
+.dropdown-submenu>.dropdown-menu {
+  top: 0;
+  left: 100%;
+  margin-top: -6px;
+  margin-left: -1px;
+  border-radius: 0 6px 6px 6px;
+}
+.dropdown-submenu:hover>.dropdown-menu {
+  display: block;
+}
+.dropdown-submenu>a:after {
+  display: block;
+  content: " ";
+  float: right;
+  width: 0;
+  height: 0;
+  border-color: transparent;
+  border-style: solid;
+  border-width: 5px 0 5px 5px;
+  border-left-color: #cccccc;
+  margin-top: 5px;
+  margin-right: -10px;
+}
+.dropdown-submenu:hover>a:after {
+  border-left-color: #ffffff;
+}
+.dropdown-submenu.pull-left {
+  float: none;
+}
+.dropdown-submenu.pull-left>.dropdown-menu {
+  left: -100%;
+  margin-left: 10px;
+  border-radius: 6px 0 6px 6px;
 }
 </style>
 
@@ -149,18 +175,75 @@ $(document).ready(function () {
 });
 </script>
 
-
-<div class="container-fluid main-container">
-
 <!-- tabsets -->
+
+<style type="text/css">
+.tabset-dropdown > .nav-tabs {
+  display: inline-table;
+  max-height: 500px;
+  min-height: 44px;
+  overflow-y: auto;
+  background: white;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs > li.active:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li.active:before {
+  content: "&#xe258;";
+  border: none;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs > li.active {
+  display: block;
+}
+
+.tabset-dropdown > .nav-tabs > li > a,
+.tabset-dropdown > .nav-tabs > li > a:focus,
+.tabset-dropdown > .nav-tabs > li > a:hover {
+  border: none;
+  display: inline-block;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li {
+  display: block;
+  float: none;
+}
+
+.tabset-dropdown > .nav-tabs > li {
+  display: none;
+}
+</style>
+
 <script>
 $(document).ready(function () {
   window.buildTabsets("TOC");
 });
+
+$(document).ready(function () {
+  $('.tabset-dropdown > .nav-tabs > li').click(function () {
+    $(this).parent().toggleClass('nav-tabs-open')
+  });
+});
 </script>
 
 <!-- code folding -->
-
 
 
 
@@ -238,8 +321,6 @@ div.tocify {
 
 .tocify-subheader .tocify-item {
   font-size: 0.90em;
-  padding-left: 25px;
-  text-indent: 0;
 }
 
 .tocify .list-group-item {
@@ -248,6 +329,16 @@ div.tocify {
 
 
 </style>
+
+
+
+</head>
+
+<body>
+
+
+<div class="container-fluid main-container">
+
 
 <!-- setup 3col/9col grid for toc_float and main content  -->
 <div class="row-fluid">
@@ -274,7 +365,7 @@ div.tocify {
     <div id="navbar" class="navbar-collapse collapse">
       <ul class="nav navbar-nav">
         <li>
-  <a href="01_SampleQualityControl.html">Quality control</a>
+  <a href="01_SampleQualityControl.html">Sample-level QC</a>
 </li>
 <li>
   <a href="02_Visualization.html">Visualizations</a>
@@ -283,13 +374,19 @@ div.tocify {
   <a href="03_Normalization.html">Normalization</a>
 </li>
 <li>
-  <a href="04_ProbeFiltering.html">Probe filtering</a>
+  <a href="04_ProbeFiltering.html">Probe-level QC</a>
 </li>
 <li>
-  <a href="05_Miscellaneous.html">Miscellaneous</a>
+  <a href="05_Impute.html">Imputation</a>
 </li>
 <li>
-  <a href="06_EWAS.html">Ewas</a>
+  <a href="06_Predict.html">Predictors</a>
+</li>
+<li>
+  <a href="07_Masking.html">Probe Masking</a>
+</li>
+<li>
+  <a href="08_EWAS.html">EWAS</a>
 </li>
       </ul>
       <ul class="nav navbar-nav navbar-right">
@@ -309,122 +406,137 @@ div.tocify {
 </div>
 
 
+<hr />
 <div id="acknowledgements" class="section level1">
 <h1>Acknowledgements</h1>
-<p>Contributors to the development of the package/workflow are:</p>
-<p>Elmar W. Tobi, Roderick Slieker, Wouter den Hollander, Rene Luijk, Koen F.Dekkers and Bas Heijmans (PI) from Molecular Epidemiology Section, Leiden University Medical Center, The Netherlands.</p>
-<p>Development of the workflow and generation of example data in LLS was funded by BBMRI-NL, a research infrastructure financed by the Dutch government (NWO 184.021.007).</p>
-<p>Maarten van Iterson is the main author of the package/workflow and should be contacted for any questions: m.van_iterson at lumc.nl</p>
-<p>Paul Hop and Jenny van Dongen were involved in testing the first versions and helped us improving the packages/workflow.</p>
-<p>Please cite van Iterson at al. <span class="citation">(Iterson, Zwet, and Heijmans 2017)</span> when using the <a href="https://github.com/molepi/DNAmArray"><strong>DNAmArray</strong></a> package or workflow.</p>
-<p>This web-site is generated with <a href="http://rmarkdown.rstudio.com/index.html"><strong>rmarkdown</strong></a> on 21 April, 2017 using R-version and packages:</p>
-<pre><code>## R version 3.3.2 (2016-10-31)
-## Platform: x86_64-pc-linux-gnu (64-bit)
-## Running under: Ubuntu 16.04.2 LTS
+<p>Contributors to the development of the package and workflow are:</p>
+<p><em>Elmar W. Tobi, Roderick Slieker, Wouter den Hollander, Rene Luijk, Koen F. Dekkers and Bas Heijmans (PI) from Molecular Epidemiology, Department of Biomedical Data Sciences, Leiden University Medical Center, Leiden, The Netherlands</em></p>
+<p>Development of the workflow and generation of previously used example data in LLS was funded by BBMRI-NL, a research infrastructure financed by the Dutch government (NWO 184.021.007).</p>
+<p>Maarten van Iterson is the main author of the package and associated workflow. Lucy Sinke is the current author and maintainer and should be contacted with any questions: <em><a href="mailto:l.j.sinke@lumc.nl">l.j.sinke@lumc.nl</a></em></p>
+<p>Paul Hop and Jenny van Dongen were involved in testing and improving the pipeline.</p>
+<p>Please cite van Iterson at al. <span class="citation">(Iterson et al. 2017)</span> when using the <a href="https://github.com/molepi/DNAmArray"><strong>DNAmArray</strong></a> package or workflow.</p>
+<p>This web-site is generated with <a href="http://rmarkdown.rstudio.com/index.html"><strong>R Markdown</strong></a> on 05 juli, 2019 using R-version and packages:</p>
+<pre><code>## R version 3.5.3 (2019-03-11)
+## Platform: x86_64-w64-mingw32/x64 (64-bit)
+## Running under: Windows 10 x64 (build 17134)
+## 
+## Matrix products: default
 ## 
 ## locale:
-##  [1] LC_CTYPE=en_US.UTF-8       LC_NUMERIC=C              
-##  [3] LC_TIME=en_US.UTF-8        LC_COLLATE=en_US.UTF-8    
-##  [5] LC_MONETARY=en_US.UTF-8    LC_MESSAGES=en_US.UTF-8   
-##  [7] LC_PAPER=en_US.UTF-8       LC_NAME=C                 
-##  [9] LC_ADDRESS=C               LC_TELEPHONE=C            
-## [11] LC_MEASUREMENT=en_US.UTF-8 LC_IDENTIFICATION=C       
+## [1] LC_COLLATE=Dutch_Netherlands.1252  LC_CTYPE=Dutch_Netherlands.1252   
+## [3] LC_MONETARY=Dutch_Netherlands.1252 LC_NUMERIC=C                      
+## [5] LC_TIME=Dutch_Netherlands.1252    
 ## 
 ## attached base packages:
-## [1] stats4    parallel  methods   stats     graphics  grDevices utils    
-## [8] datasets  base     
+## [1] stats4    parallel  stats     graphics  grDevices utils     datasets 
+## [8] methods   base     
 ## 
 ## other attached packages:
-##  [1] BBMRIomics_1.0.3                                  
-##  [2] bacon_1.2.0                                       
-##  [3] ellipse_0.3-8                                     
-##  [4] ggplot2_2.2.1                                     
-##  [5] impute_1.48.0                                     
+##  [1] BBMRIomics_3.2.1                                  
+##  [2] bacon_1.10.1                                      
+##  [3] ellipse_0.4.1                                     
+##  [4] ggplot2_3.1.1                                     
+##  [5] impute_1.56.0                                     
 ##  [6] IlluminaHumanMethylation450kanno.ilmn12.hg19_0.6.0
 ##  [7] IlluminaHumanMethylation450kmanifest_0.4.0        
-##  [8] fastcluster_1.1.22                                
-##  [9] pheatmap_1.0.8                                    
-## [10] irlba_2.1.2                                       
-## [11] Matrix_1.2-8                                      
-## [12] limma_3.30.13                                     
+##  [8] fastcluster_1.1.25                                
+##  [9] pheatmap_1.0.12                                   
+## [10] irlba_2.3.3                                       
+## [11] Matrix_1.2-15                                     
+## [12] limma_3.38.3                                      
 ## [13] cate_1.0.4                                        
-## [14] BatchJobs_1.6                                     
+## [14] BatchJobs_1.8                                     
 ## [15] BBmisc_1.11                                       
-## [16] BiocParallel_1.8.1                                
-## [17] MethylAid_1.8.0                                   
-## [18] knitr_1.15.1                                      
-## [19] DNAmArray_0.0.2                                   
-## [20] minfi_1.20.2                                      
-## [21] bumphunter_1.14.0                                 
+## [16] MethylAid_1.16.0                                  
+## [17] knitr_1.23                                        
+## [18] DNAmArray_0.1.1                                   
+## [19] htm2txt_2.1.1                                     
+## [20] minfi_1.28.4                                      
+## [21] bumphunter_1.24.5                                 
 ## [22] locfit_1.5-9.1                                    
-## [23] iterators_1.0.8                                   
-## [24] foreach_1.4.3                                     
-## [25] Biostrings_2.42.1                                 
-## [26] XVector_0.14.1                                    
-## [27] SummarizedExperiment_1.4.0                        
-## [28] FDb.InfiniumMethylation.hg19_2.2.0                
-## [29] org.Hs.eg.db_3.4.0                                
-## [30] TxDb.Hsapiens.UCSC.hg19.knownGene_3.2.2           
-## [31] GenomicFeatures_1.26.3                            
-## [32] AnnotationDbi_1.36.2                              
-## [33] Biobase_2.34.0                                    
-## [34] GenomicRanges_1.26.4                              
-## [35] GenomeInfoDb_1.10.3                               
-## [36] IRanges_2.8.2                                     
-## [37] S4Vectors_0.12.2                                  
-## [38] BiocGenerics_0.20.0                               
-## [39] BiocInstaller_1.24.0                              
+## [23] iterators_1.0.10                                  
+## [24] foreach_1.4.4                                     
+## [25] Biostrings_2.50.2                                 
+## [26] XVector_0.22.0                                    
+## [27] SummarizedExperiment_1.12.0                       
+## [28] DelayedArray_0.8.0                                
+## [29] BiocParallel_1.16.6                               
+## [30] matrixStats_0.54.0                                
+## [31] FDb.InfiniumMethylation.hg19_2.2.0                
+## [32] org.Hs.eg.db_3.7.0                                
+## [33] TxDb.Hsapiens.UCSC.hg19.knownGene_3.2.2           
+## [34] GenomicFeatures_1.34.8                            
+## [35] AnnotationDbi_1.44.0                              
+## [36] Biobase_2.42.0                                    
+## [37] GenomicRanges_1.34.0                              
+## [38] GenomeInfoDb_1.18.2                               
+## [39] IRanges_2.16.0                                    
+## [40] S4Vectors_0.20.1                                  
+## [41] BiocGenerics_0.28.0                               
+## [42] BiocInstaller_1.32.1                              
 ## 
 ## loaded via a namespace (and not attached):
-##  [1] colorspace_1.3-2         siggenes_1.48.0         
-##  [3] mclust_5.2.3             rprojroot_1.2           
-##  [5] corpcor_1.6.8            base64enc_0.1-3         
-##  [7] base64_2.0               hexbin_1.27.1           
-##  [9] leapp_1.2                codetools_0.2-15        
-## [11] splines_3.3.2            fail_1.3                
-## [13] jsonlite_1.3             Rsamtools_1.26.1        
-## [15] gridBase_0.4-7           annotate_1.52.1         
-## [17] shiny_1.0.0              readr_1.1.0             
-## [19] httr_1.2.1               backports_1.0.5         
-## [21] assertthat_0.1           lazyeval_0.2.0          
-## [23] htmltools_0.3.5          tools_3.3.2             
-## [25] gtable_0.2.0             doRNG_1.6               
-## [27] Rcpp_0.12.10             multtest_2.30.0         
-## [29] preprocessCore_1.36.0    nlme_3.1-131            
-## [31] rtracklayer_1.34.2       stringr_1.2.0           
-## [33] mime_0.5                 rngtools_1.2.4          
-## [35] RevoUtilsMath_10.0.0     XML_3.98-1.5            
-## [37] beanplot_1.2             zlibbioc_1.20.0         
-## [39] MASS_7.3-45              scales_0.4.1            
-## [41] BSgenome_1.42.0          VariantAnnotation_1.20.3
-## [43] hms_0.3                  GEOquery_2.40.0         
-## [45] RColorBrewer_1.1-2       yaml_2.1.14             
-## [47] memoise_1.0.0            pkgmaker_0.22           
-## [49] biomaRt_2.30.0           reshape_0.8.6           
-## [51] stringi_1.1.3            RSQLite_1.1-2           
-## [53] genefilter_1.56.0        checkmate_1.8.2         
-## [55] matrixStats_0.51.0       bitops_1.0-6            
-## [57] nor1mix_1.2-2            evaluate_0.10           
-## [59] lattice_0.20-35          ruv_0.9.6               
-## [61] esaBcv_1.2.1             labeling_0.3            
-## [63] GenomicAlignments_1.10.1 plyr_1.8.4              
-## [65] magrittr_1.5             sendmailR_1.2-1         
-## [67] R6_2.2.0                 DBI_0.6                 
-## [69] mgcv_1.8-17              survival_2.41-2         
-## [71] RCurl_1.95-4.8           tibble_1.2              
-## [73] rmarkdown_1.4            grid_3.3.2              
-## [75] sva_3.22.0               data.table_1.10.4       
-## [77] digest_0.6.12            svd_0.4                 
-## [79] xtable_1.8-2             httpuv_1.3.3            
-## [81] brew_1.0-6               illuminaio_0.16.0       
-## [83] openssl_0.9.6            munsell_0.4.3           
-## [85] registry_0.3             quadprog_1.5-5</code></pre>
+##   [1] backports_1.1.4           plyr_1.8.4               
+##   [3] lazyeval_0.2.2            splines_3.5.3            
+##   [5] gridBase_0.4-7            sva_3.30.1               
+##   [7] digest_0.6.19             htmltools_0.3.6          
+##   [9] svd_0.4.3                 magrittr_1.5             
+##  [11] checkmate_1.9.3           memoise_1.1.0            
+##  [13] BSgenome_1.50.0           readr_1.3.1              
+##  [15] annotate_1.60.1           askpass_1.1              
+##  [17] siggenes_1.56.0           prettyunits_1.0.2        
+##  [19] colorspace_1.4-1          blob_1.1.1               
+##  [21] xfun_0.8                  dplyr_0.8.2              
+##  [23] jsonlite_1.6              crayon_1.3.4             
+##  [25] RCurl_1.95-4.12           hexbin_1.27.3            
+##  [27] genefilter_1.64.0         GEOquery_2.50.5          
+##  [29] VariantAnnotation_1.28.13 brew_1.0-6               
+##  [31] survival_2.43-3           sendmailR_1.2-1          
+##  [33] glue_1.3.1                ruv_0.9.7                
+##  [35] registry_0.5-1            gtable_0.3.0             
+##  [37] zlibbioc_1.28.0           Rhdf5lib_1.4.3           
+##  [39] HDF5Array_1.10.1          scales_1.0.0             
+##  [41] DBI_1.0.0                 rngtools_1.3.1           
+##  [43] bibtex_0.4.2              Rcpp_1.0.1               
+##  [45] xtable_1.8-4              progress_1.2.2           
+##  [47] bit_1.1-14                mclust_5.4.4             
+##  [49] preprocessCore_1.44.0     httr_1.4.0               
+##  [51] RColorBrewer_1.1-2        pkgconfig_2.0.2          
+##  [53] reshape_0.8.8             XML_3.98-1.20            
+##  [55] tidyselect_0.2.5          rlang_0.4.0              
+##  [57] later_0.8.0               munsell_0.5.0            
+##  [59] tools_3.5.3               esaBcv_1.2.1             
+##  [61] RSQLite_2.1.1             evaluate_0.14            
+##  [63] stringr_1.4.0             yaml_2.2.0               
+##  [65] bit64_0.9-7               beanplot_1.2             
+##  [67] purrr_0.3.2               nlme_3.1-137             
+##  [69] doRNG_1.7.1               mime_0.7                 
+##  [71] leapp_1.2                 nor1mix_1.3-0            
+##  [73] xml2_1.2.0                biomaRt_2.38.0           
+##  [75] compiler_3.5.3            RPostgreSQL_0.6-2        
+##  [77] tibble_2.1.3              stringi_1.4.3            
+##  [79] lattice_0.20-38           multtest_2.38.0          
+##  [81] pillar_1.4.2              data.table_1.12.2        
+##  [83] bitops_1.0-6              corpcor_1.6.9            
+##  [85] httpuv_1.5.1              rtracklayer_1.42.2       
+##  [87] R6_2.4.0                  promises_1.0.1           
+##  [89] gridExtra_2.3             codetools_0.2-16         
+##  [91] MASS_7.3-51.1             assertthat_0.2.1         
+##  [93] rhdf5_2.26.2              openssl_1.4              
+##  [95] pkgmaker_0.27             withr_2.1.2              
+##  [97] GenomicAlignments_1.18.1  Rsamtools_1.34.1         
+##  [99] GenomeInfoDbData_1.2.0    mgcv_1.8-27              
+## [101] hms_0.4.2                 quadprog_1.5-7           
+## [103] grid_3.5.3                tidyr_0.8.3              
+## [105] base64_2.0                rmarkdown_1.13           
+## [107] DelayedMatrixStats_1.4.0  illuminaio_0.24.0        
+## [109] shiny_1.3.2               base64enc_0.1-3</code></pre>
 </div>
 <div id="references" class="section level1 unnumbered">
 <h1>References</h1>
 <div id="refs" class="references">
-<div id="ref-Iterson2017">
-<p>Iterson, M. van, E. W. van Zwet, and B. T. Heijmans. 2017. “Controlling bias and inflation in epigenome- and transcriptome-wide association studies using the empirical null distribution.” <em>Genome Biol.</em> 18 (1): 19.</p>
+<div id="ref-VanIterson2017">
+<p>Iterson, Maarten van, Erik W. van Zwet, Bastiaan T. Heijmans, Peter A.C. ’t Hoen, Joyce van Meurs, Rick Jansen, Lude Franke, et al. 2017. “Controlling bias and inflation in epigenome- and transcriptome-wide association studies using the empirical null distribution.” <em>Genome Biology</em> 18 (1). BioMed Central: 19. doi:<a href="https://doi.org/10.1186/s13059-016-1131-9">10.1186/s13059-016-1131-9</a>.</p>
 </div>
 </div>
 </div>
@@ -454,7 +566,7 @@ $(document).ready(function () {
   (function () {
     var script = document.createElement("script");
     script.type = "text/javascript";
-    script.src  = "https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
     document.getElementsByTagName("head")[0].appendChild(script);
   })();
 </script>

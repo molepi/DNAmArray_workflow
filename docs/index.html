@@ -9,14 +9,13 @@
 <meta name="generator" content="pandoc" />
 
 
-<meta name="author" content="Maarten van Iterson, Elmar Tobi, Roderick Slieker, Wouter den Hollander, Koen Dekkers, Rene Luijk, Eline Slagboom and Bas Heijmans Department of Molecular Epidemiology, Leiden University Medical Center, Leiden, The Netherlands" />
 
 
-<title>Streamlined workflow for the quality control, normalization and bias-free analysis of Illumina methylation array data - The Leiden approach</title>
+<title></title>
 
 <script src="site_libs/jquery-1.11.3/jquery.min.js"></script>
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<link href="site_libs/bootstrap-3.3.5/css/spacelab.min.css" rel="stylesheet" />
+<link href="site_libs/bootstrap-3.3.5/css/lumen.min.css" rel="stylesheet" />
 <script src="site_libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
 <script src="site_libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
 <script src="site_libs/bootstrap-3.3.5/shim/respond.min.js"></script>
@@ -24,23 +23,76 @@
 <link href="site_libs/tocify-1.9.1/jquery.tocify.css" rel="stylesheet" />
 <script src="site_libs/tocify-1.9.1/jquery.tocify.js"></script>
 <script src="site_libs/navigation-1.1/tabsets.js"></script>
-<link href="site_libs/highlightjs-1.1/textmate.css" rel="stylesheet" />
-<script src="site_libs/highlightjs-1.1/highlight.js"></script>
+
 
 <style type="text/css">code{white-space: pre;}</style>
+<style type="text/css" data-origin="pandoc">
+div.sourceCode { overflow-x: auto; }
+table.sourceCode, tr.sourceCode, td.lineNumbers, td.sourceCode {
+  margin: 0; padding: 0; vertical-align: baseline; border: none; }
+table.sourceCode { width: 100%; line-height: 100%; background-color: #ffffff; color: #1f1c1b; }
+td.lineNumbers { text-align: right; padding-right: 4px; padding-left: 4px; background-color: #ffffff; color: #a0a0a0; border-right: 1px solid #a0a0a0; }
+td.sourceCode { padding-left: 5px; }
+pre, code { color: #1f1c1b; background-color: #ffffff; }
+code > span.kw { color: #1f1c1b; font-weight: bold; } /* Keyword */
+code > span.dt { color: #0057ae; } /* DataType */
+code > span.dv { color: #b08000; } /* DecVal */
+code > span.bn { color: #b08000; } /* BaseN */
+code > span.fl { color: #b08000; } /* Float */
+code > span.cn { color: #aa5500; } /* Constant */
+code > span.ch { color: #924c9d; } /* Char */
+code > span.sc { color: #3daee9; } /* SpecialChar */
+code > span.st { color: #bf0303; } /* String */
+code > span.vs { color: #bf0303; } /* VerbatimString */
+code > span.ss { color: #ff5500; } /* SpecialString */
+code > span.im { color: #ff5500; } /* Import */
+code > span.co { color: #898887; } /* Comment */
+code > span.do { color: #607880; } /* Documentation */
+code > span.an { color: #ca60ca; } /* Annotation */
+code > span.cv { color: #0095ff; } /* CommentVar */
+code > span.ot { color: #006e28; } /* Other */
+code > span.fu { color: #644a9b; } /* Function */
+code > span.va { color: #0057ae; } /* Variable */
+code > span.cf { color: #1f1c1b; font-weight: bold; } /* ControlFlow */
+code > span.op { color: #1f1c1b; } /* Operator */
+code > span.bu { color: #644a9b; font-weight: bold; } /* BuiltIn */
+code > span.ex { color: #0095ff; font-weight: bold; } /* Extension */
+code > span.pp { color: #006e28; } /* Preprocessor */
+code > span.at { color: #0057ae; } /* Attribute */
+code > span.re { color: #0057ae; } /* RegionMarker */
+code > span.in { color: #b08000; } /* Information */
+code > span.wa { color: #bf0303; } /* Warning */
+code > span.al { color: #bf0303; font-weight: bold; } /* Alert */
+code > span.er { color: #bf0303; text-decoration: underline; } /* Error */
+code > span. { color: #1f1c1b; } /* Normal */
+
+</style>
+<script>
+// apply pandoc div.sourceCode style to pre.sourceCode instead
+(function() {
+  var sheets = document.styleSheets;
+  for (var i = 0; i < sheets.length; i++) {
+    if (sheets[i].ownerNode.dataset["origin"] !== "pandoc") continue;
+    try { var rules = sheets[i].cssRules; } catch (e) { continue; }
+    for (var j = 0; j < rules.length; j++) {
+      var rule = rules[j];
+      // check if there is a div.sourceCode rule
+      if (rule.type !== rule.STYLE_RULE || rule.selectorText !== "div.sourceCode") continue;
+      var style = rule.style.cssText;
+      // check if color or background-color is set
+      if (rule.style.color === '' || rule.style.backgroundColor === '') continue;
+      // replace div.sourceCode by a pre.sourceCode rule
+      sheets[i].deleteRule(j);
+      sheets[i].insertRule('pre.sourceCode{' + style + '}', j);
+    }
+  }
+})();
+</script>
 <style type="text/css">
   pre:not([class]) {
     background-color: white;
   }
 </style>
-<script type="text/javascript">
-if (window.hljs && document.readyState && document.readyState === "complete") {
-   window.setTimeout(function() {
-      hljs.initHighlighting();
-   }, 0);
-}
-</script>
-
 
 
 <style type="text/css">
@@ -70,10 +122,9 @@ h6 {
 }
 </style>
 
+<link rel="stylesheet" href="style.css" type="text/css" />
 
-</head>
 
-<body>
 
 <style type = "text/css">
 .main-container {
@@ -92,8 +143,14 @@ img {
 .tabbed-pane {
   padding-top: 12px;
 }
+.html-widget {
+  margin-bottom: 20px;
+}
 button.code-folding-btn:focus {
   outline: none;
+}
+summary {
+  display: list-item;
 }
 </style>
 
@@ -101,34 +158,70 @@ button.code-folding-btn:focus {
 <style type="text/css">
 /* padding for bootstrap navbar */
 body {
-  padding-top: 52px;
+  padding-top: 54px;
   padding-bottom: 40px;
 }
 /* offset scroll position for anchor links (for fixed navbar)  */
 .section h1 {
-  padding-top: 57px;
-  margin-top: -57px;
+  padding-top: 59px;
+  margin-top: -59px;
 }
-
 .section h2 {
-  padding-top: 57px;
-  margin-top: -57px;
+  padding-top: 59px;
+  margin-top: -59px;
 }
 .section h3 {
-  padding-top: 57px;
-  margin-top: -57px;
+  padding-top: 59px;
+  margin-top: -59px;
 }
 .section h4 {
-  padding-top: 57px;
-  margin-top: -57px;
+  padding-top: 59px;
+  margin-top: -59px;
 }
 .section h5 {
-  padding-top: 57px;
-  margin-top: -57px;
+  padding-top: 59px;
+  margin-top: -59px;
 }
 .section h6 {
-  padding-top: 57px;
-  margin-top: -57px;
+  padding-top: 59px;
+  margin-top: -59px;
+}
+.dropdown-submenu {
+  position: relative;
+}
+.dropdown-submenu>.dropdown-menu {
+  top: 0;
+  left: 100%;
+  margin-top: -6px;
+  margin-left: -1px;
+  border-radius: 0 6px 6px 6px;
+}
+.dropdown-submenu:hover>.dropdown-menu {
+  display: block;
+}
+.dropdown-submenu>a:after {
+  display: block;
+  content: " ";
+  float: right;
+  width: 0;
+  height: 0;
+  border-color: transparent;
+  border-style: solid;
+  border-width: 5px 0 5px 5px;
+  border-left-color: #cccccc;
+  margin-top: 5px;
+  margin-right: -10px;
+}
+.dropdown-submenu:hover>a:after {
+  border-left-color: #ffffff;
+}
+.dropdown-submenu.pull-left {
+  float: none;
+}
+.dropdown-submenu.pull-left>.dropdown-menu {
+  left: -100%;
+  margin-left: 10px;
+  border-radius: 6px 0 6px 6px;
 }
 </style>
 
@@ -150,18 +243,75 @@ $(document).ready(function () {
 });
 </script>
 
-
-<div class="container-fluid main-container">
-
 <!-- tabsets -->
+
+<style type="text/css">
+.tabset-dropdown > .nav-tabs {
+  display: inline-table;
+  max-height: 500px;
+  min-height: 44px;
+  overflow-y: auto;
+  background: white;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs > li.active:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li.active:before {
+  content: "&#xe258;";
+  border: none;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs > li.active {
+  display: block;
+}
+
+.tabset-dropdown > .nav-tabs > li > a,
+.tabset-dropdown > .nav-tabs > li > a:focus,
+.tabset-dropdown > .nav-tabs > li > a:hover {
+  border: none;
+  display: inline-block;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li {
+  display: block;
+  float: none;
+}
+
+.tabset-dropdown > .nav-tabs > li {
+  display: none;
+}
+</style>
+
 <script>
 $(document).ready(function () {
   window.buildTabsets("TOC");
 });
+
+$(document).ready(function () {
+  $('.tabset-dropdown > .nav-tabs > li').click(function () {
+    $(this).parent().toggleClass('nav-tabs-open')
+  });
+});
 </script>
 
 <!-- code folding -->
-
 
 
 
@@ -239,8 +389,6 @@ div.tocify {
 
 .tocify-subheader .tocify-item {
   font-size: 0.90em;
-  padding-left: 25px;
-  text-indent: 0;
 }
 
 .tocify .list-group-item {
@@ -249,6 +397,16 @@ div.tocify {
 
 
 </style>
+
+
+
+</head>
+
+<body>
+
+
+<div class="container-fluid main-container">
+
 
 <!-- setup 3col/9col grid for toc_float and main content  -->
 <div class="row-fluid">
@@ -275,7 +433,7 @@ div.tocify {
     <div id="navbar" class="navbar-collapse collapse">
       <ul class="nav navbar-nav">
         <li>
-  <a href="01_SampleQualityControl.html">Quality control</a>
+  <a href="01_SampleQualityControl.html">Sample-level QC</a>
 </li>
 <li>
   <a href="02_Visualization.html">Visualizations</a>
@@ -284,13 +442,19 @@ div.tocify {
   <a href="03_Normalization.html">Normalization</a>
 </li>
 <li>
-  <a href="04_ProbeFiltering.html">Probe filtering</a>
+  <a href="04_ProbeFiltering.html">Probe-level QC</a>
 </li>
 <li>
-  <a href="05_Miscellaneous.html">Miscellaneous</a>
+  <a href="05_Impute.html">Imputation</a>
 </li>
 <li>
-  <a href="06_EWAS.html">Ewas</a>
+  <a href="06_Predict.html">Predictors</a>
+</li>
+<li>
+  <a href="07_Masking.html">Probe Masking</a>
+</li>
+<li>
+  <a href="08_EWAS.html">EWAS</a>
 </li>
       </ul>
       <ul class="nav navbar-nav navbar-right">
@@ -306,53 +470,72 @@ div.tocify {
 
 
 
-<h1 class="title toc-ignore">Streamlined workflow for the quality control, normalization and bias-free analysis of Illumina methylation array data - The Leiden approach</h1>
-<h4 class="author"><em>Maarten van Iterson, Elmar Tobi, Roderick Slieker, Wouter den Hollander, Koen Dekkers, Rene Luijk, Eline Slagboom and Bas Heijmans Department of Molecular Epidemiology, Leiden University Medical Center, Leiden, The Netherlands</em></h4>
+<h1 class="title toc-ignore"><div style="white-space: pre-line;">Streamlined workflow for the quality control, normalization, and analysis of Illumina methylation array data
+</div></h1>
+<h4 class="author"><div style="white-space: pre-line;">Lucy Sinke, Maarten van Iterson, Davy Cats, and Bas Heijmans
+<font size=2 color=#6b6b6b>Molecular Epidemiology, Department of Biomedical Data Sciences, Leiden University Medical Center, Leiden, The Netherlands</font></div></h4>
 
 </div>
 
 
-<p><a href="https://doi.org/10.5281/zenodo.158908"><img src="https://zenodo.org/badge/DOI/10.5281/zenodo.158908.svg" alt="DOI" /></a></p>
+<hr />
 <div id="introduction" class="section level1">
 <h1>Introduction</h1>
-<p>Here we provide a complete workflow for the preprocessing and analysis of DNA methylation array data. The workflow combines best practices in the field with in-house developed methodology and is geared towards large-scale studies, including Epigenomewide Association Studies (EWAS). A specific aim of the work flow is to support such studies within the BIOS consortium encompassing multiple omics data on 4000 individuals from 6 Dutch biobanks operating within the frame of <a href="https://www.bbmri.nl/on_offer/bios/">BBMRI-NL</a></p>
-<p>The <a href="https://github.com/molepi/DNAmArray"><strong>DNAmArray</strong></a>-package contains a series of convenient functions for the quality control, normalization and analysis of methylation array data. The workflow has been thoroughly tested on 450k array data but will similarly be applicable to the newer 850k EPIC array pending updates of <a href="https://www.bioconductor.org">BioConductor</a> packages from other groups.</p>
-<p>The workflow and package extensively uses functionality of other <a href="https://www.bioconductor.org">BioConductor</a> packages, e.g., for transforming idats to so-called <code>RGset</code> we use <a href="http:/bioconductor.org/packages/minfi"><strong>minfi</strong></a> but <a href="https://github.com/molepi/DNAmArray"><strong>DNAmArray</strong></a> provides functionality to do this in parallel. Furthermore, we have developed two other packages <a href="http:/bioconductor.org/packages/MethylAid"><strong>MethylAid</strong></a> <span class="citation">(Iterson et al. 2014)</span> and <a href="http:/bioconductor.org/packages/bacon"><strong>bacon</strong></a> <span class="citation">(Iterson, Zwet, and Heijmans 2017)</span>, reps., performing interactive sample quality control and bias- and inflation-correction in epigenomewide association studies, each have been deposited at BioConductor (of note: <a href="http:/bioconductor.org/packages/bacon"><strong>bacon</strong></a> also applies to transcriptome- and any other ome-wide association studies) .</p>
+<p>Here we provide a complete workflow for the preprocessing and analysis of DNA methylation array data. The workflow combines best practices in the field with in-house developed methodology, and is geared towards large-scale studies, including Epigenome-wide Association Studies (EWAS). Its development was informed by our research analysing <a href="https://www.bbmri.nl/samples-images-data">BIOS consortium</a> data, which contains multiomics measures from 6 Dutch biobanks comprising ~4000 individuals <span class="citation">(Dekkers et al. 2016, <span class="citation">R. C. Slieker et al. (2016)</span>, <span class="citation">Bonder et al. (2017)</span>, <span class="citation">Luijk et al. (2018)</span>)</span> .</p>
+<p>The <a href="https://github.com/molepi/DNAmArray"><strong>DNAmArray</strong></a>-package contains a series of convenient functions for the quality control, normalization, and analysis of methylation array data. The workflow has been thoroughly tested for the Illumina 450k array but is similarly applicable to the newer 850k EPIC array.</p>
+<p>It is worth noting that this workflow makes extensive use of other <a href="https://www.bioconductor.org">BioConductor</a> packages. For example, the <a href="https://github.com/molepi/DNAmArray"><strong>DNAmArray</strong></a> function <code>read.metharray.exp.par()</code> converts IDAT files to an <code>RGset</code> by harnessing functions from <a href="https://bioconductor.org/packages/release/bioc/html/minfi.html"><strong>minfi</strong></a> <span class="citation">(Aryee et al. 2014)</span> and combining them with <a href="https://bioconductor.org/packages/release/bioc/html/BiocParallel.html"><strong>BiocParallel</strong></a>. Usually the required packages are installed automatically, but otherwise please refer to the relevant package’s documentation.</p>
+<p>Furthermore, we have also developed packages used by this workflow. <a href="http:/bioconductor.org/packages/MethylAid"><strong>MethylAid</strong></a> <span class="citation">(Iterson et al. 2014)</span> provides a web application to assist in performing interactive sample quality control, and <a href="http:/bioconductor.org/packages/bacon"><strong>bacon</strong></a> <span class="citation">(Iterson et al. 2017)</span> corrects for bias and inflation in ome-wide association studies, such as EWAS.</p>
+<hr />
 </div>
-<div id="leiden-longevity-study" class="section level1">
-<h1>Leiden Longevity Study</h1>
-<p>The example DNA methylation data that is used in this workflow is from the Leiden Longevity Study. The Leiden Longevity Study has been described in detail previously <span class="citation">(Westendorp et al. 2009)</span>. It is a family based study consists of 1671 offspring of 421 nonagenarians sibling pairs of Dutch descent, and their 744 partners. In the current EWAS initiative 793 individuals with available DNA methylation data and phenotypic data (mean age = 60 years) were included.</p>
+<div id="example-data" class="section level1">
+<h1>Example Data</h1>
+<p>The <a href="https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE113018">example data</a> <span class="citation">(Cobben et al. 2019)</span> used in this workflow is available from the <a href="https://www.ncbi.nlm.nih.gov/geo/">NCBI Gene Expression Omnibus</a> (GEO), a public repository of microarray data. It contains genome-wide DNA methylation data from whole blood obtained using the Illumina 450k microarray. The participants consist of 46 fetal alcohol spectrum disorder (FASD) cases and 92 controls from both a discovery and replication cohort.</p>
+<hr />
 </div>
 <div id="installation" class="section level1">
 <h1>Installation</h1>
-<p>The <a href="https://github.com/molepi/DNAmArray"><strong>DNAmArray</strong></a>-package can be installed in several ways which are described below. The package has been installed successfully for &gt;= R-3.2.0 on different linux-builds.</p>
-<p>The package depends on many other packages from <a href="https://www.bioconductor.org">BioConductor</a> or <a href="https://cran.r-project.org/">cran</a>. Usually these are installed automatically, otherwise, we refer to <a href="https://www.bioconductor.org/install/">BioConductor</a> or <a href="https://cran.r-project.org/doc/manuals/r-release/R-admin.html#Installing-packages">cran</a> documentation for the installation of these packages.</p>
-<div id="install-using-the-devtools-package" class="section level2">
-<h2>Install using the <strong>devtools</strong>-package</h2>
-<p>First install the package <a href="https://github.com/hadley/devtools"><strong>devtools</strong></a>. Next use:</p>
-<pre class="r"><code>library(devtools)
-install_github(&quot;molepi/DNAmArray.git&quot;)</code></pre>
+<p>The <a href="https://github.com/molepi/DNAmArray"><strong>DNAmArray</strong></a>-package can be installed in several ways, and has been successfully for &gt;= R-3.2.0 on various Linux-builds and for &gt;= R-3.5.3 on Windows.</p>
+<div id="install-using-the-devtools-package" class="section level3">
+<h3>Install using the <strong>devtools</strong>-package</h3>
+<p>First install the package <a href="https://github.com/hadley/devtools"><strong>devtools</strong></a>, then use the <code>install_github()</code> function to fetch the <a href="https://github.com/molepi/DNAmArray"><strong>DNAmArray</strong></a> package.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(devtools)
+<span class="kw">install_github</span>(<span class="st">&quot;molepi/DNAmArray&quot;</span>)</code></pre></div>
 </div>
-<div id="install-from-source-using-gitr" class="section level2">
-<h2>Install from source using <code>git/R</code></h2>
-<p>Using <a href="https://git-scm.com/">git</a>, e.g, use <code>git clone</code> and then build and install the package from source:</p>
-<pre class="bash"><code>git clone git@github.com/molepi/DNAmArray.git
+<div id="install-from-source-using-gitr" class="section level3">
+<h3>Install from source using <code>git/R</code></h3>
+<p>Using <a href="https://git-scm.com/">git</a>, you can <code>git clone</code> our repository and then install the package, changing <code>_x.y.z.</code> to the version you cloned.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">git clone git<span class="op">@</span>github.com<span class="op">/</span>molepi<span class="op">/</span>DNAmArray.git
 R CMD build DNAmArray
-R CMD INSTALL DNAmArray_x.y.z.tar.gz</code></pre>
-<p>Change <code>_x.y.z.</code> to the proper version you downloaded!</p>
+R CMD INSTALL DNAmArray_x.y.z.tar.gz</code></pre></div>
+<hr />
 </div>
 </div>
 <div id="references" class="section level1 unnumbered">
 <h1>References</h1>
 <div id="refs" class="references">
-<div id="ref-Iterson2014">
-<p>Iterson, M. van, E. W. Tobi, R. C. Slieker, W. den Hollander, R. Luijk, P. E. Slagboom, and B. T. Heijmans. 2014. “MethylAid: visual and interactive quality control of large Illumina 450k datasets.” <em>Bioinformatics</em> 30 (23): 3435–7.</p>
+<div id="ref-Feinberg2014">
+<p>Aryee, Martin J., Andrew E. Jaffe, Hector Corrada-Bravo, Christine Ladd-Acosta, Andrew P. Feinberg, Kasper D. Hansen, and Rafael A. Irizarry. 2014. “Minfi: A flexible and comprehensive Bioconductor package for the analysis of Infinium DNA methylation microarrays.” <em>Bioinformatics</em> 30 (10). Oxford University Press: 1363–9. doi:<a href="https://doi.org/10.1093/bioinformatics/btu049">10.1093/bioinformatics/btu049</a>.</p>
 </div>
-<div id="ref-Iterson2017">
-<p>Iterson, M. van, E. W. van Zwet, and B. T. Heijmans. 2017. “Controlling bias and inflation in epigenome- and transcriptome-wide association studies using the empirical null distribution.” <em>Genome Biol.</em> 18 (1): 19.</p>
+<div id="ref-Bonder2017">
+<p>Bonder, Marc Jan, René Luijk, Daria V Zhernakova, Matthijs Moed, Patrick Deelen, Martijn Vermaat, Maarten van Iterson, et al. 2017. “Disease variants alter transcription factor levels and methylation of their binding sites.” <em>Nature Genetics</em> 49 (1). Nature Publishing Group: 131–38. doi:<a href="https://doi.org/10.1038/ng.3721">10.1038/ng.3721</a>.</p>
 </div>
-<div id="ref-Westendorp2009">
-<p>Westendorp, R. G., D. van Heemst, M. P. Rozing, M. Frolich, S. P. Mooijaart, G. J. Blauw, M. Beekman, B. T. Heijmans, A. J. de Craen, and P. E. Slagboom. 2009. “Nonagenarian siblings and their offspring display lower risk of mortality and morbidity than sporadic nonagenarians: The Leiden Longevity Study.” <em>J Am Geriatr Soc</em> 57 (9): 1634–7.</p>
+<div id="ref-Cobben2019">
+<p>Cobben, Jan M., Izabela M. Krzyzewska, Andrea Venema, Adri N. Mul, Abeltje Polstra, Alex V. Postma, Robert Smigiel, et al. 2019. “DNA-methylation abundantly associates with fetal alcohol spectrum disorder and its subphenotypes.” <em>Epigenomics</em>, March. Future Science Ltd London, UK, epi–2018–0221. doi:<a href="https://doi.org/10.2217/epi-2018-0221">10.2217/epi-2018-0221</a>.</p>
+</div>
+<div id="ref-Dekkers2016">
+<p>Dekkers, Koen F., Maarten van Iterson, Roderick C. Slieker, Matthijs H. Moed, Marc Jan Bonder, Michiel van Galen, Hailiang Mei, et al. 2016. “Blood lipids influence DNA methylation in circulating cells.” <em>Genome Biology</em> 17 (1). BioMed Central: 138. doi:<a href="https://doi.org/10.1186/s13059-016-1000-6">10.1186/s13059-016-1000-6</a>.</p>
+</div>
+<div id="ref-Luijk2014">
+<p>Iterson, Maarten van, Elmar W. Tobi, Roderick C. Slieker, Wouter Den Hollander, René Luijk, P. Eline Slagboom, and Bastiaan T. Heijmans. 2014. “MethylAid: Visual and interactive quality control of large Illumina 450k datasets.” <em>Bioinformatics</em> 30 (23). Oxford University Press: 3435–7. doi:<a href="https://doi.org/10.1093/bioinformatics/btu566">10.1093/bioinformatics/btu566</a>.</p>
+</div>
+<div id="ref-VanIterson2017">
+<p>Iterson, Maarten van, Erik W. van Zwet, Bastiaan T. Heijmans, Peter A.C. ’t Hoen, Joyce van Meurs, Rick Jansen, Lude Franke, et al. 2017. “Controlling bias and inflation in epigenome- and transcriptome-wide association studies using the empirical null distribution.” <em>Genome Biology</em> 18 (1). BioMed Central: 19. doi:<a href="https://doi.org/10.1186/s13059-016-1131-9">10.1186/s13059-016-1131-9</a>.</p>
+</div>
+<div id="ref-Luijk2018">
+<p>Luijk, René, Haoyu Wu, Cavin K Ward-Caviness, Eilis Hannon, Elena Carnero-Montoro, Josine L. Min, Pooja Mandaviya, et al. 2018. “Autosomal genetic variation is associated with DNA methylation in regions variably escaping X-chromosome inactivation.” <em>Nature Communications</em> 9. Nature Publishing Group. doi:<a href="https://doi.org/10.1038/S41467-018-05714-3">10.1038/S41467-018-05714-3</a>.</p>
+</div>
+<div id="ref-Slieker2016">
+<p>Slieker, Roderick C, Maarten van Iterson, René Luijk, Marian Beekman, Daria V Zhernakova, Matthijs H Moed, Hailiang Mei, et al. 2016. “Age-related accrual of methylomic variability is linked to fundamental ageing mechanisms.” <em>Genome Biology</em> 17 (1). BioMed Central: 191. doi:<a href="https://doi.org/10.1186/s13059-016-1053-6">10.1186/s13059-016-1053-6</a>.</p>
 </div>
 </div>
 </div>
@@ -382,7 +565,7 @@ $(document).ready(function () {
   (function () {
     var script = document.createElement("script");
     script.type = "text/javascript";
-    script.src  = "https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
     document.getElementsByTagName("head")[0].appendChild(script);
   })();
 </script>

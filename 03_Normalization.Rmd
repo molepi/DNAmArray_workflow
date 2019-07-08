@@ -2,46 +2,48 @@
 ```{r, child="_setup.Rmd"}
 ```
 
-# Functional normalization #
+***
 
-We prefer normalization of 450K data using the Functional
-Normalization approach of [@Fortin2014]. Functional Normalization uses
-control probes for normalization. Furthemore, Functional Normalization
-includes a NOOB background and dye bias correction step[@Triche2013].
+# Introduction #
 
-## Select number of PC's ##
+Our workflow uses the Functional Normalization approach [@Hansen2014], which exploits internal control probes designed to detect technical variations without assaying biological differences. It has been shown to perform favourably when compared to other approaches [@Heiss2015, @Liu2016]. 
 
-In our experience the default number of principal compontents (2) is
-often too small. We use a screeplot to determine the optimal number of
-principal compontents:
+Using the internal control probes avoids the problems associated with global normalization methods, where biological variation can be mistaken for a technical effect and removed. This is especially important in studies where groups are expected to have differential methylomes, such as multiple tissue studies [@Min2018].
 
-```{r screeplot}
+***
+
+# Principal Components Selection #
+
+Since the default of selecting only two principal components is often too restrictive for this type of data, our `screeplot()` function allows visualisation of control probe eigenvalues to help select the optimal number. Often you will see a drop-off in proportion of variance explained after a certain number of principal components, and this can indicate an efficient cut-off. 
+
+```{r 401start, echo=FALSE, message=FALSE}
+load("C:/Users/ljsinke/Documents/git/GitHub/test_workflow/data/targets_mod.RData")
+RGset <- read.metharray.exp(base="C:/Users/ljsinke/Documents/r/cd/GSE113018/IDATs", targets, extended=TRUE)
+```
+
+```{r 402screeplot}
+par(mar=c(5,5,4,2), mgp=c(2.5,1,0), cex.main=1.5, font.main="1", fg="#6b6b6b", col.main="#4b4b4b")
 pc <- screeplot(RGset)
 ``` 
 
-## Functional normalization without copy number data ##
+This plot shows that only a small amount of variance is explained after the fourth principal component. For this reason, we choose to carry out normalization using 6 principal components.
 
-By default Functional Normalization returns normalized
-copy number data making the returned `GenomicRatioSet` twice the size
-necessary when only beta-values or M-values are required. Therefore, we
-added an argument to minfi's implementation of Functional Normalization
-to allow for not returning normalized copy number data.
+***
 
-```{r funnorm}
-GRset <- preprocessFunnorm.DNAmArray(RGset, nPCs=3, keepCN=FALSE)
+# Functional Normalization #
+
+By default, functional normalization returns normalized copy number data making the returned `GenomicRatioSet` twice the size necessary when only beta-values or M-values are required. Therefore, we developed `preprocessFunnorm.DNAmArray()`, which adds an option not to return these to the `preprocessFunnorm()` function from [**minfi**](https://bioconductor.org/packages/release/bioc/html/minfi.html) [@Feinberg2014].
+
+```{r 403funnorm}
+GRset <- preprocessFunnorm.DNAmArray(RGset, nPCs=6, keepCN=FALSE)
+GRset
 ```
 
-By default `preprocessFunnorm` return beta-values calculated with an
-offset of 100, like GenomeStudio (`getBeta` with type='Illumina'). If
-required these can be transformed to M-values using minfi's `getM`
-which does a logit2-transformation on the beta-values.
+This function returns beta-values calculated with an offset of 100, similar to specifying `getBeta()` with option `type='Illumina'`. If required, these can be transformed to M-values using [**minfi**](https://bioconductor.org/packages/release/bioc/html/minfi.html)'s `getM()` which applies a logit2-transformation to the beta-values.
 
-We recommend to perform probe-filtering by setting unreliable measured
-probes to NA. Unfortunately, Functional Normalization does not allow
-NA's in the `RGChannelSet`. Therefore, we suggest to run normalization
-and probe-filtering separately and combine the results afterwards
-using `reduce`. See the next section on `Probe Filtering` for more
-details.
+From inspecting the `GenomicRatioSet` object, you can see that there is one `Beta` assay, with methylation values for 485,512 CpG sites. 
+
+***
 
 # References #
 
