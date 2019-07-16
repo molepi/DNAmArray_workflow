@@ -6,19 +6,17 @@ suppressPackageStartupMessages({
     Require <- function(pkg){
         pkg <- as.character(substitute(pkg))
         if(!require(pkg, character.only=TRUE)){
-            require("BiocInstaller")
-            biocLite(pkg)
+            require("BiocManager")
+            BiocManager::install(pkg)
         }
         require(pkg, character.only=TRUE)
     }
 
-    if(!require(BiocInstaller)) {
-        source("https://bioconductor.org/biocLite.R")
-        require(BiocInstaller)
+    if(!require(BiocManager)) {
+        require(BiocManager)
     }
 
     if(!require(DNAmArray)) {
-        biocLite("molepi/DNAmArray")
         require(DNAmArray)
     }
 

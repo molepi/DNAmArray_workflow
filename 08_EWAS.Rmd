@@ -67,17 +67,20 @@ factor.num <- est.confounder.num(~ cc_statusFASD | . - cc_statusFASD + 0,
 factor.num$r
 ```
 
-In this instance, it is suggested we correct for 10 unmeasured confounders. To implement this, we use the `cate.fit()` function, as shown below. The output object stores the beta values, estimated test statistics, and relevant p-values, and top hits can be viewed after using the Bonferonni correction to adjust for multiple testing.
+In this instance, it is suggested we correct for 9 unmeasured confounders. To implement this, we use the `cate.fit()` function, as shown below. The output object stores the beta values, estimated test statistics, and relevant p-values, and top hits can be viewed after using the Bonferonni correction to adjust for multiple testing.
 
 ``` {r cate}
 results.cate <- cate.fit(design[,2,drop=FALSE], design[,-2], beta.cate, 
-                         r = 10, calibrate=FALSE, adj.method="naive")
+                         r = 9, calibrate=FALSE, adj.method="naive")
 
 padj.cate <- p.adjust(sort(results.cate$beta.p.value[,1], decreasing=FALSE), method="bonf")
 
 head(padj.cate[padj.cate < 0.05])
 length(padj.cate[padj.cate < 0.05])
 ```
+
+This analysis has identified 537 differentially methylated probes (DMPs) associated with FASD after adjusting for age, sex, and sentrix position. These can be analysed further, but first we want to outline alternatives to the [**cate**](https://cran.r-project.org/web/packages/cate/index.html)-based EWAS, and demonstrate that results are comparable.
+
 
 ***
 
@@ -101,6 +104,8 @@ head(padj[padj < 0.05])
 length(padj[padj < 0.05])
 ```
 
+As shown, results from [**limma**](https://bioconductor.org/packages/release/bioc/html/limma.html) are comparable with those from [**cate**](https://cran.r-project.org/web/packages/cate/index.html). Here, the same number of DMPs are identified and top hits are identical. Despite this, for the reasons specified above, we still advise using [**cate**](https://cran.r-project.org/web/packages/cate/index.html) unless your sample size is small enough to require the `eBayes` option. 
+
 Linear mixed models and linear models can both work well for performing EWAS and, when looking solely at top hits, are unlikely to differ greatly from results obtained using [**cate**](https://cran.r-project.org/web/packages/cate/index.html) or [**limma**](https://bioconductor.org/packages/release/bioc/html/limma.html).
 
 
@@ -111,11 +116,24 @@ Linear mixed models and linear models can both work well for performing EWAS and
 Our package also contains a `cpgInfo()` function, which can be used to map CpG probes to their nearest genes. This utilises the [**TxDb.Hsapiens.UCSC.hg19.knownGene**](http://bioconductor.statistik.tu-dortmund.de/packages/3.6/data/annotation/html/TxDb.Hsapiens.UCSC.hg19.knownGene.html) package, which accesses the USCS annotation databases.
 
 ```{r 615annotate}
-cpgs <- rownames(betas)
+cpgs <- names(methData)
 cpgInfo <- cpgInfo(cpgs, TxDb="TxDb.Hsapiens.UCSC.hg19.knownGene")
 cpgInfo[1:10, 1:7]
 ```
 
 ***
 
-# References #
+# DMR Finder #
+
+This `DNAmArray` package also contains a `DMRfinder()` function, which can be used to identify differentially methylated regions (DMRs). This function takes a simple data frame as input, which needs to contain a column called `crit` with a binary indicator of whether the adjusted p-value was significant or not. Other options include `mismatches`, which specifies how many DMPs are allowed to be not significant in a row before a region is not deemed to be a DMR, and the `icd` or Inter-CpG distance required for a region to be identified.
+
+```{r 616dmrfinder}
+dmrData <- data.frame(dmp = attr(padj.cate, "names"), crit = ifelse(padj.cate<0.05,1,0))
+
+DMRs = DMRfinder(dmrData, mismatches=3, icd=1000)
+DMRs
+```
+
+In this instance, 22 DMRs were found to be associated with FASD. These regions can be visualised with a chromosome-based circo plot, such as using [**OmicCircos**](http://bioconductor.org/packages/release/bioc/html/OmicCircos.html) to get a better understanding of the regions identified.  
+
+***

@@ -7,6 +7,7 @@
 <meta charset="utf-8" />
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
 
 
 
@@ -80,7 +81,7 @@ code > span. { color: #1f1c1b; } /* Normal */
       if (rule.type !== rule.STYLE_RULE || rule.selectorText !== "div.sourceCode") continue;
       var style = rule.style.cssText;
       // check if color or background-color is set
-      if (rule.style.color === '' || rule.style.backgroundColor === '') continue;
+      if (rule.style.color === '' && rule.style.backgroundColor === '') continue;
       // replace div.sourceCode by a pre.sourceCode rule
       sheets[i].deleteRule(j);
       sheets[i].insertRule('pre.sourceCode{' + style + '}', j);
@@ -299,48 +300,9 @@ $(document).ready(function () {
 }
 </style>
 
-<script>
-$(document).ready(function () {
-  window.buildTabsets("TOC");
-});
-
-$(document).ready(function () {
-  $('.tabset-dropdown > .nav-tabs > li').click(function () {
-    $(this).parent().toggleClass('nav-tabs-open')
-  });
-});
-</script>
-
 <!-- code folding -->
 
 
-
-<script>
-$(document).ready(function ()  {
-
-    // move toc-ignore selectors from section div to header
-    $('div.section.toc-ignore')
-        .removeClass('toc-ignore')
-        .children('h1,h2,h3,h4,h5').addClass('toc-ignore');
-
-    // establish options
-    var options = {
-      selectors: "h1,h2",
-      theme: "bootstrap3",
-      context: '.toc-content',
-      hashGenerator: function (text) {
-        return text.replace(/[.\\/?&!#<>]/g, '').replace(/\s/g, '_').toLowerCase();
-      },
-      ignoreSelector: ".toc-ignore",
-      scrollTo: 0
-    };
-    options.showAndHide = true;
-    options.smoothScroll = true;
-
-    // tocify
-    var toc = $("#TOC").tocify(options).data("toc-tocify");
-});
-</script>
 
 <style type="text/css">
 
@@ -511,10 +473,10 @@ factor.num &lt;-<span class="st"> </span><span class="kw">est.confounder.num</sp
                                  <span class="dt">method =</span> <span class="st">&quot;bcv&quot;</span>, <span class="dt">bcv.plot =</span> <span class="ot">FALSE</span>,
                                  <span class="dt">rmax =</span> <span class="dv">30</span>, <span class="dt">nRepeat =</span> <span class="dv">20</span>)
 factor.num<span class="op">$</span>r</code></pre></div>
-<pre><code>## [1] 10</code></pre>
-<p>In this instance, it is suggested we correct for 10 unmeasured confounders. To implement this, we use the <code>cate.fit()</code> function, as shown below. The output object stores the beta values, estimated test statistics, and relevant p-values, and top hits can be viewed after using the Bonferonni correction to adjust for multiple testing.</p>
+<pre><code>## [1] 9</code></pre>
+<p>In this instance, it is suggested we correct for 9 unmeasured confounders. To implement this, we use the <code>cate.fit()</code> function, as shown below. The output object stores the beta values, estimated test statistics, and relevant p-values, and top hits can be viewed after using the Bonferonni correction to adjust for multiple testing.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">results.cate &lt;-<span class="st"> </span><span class="kw">cate.fit</span>(design[,<span class="dv">2</span>,<span class="dt">drop=</span><span class="ot">FALSE</span>], design[,<span class="op">-</span><span class="dv">2</span>], beta.cate, 
-                         <span class="dt">r =</span> <span class="dv">10</span>, <span class="dt">calibrate=</span><span class="ot">FALSE</span>, <span class="dt">adj.method=</span><span class="st">&quot;naive&quot;</span>)
+                         <span class="dt">r =</span> <span class="dv">9</span>, <span class="dt">calibrate=</span><span class="ot">FALSE</span>, <span class="dt">adj.method=</span><span class="st">&quot;naive&quot;</span>)
 
 padj.cate &lt;-<span class="st"> </span><span class="kw">p.adjust</span>(<span class="kw">sort</span>(results.cate<span class="op">$</span>beta.p.value[,<span class="dv">1</span>], <span class="dt">decreasing=</span><span class="ot">FALSE</span>), <span class="dt">method=</span><span class="st">&quot;bonf&quot;</span>)
 
@@ -525,6 +487,7 @@ padj.cate &lt;-<span class="st"> </span><span class="kw">p.adjust</span>(<span c
 ## 9.186873e-10</code></pre>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">length</span>(padj.cate[padj.cate <span class="op">&lt;</span><span class="st"> </span><span class="fl">0.05</span>])</code></pre></div>
 <pre><code>## [1] 537</code></pre>
+<p>This analysis has identified 537 differentially methylated probes (DMPs) associated with FASD after adjusting for age, sex, and sentrix position. These can be analysed further, but first we want to outline alternatives to the <a href="https://cran.r-project.org/web/packages/cate/index.html"><strong>cate</strong></a>-based EWAS, and demonstrate that results are comparable.</p>
 <hr />
 </div>
 <div id="alternatives" class="section level1">
@@ -547,32 +510,58 @@ padj &lt;-<span class="st"> </span><span class="kw">p.adjust</span>(<span class=
 ## 9.439371e-10</code></pre>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">length</span>(padj[padj <span class="op">&lt;</span><span class="st"> </span><span class="fl">0.05</span>])</code></pre></div>
 <pre><code>## [1] 537</code></pre>
+<p>As shown, results from <a href="https://bioconductor.org/packages/release/bioc/html/limma.html"><strong>limma</strong></a> are comparable with those from <a href="https://cran.r-project.org/web/packages/cate/index.html"><strong>cate</strong></a>. Here, the same number of DMPs are identified and top hits are identical. Despite this, for the reasons specified above, we still advise using <a href="https://cran.r-project.org/web/packages/cate/index.html"><strong>cate</strong></a> unless your sample size is small enough to require the <code>eBayes</code> option.</p>
 <p>Linear mixed models and linear models can both work well for performing EWAS and, when looking solely at top hits, are unlikely to differ greatly from results obtained using <a href="https://cran.r-project.org/web/packages/cate/index.html"><strong>cate</strong></a> or <a href="https://bioconductor.org/packages/release/bioc/html/limma.html"><strong>limma</strong></a>.</p>
 <hr />
 </div>
 <div id="probe-annotation" class="section level1">
 <h1>Probe Annotation</h1>
 <p>Our package also contains a <code>cpgInfo()</code> function, which can be used to map CpG probes to their nearest genes. This utilises the <a href="http://bioconductor.statistik.tu-dortmund.de/packages/3.6/data/annotation/html/TxDb.Hsapiens.UCSC.hg19.knownGene.html"><strong>TxDb.Hsapiens.UCSC.hg19.knownGene</strong></a> package, which accesses the USCS annotation databases.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">cpgs &lt;-<span class="st"> </span><span class="kw">rownames</span>(betas)
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">cpgs &lt;-<span class="st"> </span><span class="kw">names</span>(methData)
 cpgInfo &lt;-<span class="st"> </span><span class="kw">cpgInfo</span>(cpgs, <span class="dt">TxDb=</span><span class="st">&quot;TxDb.Hsapiens.UCSC.hg19.knownGene&quot;</span>)</code></pre></div>
 <pre><code>## Fetching coordinates for hg19...</code></pre>
 <pre><code>## &#39;select()&#39; returned many:1 mapping between keys and columns</code></pre>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">cpgInfo[<span class="dv">1</span><span class="op">:</span><span class="dv">10</span>, <span class="dv">1</span><span class="op">:</span><span class="dv">7</span>]</code></pre></div>
-<pre><code>##            seqnames     start       end  width strand gene_id SYMBOL
-## cg01707559     chrY   6778727   6959724 180998      +   90665  TBL1Y
-## cg03244189     chrY  21094585  21239302 144718      -   83869 TTTY14
-## cg04792227     chrY  16634488  16955848 321361      +   22829 NLGN4Y
-## cg14180491     chrY  15016019  15032390  16372      +    8653  DDX3Y
-## cg25032547     chrY  14774298  14804153  29856      +   64595 TTTY15
-## cg00008945     chrX  80369200  80457441  88242      -   79366  HMGN5
-## cg00011200     chrX  48380164  48387104   6941      +   10682    EBP
-## cg00011891     chrX 153712056 153714932   2877      -    8266  UBL4A
-## cg00014152     chrX  48455880  48463582   7703      +   64743  WDR13
-## cg00016522     chrX 149737047 149841616 104570      +    4534   MTM1</code></pre>
+<pre><code>##            seqnames     start       end  width strand gene_id  SYMBOL
+## cg00000957     chr1   5922870   6052533 129664      -  261734   NPHP4
+## cg00001349     chr1 166944819 166991447  46629      +   84944    MAEL
+## cg00001583     chr1 199996730 200146550 149821      +    2494   NR5A2
+## cg00002028     chr1  20959948  20978004  18057      +   65018   PINK1
+## cg00002719     chr1 169364114 169429907  65794      -   57821 CCDC181
+## cg00002837     chr1  44514030  44600809  86780      +  128209   KLF17
+## cg00003202     chr1 151313116 151319769   6654      -    5993    RFX5
+## cg00003287     chr1 201328136 201346828  18693      -    7139   TNNT2
+## cg00007036     chr1  33722174  33766320  44147      +  149076  ZNF362
+## cg00007898     chr1 205111631 205180727  69097      -   25778   DSTYK</code></pre>
 <hr />
 </div>
-<div id="references" class="section level1">
-<h1>References</h1>
+<div id="dmr-finder" class="section level1">
+<h1>DMR Finder</h1>
+<p>This <code>DNAmArray</code> package also contains a <code>DMRfinder()</code> function, which can be used to identify differentially methylated regions (DMRs). This function takes a simple data frame as input, which needs to contain a column called <code>crit</code> with a binary indicator of whether the adjusted p-value was significant or not. Other options include <code>mismatches</code>, which specifies how many DMPs are allowed to be not significant in a row before a region is not deemed to be a DMR, and the <code>icd</code> or Inter-CpG distance required for a region to be identified.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">dmrData &lt;-<span class="st"> </span><span class="kw">data.frame</span>(<span class="dt">dmp =</span> <span class="kw">attr</span>(padj.cate, <span class="st">&quot;names&quot;</span>), <span class="dt">crit =</span> <span class="kw">ifelse</span>(padj.cate<span class="op">&lt;</span><span class="fl">0.05</span>,<span class="dv">1</span>,<span class="dv">0</span>))
+
+DMRs =<span class="st"> </span><span class="kw">DMRfinder</span>(dmrData, <span class="dt">mismatches=</span><span class="dv">3</span>, <span class="dt">icd=</span><span class="dv">1000</span>)</code></pre></div>
+<pre><code>## 
+## ========================================================================</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">DMRs</code></pre></div>
+<pre><code>## GRanges object with 22 ranges and 0 metadata columns:
+##        seqnames              ranges strand
+##           &lt;Rle&gt;           &lt;IRanges&gt;  &lt;Rle&gt;
+##    [1]     chr1   11561497-11561956      *
+##    [2]     chr1 153762224-153762564      *
+##    [3]     chr2 121625577-121625735      *
+##    [4]     chr2 152830505-152830614      *
+##    [5]     chr3   46618325-46618668      *
+##    ...      ...                 ...    ...
+##   [18]    chr17     8928012-8928451      *
+##   [19]    chr18     5891602-5892245      *
+##   [20]    chr18   11850139-11850153      *
+##   [21]    chr18   32173084-32173227      *
+##   [22]    chr22   50165244-50165512      *
+##   -------
+##   seqinfo: 10 sequences from an unspecified genome; no seqlengths</code></pre>
+<p>In this instance, 22 DMRs were found to be associated with FASD. These regions can be visualised with a chromosome-based circo plot, such as using <a href="http://bioconductor.org/packages/release/bioc/html/OmicCircos.html"><strong>OmicCircos</strong></a> to get a better understanding of the regions identified.</p>
+<hr />
 </div>
 
 
@@ -593,6 +582,49 @@ $(document).ready(function () {
 });
 
 
+</script>
+
+<!-- tabsets -->
+
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+
+$(document).ready(function () {
+  $('.tabset-dropdown > .nav-tabs > li').click(function () {
+    $(this).parent().toggleClass('nav-tabs-open')
+  });
+});
+</script>
+
+<!-- code folding -->
+
+<script>
+$(document).ready(function ()  {
+
+    // move toc-ignore selectors from section div to header
+    $('div.section.toc-ignore')
+        .removeClass('toc-ignore')
+        .children('h1,h2,h3,h4,h5').addClass('toc-ignore');
+
+    // establish options
+    var options = {
+      selectors: "h1,h2",
+      theme: "bootstrap3",
+      context: '.toc-content',
+      hashGenerator: function (text) {
+        return text.replace(/[.\\/?&!#<>]/g, '').replace(/\s/g, '_').toLowerCase();
+      },
+      ignoreSelector: ".toc-ignore",
+      scrollTo: 0
+    };
+    options.showAndHide = true;
+    options.smoothScroll = true;
+
+    // tocify
+    var toc = $("#TOC").tocify(options).data("toc-tocify");
+});
 </script>
 
 <!-- dynamically load mathjax for compatibility with self-contained -->
