@@ -26,7 +26,7 @@ The [**DNAmArray**](https://github.com/molepi/DNAmArray)-package contains a seri
 
 It is worth noting that this workflow makes extensive use of other [BioConductor](https://www.bioconductor.org) packages. For example, the [**DNAmArray**](https://github.com/molepi/DNAmArray) function `read.metharray.exp.par()` converts IDAT files to an `RGset` by harnessing functions from [**minfi**](https://bioconductor.org/packages/release/bioc/html/minfi.html) [@Feinberg2014] and combining them with [**BiocParallel**](https://bioconductor.org/packages/release/bioc/html/BiocParallel.html). Usually the required packages are installed automatically, but otherwise please refer to the relevant package's documentation.
 
-Furthermore, we have also developed packages used by this workflow.  [**MethylAid**](http:/bioconductor.org/packages/MethylAid) [@Luijk2014] provides a web application to assist in performing interactive sample quality control, and  [**bacon**](http:/bioconductor.org/packages/bacon)
+Furthermore, we have also developed packages used by this workflow.  [**MethylAid**](http:/bioconductor.org/packages/MethylAid) [@Luijk2014] provides a web application to assist in performing interactive sample quality control, and [**bacon**](http:/bioconductor.org/packages/bacon)
 [@VanIterson2017] corrects for bias and inflation in ome-wide association studies, such as EWAS.
 
 ***
@@ -34,31 +34,6 @@ Furthermore, we have also developed packages used by this workflow.  [**MethylAi
 # Example Data #
 
 The [example data](https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE113018) [@Cobben2019] used in this workflow is available from the [NCBI Gene Expression Omnibus](https://www.ncbi.nlm.nih.gov/geo/) (GEO), a public repository of microarray data. It contains genome-wide DNA methylation data from whole blood obtained using the Illumina 450k microarray. The participants consist of 46 fetal alcohol spectrum disorder (FASD) cases and 92 controls from both a discovery and replication cohort.
-
-***
-
-# Installation #
-  
-The [**DNAmArray**](https://github.com/molepi/DNAmArray)-package can be installed in several ways, and has been successfully for >= R-3.2.0 on various Linux-builds and for >= R-3.5.3 on Windows.
-
-### Install using the **devtools**-package ###
-
-First install the package [**devtools**](https://github.com/hadley/devtools), then use the `install_github()` function to fetch the [**DNAmArray**](https://github.com/molepi/DNAmArray) package.
-
-```{r 101devtools, eval=FALSE}
-library(devtools)
-install_github("molepi/DNAmArray")
-```
-
-### Install from source using `git/R` ###
-
-Using [git](https://git-scm.com/), you can `git clone` our repository and then install the package, changing `_x.y.z.` to the version you cloned.
-
-```{r 102git, eval=FALSE}
-git clone git@github.com/molepi/DNAmArray.git
-R CMD build DNAmArray
-R CMD INSTALL DNAmArray_x.y.z.tar.gz
-```
 
 ***
 

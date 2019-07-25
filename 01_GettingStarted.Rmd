@@ -1,0 +1,62 @@
+
+```{r, child="_setup.Rmd"}
+```
+
+***
+
+# Installation #
+  
+The [**DNAmArray**](https://github.com/molepi/DNAmArray)-package can be installed in several ways, and has been successfully for >= R-3.2.0 on various Linux-builds and for >= R-3.5.3 on Windows.
+
+### Install using the **devtools**-package ###
+
+First install the package [**devtools**](https://github.com/hadley/devtools), then use the `install_github()` function to fetch the [**DNAmArray**](https://github.com/molepi/DNAmArray) package.
+
+```{r 101devtools, eval=FALSE}
+library(devtools)
+install_github("molepi/DNAmArray")
+```
+
+### Install from source using `git/R` ###
+
+Using [git](https://git-scm.com/), you can `git clone` our repository and then install the package, changing `_x.y.z.` to the version you cloned.
+
+```{r 102git, eval=FALSE}
+git clone git@github.com/molepi/DNAmArray.git
+R CMD build DNAmArray
+R CMD INSTALL DNAmArray_x.y.z.tar.gz
+```
+
+***
+
+# Importing IDATs #
+
+The first step of any analysis of microarray data involves importing the raw intensity files into your software program. In this example, we show how to import raw IDAT files from GEO into R, but similar strategies can be employed for all Illumina methylation array files when using R. 
+
+Using [**GEOquery**](http://bioconductor.org/packages/release/bioc/html/GEOquery.html) [@Davis2007], you can download the [example data](https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE113018) [@Cobben2019]. This package contains functions that bridge the gap between between [BioConductor](https://www.bioconductor.org) tools and [GEO](https://www.ncbi.nlm.nih.gov/geo/), which is a public repository of microarray data.
+
+Initially, we use `getGEOSuppFiles()` to download the supplementary data to the current working directory. These consist of an archive containing the raw IDATs alongside some documentation. We extract these and store them in our chosen directory, ready for decompression.
+
+```{r 201geoquery, eval=FALSE}
+library(GEOquery)
+getGEOSuppFiles("GSE113018")
+untar(tarfile="./GSE113018/GSE113018_RAW.tar", exdir="./GSE113018/IDATs")
+```
+
+After creating a list of files, we utilise the `gunzip()` function to efficiently unpack the data.
+
+```{r 202idats, eval=FALSE}
+setwd("./GSE113018/IDATs")
+sapply(list.files(), gunzip)
+```
+
+We then use `getGEO()` to import SOFT format microarray data into R as a large GSE-class list. This contains a multitude of information, but we extract the phenotypic and meta-data of interest. 
+
+```{r 203getgeo, eval=FALSE}
+GSE113018 <- getGEO(GEO="GSE113018")
+targets <- pData(phenoData(GSE113018[[1]]))
+```
+
+***
+
+# References #

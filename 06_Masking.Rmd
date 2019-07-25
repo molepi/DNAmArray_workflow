@@ -1,0 +1,109 @@
+
+```{r, child="_setup.Rmd"}
+```
+
+```{r 701start, echo=FALSE, message=FALSE, results='hide'}
+load("C:/Users/ljsinke/Documents/git/GitHub/test_workflow/data/targets_mod.RData")
+RGset <- read.metharray.exp(base="C:/Users/ljsinke/Documents/r/cd/GSE113018/IDATs", targets, extended=TRUE)
+GRset <- preprocessFunnorm.DNAmArray(RGset, nPCs=4, keepCN=FALSE)
+RGset <- probeFiltering(RGset)
+betas <- reduce(GRset, RGset, what="beta")
+
+library(missMDA)
+betas <- imputePCA(betas)
+betas <- betas$completeObs
+betas[betas<0] <- 0
+betas[betas>1] <- 1
+
+data("DNAmPredictorCoef")
+RGset$Sentrix_Position <- substr(RGset$Basename,23,28)
+wbcc_covar <- as.data.frame(colData(RGset)[,c(28,32,36)])
+wbcc_covar[,2] <- as.numeric(wbcc_covar[,2])-1
+wbcc_covar[,3] <- as.numeric(as.factor(wbcc_covar[,3]))
+wbcc_covar <- as.matrix(wbcc_covar)
+
+cgRows <- row.names(DNAmPredictorCoef)[grep("data", row.names(DNAmPredictorCoef))] 
+library(stringr)
+cgRows <- str_remove(cgRows, "data")
+wbcc_betas <- betas[match(cgRows, rownames(betas)),] 
+
+rownames(DNAmPredictorCoef) <- str_remove(rownames(DNAmPredictorCoef), "data")
+rownames(DNAmPredictorCoef) <- str_remove(rownames(DNAmPredictorCoef), "covar")
+predicted <- predict_wbcc(DNAmPredictorCoef, wbcc_betas, wbcc_covar, ncomp=40)
+predicted[predicted<0] <- 0
+colData(RGset) <- cbind(colData(RGset),predicted)
+```
+
+***
+
+# Ambiguous probes #
+
+Several studies [@Chen2013, @Zhou2017] have characterized cross-reactive and polymorphic probes on both the 450k and EPIC methylation arrays and made suggestions for removal. We chose to remove probes identified by Zhou et al., since this set is actively maintained and supports both array sizes. Additionally, different sets are specified depending on the reference genome used.
+
+In total, Zhou et al. suggest removal of probes for a variety of reasons, from ambiguous mapping and cross-reactivity to polymorphisms that interfere with extension. In general, around 60,000 probes are suggested for removal in 450k arrays, and 100,000 for EPIC. 
+
+We developed the `probeMasking()` function, which removes specified probes from either beta- or M- value matrices. In this instance, 59,780 CpG rows are removed. 
+
+```{r 505zhoumask}
+betas <- probeMasking(betas, array="450", genome="hg19")
+```
+
+***
+
+# `RangedSummarizedExperiment` #
+
+Moving further into the pipeline, it will be necessary to have our methylation data stored in a [`RangedSummarizedExperiment`](http://bioconductor.org/packages/SummarizedExperiment) class object. Designed to handle microarray data, this class stores observations from multiple samples alongside relevant meta-data, and ensures that both features and phenotypes are kept in-sync when subsetting.
+
+This matrix-like container is organised with rows representing features, such as genes or exons, which can be accessed using `rowRanges()`. This function calls a `GRanges` object describing features and their attributes. The columns of the `RangedSummarizedExperiment` store information about each sample, and this can be accessed using `colData()`. 
+
+Lastly, each assay is represented in the third dimension of this matrix-like object and can be shown using the `assays()` function. Meta-data is then linked to this combination of data frames, and can be accessed with the `metadata()` command. 
+
+***
+
+### Creating a `RangedSummarizedExperiment` ###
+
+The [**FDb.InfiniumMethylation.hg19**](https://bioconductor.org/packages/release/data/annotation/html/FDb.InfiniumMethylation.hg19.html) package contains probe annotations, which can be extracted using the `getPlatform()` function. To ensure that we apply the previous probe filtering, we use `match()` to keep only the relevant information.
+
+```{r 602probeannotate}
+library(FDb.InfiniumMethylation.hg19)
+rowRanges <- getPlatform(platform="HM450", genome="hg19")
+rows <- match(rownames(betas), names(rowRanges))
+rowRanges <- rowRanges[rows]
+
+rowRanges[,3:4]
+```
+
+Now that we have our annotations, we can combine them with our data using the [**SummarizedExperiment**](https://bioconductor.org/packages/release/bioc/html/SummarizedExperiment.html) package. After ensuring that any column subsetting is accounted for, we extract the `colData()` from our `RGset`. Finally, the beta values, probe annotations, and sample information are combined into a `RangedSummarizedExperiment` object using the `SummarizedExperiment()` function.
+
+```{r 603summexp}
+library(SummarizedExperiment)
+
+cols <- match(colnames(betas), colnames(RGset))
+colData <- DataFrame(colData(RGset[, cols])@listData)
+
+methData <- SummarizedExperiment(assays=SimpleList(betas=betas),
+                                 rowRanges=rowRanges,
+                                 colData=colData)
+methData
+```
+
+You can read more about [**SummarizedExperiment**](http://bioconductor.org/packages/SummarizedExperiment) from the following resources:
+<ul>
+<li>[Package vignette](http://bioconductor.org/packages/release/bioc/vignettes/SummarizedExperiment/inst/doc/SummarizedExperiment.html)</li>
+<li>[Course material](http://bioconductor.org/help/course-materials/2012/BiocEurope2012/SummarizedExperiment.pdf)</li>
+<li>[BioConductor nature paper](http://www.nature.com/nmeth/journal/v12/n2/full/nmeth.3252.html)</li>
+</ul>
+
+***
+
+# Sex Chromosomal Probes #
+
+Having a `RangedSummarizedExperiment` class object expedites masking sex chromosomal probes. 
+
+``` {r sexmask}
+methData <- methData[!(seqnames(methData) %in% c("chrX", "chrY")),]
+```
+
+***
+
+# References #

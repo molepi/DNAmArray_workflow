@@ -1,0 +1,260 @@
+
+```{r, child="_setup.Rmd"}
+```
+
+```{r 701start, echo=FALSE, message=FALSE, results='hide'}
+load("C:/Users/ljsinke/Documents/git/GitHub/test_workflow/data/targets_mod.RData")
+RGset <- read.metharray.exp(base="C:/Users/ljsinke/Documents/r/cd/GSE113018/IDATs", targets, extended=TRUE)
+GRset <- preprocessFunnorm.DNAmArray(RGset, nPCs=4, keepCN=FALSE)
+RGset <- probeFiltering(RGset)
+betas <- reduce(GRset, RGset, what="beta")
+
+library(missMDA)
+betas <- imputePCA(betas)
+betas <- betas$completeObs
+betas[betas<0] <- 0
+betas[betas>1] <- 1
+
+data("DNAmPredictorCoef")
+RGset$Sentrix_Position <- substr(RGset$Basename,23,28)
+wbcc_covar <- as.data.frame(colData(RGset)[,c(28,32,36)])
+wbcc_covar[,2] <- as.numeric(wbcc_covar[,2])-1
+wbcc_covar[,3] <- as.numeric(as.factor(wbcc_covar[,3]))
+wbcc_covar <- as.matrix(wbcc_covar)
+cgRows <- row.names(DNAmPredictorCoef)[grep("data", row.names(DNAmPredictorCoef))] 
+library(stringr)
+cgRows <- str_remove(cgRows, "data")
+wbcc_betas <- betas[match(cgRows, rownames(betas)),] 
+rownames(DNAmPredictorCoef) <- str_remove(rownames(DNAmPredictorCoef), "data")
+rownames(DNAmPredictorCoef) <- str_remove(rownames(DNAmPredictorCoef), "covar")
+predicted <- predict_wbcc(DNAmPredictorCoef, wbcc_betas, wbcc_covar, ncomp=40)
+predicted[predicted<0] <- 0
+colData(RGset) <- cbind(colData(RGset),predicted)
+
+betas <- probeMasking(betas, array="450", genome="hg19")
+
+library(FDb.InfiniumMethylation.hg19)
+rowRanges <- getPlatform(platform="HM450", genome="hg19")
+rows <- match(rownames(betas), names(rowRanges))
+rowRanges <- rowRanges[rows]
+library(SummarizedExperiment)
+cols <- match(colnames(betas), colnames(RGset))
+colData <- DataFrame(colData(RGset[, cols])@listData)
+
+methData <- SummarizedExperiment(assays=SimpleList(betas=betas),
+                                 rowRanges=rowRanges,
+                                 colData=colData)
+methData <- methData[!(seqnames(methData) %in% c("chrX", "chrY")),]
+```
+
+***
+
+# Covariates #
+
+Each column in the `RGset` colData should be considered as a potential covariate in our models. Both technical and biological factors should be investigated as these may introduce batch effects or be clinically relevant. In order to assess this, we convert each column to a categorical variable whose correlations can be visualised. 
+
+Homogenous columns can be excluded, as any variables that do not change by definition cannot explain variation in the data. In this instance, the `description` for all samples is peripheral whole blood, so there is no need to investigate a tissue effect. However, in some instances samples may be taken from different tissues, and in this type of study analysis must be done separately for each to correctly separate clinically relevant methylation changes from tissue-specific methylation differences. 
+
+```{r 305heatmapscols}
+df <- apply(colData(RGset), 2, function(x) as.numeric(factor(x)))
+keep <- apply(df, 2, sd) > 0
+summary(keep)
+
+df <- df[ , keep]
+colnames(df)
+```
+
+As you can see, 16 columns need to be examined. These include sample identifiers, such as `title` and the `Basename` variable we created, as well as which `cohort` the participant was from. Other potential causes of variation are biological, such as `age`, `sex`, and `cc_status`, and some, like `Sentrix_Position` and the blood cell counts, represent potential batch effects or confounding.
+
+Correlations between complete factors and the principal components is calculated, and this correlation matrix is then melted using the `melt()` function from the [**reshape2**](https://cran.r-project.org/web/packages/reshape2/index.html) package. This prepares it for visualization using [**ggplot2**](https://ggplot2.tidyverse.org/).
+
+```{r 306heatmapplot}
+library(irlba)
+pc <- prcomp_irlba(t(betas), n=6)
+
+cxy <- round(cor(pc$x, scale(df)),2)  
+cxy[ , 1:9]
+
+library(reshape2)
+melted_cxy <- melt(cxy)
+head(melted_cxy)
+```
+
+After some aesthetic preparation of the `theme()`, the correlations can be visualized in a heatmap using [**ggplot2**](https://ggplot2.tidyverse.org/)'s `geom_tile()` function.
+
+```{r 306heatmaptheme, echo=FALSE}
+th2 <- scale_fill_gradient2(low = "#158cba", high = "#D67D87", mid = "white", 
+                                                            midpoint = 0, limit = c(-1,1), 
+                                                            name="Pearson's r")
+th3 <- theme(text=element_text(size=12), 
+             panel.border=element_rect(fill=NA, color="#adadad", size=0.5, linetype=1),
+             panel.background=element_rect(fill="white"), 
+             plot.title=element_text(size=20, hjust=0.5, margin=margin(0,0,15,0)), 
+             plot.margin=margin(20,25,25,25), 
+             panel.grid=element_line(size=1, linetype=1, color="black"),
+             axis.ticks=element_line(size=0.4),
+             plot.background=element_blank())
+th4 <- scale_x_discrete(expand=c(0,0))
+th5 <- scale_y_discrete(expand=c(0,0))
+```
+
+```{r 306heatmapgg}
+library(ggplot2)
+ggplot(data = melted_cxy, aes(x=Var1, y=Var2, fill=value)) + th2 + th3 + th4 + th5 +
+  geom_tile(colour="#adadad",size=0.5) + ggtitle("Heatmap of Correlations") + labs(x="",y="")
+```
+
+By examining the correlations in the data, we can build our model in a more informed manner. The first PC is highly correlated with sex and, as is usual in EWAS, we intend to include this as a confounder. 
+Cell counts appear of substantial importance and will also be adjusted for. Model specification should be informed by a combination of prior knowledge and inspection of patterns in the data. 
+
+Below we will specify a model adjusting for age, sex, sentrix position, cell counts, and cohort. It is not appropriate to adjust for sample ID type variables, such as Basename, despite their correlation with our PCs. 
+
+***
+
+# EWAS using `cate` #
+
+The package [**cate**](https://cran.r-project.org/web/packages/cate/index.html) uses high dimensional factor analysis to adjust for measured and unmeasured confounding in multiple hypothesis testing. Unmeasured confounders, which are correlated with both methylation and case-control status, can bias the results from association tests. This makes this method superior to using [**limma**](https://bioconductor.org/packages/release/bioc/html/limma.html), since it both corrects for technical variation and performs robust linear regression.
+
+We advise using [**cate**](https://cran.r-project.org/web/packages/cate/index.html) over PCA, since you can specify that factors should be independent of the outcome of interest. This is not the case in PCA, which can result in biological variation being removed. 
+
+The first step in running an EWAS is to make sure that you have information on all your confounders, and that these are stored in a design matrix. This matrix should be created using the `model.matrix()` function, so that variables are treated correctly. 
+
+The formula that will be used for our EWAS is stored inside the `RangedSummarizeExperiment` and called when creating the design matrix, after ensuring that none of the covariates contain missing values. We adjust for measured confounders, including age, sex, sentrix position, and estimated cell percentages. 
+
+``` {r designmatrix}
+metadata(methData)$formula <- ~cc_status + age + sex + Sentrix_Position + cohort +
+  baso_perc + eos_perc + lymph_perc + mono_perc + neut_perc
+covariates <- get_all_vars(metadata(methData)$formula, data=colData(methData))
+
+nas <- apply(covariates, 1, anyNA)
+methData <- methData[, !nas]
+
+design <- model.matrix(metadata(methData)$formula, data=colData(methData))
+design[1:5, 1:3]
+```
+
+To correct for unknown confounders, we must estimate their number using the `est.confounder.num()` function from [**cate**](https://cran.r-project.org/web/packages/cate/index.html). In order to correctly input the arguments of this function you need to specify the variable of interest, which in this instance is case-control status, followed by a formula indicating that all other variables except the intercept are known confounders. This function also needs the design matrix as a data frame, the transposed beta values, and an indication of what methods and number of iterations you want to use. 
+
+``` {r estimaten}
+library(cate)
+beta.cate <- t(assays(methData)$betas)
+
+factor.num <- est.confounder.num(~ cc_statusFASD | . - cc_statusFASD + 0,
+                                 as.data.frame(design), beta.cate,
+                                 method = "bcv", bcv.plot = FALSE,
+                                 rmax = 30, nRepeat = 20)
+factor.num$r
+```
+
+In this instance, it is suggested we correct for 9 unmeasured confounders. To implement this, we use the `cate.fit()` function, as shown below. The output object stores the beta values, estimated test statistics, and relevant p-values, and top hits can be viewed after using the Bonferonni correction to adjust for multiple testing.
+
+``` {r cate}
+results.cate <- cate.fit(design[,2,drop=FALSE], design[,-2], beta.cate, 
+                         r = 9, calibrate=FALSE, adj.method="naive")
+
+padj.cate <- p.adjust(sort(results.cate$beta.p.value[,1], decreasing=FALSE), method="bonf")
+
+head(padj.cate[padj.cate < 0.05])
+length(padj.cate[padj.cate < 0.05])
+```
+
+This analysis has identified 417 differentially methylated probes (DMPs) associated with FASD after adjusting for age, sex, and sentrix position. These can be analysed further, but first we want to outline alternatives to the [**cate**](https://cran.r-project.org/web/packages/cate/index.html)-based EWAS, and demonstrate that results are comparable.
+
+
+***
+
+# Alternatives #
+
+[**Limma**](https://bioconductor.org/packages/release/bioc/html/limma.html) is a package with excellent documentation that can be useful for smaller samples, due to the optional empirical Bayes step. Running [**limma**](https://bioconductor.org/packages/release/bioc/html/limma.html) is similar to running [**cate**](https://cran.r-project.org/web/packages/cate/index.html), except that the beta matrix does not need transposing and test statistics and p-values need to be manually derived.
+
+```{r 706ewas}
+beta.limma <- assays(methData)$betas
+
+library(limma)
+fit <- lmFit(beta.limma, design)
+
+tstat <- fit$coef/fit$stdev.unscaled/fit$sigma
+pval <- 2*pnorm(-abs(tstat[,2]))
+padj <- p.adjust(sort(pval, decreasing=FALSE), method="bonf")
+
+head(padj[padj < 0.05])
+length(padj[padj < 0.05])
+```
+
+As shown, results from [**limma**](https://bioconductor.org/packages/release/bioc/html/limma.html) are comparable with those from [**cate**](https://cran.r-project.org/web/packages/cate/index.html). Here, the same number of DMPs are identified and top hits are identical, albeit with slightly differing p-values. Despite this, for the reasons specified above, we still advise using [**cate**](https://cran.r-project.org/web/packages/cate/index.html) unless your sample size is small enough to require the `eBayes` option. 
+
+Linear mixed models and linear models can both work well for performing EWAS and, when looking solely at top hits, are unlikely to differ greatly from results obtained using [**cate**](https://cran.r-project.org/web/packages/cate/index.html) or [**limma**](https://bioconductor.org/packages/release/bioc/html/limma.html).
+
+***
+
+# `bacon` #
+
+We developed a package called [**bacon**](http://bioconductor.org/packages/bacon) [@VanIterson2017] to estimate and correct for bias and inflation of test statistics in EWAS. This maximizes power while properly controlling the false positive rate, by estimating the empirical null distribution using Bayesian statistics. The utility of the tool was illustrated through the application of meta-analysis by performing epigenome- and transcriptome-wide association studies (EWASs/TWASs) on age and smoking which highlighted an overlap in differential methylation and expression of associated genes. It can be used to remove inflation and
+bias often observed in EWAS.
+
+```{r 707bacon, eval=FALSE}
+library(bacon)
+tstats <- cbind(limma=tstat[,2], cate=as.vector(fa$beta.t))
+
+library(BiocParallel)
+register(MulticoreParam(2))
+bc <- bacon(tstats)
+```
+
+Plots can be used to compare adjustment using [**cate**](https://cran.r-project.org/web/packages/cate/index.html) with that using [**bacon**](http://bioconductor.org/packages/bacon), and bacon-adjusted [**limma**](https://bioconductor.org/packages/release/bioc/html/limma.html) and [**cate**](https://cran.r-project.org/web/packages/cate/index.html) values can be compared side by side. 
+
+```{r 708bacon2, eval=FALSE}
+print(plot(bc, type="hist"))
+````
+
+![](C:/Users/ljsinke/Documents/git/GitHub/DNAmArray_workflow/07_EWAS_files/figure-html/bacon-1.png)
+
+<br>
+
+```{r 703bacon2, eval=FALSE}
+print(plot(bc, type="qq"))
+````
+
+![](C:/Users/ljsinke/Documents/git/GitHub/DNAmArray_workflow/07_EWAS_files/figure-html/bacon-2.png)
+
+<br>
+
+```{r 707bacon3, eval=FALSE}
+pvalsbc <- pval(bc)
+head(pvalsbc[order(pvalsbc[,1]),])
+pvals <- pval(bc, FALSE)
+head(pvals[order(pvals[,1]),])
+```
+
+If, after looking at the plots, strong bias is observed, running [**bacon**](http://bioconductor.org/packages/bacon) should be seriously considered. 
+
+***
+
+# DMR Finder #
+
+This `DNAmArray` package also contains a [**DMRfinder**](https://epigeneticsandchromatin.biomedcentral.com/articles/10.1186/1756-8935-6-26) [@Slieker2013] function, which can be used to identify differentially methylated regions (DMRs). This function takes a simple data frame as input, which needs to contain a column called `crit` with a binary indicator of whether the adjusted p-value was significant or not. Other options include `mismatches`, which specifies how many DMPs are allowed to be not significant in a row before a region is not deemed to be a DMR, and the `icd` or Inter-CpG distance required for a region to be identified.
+
+```{r 616dmrfinder}
+dmrData <- data.frame(dmp = attr(padj.cate, "names"), crit = ifelse(padj.cate<0.05,1,0))
+
+DMRs = DMRfinder(dmrData, mismatches=3, icd=1000)
+DMRs
+```
+
+In this instance, 16 DMRs were found to be associated with FASD. These regions can be visualised with a chromosome-based circo plot, such as using [**OmicCircos**](http://bioconductor.org/packages/release/bioc/html/OmicCircos.html) to get a better understanding of the regions identified.  
+
+***
+
+# Probe Annotation #
+
+Our package also contains a `cpgInfo()` function, which can be used to map CpG probes to their nearest genes. This utilises the [**TxDb.Hsapiens.UCSC.hg19.knownGene**](http://bioconductor.statistik.tu-dortmund.de/packages/3.6/data/annotation/html/TxDb.Hsapiens.UCSC.hg19.knownGene.html) package, which accesses the USCS annotation databases.
+
+```{r 615annotate}
+cpgs <- names(methData)
+cpgInfo <- cpgInfo(cpgs, TxDb="TxDb.Hsapiens.UCSC.hg19.knownGene")
+cpgInfo[1:10, 1:7]
+```
+
+***
+
+# References #

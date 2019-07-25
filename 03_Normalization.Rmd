@@ -14,7 +14,7 @@ Using the internal control probes avoids the problems associated with global nor
 
 # Principal Components Selection #
 
-Since the default of selecting only two principal components is often too restrictive for this type of data, our `screeplot()` function allows visualisation of control probe eigenvalues to help select the optimal number. Often you will see a drop-off in proportion of variance explained after a certain number of principal components, and this can indicate an efficient cut-off. 
+The default of selecting only two principal components is often too low for this type of data, so our `screeplot()` function allows visualisation of control probe eigenvalues to help select the optimal number. Often you will see a drop-off in proportion of variance explained after a certain number of principal components, and this can indicate an efficient cut-off. 
 
 ```{r 401start, echo=FALSE, message=FALSE}
 load("C:/Users/ljsinke/Documents/git/GitHub/test_workflow/data/targets_mod.RData")
@@ -26,7 +26,7 @@ par(mar=c(5,5,4,2), mgp=c(2.5,1,0), cex.main=1.5, font.main="1", fg="#6b6b6b", c
 pc <- screeplot(RGset)
 ``` 
 
-This plot shows that only a small amount of variance is explained after the fourth principal component. For this reason, we choose to carry out normalization using 6 principal components.
+This plot shows that only a small amount of variance is explained after the sixth principal component. For this reason, we choose to carry out normalization using 6 principal components.
 
 ***
 
