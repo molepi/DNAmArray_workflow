@@ -391,108 +391,127 @@ div.tocify {
 ## [8] methods   base     
 ## 
 ## other attached packages:
-##  [1] BBMRIomics_3.2.1                                  
-##  [2] bacon_1.12.0                                      
-##  [3] ellipse_0.4.1                                     
-##  [4] ggplot2_3.2.0                                     
-##  [5] impute_1.58.0                                     
-##  [6] IlluminaHumanMethylation450kanno.ilmn12.hg19_0.6.0
-##  [7] IlluminaHumanMethylation450kmanifest_0.4.0        
-##  [8] fastcluster_1.1.25                                
-##  [9] pheatmap_1.0.12                                   
-## [10] irlba_2.3.3                                       
-## [11] Matrix_1.2-17                                     
-## [12] limma_3.40.2                                      
-## [13] cate_1.0.4                                        
-## [14] BatchJobs_1.8                                     
-## [15] BBmisc_1.11                                       
-## [16] MethylAid_1.18.0                                  
-## [17] knitr_1.23                                        
-## [18] DNAmArray_0.1.1                                   
-## [19] htm2txt_2.1.1                                     
-## [20] minfi_1.30.0                                      
-## [21] bumphunter_1.26.0                                 
-## [22] locfit_1.5-9.1                                    
-## [23] iterators_1.0.10                                  
-## [24] foreach_1.4.4                                     
-## [25] Biostrings_2.52.0                                 
-## [26] XVector_0.24.0                                    
-## [27] SummarizedExperiment_1.14.0                       
-## [28] DelayedArray_0.10.0                               
-## [29] BiocParallel_1.17.18                              
-## [30] matrixStats_0.54.0                                
-## [31] FDb.InfiniumMethylation.hg19_2.2.0                
-## [32] org.Hs.eg.db_3.8.2                                
-## [33] TxDb.Hsapiens.UCSC.hg19.knownGene_3.2.2           
-## [34] GenomicFeatures_1.36.4                            
-## [35] AnnotationDbi_1.46.0                              
-## [36] Biobase_2.44.0                                    
-## [37] GenomicRanges_1.36.0                              
-## [38] GenomeInfoDb_1.20.0                               
-## [39] IRanges_2.18.1                                    
-## [40] S4Vectors_0.22.0                                  
-## [41] BiocGenerics_0.30.0                               
-## [42] BiocManager_1.30.4                                
+##  [1] wateRmelon_1.28.0                                 
+##  [2] illuminaio_0.26.0                                 
+##  [3] ROC_1.60.0                                        
+##  [4] lumi_2.36.0                                       
+##  [5] methylumi_2.30.0                                  
+##  [6] reshape2_1.4.3                                    
+##  [7] scales_1.0.0                                      
+##  [8] stringr_1.4.0                                     
+##  [9] missMDA_1.14                                      
+## [10] BBMRIomics_3.2.1                                  
+## [11] bacon_1.12.0                                      
+## [12] ellipse_0.4.1                                     
+## [13] ggplot2_3.2.0                                     
+## [14] impute_1.58.0                                     
+## [15] IlluminaHumanMethylation450kanno.ilmn12.hg19_0.6.0
+## [16] IlluminaHumanMethylation450kmanifest_0.4.0        
+## [17] fastcluster_1.1.25                                
+## [18] pheatmap_1.0.12                                   
+## [19] irlba_2.3.3                                       
+## [20] Matrix_1.2-17                                     
+## [21] limma_3.40.2                                      
+## [22] cate_1.0.4                                        
+## [23] BatchJobs_1.8                                     
+## [24] BBmisc_1.11                                       
+## [25] MethylAid_1.18.0                                  
+## [26] knitr_1.23                                        
+## [27] DNAmArray_0.1.1                                   
+## [28] htm2txt_2.1.1                                     
+## [29] minfi_1.30.0                                      
+## [30] bumphunter_1.26.0                                 
+## [31] locfit_1.5-9.1                                    
+## [32] iterators_1.0.10                                  
+## [33] foreach_1.4.4                                     
+## [34] Biostrings_2.52.0                                 
+## [35] XVector_0.24.0                                    
+## [36] SummarizedExperiment_1.14.0                       
+## [37] DelayedArray_0.10.0                               
+## [38] BiocParallel_1.17.18                              
+## [39] matrixStats_0.54.0                                
+## [40] FDb.InfiniumMethylation.hg19_2.2.0                
+## [41] org.Hs.eg.db_3.8.2                                
+## [42] TxDb.Hsapiens.UCSC.hg19.knownGene_3.2.2           
+## [43] GenomicFeatures_1.36.4                            
+## [44] AnnotationDbi_1.46.0                              
+## [45] Biobase_2.44.0                                    
+## [46] GenomicRanges_1.36.0                              
+## [47] GenomeInfoDb_1.20.0                               
+## [48] IRanges_2.18.1                                    
+## [49] S4Vectors_0.22.0                                  
+## [50] BiocGenerics_0.30.0                               
+## [51] BiocManager_1.30.4                                
 ## 
 ## loaded via a namespace (and not attached):
-##   [1] backports_1.1.4          plyr_1.8.4              
-##   [3] lazyeval_0.2.2           splines_3.6.1           
-##   [5] gridBase_0.4-7           sva_3.32.1              
-##   [7] digest_0.6.20            htmltools_0.3.6         
-##   [9] svd_0.4.3                magrittr_1.5            
-##  [11] checkmate_1.9.4          memoise_1.1.0           
-##  [13] BSgenome_1.52.0          readr_1.3.1             
-##  [15] annotate_1.62.0          askpass_1.1             
-##  [17] siggenes_1.58.0          prettyunits_1.0.2       
-##  [19] colorspace_1.4-1         blob_1.2.0              
-##  [21] xfun_0.8                 dplyr_0.8.3             
-##  [23] jsonlite_1.6             crayon_1.3.4            
-##  [25] RCurl_1.95-4.12          hexbin_1.27.3           
-##  [27] genefilter_1.66.0        GEOquery_2.52.0         
-##  [29] zeallot_0.1.0            VariantAnnotation_1.30.1
-##  [31] brew_1.0-6               survival_2.44-1.1       
-##  [33] sendmailR_1.2-1          glue_1.3.1              
-##  [35] ruv_0.9.7                registry_0.5-1          
-##  [37] gtable_0.3.0             zlibbioc_1.30.0         
-##  [39] Rhdf5lib_1.6.0           HDF5Array_1.12.1        
-##  [41] scales_1.0.0             DBI_1.0.0               
-##  [43] rngtools_1.4             bibtex_0.4.2            
-##  [45] Rcpp_1.0.1               xtable_1.8-4            
-##  [47] progress_1.2.2           bit_1.1-14              
-##  [49] mclust_5.4.5             preprocessCore_1.46.0   
-##  [51] httr_1.4.0               RColorBrewer_1.1-2      
-##  [53] pkgconfig_2.0.2          reshape_0.8.8           
-##  [55] XML_3.98-1.20            tidyselect_0.2.5        
-##  [57] rlang_0.4.0              reshape2_1.4.3          
-##  [59] later_0.8.0              munsell_0.5.0           
-##  [61] tools_3.6.1              esaBcv_1.2.1            
-##  [63] RSQLite_2.1.1            pls_2.7-1               
-##  [65] evaluate_0.14            stringr_1.4.0           
-##  [67] yaml_2.2.0               bit64_0.9-7             
-##  [69] beanplot_1.2             scrime_1.3.5            
-##  [71] purrr_0.3.2              nlme_3.1-140            
-##  [73] doRNG_1.7.1              mime_0.7                
-##  [75] leapp_1.2                nor1mix_1.3-0           
-##  [77] xml2_1.2.0               biomaRt_2.40.1          
-##  [79] compiler_3.6.1           RPostgreSQL_0.6-2       
-##  [81] tibble_2.1.3             stringi_1.4.3           
-##  [83] lattice_0.20-38          multtest_2.40.0         
-##  [85] vctrs_0.2.0              pillar_1.4.2            
-##  [87] corpcor_1.6.9            data.table_1.12.2       
-##  [89] bitops_1.0-6             httpuv_1.5.1            
-##  [91] rtracklayer_1.44.1       R6_2.4.0                
-##  [93] promises_1.0.1           gridExtra_2.3           
-##  [95] codetools_0.2-16         MASS_7.3-51.4           
-##  [97] assertthat_0.2.1         rhdf5_2.28.0            
-##  [99] openssl_1.4              pkgmaker_0.27           
-## [101] withr_2.1.2              GenomicAlignments_1.20.1
-## [103] Rsamtools_2.0.0          GenomeInfoDbData_1.2.1  
-## [105] mgcv_1.8-28              hms_0.5.0               
-## [107] quadprog_1.5-7           grid_3.6.1              
-## [109] tidyr_0.8.3              base64_2.0              
-## [111] rmarkdown_1.14           DelayedMatrixStats_1.6.0
-## [113] illuminaio_0.26.0        shiny_1.3.2             
-## [115] base64enc_0.1-3</code></pre>
+##   [1] lme4_1.1-21              tidyselect_0.2.5        
+##   [3] RSQLite_2.1.1            FactoMineR_1.42         
+##   [5] grid_3.6.1               munsell_0.5.0           
+##   [7] codetools_0.2-16         preprocessCore_1.46.0   
+##   [9] nleqslv_3.3.2            withr_2.1.2             
+##  [11] colorspace_1.4-1         leapp_1.2               
+##  [13] leaps_3.0                labeling_0.3            
+##  [15] GenomeInfoDbData_1.2.1   bit64_0.9-7             
+##  [17] rhdf5_2.28.0             vctrs_0.2.0             
+##  [19] generics_0.0.2           xfun_0.8                
+##  [21] R6_2.4.0                 doParallel_1.0.14       
+##  [23] bitops_1.0-6             reshape_0.8.8           
+##  [25] assertthat_0.2.1         promises_1.0.1          
+##  [27] nnet_7.3-12              gtable_0.3.0            
+##  [29] affy_1.62.0              sva_3.32.1              
+##  [31] svd_0.4.3                rlang_0.4.0             
+##  [33] zeallot_0.1.0            genefilter_1.66.0       
+##  [35] scatterplot3d_0.3-41     splines_3.6.1           
+##  [37] rtracklayer_1.44.1       lazyeval_0.2.2          
+##  [39] GEOquery_2.52.0          hexbin_1.27.3           
+##  [41] broom_0.5.2              brew_1.0-6              
+##  [43] checkmate_1.9.4          yaml_2.2.0              
+##  [45] backports_1.1.4          httpuv_1.5.1            
+##  [47] tools_3.6.1              RPostgreSQL_0.6-2       
+##  [49] gridBase_0.4-7           nor1mix_1.3-0           
+##  [51] affyio_1.54.0            RColorBrewer_1.1-2      
+##  [53] siggenes_1.58.0          Rcpp_1.0.1              
+##  [55] plyr_1.8.4               base64enc_0.1-3         
+##  [57] progress_1.2.2           zlibbioc_1.30.0         
+##  [59] purrr_0.3.2              RCurl_1.95-4.12         
+##  [61] prettyunits_1.0.2        rpart_4.1-15            
+##  [63] openssl_1.4              cluster_2.1.0           
+##  [65] magrittr_1.5             data.table_1.12.2       
+##  [67] mvtnorm_1.0-11           mitml_0.3-7             
+##  [69] hms_0.5.0                mime_0.7                
+##  [71] evaluate_0.14            xtable_1.8-4            
+##  [73] XML_3.98-1.20            mclust_5.4.5            
+##  [75] gridExtra_2.3            compiler_3.6.1          
+##  [77] biomaRt_2.40.1           tibble_2.1.3            
+##  [79] mice_3.6.0               KernSmooth_2.23-15      
+##  [81] crayon_1.3.4             minqa_1.2.4             
+##  [83] htmltools_0.3.6          mgcv_1.8-28             
+##  [85] corpcor_1.6.9            later_0.8.0             
+##  [87] tidyr_0.8.3              sendmailR_1.2-1         
+##  [89] DBI_1.0.0                MASS_7.3-51.4           
+##  [91] boot_1.3-22              readr_1.3.1             
+##  [93] quadprog_1.5-7           pan_1.6                 
+##  [95] pkgconfig_2.0.2          flashClust_1.01-2       
+##  [97] GenomicAlignments_1.20.1 registry_0.5-1          
+##  [99] xml2_1.2.0               annotate_1.62.0         
+## [101] rngtools_1.4             pkgmaker_0.27           
+## [103] multtest_2.40.0          beanplot_1.2            
+## [105] ruv_0.9.7                bibtex_0.4.2            
+## [107] doRNG_1.7.1              scrime_1.3.5            
+## [109] VariantAnnotation_1.30.1 digest_0.6.20           
+## [111] pls_2.7-1                rmarkdown_1.14          
+## [113] base64_2.0               DelayedMatrixStats_1.6.0
+## [115] jomo_2.6-8               shiny_1.3.2             
+## [117] Rsamtools_2.0.0          nloptr_1.2.1            
+## [119] nlme_3.1-140             jsonlite_1.6            
+## [121] Rhdf5lib_1.6.0           askpass_1.1             
+## [123] BSgenome_1.52.0          pillar_1.4.2            
+## [125] lattice_0.20-38          httr_1.4.0              
+## [127] survival_2.44-1.1        glue_1.3.1              
+## [129] esaBcv_1.2.1             bit_1.1-14              
+## [131] stringi_1.4.3            HDF5Array_1.12.1        
+## [133] blob_1.2.0               memoise_1.1.0           
+## [135] dplyr_0.8.3</code></pre>
 </div>
 <div id="references" class="section level1 unnumbered">
 <h1>References</h1>

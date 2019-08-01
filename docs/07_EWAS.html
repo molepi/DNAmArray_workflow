@@ -458,23 +458,23 @@ pc &lt;-<span class="st"> </span><span class="kw">prcomp_irlba</span>(<span clas
 
 cxy &lt;-<span class="st"> </span><span class="kw">round</span>(<span class="kw">cor</span>(pc<span class="op">$</span>x, <span class="kw">scale</span>(df)),<span class="dv">2</span>)  
 cxy[ , <span class="dv">1</span><span class="op">:</span><span class="dv">9</span>]</code></pre></div>
-<pre><code>##     title cohort   age   cns cc_status facial   sex growth Basename
-## PC1  0.23  -0.16 -0.07 -0.11      0.06  -0.07  0.99  -0.08    -0.28
-## PC2  0.15  -0.13 -0.10 -0.27      0.25  -0.22 -0.10  -0.18     0.03
-## PC3  0.57  -0.89 -0.33 -0.04      0.02   0.03  0.00   0.01    -0.70
-## PC4 -0.33   0.34  0.30  0.09     -0.20   0.15  0.01   0.14     0.15
-## PC5  0.11  -0.08  0.07 -0.22      0.36  -0.36  0.02  -0.27     0.05
-## PC6 -0.16   0.07 -0.06  0.01     -0.01   0.00  0.02  -0.03    -0.02</code></pre>
+<pre><code>##     title cohort  age   cns cc_status facial   sex growth Basename
+## PC1 -0.23   0.16 0.07  0.11     -0.06   0.07 -0.99   0.08     0.28
+## PC2 -0.15   0.13 0.10  0.27     -0.25   0.22  0.10   0.18    -0.03
+## PC3 -0.57   0.89 0.33  0.04     -0.02  -0.03  0.00  -0.01     0.70
+## PC4 -0.33   0.34 0.30  0.09     -0.20   0.15  0.01   0.14     0.15
+## PC5  0.11  -0.08 0.07 -0.22      0.36  -0.36  0.02  -0.27     0.05
+## PC6  0.16  -0.07 0.06 -0.01      0.01   0.00 -0.02   0.03     0.02</code></pre>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(reshape2)
 melted_cxy &lt;-<span class="st"> </span><span class="kw">melt</span>(cxy)
 <span class="kw">head</span>(melted_cxy)</code></pre></div>
 <pre><code>##   Var1  Var2 value
-## 1  PC1 title  0.23
-## 2  PC2 title  0.15
-## 3  PC3 title  0.57
+## 1  PC1 title -0.23
+## 2  PC2 title -0.15
+## 3  PC3 title -0.57
 ## 4  PC4 title -0.33
 ## 5  PC5 title  0.11
-## 6  PC6 title -0.16</code></pre>
+## 6  PC6 title  0.16</code></pre>
 <p>After some aesthetic preparation of the <code>theme()</code>, the correlations can be visualized in a heatmap using <a href="https://ggplot2.tidyverse.org/"><strong>ggplot2</strong></a>’s <code>geom_tile()</code> function.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(ggplot2)
 <span class="kw">ggplot</span>(<span class="dt">data =</span> melted_cxy, <span class="kw">aes</span>(<span class="dt">x=</span>Var1, <span class="dt">y=</span>Var2, <span class="dt">fill=</span>value)) <span class="op">+</span><span class="st"> </span>th2 <span class="op">+</span><span class="st"> </span>th3 <span class="op">+</span><span class="st"> </span>th4 <span class="op">+</span><span class="st"> </span>th5 <span class="op">+</span>
@@ -514,7 +514,7 @@ factor.num &lt;-<span class="st"> </span><span class="kw">est.confounder.num</sp
                                  <span class="dt">method =</span> <span class="st">&quot;bcv&quot;</span>, <span class="dt">bcv.plot =</span> <span class="ot">FALSE</span>,
                                  <span class="dt">rmax =</span> <span class="dv">30</span>, <span class="dt">nRepeat =</span> <span class="dv">20</span>)
 factor.num<span class="op">$</span>r</code></pre></div>
-<pre><code>## [1] 11</code></pre>
+<pre><code>## [1] 8</code></pre>
 <p>In this instance, it is suggested we correct for 9 unmeasured confounders. To implement this, we use the <code>cate.fit()</code> function, as shown below. The output object stores the beta values, estimated test statistics, and relevant p-values, and top hits can be viewed after using the Bonferonni correction to adjust for multiple testing.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">results.cate &lt;-<span class="st"> </span><span class="kw">cate.fit</span>(design[,<span class="dv">2</span>,<span class="dt">drop=</span><span class="ot">FALSE</span>], design[,<span class="op">-</span><span class="dv">2</span>], beta.cate, 
                          <span class="dt">r =</span> <span class="dv">9</span>, <span class="dt">calibrate=</span><span class="ot">FALSE</span>, <span class="dt">adj.method=</span><span class="st">&quot;naive&quot;</span>)

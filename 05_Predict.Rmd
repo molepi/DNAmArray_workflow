@@ -208,7 +208,7 @@ measured <- testCellPer
 plot_wbcc(measured, predicted)
 ```
 
-![](C:/Users/ljsinke/Documents/git/GitHub/test_workflow/05_Predict_files/figure-html/corrplots.png)
+![](C:/Users/ljsinke/Documents/git/GitHub/DNAmArray_workflow/05_Predict_files/figure-html/corrplots.png)
 
 <br>
 

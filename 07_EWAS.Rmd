@@ -159,7 +159,7 @@ Plots can be used to compare adjustment using [**cate**](https://cran.r-project.
 print(plot(bc, type="hist"))
 ````
 
-![](C:/Users/ljsinke/Documents/git/GitHub/test_workflow/07_EWAS_files/figure-html/bacon-1.png)
+![](C:/Users/ljsinke/Documents/git/GitHub/DNAmArray_workflow/07_EWAS_files/figure-html/bacon-1.png)
 
 <br>
 
@@ -167,7 +167,7 @@ print(plot(bc, type="hist"))
 print(plot(bc, type="qq"))
 ````
 
-![](C:/Users/ljsinke/Documents/git/GitHub/test_workflow/07_EWAS_files/figure-html/bacon-2.png)
+![](C:/Users/ljsinke/Documents/git/GitHub/DNAmArray_workflow/07_EWAS_files/figure-html/bacon-2.png)
 
 <br>
 
