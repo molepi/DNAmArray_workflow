@@ -1,4 +1,3 @@
-
 ```{r, child="_setup.Rmd"}
 ```
 
@@ -31,7 +30,7 @@ outliers <- visualize(sData, background=exampleDataLarge)
 targets <- targets[!(rownames(targets) %in% rownames(outliers)), ]
 ```
 
-![](C:/Users/ljsinke/Documents/git/GitHub/DNAmArray_workflow/02_SampleQualityControl_files/figure-html/methylaid-eg.PNG)
+![](C:/Users/ljsinke/Documents/git/GitHub/test_workflow/02_SampleQualityControl_files/figure-html/methylaid-eg.PNG)
 
 <br>
 This image shows an example of the plots available in [**MethylAid**](http://bioconductor.org/packages/MethylAid). Observations can be coloured by phenotype, outliers can be highlighted, and the background option can be toggled off and on. 

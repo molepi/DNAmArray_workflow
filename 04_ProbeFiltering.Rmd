@@ -1,7 +1,4 @@
 
-```{r, child="_setup.Rmd"}
-```
-
 ***
 
 # Filtering on Intensities #
@@ -9,12 +6,6 @@
 We recommend performing probe-filtering by setting unreliably measured probes to NA. Unfortunately, Functional Normalization does not allow NA's in the `RGChannelSet`. Therefore, it is best to run normalization and probe-filtering separately and combine the results afterwards using our `reduce()` function. 
 
 Some observations need to be removed from the dataset since they provide little to no information that could skew analyses. Probes which have zero intensity or are based on very few (default: <3) beads are removed, based on a specified cut off. 
-
-```{r 501start, echo=FALSE, message=FALSE, results='hide'}
-load("C:/Users/ljsinke/Documents/git/GitHub/test_workflow/data/targets_mod.RData")
-RGset <- read.metharray.exp(base="C:/Users/ljsinke/Documents/r/cd/GSE113018/IDATs", targets, extended=TRUE)
-GRset <- preprocessFunnorm.DNAmArray(RGset, nPCs=4, keepCN=FALSE)
-```
 
 ```{r 502filter}
 RGset <- probeFiltering(RGset)

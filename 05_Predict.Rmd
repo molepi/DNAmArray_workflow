@@ -1,21 +1,4 @@
 
-```{r, child="_setup.Rmd"}
-```
-
-```{r 601start, echo=FALSE, message=FALSE, results='hide'}
-load("C:/Users/ljsinke/Documents/git/GitHub/test_workflow/data/targets_mod.RData")
-RGset <- read.metharray.exp(base="C:/Users/ljsinke/Documents/r/cd/GSE113018/IDATs", targets, extended=TRUE)
-GRset <- preprocessFunnorm.DNAmArray(RGset, nPCs=4, keepCN=FALSE)
-RGset <- probeFiltering(RGset)
-betas <- reduce(GRset, RGset, what="beta")
-
-library(missMDA)
-betas <- imputePCA(betas)
-betas <- betas$completeObs
-betas[betas<0] <- 0
-betas[betas>1] <- 1
-```
-
 ***
 
 # Phenotype Prediction #
@@ -225,7 +208,7 @@ measured <- testCellPer
 plot_wbcc(measured, predicted)
 ```
 
-![](C:/Users/ljsinke/Documents/git/GitHub/DNAmArray_workflow/06_Predict_files/figure-html/corrplots.png)
+![](C:/Users/ljsinke/Documents/git/GitHub/test_workflow/05_Predict_files/figure-html/corrplots.png)
 
 <br>
 

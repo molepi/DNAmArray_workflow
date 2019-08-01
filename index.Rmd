@@ -13,7 +13,7 @@ email: l.j.sinke@lumc.nl
 ```{r, child="_setup.Rmd"}
 ```
 <div class="DOI">
-[![DOI](C:/Users/ljsinke/Documents/git/GitHub/DNAmArray_workflow/data/zenodo.3332710.svg)](https://doi.org/10.5281/zenodo.3332710)
+[![DOI](C:/Users/ljsinke/Documents/git/GitHub/test_workflow/data/zenodo.3332710.svg)](https://doi.org/10.5281/zenodo.3332710)
 </div>
 
 ***

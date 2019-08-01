@@ -459,22 +459,22 @@ pc &lt;-<span class="st"> </span><span class="kw">prcomp_irlba</span>(<span clas
 cxy &lt;-<span class="st"> </span><span class="kw">round</span>(<span class="kw">cor</span>(pc<span class="op">$</span>x, <span class="kw">scale</span>(df)),<span class="dv">2</span>)  
 cxy[ , <span class="dv">1</span><span class="op">:</span><span class="dv">9</span>]</code></pre></div>
 <pre><code>##     title cohort   age   cns cc_status facial   sex growth Basename
-## PC1 -0.23   0.16  0.07  0.11     -0.05   0.07 -0.99   0.08     0.28
-## PC2 -0.15   0.13  0.10  0.28     -0.25   0.22  0.10   0.18    -0.04
-## PC3  0.58  -0.90 -0.33 -0.04      0.03   0.03  0.00   0.01    -0.70
-## PC4 -0.31   0.32  0.30  0.09     -0.20   0.15  0.01   0.14     0.14
-## PC5  0.13  -0.10  0.05 -0.23      0.37  -0.37  0.02  -0.27     0.03
-## PC6  0.19  -0.10 -0.01 -0.05      0.10  -0.06 -0.01  -0.01     0.02</code></pre>
+## PC1  0.23  -0.16 -0.07 -0.11      0.06  -0.07  0.99  -0.08    -0.28
+## PC2  0.15  -0.13 -0.10 -0.27      0.25  -0.22 -0.10  -0.18     0.03
+## PC3  0.57  -0.89 -0.33 -0.04      0.02   0.03  0.00   0.01    -0.70
+## PC4 -0.33   0.34  0.30  0.09     -0.20   0.15  0.01   0.14     0.15
+## PC5  0.11  -0.08  0.07 -0.22      0.36  -0.36  0.02  -0.27     0.05
+## PC6 -0.16   0.07 -0.06  0.01     -0.01   0.00  0.02  -0.03    -0.02</code></pre>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(reshape2)
 melted_cxy &lt;-<span class="st"> </span><span class="kw">melt</span>(cxy)
 <span class="kw">head</span>(melted_cxy)</code></pre></div>
 <pre><code>##   Var1  Var2 value
-## 1  PC1 title -0.23
-## 2  PC2 title -0.15
-## 3  PC3 title  0.58
-## 4  PC4 title -0.31
-## 5  PC5 title  0.13
-## 6  PC6 title  0.19</code></pre>
+## 1  PC1 title  0.23
+## 2  PC2 title  0.15
+## 3  PC3 title  0.57
+## 4  PC4 title -0.33
+## 5  PC5 title  0.11
+## 6  PC6 title -0.16</code></pre>
 <p>After some aesthetic preparation of the <code>theme()</code>, the correlations can be visualized in a heatmap using <a href="https://ggplot2.tidyverse.org/"><strong>ggplot2</strong></a>’s <code>geom_tile()</code> function.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(ggplot2)
 <span class="kw">ggplot</span>(<span class="dt">data =</span> melted_cxy, <span class="kw">aes</span>(<span class="dt">x=</span>Var1, <span class="dt">y=</span>Var2, <span class="dt">fill=</span>value)) <span class="op">+</span><span class="st"> </span>th2 <span class="op">+</span><span class="st"> </span>th3 <span class="op">+</span><span class="st"> </span>th4 <span class="op">+</span><span class="st"> </span>th5 <span class="op">+</span>
@@ -514,7 +514,7 @@ factor.num &lt;-<span class="st"> </span><span class="kw">est.confounder.num</sp
                                  <span class="dt">method =</span> <span class="st">&quot;bcv&quot;</span>, <span class="dt">bcv.plot =</span> <span class="ot">FALSE</span>,
                                  <span class="dt">rmax =</span> <span class="dv">30</span>, <span class="dt">nRepeat =</span> <span class="dv">20</span>)
 factor.num<span class="op">$</span>r</code></pre></div>
-<pre><code>## [1] 9</code></pre>
+<pre><code>## [1] 11</code></pre>
 <p>In this instance, it is suggested we correct for 9 unmeasured confounders. To implement this, we use the <code>cate.fit()</code> function, as shown below. The output object stores the beta values, estimated test statistics, and relevant p-values, and top hits can be viewed after using the Bonferonni correction to adjust for multiple testing.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">results.cate &lt;-<span class="st"> </span><span class="kw">cate.fit</span>(design[,<span class="dv">2</span>,<span class="dt">drop=</span><span class="ot">FALSE</span>], design[,<span class="op">-</span><span class="dv">2</span>], beta.cate, 
                          <span class="dt">r =</span> <span class="dv">9</span>, <span class="dt">calibrate=</span><span class="ot">FALSE</span>, <span class="dt">adj.method=</span><span class="st">&quot;naive&quot;</span>)
@@ -522,12 +522,12 @@ factor.num<span class="op">$</span>r</code></pre></div>
 padj.cate &lt;-<span class="st"> </span><span class="kw">p.adjust</span>(<span class="kw">sort</span>(results.cate<span class="op">$</span>beta.p.value[,<span class="dv">1</span>], <span class="dt">decreasing=</span><span class="ot">FALSE</span>), <span class="dt">method=</span><span class="st">&quot;bonf&quot;</span>)
 
 <span class="kw">head</span>(padj.cate[padj.cate <span class="op">&lt;</span><span class="st"> </span><span class="fl">0.05</span>])</code></pre></div>
-<pre><code>##   cg00121876   cg04180046   cg14257435   cg18420599   cg22171758 
-## 0.000000e+00 2.756062e-10 8.268186e-10 2.021112e-09 3.399143e-09 
-##   cg02017109 
-## 4.042224e-09</code></pre>
+<pre><code>##   cg00121876   cg20893180   cg21692450   cg22171758   cg04180046 
+## 2.756062e-10 1.653637e-09 6.430811e-09 1.387218e-08 2.296718e-08 
+##   cg00504595 
+## 3.371583e-08</code></pre>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">length</span>(padj.cate[padj.cate <span class="op">&lt;</span><span class="st"> </span><span class="fl">0.05</span>])</code></pre></div>
-<pre><code>## [1] 417</code></pre>
+<pre><code>## [1] 265</code></pre>
 <p>This analysis has identified 417 differentially methylated probes (DMPs) associated with FASD after adjusting for age, sex, and sentrix position. These can be analysed further, but first we want to outline alternatives to the <a href="https://cran.r-project.org/web/packages/cate/index.html"><strong>cate</strong></a>-based EWAS, and demonstrate that results are comparable.</p>
 <hr />
 </div>
@@ -544,12 +544,12 @@ pval &lt;-<span class="st"> </span><span class="dv">2</span><span class="op">*</
 padj &lt;-<span class="st"> </span><span class="kw">p.adjust</span>(<span class="kw">sort</span>(pval, <span class="dt">decreasing=</span><span class="ot">FALSE</span>), <span class="dt">method=</span><span class="st">&quot;bonf&quot;</span>)
 
 <span class="kw">head</span>(padj[padj <span class="op">&lt;</span><span class="st"> </span><span class="fl">0.05</span>])</code></pre></div>
-<pre><code>##   cg00121876   cg04180046   cg14257435   cg18420599   cg22171758 
-## 3.274487e-13 2.369151e-10 8.659085e-10 2.005018e-09 3.437176e-09 
-##   cg02017109 
-## 4.070638e-09</code></pre>
+<pre><code>##   cg00121876   cg20893180   cg21692450   cg22171758   cg04180046 
+## 3.153599e-10 1.646578e-09 6.426680e-09 1.389541e-08 2.296891e-08 
+##   cg00504595 
+## 3.370872e-08</code></pre>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">length</span>(padj[padj <span class="op">&lt;</span><span class="st"> </span><span class="fl">0.05</span>])</code></pre></div>
-<pre><code>## [1] 417</code></pre>
+<pre><code>## [1] 265</code></pre>
 <p>As shown, results from <a href="https://bioconductor.org/packages/release/bioc/html/limma.html"><strong>limma</strong></a> are comparable with those from <a href="https://cran.r-project.org/web/packages/cate/index.html"><strong>cate</strong></a>. Here, the same number of DMPs are identified and top hits are identical, albeit with slightly differing p-values. Despite this, for the reasons specified above, we still advise using <a href="https://cran.r-project.org/web/packages/cate/index.html"><strong>cate</strong></a> unless your sample size is small enough to require the <code>eBayes</code> option.</p>
 <p>Linear mixed models and linear models can both work well for performing EWAS and, when looking solely at top hits, are unlikely to differ greatly from results obtained using <a href="https://cran.r-project.org/web/packages/cate/index.html"><strong>cate</strong></a> or <a href="https://bioconductor.org/packages/release/bioc/html/limma.html"><strong>limma</strong></a>.</p>
 <hr />
@@ -592,22 +592,22 @@ DMRs =<span class="st"> </span><span class="kw">DMRfinder</span>(dmrData, <span 
 <pre><code>## 
 ## ========================================================================</code></pre>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">DMRs</code></pre></div>
-<pre><code>## GRanges object with 16 ranges and 0 metadata columns:
+<pre><code>## GRanges object with 12 ranges and 0 metadata columns:
 ##        seqnames              ranges strand
 ##           &lt;Rle&gt;           &lt;IRanges&gt;  &lt;Rle&gt;
-##    [1]     chr1 153762224-153762564      *
-##    [2]     chr2 121625577-121625735      *
+##    [1]     chr1   46939866-46940516      *
+##    [2]     chr1 153762244-153762564      *
 ##    [3]     chr2 152830505-152830614      *
 ##    [4]     chr4     5710761-5711301      *
-##    [5]     chr6   75912547-75912711      *
+##    [5]     chr5     8457721-8458392      *
 ##    ...      ...                 ...    ...
-##   [12]    chr17     8928012-8928451      *
-##   [13]    chr17   76886742-76886912      *
-##   [14]    chr18     5891602-5892213      *
-##   [15]    chr18   32173084-32173227      *
-##   [16]    chr22   50165244-50165512      *
+##    [8]    chr13   24144483-24144985      *
+##    [9]    chr17     8928012-8928451      *
+##   [10]    chr18     5891948-5892213      *
+##   [11]    chr18   32173084-32173227      *
+##   [12]    chr22   50165244-50165512      *
 ##   -------
-##   seqinfo: 11 sequences from an unspecified genome; no seqlengths</code></pre>
+##   seqinfo: 10 sequences from an unspecified genome; no seqlengths</code></pre>
 <p>In this instance, 16 DMRs were found to be associated with FASD. These regions can be visualised with a chromosome-based circo plot, such as using <a href="http://bioconductor.org/packages/release/bioc/html/OmicCircos.html"><strong>OmicCircos</strong></a> to get a better understanding of the regions identified.</p>
 <hr />
 </div>

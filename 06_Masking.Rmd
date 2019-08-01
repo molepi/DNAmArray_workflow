@@ -1,39 +1,4 @@
 
-```{r, child="_setup.Rmd"}
-```
-
-```{r 701start, echo=FALSE, message=FALSE, results='hide'}
-load("C:/Users/ljsinke/Documents/git/GitHub/test_workflow/data/targets_mod.RData")
-RGset <- read.metharray.exp(base="C:/Users/ljsinke/Documents/r/cd/GSE113018/IDATs", targets, extended=TRUE)
-GRset <- preprocessFunnorm.DNAmArray(RGset, nPCs=4, keepCN=FALSE)
-RGset <- probeFiltering(RGset)
-betas <- reduce(GRset, RGset, what="beta")
-
-library(missMDA)
-betas <- imputePCA(betas)
-betas <- betas$completeObs
-betas[betas<0] <- 0
-betas[betas>1] <- 1
-
-data("DNAmPredictorCoef")
-RGset$Sentrix_Position <- substr(RGset$Basename,23,28)
-wbcc_covar <- as.data.frame(colData(RGset)[,c(28,32,36)])
-wbcc_covar[,2] <- as.numeric(wbcc_covar[,2])-1
-wbcc_covar[,3] <- as.numeric(as.factor(wbcc_covar[,3]))
-wbcc_covar <- as.matrix(wbcc_covar)
-
-cgRows <- row.names(DNAmPredictorCoef)[grep("data", row.names(DNAmPredictorCoef))] 
-library(stringr)
-cgRows <- str_remove(cgRows, "data")
-wbcc_betas <- betas[match(cgRows, rownames(betas)),] 
-
-rownames(DNAmPredictorCoef) <- str_remove(rownames(DNAmPredictorCoef), "data")
-rownames(DNAmPredictorCoef) <- str_remove(rownames(DNAmPredictorCoef), "covar")
-predicted <- predict_wbcc(DNAmPredictorCoef, wbcc_betas, wbcc_covar, ncomp=40)
-predicted[predicted<0] <- 0
-colData(RGset) <- cbind(colData(RGset),predicted)
-```
-
 ***
 
 # Ambiguous probes #

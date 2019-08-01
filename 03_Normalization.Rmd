@@ -1,7 +1,4 @@
 
-```{r, child="_setup.Rmd"}
-```
-
 ***
 
 # Introduction #
@@ -15,11 +12,6 @@ Using the internal control probes avoids the problems associated with global nor
 # Principal Components Selection #
 
 The default of selecting only two principal components is often too low for this type of data, so our `screeplot()` function allows visualisation of control probe eigenvalues to help select the optimal number. Often you will see a drop-off in proportion of variance explained after a certain number of principal components, and this can indicate an efficient cut-off. 
-
-```{r 401start, echo=FALSE, message=FALSE}
-load("C:/Users/ljsinke/Documents/git/GitHub/test_workflow/data/targets_mod.RData")
-RGset <- read.metharray.exp(base="C:/Users/ljsinke/Documents/r/cd/GSE113018/IDATs", targets, extended=TRUE)
-```
 
 ```{r 402screeplot}
 par(mar=c(5,5,4,2), mgp=c(2.5,1,0), cex.main=1.5, font.main="1", fg="#6b6b6b", col.main="#4b4b4b")

@@ -1,7 +1,4 @@
 
-```{r, child="_setup.Rmd"}
-```
-
 ***
 
 # Installation #

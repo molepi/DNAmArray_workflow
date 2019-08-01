@@ -490,19 +490,19 @@ predicted &lt;-<span class="st"> </span><span class="kw">predict_wbcc</span>(DNA
 
 <span class="kw">head</span>(predicted)</code></pre></div>
 <pre><code>##                              baso_perc eos_perc lymph_perc mono_perc
-## GSM3092700_9985178096_R01C01 0.6321149 2.214421   32.94927  8.779214
-## GSM3092701_9985178127_R03C02 0.3362108 2.507731   40.18787 10.787790
-## GSM3092702_9986360109_R02C02 0.5406660 2.930009   47.58609  9.433068
-## GSM3092703_9985178087_R01C01 0.3392097 2.334921   39.96977  8.882842
-## GSM3092704_9985178090_R01C01 0.1161778 3.961629   45.82765  9.004402
-## GSM3092705_9985178090_R04C01 0.0000000 1.238824   39.71982  7.191196
+## GSM3092700_9985178096_R01C01 0.6263247 2.208560   33.03383  8.781183
+## GSM3092701_9985178127_R03C02 0.3418325 2.519044   40.09988 10.786837
+## GSM3092702_9986360109_R02C02 0.5336938 2.901718   47.76722  9.461366
+## GSM3092703_9985178087_R01C01 0.3377483 2.330022   40.02461  8.886835
+## GSM3092704_9985178090_R01C01 0.1166079 3.963368   45.87435  8.999143
+## GSM3092705_9985178090_R04C01 0.0000000 1.231380   39.65770  7.191975
 ##                              neut_perc
-## GSM3092700_9985178096_R01C01  54.88747
-## GSM3092701_9985178127_R03C02  45.91311
-## GSM3092702_9986360109_R02C02  38.98638
-## GSM3092703_9985178087_R01C01  47.35677
-## GSM3092704_9985178090_R01C01  40.29231
-## GSM3092705_9985178090_R04C01  50.61751</code></pre>
+## GSM3092700_9985178096_R01C01  54.84142
+## GSM3092701_9985178127_R03C02  45.94737
+## GSM3092702_9986360109_R02C02  38.86701
+## GSM3092703_9985178087_R01C01  47.31953
+## GSM3092704_9985178090_R01C01  40.24994
+## GSM3092705_9985178090_R04C01  50.68405</code></pre>
 <p>Here, you see the predicted cell types for our whole blood samples. There is an estimated percentage for basophils, eosinophils, lymphocytes, monocytes, and neutrophils. These can then be added to the <code>colData</code> of our <code>RGset</code> for use in later analysis models.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">colData</span>(RGset) &lt;-<span class="st"> </span><span class="kw">cbind</span>(<span class="kw">colData</span>(RGset),predicted)</code></pre></div>
 <hr />
@@ -535,12 +535,12 @@ assumedAge &lt;-<span class="st"> </span><span class="kw">as.numeric</span>(targ
 ages &lt;-<span class="st"> </span><span class="kw">data.frame</span>(<span class="dt">Assumed=</span>assumedAge, <span class="dt">Predicted=</span>predictedAge)
 <span class="kw">head</span>(ages)</code></pre></div>
 <pre><code>##   Assumed Predicted
-## 1    17.3 22.177837
-## 2    11.3 10.441507
-## 3     9.5  5.778678
-## 4    15.0 21.759813
-## 5     6.7  5.363251
-## 6     8.3  2.099933</code></pre>
+## 1    17.3 22.099658
+## 2    11.3 10.538492
+## 3     9.5  5.488747
+## 4    15.0 21.714933
+## 5     6.7  5.234714
+## 6     8.3  2.190379</code></pre>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">ggplot</span>(ages, <span class="kw">aes</span>(<span class="dt">x=</span>Assumed, <span class="dt">y=</span>Predicted)) <span class="op">+</span><span class="st"> </span><span class="kw">ggtitle</span>(<span class="st">&quot;Assumed vs. Predicted Age&quot;</span>) <span class="op">+</span><span class="st"> </span>th3 <span class="op">+</span>
 <span class="st">  </span><span class="kw">geom_point</span>(<span class="dt">shape=</span><span class="dv">16</span>, <span class="dt">color=</span><span class="st">&quot;#158cba&quot;</span>) <span class="op">+</span><span class="st"> </span><span class="kw">geom_smooth</span>(<span class="dt">method=</span>lm, <span class="dt">color=</span><span class="st">&quot;#D67D87&quot;</span>)</code></pre></div>
 <p><img src="05_Predict_files/figure-html/608plot-1.png" width="672" /></p>
@@ -612,7 +612,7 @@ measured &lt;-<span class="st"> </span>testCellPer
 
 <span class="kw">plot_wbcc</span>(measured, predicted)</code></pre></div>
 <div class="figure">
-<img src="06_Predict_files/figure-html/corrplots.png" />
+<img src="05_Predict_files/figure-html/corrplots.png" />
 
 </div>
 <p><br></p>
