@@ -28,44 +28,22 @@
 
 <style type="text/css">code{white-space: pre;}</style>
 <style type="text/css" data-origin="pandoc">
-div.sourceCode { overflow-x: auto; }
 table.sourceCode, tr.sourceCode, td.lineNumbers, td.sourceCode {
   margin: 0; padding: 0; vertical-align: baseline; border: none; }
-table.sourceCode { width: 100%; line-height: 100%; background-color: #ffffff; color: #1f1c1b; }
-td.lineNumbers { text-align: right; padding-right: 4px; padding-left: 4px; background-color: #ffffff; color: #a0a0a0; border-right: 1px solid #a0a0a0; }
+table.sourceCode { width: 100%; line-height: 100%; }
+td.lineNumbers { text-align: right; padding-right: 4px; padding-left: 4px; background-color: #dddddd; }
 td.sourceCode { padding-left: 5px; }
-pre, code { color: #1f1c1b; background-color: #ffffff; }
-code > span.kw { color: #1f1c1b; font-weight: bold; } /* Keyword */
-code > span.dt { color: #0057ae; } /* DataType */
-code > span.dv { color: #b08000; } /* DecVal */
-code > span.bn { color: #b08000; } /* BaseN */
-code > span.fl { color: #b08000; } /* Float */
-code > span.cn { color: #aa5500; } /* Constant */
-code > span.ch { color: #924c9d; } /* Char */
-code > span.sc { color: #3daee9; } /* SpecialChar */
-code > span.st { color: #bf0303; } /* String */
-code > span.vs { color: #bf0303; } /* VerbatimString */
-code > span.ss { color: #ff5500; } /* SpecialString */
-code > span.im { color: #ff5500; } /* Import */
-code > span.co { color: #898887; } /* Comment */
-code > span.do { color: #607880; } /* Documentation */
-code > span.an { color: #ca60ca; } /* Annotation */
-code > span.cv { color: #0095ff; } /* CommentVar */
-code > span.ot { color: #006e28; } /* Other */
-code > span.fu { color: #644a9b; } /* Function */
-code > span.va { color: #0057ae; } /* Variable */
-code > span.cf { color: #1f1c1b; font-weight: bold; } /* ControlFlow */
-code > span.op { color: #1f1c1b; } /* Operator */
-code > span.bu { color: #644a9b; font-weight: bold; } /* BuiltIn */
-code > span.ex { color: #0095ff; font-weight: bold; } /* Extension */
-code > span.pp { color: #006e28; } /* Preprocessor */
-code > span.at { color: #0057ae; } /* Attribute */
-code > span.re { color: #0057ae; } /* RegionMarker */
-code > span.in { color: #b08000; } /* Information */
-code > span.wa { color: #bf0303; } /* Warning */
-code > span.al { color: #bf0303; font-weight: bold; } /* Alert */
-code > span.er { color: #bf0303; text-decoration: underline; } /* Error */
-code > span. { color: #1f1c1b; } /* Normal */
+code > span.kw { font-weight: bold; }
+code > span.dt { color: #800000; }
+code > span.dv { color: #0000ff; }
+code > span.bn { color: #0000ff; }
+code > span.fl { color: #800080; }
+code > span.ch { color: #ff00ff; }
+code > span.st { color: #dd0000; }
+code > span.co { color: #808080; font-style: italic; }
+code > span.al { color: #00ff00; font-weight: bold; }
+code > span.fu { color: #000080; }
+code > span.er { color: #ff0000; font-weight: bold; }
 
 </style>
 <script>
@@ -438,13 +416,13 @@ div.tocify {
 <h1>Covariates</h1>
 <p>Each column in the <code>RGset</code> colData should be considered as a potential covariate in our models. Both technical and biological factors should be investigated as these may introduce batch effects or be clinically relevant. In order to assess this, we convert each column to a categorical variable whose correlations can be visualised.</p>
 <p>Homogenous columns can be excluded, as any variables that do not change by definition cannot explain variation in the data. In this instance, the <code>description</code> for all samples is peripheral whole blood, so there is no need to investigate a tissue effect. However, in some instances samples may be taken from different tissues, and in this type of study analysis must be done separately for each to correctly separate clinically relevant methylation changes from tissue-specific methylation differences.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">df &lt;-<span class="st"> </span><span class="kw">apply</span>(<span class="kw">colData</span>(RGset), <span class="dv">2</span>, <span class="cf">function</span>(x) <span class="kw">as.numeric</span>(<span class="kw">factor</span>(x)))
-keep &lt;-<span class="st"> </span><span class="kw">apply</span>(df, <span class="dv">2</span>, sd) <span class="op">&gt;</span><span class="st"> </span><span class="dv">0</span>
-<span class="kw">summary</span>(keep)</code></pre></div>
+<pre class="sourceCode r"><code class="sourceCode r">df &lt;-<span class="st"> </span><span class="kw">apply</span>(<span class="kw">colData</span>(RGset), <span class="dv">2</span>, function(x) <span class="kw">as.numeric</span>(<span class="kw">factor</span>(x)))
+keep &lt;-<span class="st"> </span><span class="kw">apply</span>(df, <span class="dv">2</span>, sd) &gt;<span class="st"> </span><span class="dv">0</span>
+<span class="kw">summary</span>(keep)</code></pre>
 <pre><code>##    Mode   FALSE    TRUE 
 ## logical      25      16</code></pre>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">df &lt;-<span class="st"> </span>df[ , keep]
-<span class="kw">colnames</span>(df)</code></pre></div>
+<pre class="sourceCode r"><code class="sourceCode r">df &lt;-<span class="st"> </span>df[ , keep]
+<span class="kw">colnames</span>(df)</code></pre>
 <pre><code>##  [1] &quot;title&quot;            &quot;cohort&quot;           &quot;age&quot;             
 ##  [4] &quot;cns&quot;              &quot;cc_status&quot;        &quot;facial&quot;          
 ##  [7] &quot;sex&quot;              &quot;growth&quot;           &quot;Basename&quot;        
@@ -453,33 +431,33 @@ keep &lt;-<span class="st"> </span><span class="kw">apply</span>(df, <span class
 ## [16] &quot;neut_perc&quot;</code></pre>
 <p>As you can see, 16 columns need to be examined. These include sample identifiers, such as <code>title</code> and the <code>Basename</code> variable we created, as well as which <code>cohort</code> the participant was from. Other potential causes of variation are biological, such as <code>age</code>, <code>sex</code>, and <code>cc_status</code>, and some, like <code>Sentrix_Position</code> and the blood cell counts, represent potential batch effects or confounding.</p>
 <p>Correlations between complete factors and the principal components is calculated, and this correlation matrix is then melted using the <code>melt()</code> function from the <a href="https://cran.r-project.org/web/packages/reshape2/index.html"><strong>reshape2</strong></a> package. This prepares it for visualization using <a href="https://ggplot2.tidyverse.org/"><strong>ggplot2</strong></a>.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(irlba)
+<pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(irlba)
 pc &lt;-<span class="st"> </span><span class="kw">prcomp_irlba</span>(<span class="kw">t</span>(betas), <span class="dt">n=</span><span class="dv">6</span>)
 
-cxy &lt;-<span class="st"> </span><span class="kw">round</span>(<span class="kw">cor</span>(pc<span class="op">$</span>x, <span class="kw">scale</span>(df)),<span class="dv">2</span>)  
-cxy[ , <span class="dv">1</span><span class="op">:</span><span class="dv">9</span>]</code></pre></div>
-<pre><code>##     title cohort  age   cns cc_status facial   sex growth Basename
-## PC1 -0.23   0.16 0.07  0.11     -0.06   0.07 -0.99   0.08     0.28
-## PC2 -0.15   0.13 0.10  0.27     -0.25   0.22  0.10   0.18    -0.03
-## PC3 -0.57   0.89 0.33  0.04     -0.02  -0.03  0.00  -0.01     0.70
-## PC4 -0.33   0.34 0.30  0.09     -0.20   0.15  0.01   0.14     0.15
-## PC5  0.11  -0.08 0.07 -0.22      0.36  -0.36  0.02  -0.27     0.05
-## PC6  0.16  -0.07 0.06 -0.01      0.01   0.00 -0.02   0.03     0.02</code></pre>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(reshape2)
+cxy &lt;-<span class="st"> </span><span class="kw">round</span>(<span class="kw">cor</span>(pc$x, <span class="kw">scale</span>(df)),<span class="dv">2</span>)  
+cxy[ , <span class="dv">1</span>:<span class="dv">9</span>]</code></pre>
+<pre><code>##     title cohort   age   cns cc_status facial   sex growth Basename
+## PC1  0.23  -0.16 -0.07 -0.11      0.06  -0.07  0.99  -0.08    -0.28
+## PC2 -0.15   0.13  0.10  0.27     -0.25   0.22  0.10   0.18    -0.03
+## PC3 -0.57   0.89  0.33  0.04     -0.02  -0.03  0.00  -0.01     0.70
+## PC4  0.33  -0.34 -0.30 -0.09      0.20  -0.15 -0.01  -0.14    -0.15
+## PC5 -0.11   0.08 -0.07  0.22     -0.36   0.36 -0.02   0.27    -0.05
+## PC6 -0.16   0.07 -0.06  0.01     -0.01   0.00  0.02  -0.03    -0.02</code></pre>
+<pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(reshape2)
 melted_cxy &lt;-<span class="st"> </span><span class="kw">melt</span>(cxy)
-<span class="kw">head</span>(melted_cxy)</code></pre></div>
+<span class="kw">head</span>(melted_cxy)</code></pre>
 <pre><code>##   Var1  Var2 value
-## 1  PC1 title -0.23
+## 1  PC1 title  0.23
 ## 2  PC2 title -0.15
 ## 3  PC3 title -0.57
-## 4  PC4 title -0.33
-## 5  PC5 title  0.11
-## 6  PC6 title  0.16</code></pre>
+## 4  PC4 title  0.33
+## 5  PC5 title -0.11
+## 6  PC6 title -0.16</code></pre>
 <p>After some aesthetic preparation of the <code>theme()</code>, the correlations can be visualized in a heatmap using <a href="https://ggplot2.tidyverse.org/"><strong>ggplot2</strong></a>’s <code>geom_tile()</code> function.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(ggplot2)
-<span class="kw">ggplot</span>(<span class="dt">data =</span> melted_cxy, <span class="kw">aes</span>(<span class="dt">x=</span>Var1, <span class="dt">y=</span>Var2, <span class="dt">fill=</span>value)) <span class="op">+</span><span class="st"> </span>th2 <span class="op">+</span><span class="st"> </span>th3 <span class="op">+</span><span class="st"> </span>th4 <span class="op">+</span><span class="st"> </span>th5 <span class="op">+</span>
-<span class="st">  </span><span class="kw">geom_tile</span>(<span class="dt">colour=</span><span class="st">&quot;#adadad&quot;</span>,<span class="dt">size=</span><span class="fl">0.5</span>) <span class="op">+</span><span class="st"> </span><span class="kw">ggtitle</span>(<span class="st">&quot;Heatmap of Correlations&quot;</span>) <span class="op">+</span><span class="st"> </span><span class="kw">labs</span>(<span class="dt">x=</span><span class="st">&quot;&quot;</span>,<span class="dt">y=</span><span class="st">&quot;&quot;</span>)</code></pre></div>
-<p><img src="07_EWAS_files/figure-html/306heatmapgg-1.png" width="672" /></p>
+<pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(ggplot2)
+<span class="kw">ggplot</span>(<span class="dt">data =</span> melted_cxy, <span class="kw">aes</span>(<span class="dt">x=</span>Var1, <span class="dt">y=</span>Var2, <span class="dt">fill=</span>value)) +<span class="st"> </span>th2 +<span class="st"> </span>th3 +<span class="st"> </span>th4 +<span class="st"> </span>th5 +
+<span class="st">  </span><span class="kw">geom_tile</span>(<span class="dt">colour=</span><span class="st">&quot;#adadad&quot;</span>,<span class="dt">size=</span><span class="fl">0.5</span>) +<span class="st"> </span><span class="kw">ggtitle</span>(<span class="st">&quot;Heatmap of Correlations&quot;</span>) +<span class="st"> </span><span class="kw">labs</span>(<span class="dt">x=</span><span class="st">&quot;&quot;</span>,<span class="dt">y=</span><span class="st">&quot;&quot;</span>)</code></pre>
+<p><img src="07_EWAS_files/figure-html/704heatmapgg-1.png" width="672" /></p>
 <p>By examining the correlations in the data, we can build our model in a more informed manner. The first PC is highly correlated with sex and, as is usual in EWAS, we intend to include this as a confounder. Cell counts appear of substantial importance and will also be adjusted for. Model specification should be informed by a combination of prior knowledge and inspection of patterns in the data.</p>
 <p>Below we will specify a model adjusting for age, sex, sentrix position, cell counts, and cohort. It is not appropriate to adjust for sample ID type variables, such as Basename, despite their correlation with our PCs.</p>
 <hr />
@@ -490,15 +468,15 @@ melted_cxy &lt;-<span class="st"> </span><span class="kw">melt</span>(cxy)
 <p>We advise using <a href="https://cran.r-project.org/web/packages/cate/index.html"><strong>cate</strong></a> over PCA, since you can specify that factors should be independent of the outcome of interest. This is not the case in PCA, which can result in biological variation being removed.</p>
 <p>The first step in running an EWAS is to make sure that you have information on all your confounders, and that these are stored in a design matrix. This matrix should be created using the <code>model.matrix()</code> function, so that variables are treated correctly.</p>
 <p>The formula that will be used for our EWAS is stored inside the <code>RangedSummarizeExperiment</code> and called when creating the design matrix, after ensuring that none of the covariates contain missing values. We adjust for measured confounders, including age, sex, sentrix position, and estimated cell percentages.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">metadata</span>(methData)<span class="op">$</span>formula &lt;-<span class="st"> </span><span class="er">~</span>cc_status <span class="op">+</span><span class="st"> </span>age <span class="op">+</span><span class="st"> </span>sex <span class="op">+</span><span class="st"> </span>Sentrix_Position <span class="op">+</span><span class="st"> </span>cohort <span class="op">+</span>
-<span class="st">  </span>baso_perc <span class="op">+</span><span class="st"> </span>eos_perc <span class="op">+</span><span class="st"> </span>lymph_perc <span class="op">+</span><span class="st"> </span>mono_perc <span class="op">+</span><span class="st"> </span>neut_perc
-covariates &lt;-<span class="st"> </span><span class="kw">get_all_vars</span>(<span class="kw">metadata</span>(methData)<span class="op">$</span>formula, <span class="dt">data=</span><span class="kw">colData</span>(methData))
+<pre class="sourceCode r"><code class="sourceCode r"><span class="kw">metadata</span>(methData)$formula &lt;-<span class="st"> </span><span class="er">~</span>cc_status +<span class="st"> </span>age +<span class="st"> </span>sex +<span class="st"> </span>Sentrix_Position +<span class="st"> </span>cohort +
+<span class="st">  </span>baso_perc +<span class="st"> </span>eos_perc +<span class="st"> </span>lymph_perc +<span class="st"> </span>mono_perc +<span class="st"> </span>neut_perc
+covariates &lt;-<span class="st"> </span><span class="kw">get_all_vars</span>(<span class="kw">metadata</span>(methData)$formula, <span class="dt">data=</span><span class="kw">colData</span>(methData))
 
 nas &lt;-<span class="st"> </span><span class="kw">apply</span>(covariates, <span class="dv">1</span>, anyNA)
-methData &lt;-<span class="st"> </span>methData[, <span class="op">!</span>nas]
+methData &lt;-<span class="st"> </span>methData[, !nas]
 
-design &lt;-<span class="st"> </span><span class="kw">model.matrix</span>(<span class="kw">metadata</span>(methData)<span class="op">$</span>formula, <span class="dt">data=</span><span class="kw">colData</span>(methData))
-design[<span class="dv">1</span><span class="op">:</span><span class="dv">5</span>, <span class="dv">1</span><span class="op">:</span><span class="dv">3</span>]</code></pre></div>
+design &lt;-<span class="st"> </span><span class="kw">model.matrix</span>(<span class="kw">metadata</span>(methData)$formula, <span class="dt">data=</span><span class="kw">colData</span>(methData))
+design[<span class="dv">1</span>:<span class="dv">5</span>, <span class="dv">1</span>:<span class="dv">3</span>]</code></pre>
 <pre><code>##                              (Intercept) cc_statusFASD  age
 ## GSM3092700_9985178096_R01C01           1             0 17.3
 ## GSM3092701_9985178127_R03C02           1             0 11.3
@@ -506,27 +484,27 @@ design[<span class="dv">1</span><span class="op">:</span><span class="dv">5</spa
 ## GSM3092703_9985178087_R01C01           1             0 15.0
 ## GSM3092704_9985178090_R01C01           1             0  6.7</code></pre>
 <p>To correct for unknown confounders, we must estimate their number using the <code>est.confounder.num()</code> function from <a href="https://cran.r-project.org/web/packages/cate/index.html"><strong>cate</strong></a>. In order to correctly input the arguments of this function you need to specify the variable of interest, which in this instance is case-control status, followed by a formula indicating that all other variables except the intercept are known confounders. This function also needs the design matrix as a data frame, the transposed beta values, and an indication of what methods and number of iterations you want to use.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(cate)
-beta.cate &lt;-<span class="st"> </span><span class="kw">t</span>(<span class="kw">assays</span>(methData)<span class="op">$</span>betas)
+<pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(cate)
+beta.cate &lt;-<span class="st"> </span><span class="kw">t</span>(<span class="kw">assays</span>(methData)$betas)
 
-factor.num &lt;-<span class="st"> </span><span class="kw">est.confounder.num</span>(<span class="op">~</span><span class="st"> </span>cc_statusFASD <span class="op">|</span><span class="st"> </span>. <span class="op">-</span><span class="st"> </span>cc_statusFASD <span class="op">+</span><span class="st"> </span><span class="dv">0</span>,
+factor.num &lt;-<span class="st"> </span><span class="kw">est.confounder.num</span>(~<span class="st"> </span>cc_statusFASD |<span class="st"> </span>. -<span class="st"> </span>cc_statusFASD +<span class="st"> </span><span class="dv">0</span>,
                                  <span class="kw">as.data.frame</span>(design), beta.cate,
                                  <span class="dt">method =</span> <span class="st">&quot;bcv&quot;</span>, <span class="dt">bcv.plot =</span> <span class="ot">FALSE</span>,
                                  <span class="dt">rmax =</span> <span class="dv">30</span>, <span class="dt">nRepeat =</span> <span class="dv">20</span>)
-factor.num<span class="op">$</span>r</code></pre></div>
-<pre><code>## [1] 8</code></pre>
+factor.num$r</code></pre>
+<pre><code>## [1] 9</code></pre>
 <p>In this instance, it is suggested we correct for 9 unmeasured confounders. To implement this, we use the <code>cate.fit()</code> function, as shown below. The output object stores the beta values, estimated test statistics, and relevant p-values, and top hits can be viewed after using the Bonferonni correction to adjust for multiple testing.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">results.cate &lt;-<span class="st"> </span><span class="kw">cate.fit</span>(design[,<span class="dv">2</span>,<span class="dt">drop=</span><span class="ot">FALSE</span>], design[,<span class="op">-</span><span class="dv">2</span>], beta.cate, 
+<pre class="sourceCode r"><code class="sourceCode r">results.cate &lt;-<span class="st"> </span><span class="kw">cate.fit</span>(design[,<span class="dv">2</span>,<span class="dt">drop=</span><span class="ot">FALSE</span>], design[,-<span class="dv">2</span>], beta.cate, 
                          <span class="dt">r =</span> <span class="dv">9</span>, <span class="dt">calibrate=</span><span class="ot">FALSE</span>, <span class="dt">adj.method=</span><span class="st">&quot;naive&quot;</span>)
 
-padj.cate &lt;-<span class="st"> </span><span class="kw">p.adjust</span>(<span class="kw">sort</span>(results.cate<span class="op">$</span>beta.p.value[,<span class="dv">1</span>], <span class="dt">decreasing=</span><span class="ot">FALSE</span>), <span class="dt">method=</span><span class="st">&quot;bonf&quot;</span>)
+padj.cate &lt;-<span class="st"> </span><span class="kw">p.adjust</span>(<span class="kw">sort</span>(results.cate$beta.p.value[,<span class="dv">1</span>], <span class="dt">decreasing=</span><span class="ot">FALSE</span>), <span class="dt">method=</span><span class="st">&quot;bonf&quot;</span>)
 
-<span class="kw">head</span>(padj.cate[padj.cate <span class="op">&lt;</span><span class="st"> </span><span class="fl">0.05</span>])</code></pre></div>
+<span class="kw">head</span>(padj.cate[padj.cate &lt;<span class="st"> </span><span class="fl">0.05</span>])</code></pre>
 <pre><code>##   cg00121876   cg20893180   cg21692450   cg22171758   cg04180046 
 ## 2.756062e-10 1.653637e-09 6.430811e-09 1.387218e-08 2.296718e-08 
 ##   cg00504595 
 ## 3.371583e-08</code></pre>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">length</span>(padj.cate[padj.cate <span class="op">&lt;</span><span class="st"> </span><span class="fl">0.05</span>])</code></pre></div>
+<pre class="sourceCode r"><code class="sourceCode r"><span class="kw">length</span>(padj.cate[padj.cate &lt;<span class="st"> </span><span class="fl">0.05</span>])</code></pre>
 <pre><code>## [1] 265</code></pre>
 <p>This analysis has identified 417 differentially methylated probes (DMPs) associated with FASD after adjusting for age, sex, and sentrix position. These can be analysed further, but first we want to outline alternatives to the <a href="https://cran.r-project.org/web/packages/cate/index.html"><strong>cate</strong></a>-based EWAS, and demonstrate that results are comparable.</p>
 <hr />
@@ -534,21 +512,21 @@ padj.cate &lt;-<span class="st"> </span><span class="kw">p.adjust</span>(<span c
 <div id="alternatives" class="section level1">
 <h1>Alternatives</h1>
 <p><a href="https://bioconductor.org/packages/release/bioc/html/limma.html"><strong>Limma</strong></a> is a package with excellent documentation that can be useful for smaller samples, due to the optional empirical Bayes step. Running <a href="https://bioconductor.org/packages/release/bioc/html/limma.html"><strong>limma</strong></a> is similar to running <a href="https://cran.r-project.org/web/packages/cate/index.html"><strong>cate</strong></a>, except that the beta matrix does not need transposing and test statistics and p-values need to be manually derived.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">beta.limma &lt;-<span class="st"> </span><span class="kw">assays</span>(methData)<span class="op">$</span>betas
+<pre class="sourceCode r"><code class="sourceCode r">beta.limma &lt;-<span class="st"> </span><span class="kw">assays</span>(methData)$betas
 
 <span class="kw">library</span>(limma)
 fit &lt;-<span class="st"> </span><span class="kw">lmFit</span>(beta.limma, design)
 
-tstat &lt;-<span class="st"> </span>fit<span class="op">$</span>coef<span class="op">/</span>fit<span class="op">$</span>stdev.unscaled<span class="op">/</span>fit<span class="op">$</span>sigma
-pval &lt;-<span class="st"> </span><span class="dv">2</span><span class="op">*</span><span class="kw">pnorm</span>(<span class="op">-</span><span class="kw">abs</span>(tstat[,<span class="dv">2</span>]))
+tstat &lt;-<span class="st"> </span>fit$coef/fit$stdev.unscaled/fit$sigma
+pval &lt;-<span class="st"> </span><span class="dv">2</span>*<span class="kw">pnorm</span>(-<span class="kw">abs</span>(tstat[,<span class="dv">2</span>]))
 padj &lt;-<span class="st"> </span><span class="kw">p.adjust</span>(<span class="kw">sort</span>(pval, <span class="dt">decreasing=</span><span class="ot">FALSE</span>), <span class="dt">method=</span><span class="st">&quot;bonf&quot;</span>)
 
-<span class="kw">head</span>(padj[padj <span class="op">&lt;</span><span class="st"> </span><span class="fl">0.05</span>])</code></pre></div>
+<span class="kw">head</span>(padj[padj &lt;<span class="st"> </span><span class="fl">0.05</span>])</code></pre>
 <pre><code>##   cg00121876   cg20893180   cg21692450   cg22171758   cg04180046 
 ## 3.153599e-10 1.646578e-09 6.426680e-09 1.389541e-08 2.296891e-08 
 ##   cg00504595 
 ## 3.370872e-08</code></pre>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">length</span>(padj[padj <span class="op">&lt;</span><span class="st"> </span><span class="fl">0.05</span>])</code></pre></div>
+<pre class="sourceCode r"><code class="sourceCode r"><span class="kw">length</span>(padj[padj &lt;<span class="st"> </span><span class="fl">0.05</span>])</code></pre>
 <pre><code>## [1] 265</code></pre>
 <p>As shown, results from <a href="https://bioconductor.org/packages/release/bioc/html/limma.html"><strong>limma</strong></a> are comparable with those from <a href="https://cran.r-project.org/web/packages/cate/index.html"><strong>cate</strong></a>. Here, the same number of DMPs are identified and top hits are identical, albeit with slightly differing p-values. Despite this, for the reasons specified above, we still advise using <a href="https://cran.r-project.org/web/packages/cate/index.html"><strong>cate</strong></a> unless your sample size is small enough to require the <code>eBayes</code> option.</p>
 <p>Linear mixed models and linear models can both work well for performing EWAS and, when looking solely at top hits, are unlikely to differ greatly from results obtained using <a href="https://cran.r-project.org/web/packages/cate/index.html"><strong>cate</strong></a> or <a href="https://bioconductor.org/packages/release/bioc/html/limma.html"><strong>limma</strong></a>.</p>
@@ -557,41 +535,50 @@ padj &lt;-<span class="st"> </span><span class="kw">p.adjust</span>(<span class=
 <div id="bacon" class="section level1">
 <h1><code>bacon</code></h1>
 <p>We developed a package called <a href="http://bioconductor.org/packages/bacon"><strong>bacon</strong></a> <span class="citation">(Iterson et al. 2017)</span> to estimate and correct for bias and inflation of test statistics in EWAS. This maximizes power while properly controlling the false positive rate, by estimating the empirical null distribution using Bayesian statistics. The utility of the tool was illustrated through the application of meta-analysis by performing epigenome- and transcriptome-wide association studies (EWASs/TWASs) on age and smoking which highlighted an overlap in differential methylation and expression of associated genes. It can be used to remove inflation and bias often observed in EWAS.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(bacon)
-tstats &lt;-<span class="st"> </span><span class="kw">cbind</span>(<span class="dt">limma=</span>tstat[,<span class="dv">2</span>], <span class="dt">cate=</span><span class="kw">as.vector</span>(fa<span class="op">$</span>beta.t))
+<pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(bacon)
+tstats &lt;-<span class="st"> </span><span class="kw">cbind</span>(<span class="dt">limma=</span>tstat[,<span class="dv">2</span>], <span class="dt">cate=</span><span class="kw">as.vector</span>(results.cate$beta.t))
 
 <span class="kw">library</span>(BiocParallel)
-<span class="kw">register</span>(<span class="kw">MulticoreParam</span>(<span class="dv">2</span>))
-bc &lt;-<span class="st"> </span><span class="kw">bacon</span>(tstats)</code></pre></div>
+<span class="kw">register</span>(<span class="kw">MulticoreParam</span>(<span class="dv">6</span>))
+bc &lt;-<span class="st"> </span><span class="kw">bacon</span>(tstats)</code></pre>
+<pre><code>## Detected 2 workers!
+##  Running in parallel!</code></pre>
 <p>Plots can be used to compare adjustment using <a href="https://cran.r-project.org/web/packages/cate/index.html"><strong>cate</strong></a> with that using <a href="http://bioconductor.org/packages/bacon"><strong>bacon</strong></a>, and bacon-adjusted <a href="https://bioconductor.org/packages/release/bioc/html/limma.html"><strong>limma</strong></a> and <a href="https://cran.r-project.org/web/packages/cate/index.html"><strong>cate</strong></a> values can be compared side by side.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">print</span>(<span class="kw">plot</span>(bc, <span class="dt">type=</span><span class="st">&quot;hist&quot;</span>))</code></pre></div>
-<div class="figure">
-<img src="07_EWAS_files/figure-html/bacon-1.png" />
-
-</div>
-<p><br></p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">print</span>(<span class="kw">plot</span>(bc, <span class="dt">type=</span><span class="st">&quot;qq&quot;</span>))</code></pre></div>
-<div class="figure">
-<img src="07_EWAS_files/figure-html/bacon-2.png" />
-
-</div>
-<p><br></p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">pvalsbc &lt;-<span class="st"> </span><span class="kw">pval</span>(bc)
-<span class="kw">head</span>(pvalsbc[<span class="kw">order</span>(pvalsbc[,<span class="dv">1</span>]),])
-pvals &lt;-<span class="st"> </span><span class="kw">pval</span>(bc, <span class="ot">FALSE</span>)
-<span class="kw">head</span>(pvals[<span class="kw">order</span>(pvals[,<span class="dv">1</span>]),])</code></pre></div>
-<p>If, after looking at the plots, strong bias is observed, running <a href="http://bioconductor.org/packages/bacon"><strong>bacon</strong></a> should be seriously considered.</p>
+<pre class="sourceCode r"><code class="sourceCode r"><span class="kw">print</span>(<span class="kw">plot</span>(bc, <span class="dt">type=</span><span class="st">&quot;hist&quot;</span>))</code></pre>
+<pre><code>## `stat_bin()` using `bins = 30`. Pick better value with `binwidth`.</code></pre>
+<p><img src="07_EWAS_files/figure-html/710baconplot-1.png" width="672" /></p>
+<pre class="sourceCode r"><code class="sourceCode r"><span class="kw">print</span>(<span class="kw">plot</span>(bc, <span class="dt">type=</span><span class="st">&quot;qq&quot;</span>))</code></pre>
+<p><img src="07_EWAS_files/figure-html/710baconplot-2.png" width="672" /></p>
+<pre class="sourceCode r"><code class="sourceCode r">pvalsbc &lt;-<span class="st"> </span><span class="kw">pval</span>(bc)
+<span class="kw">head</span>(pvalsbc[<span class="kw">order</span>(pvalsbc[,<span class="dv">1</span>]),])</code></pre>
+<pre><code>##                   limma         cate
+## cg00121876 1.976749e-15 1.899864e-15
+## cg20893180 3.647730e-12 3.516626e-12
+## cg21692450 1.130865e-11 1.091939e-11
+## cg22171758 2.144975e-11 2.072988e-11
+## cg04180046 3.254814e-11 3.147408e-11
+## cg00504595 4.474121e-11 4.328396e-11</code></pre>
+<pre class="sourceCode r"><code class="sourceCode r">pvals &lt;-<span class="st"> </span><span class="kw">pval</span>(bc, <span class="ot">FALSE</span>)
+<span class="kw">head</span>(pvals[<span class="kw">order</span>(pvals[,<span class="dv">1</span>]),])</code></pre>
+<pre><code>##                   limma         cate
+## cg00121876 7.622176e-16 7.622176e-16
+## cg20893180 3.979740e-15 3.979740e-15
+## cg21692450 1.553314e-14 1.553314e-14
+## cg22171758 3.358488e-14 3.358488e-14
+## cg04180046 5.551533e-14 5.551533e-14
+## cg00504595 8.147320e-14 8.147320e-14</code></pre>
+<p>After looking at these plots, strong bias is observed, and running <a href="http://bioconductor.org/packages/bacon"><strong>bacon</strong></a> should be seriously considered.</p>
 <hr />
 </div>
 <div id="dmr-finder" class="section level1">
 <h1>DMR Finder</h1>
 <p>This <code>DNAmArray</code> package also contains a <a href="https://epigeneticsandchromatin.biomedcentral.com/articles/10.1186/1756-8935-6-26"><strong>DMRfinder</strong></a> <span class="citation">(Slieker et al. 2013)</span> function, which can be used to identify differentially methylated regions (DMRs). This function takes a simple data frame as input, which needs to contain a column called <code>crit</code> with a binary indicator of whether the adjusted p-value was significant or not. Other options include <code>mismatches</code>, which specifies how many DMPs are allowed to be not significant in a row before a region is not deemed to be a DMR, and the <code>icd</code> or Inter-CpG distance required for a region to be identified.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">dmrData &lt;-<span class="st"> </span><span class="kw">data.frame</span>(<span class="dt">dmp =</span> <span class="kw">attr</span>(padj.cate, <span class="st">&quot;names&quot;</span>), <span class="dt">crit =</span> <span class="kw">ifelse</span>(padj.cate<span class="op">&lt;</span><span class="fl">0.05</span>,<span class="dv">1</span>,<span class="dv">0</span>))
+<pre class="sourceCode r"><code class="sourceCode r">dmrData &lt;-<span class="st"> </span><span class="kw">data.frame</span>(<span class="dt">dmp =</span> <span class="kw">attr</span>(padj.cate, <span class="st">&quot;names&quot;</span>), <span class="dt">crit =</span> <span class="kw">ifelse</span>(padj.cate&lt;<span class="fl">0.05</span>,<span class="dv">1</span>,<span class="dv">0</span>))
 
-DMRs =<span class="st"> </span><span class="kw">DMRfinder</span>(dmrData, <span class="dt">mismatches=</span><span class="dv">3</span>, <span class="dt">icd=</span><span class="dv">1000</span>)</code></pre></div>
+DMRs =<span class="st"> </span><span class="kw">DMRfinder</span>(dmrData, <span class="dt">mismatches=</span><span class="dv">3</span>, <span class="dt">icd=</span><span class="dv">1000</span>)</code></pre>
 <pre><code>## 
 ## ========================================================================</code></pre>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">DMRs</code></pre></div>
+<pre class="sourceCode r"><code class="sourceCode r">DMRs</code></pre>
 <pre><code>## GRanges object with 12 ranges and 0 metadata columns:
 ##        seqnames              ranges strand
 ##           &lt;Rle&gt;           &lt;IRanges&gt;  &lt;Rle&gt;
@@ -614,11 +601,11 @@ DMRs =<span class="st"> </span><span class="kw">DMRfinder</span>(dmrData, <span 
 <div id="probe-annotation" class="section level1">
 <h1>Probe Annotation</h1>
 <p>Our package also contains a <code>cpgInfo()</code> function, which can be used to map CpG probes to their nearest genes. This utilises the <a href="http://bioconductor.statistik.tu-dortmund.de/packages/3.6/data/annotation/html/TxDb.Hsapiens.UCSC.hg19.knownGene.html"><strong>TxDb.Hsapiens.UCSC.hg19.knownGene</strong></a> package, which accesses the USCS annotation databases.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">cpgs &lt;-<span class="st"> </span><span class="kw">names</span>(methData)
-cpgInfo &lt;-<span class="st"> </span><span class="kw">cpgInfo</span>(cpgs, <span class="dt">TxDb=</span><span class="st">&quot;TxDb.Hsapiens.UCSC.hg19.knownGene&quot;</span>)</code></pre></div>
+<pre class="sourceCode r"><code class="sourceCode r">cpgs &lt;-<span class="st"> </span><span class="kw">names</span>(methData)
+cpgInfo &lt;-<span class="st"> </span><span class="kw">cpgInfo</span>(cpgs, <span class="dt">TxDb=</span><span class="st">&quot;TxDb.Hsapiens.UCSC.hg19.knownGene&quot;</span>)</code></pre>
 <pre><code>## Fetching coordinates for hg19...</code></pre>
 <pre><code>## &#39;select()&#39; returned many:1 mapping between keys and columns</code></pre>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">cpgInfo[<span class="dv">1</span><span class="op">:</span><span class="dv">10</span>, <span class="dv">1</span><span class="op">:</span><span class="dv">7</span>]</code></pre></div>
+<pre class="sourceCode r"><code class="sourceCode r">cpgInfo[<span class="dv">1</span>:<span class="dv">10</span>, <span class="dv">1</span>:<span class="dv">7</span>]</code></pre>
 <pre><code>##            seqnames     start       end  width strand gene_id  SYMBOL
 ## cg00000957     chr1   5922870   6052533 129664      -  261734   NPHP4
 ## cg00001349     chr1 166944819 166991447  46629      +   84944    MAEL
@@ -631,16 +618,9 @@ cpgInfo &lt;-<span class="st"> </span><span class="kw">cpgInfo</span>(cpgs, <spa
 ## cg00007036     chr1  33722174  33766320  44147      +  149076  ZNF362
 ## cg00007898     chr1 205111631 205180727  69097      -   25778   DSTYK</code></pre>
 <hr />
-</div>
-<div id="references" class="section level1 unnumbered">
-<h1>References</h1>
-<div id="refs" class="references">
-<div id="ref-VanIterson2017">
-<p>Iterson, Maarten van, Erik W. van Zwet, Bastiaan T. Heijmans, Peter A.C. ’t Hoen, Joyce van Meurs, Rick Jansen, Lude Franke, et al. 2017. “Controlling bias and inflation in epigenome- and transcriptome-wide association studies using the empirical null distribution.” <em>Genome Biology</em> 18 (1). BioMed Central: 19. doi:<a href="https://doi.org/10.1186/s13059-016-1131-9">10.1186/s13059-016-1131-9</a>.</p>
-</div>
-<div id="ref-Slieker2013">
-<p>Slieker, Roderick C, Steffan D Bos, Jelle J Goeman, Judith VMG Bovée, Rudolf P Talens, Ruud Van Der Breggen, H Eka D Suchiman, et al. 2013. “Identification and systematic annotation of tissue-specific differentially methylated regions using the Illumina 450k array.” <em>Epigenetics and Chromatin</em> 6 (1). BioMed Central: 26. doi:<a href="https://doi.org/10.1186/1756-8935-6-26">10.1186/1756-8935-6-26</a>.</p>
-</div>
+<div class="references">
+<p>Iterson, Maarten van, Erik W. van Zwet, Bastiaan T. Heijmans, <span>’t Hoen</span>Peter A.C., Joyce van Meurs, Rick Jansen, Lude Franke, et al. 2017. “Controlling Bias and Inflation in Epigenome- and Transcriptome-Wide Association Studies Using the Empirical Null Distribution.” <em>Genome Biology</em> 18 (1) (December): 19. doi:<a href="http://dx.doi.org/10.1186/s13059-016-1131-9">10.1186/s13059-016-1131-9</a>. <a href="http://genomebiology.biomedcentral.com/articles/10.1186/s13059-016-1131-9" class="uri">http://genomebiology.biomedcentral.com/articles/10.1186/s13059-016-1131-9</a>.</p>
+<p>Slieker, Roderick C, Steffan D Bos, Jelle J Goeman, Judith VMG Bov<span>é</span>e, Rudolf P Talens, Ruud <span>Van Der Breggen</span>, H Eka D Suchiman, et al. 2013. “Identification and Systematic Annotation of Tissue-Specific Differentially Methylated Regions Using the Illumina 450k Array.” <em>Epigenetics and Chromatin</em> 6 (1) (August): 26. doi:<a href="http://dx.doi.org/10.1186/1756-8935-6-26">10.1186/1756-8935-6-26</a>. <a href="http://epigeneticsandchromatin.biomedcentral.com/articles/10.1186/1756-8935-6-26" class="uri">http://epigeneticsandchromatin.biomedcentral.com/articles/10.1186/1756-8935-6-26</a>.</p>
 </div>
 </div>
 

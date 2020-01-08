@@ -28,44 +28,22 @@
 
 <style type="text/css">code{white-space: pre;}</style>
 <style type="text/css" data-origin="pandoc">
-div.sourceCode { overflow-x: auto; }
 table.sourceCode, tr.sourceCode, td.lineNumbers, td.sourceCode {
   margin: 0; padding: 0; vertical-align: baseline; border: none; }
-table.sourceCode { width: 100%; line-height: 100%; background-color: #ffffff; color: #1f1c1b; }
-td.lineNumbers { text-align: right; padding-right: 4px; padding-left: 4px; background-color: #ffffff; color: #a0a0a0; border-right: 1px solid #a0a0a0; }
+table.sourceCode { width: 100%; line-height: 100%; }
+td.lineNumbers { text-align: right; padding-right: 4px; padding-left: 4px; background-color: #dddddd; }
 td.sourceCode { padding-left: 5px; }
-pre, code { color: #1f1c1b; background-color: #ffffff; }
-code > span.kw { color: #1f1c1b; font-weight: bold; } /* Keyword */
-code > span.dt { color: #0057ae; } /* DataType */
-code > span.dv { color: #b08000; } /* DecVal */
-code > span.bn { color: #b08000; } /* BaseN */
-code > span.fl { color: #b08000; } /* Float */
-code > span.cn { color: #aa5500; } /* Constant */
-code > span.ch { color: #924c9d; } /* Char */
-code > span.sc { color: #3daee9; } /* SpecialChar */
-code > span.st { color: #bf0303; } /* String */
-code > span.vs { color: #bf0303; } /* VerbatimString */
-code > span.ss { color: #ff5500; } /* SpecialString */
-code > span.im { color: #ff5500; } /* Import */
-code > span.co { color: #898887; } /* Comment */
-code > span.do { color: #607880; } /* Documentation */
-code > span.an { color: #ca60ca; } /* Annotation */
-code > span.cv { color: #0095ff; } /* CommentVar */
-code > span.ot { color: #006e28; } /* Other */
-code > span.fu { color: #644a9b; } /* Function */
-code > span.va { color: #0057ae; } /* Variable */
-code > span.cf { color: #1f1c1b; font-weight: bold; } /* ControlFlow */
-code > span.op { color: #1f1c1b; } /* Operator */
-code > span.bu { color: #644a9b; font-weight: bold; } /* BuiltIn */
-code > span.ex { color: #0095ff; font-weight: bold; } /* Extension */
-code > span.pp { color: #006e28; } /* Preprocessor */
-code > span.at { color: #0057ae; } /* Attribute */
-code > span.re { color: #0057ae; } /* RegionMarker */
-code > span.in { color: #b08000; } /* Information */
-code > span.wa { color: #bf0303; } /* Warning */
-code > span.al { color: #bf0303; font-weight: bold; } /* Alert */
-code > span.er { color: #bf0303; text-decoration: underline; } /* Error */
-code > span. { color: #1f1c1b; } /* Normal */
+code > span.kw { font-weight: bold; }
+code > span.dt { color: #800000; }
+code > span.dv { color: #0000ff; }
+code > span.bn { color: #0000ff; }
+code > span.fl { color: #800080; }
+code > span.ch { color: #ff00ff; }
+code > span.st { color: #dd0000; }
+code > span.co { color: #808080; font-style: italic; }
+code > span.al { color: #00ff00; font-weight: bold; }
+code > span.fu { color: #000080; }
+code > span.er { color: #ff0000; font-weight: bold; }
 
 </style>
 <script>
@@ -436,10 +414,10 @@ div.tocify {
 <hr />
 <div id="ambiguous-probes" class="section level1">
 <h1>Ambiguous probes</h1>
-<p>Several studies <span class="citation">(Chen et al. 2013, <span class="citation">Zhou, Laird, and Shen (2017)</span>)</span> have characterized cross-reactive and polymorphic probes on both the 450k and EPIC methylation arrays and made suggestions for removal. We chose to remove probes identified by Zhou et al., since this set is actively maintained and supports both array sizes. Additionally, different sets are specified depending on the reference genome used.</p>
+<p>Several studies <span class="citation">(Zhou, Laird, and Shen 2017)</span> have characterized cross-reactive and polymorphic probes on both the 450k and EPIC methylation arrays and made suggestions for removal. We chose to remove probes identified by Zhou et al., since this set is actively maintained and supports both array sizes. Additionally, different sets are specified depending on the reference genome used.</p>
 <p>In total, Zhou et al. suggest removal of probes for a variety of reasons, from ambiguous mapping and cross-reactivity to polymorphisms that interfere with extension. In general, around 60,000 probes are suggested for removal in 450k arrays, and 100,000 for EPIC.</p>
 <p>We developed the <code>probeMasking()</code> function, which removes specified probes from either beta- or M- value matrices. In this instance, 59,780 CpG rows are removed.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">betas &lt;-<span class="st"> </span><span class="kw">probeMasking</span>(betas, <span class="dt">array=</span><span class="st">&quot;450&quot;</span>, <span class="dt">genome=</span><span class="st">&quot;hg19&quot;</span>)</code></pre></div>
+<pre class="sourceCode r"><code class="sourceCode r">betas &lt;-<span class="st"> </span><span class="kw">probeMasking</span>(betas, <span class="dt">array=</span><span class="st">&quot;450&quot;</span>, <span class="dt">genome=</span><span class="st">&quot;hg19&quot;</span>)</code></pre>
 <pre><code>## [probeFilterDNAmArray] Extracting probe filter... 
 ## [probeFilterDNAmArray] 60466 probes considered for filtering... 
 ## [probeFilterDNAmArray] 59780 / 483366 probes removed from the dataset</code></pre>
@@ -454,13 +432,13 @@ div.tocify {
 <div id="creating-a-rangedsummarizedexperiment" class="section level3">
 <h3>Creating a <code>RangedSummarizedExperiment</code></h3>
 <p>The <a href="https://bioconductor.org/packages/release/data/annotation/html/FDb.InfiniumMethylation.hg19.html"><strong>FDb.InfiniumMethylation.hg19</strong></a> package contains probe annotations, which can be extracted using the <code>getPlatform()</code> function. To ensure that we apply the previous probe filtering, we use <code>match()</code> to keep only the relevant information.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(FDb.InfiniumMethylation.hg19)
-rowRanges &lt;-<span class="st"> </span><span class="kw">getPlatform</span>(<span class="dt">platform=</span><span class="st">&quot;HM450&quot;</span>, <span class="dt">genome=</span><span class="st">&quot;hg19&quot;</span>)</code></pre></div>
+<pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(FDb.InfiniumMethylation.hg19)
+rowRanges &lt;-<span class="st"> </span><span class="kw">getPlatform</span>(<span class="dt">platform=</span><span class="st">&quot;HM450&quot;</span>, <span class="dt">genome=</span><span class="st">&quot;hg19&quot;</span>)</code></pre>
 <pre><code>## Fetching coordinates for hg19...</code></pre>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">rows &lt;-<span class="st"> </span><span class="kw">match</span>(<span class="kw">rownames</span>(betas), <span class="kw">names</span>(rowRanges))
+<pre class="sourceCode r"><code class="sourceCode r">rows &lt;-<span class="st"> </span><span class="kw">match</span>(<span class="kw">rownames</span>(betas), <span class="kw">names</span>(rowRanges))
 rowRanges &lt;-<span class="st"> </span>rowRanges[rows]
 
-rowRanges[,<span class="dv">3</span><span class="op">:</span><span class="dv">4</span>]</code></pre></div>
+rowRanges[,<span class="dv">3</span>:<span class="dv">4</span>]</code></pre>
 <pre><code>## GRanges object with 423586 ranges and 2 metadata columns:
 ##                   seqnames            ranges strand | channel platform
 ##                      &lt;Rle&gt;         &lt;IRanges&gt;  &lt;Rle&gt; |   &lt;Rle&gt;    &lt;Rle&gt;
@@ -478,15 +456,15 @@ rowRanges[,<span class="dv">3</span><span class="op">:</span><span class="dv">4<
 ##   -------
 ##   seqinfo: 24 sequences from hg19 genome</code></pre>
 <p>Now that we have our annotations, we can combine them with our data using the <a href="https://bioconductor.org/packages/release/bioc/html/SummarizedExperiment.html"><strong>SummarizedExperiment</strong></a> package. After ensuring that any column subsetting is accounted for, we extract the <code>colData()</code> from our <code>RGset</code>. Finally, the beta values, probe annotations, and sample information are combined into a <code>RangedSummarizedExperiment</code> object using the <code>SummarizedExperiment()</code> function.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(SummarizedExperiment)
+<pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(SummarizedExperiment)
 
 cols &lt;-<span class="st"> </span><span class="kw">match</span>(<span class="kw">colnames</span>(betas), <span class="kw">colnames</span>(RGset))
-colData &lt;-<span class="st"> </span><span class="kw">DataFrame</span>(<span class="kw">colData</span>(RGset[, cols])<span class="op">@</span>listData)
+colData &lt;-<span class="st"> </span><span class="kw">DataFrame</span>(<span class="kw">colData</span>(RGset[, cols])@listData)
 
 methData &lt;-<span class="st"> </span><span class="kw">SummarizedExperiment</span>(<span class="dt">assays=</span><span class="kw">SimpleList</span>(<span class="dt">betas=</span>betas),
                                  <span class="dt">rowRanges=</span>rowRanges,
                                  <span class="dt">colData=</span>colData)
-methData</code></pre></div>
+methData</code></pre>
 <pre><code>## class: RangedSummarizedExperiment 
 ## dim: 423586 138 
 ## metadata(0):
@@ -516,18 +494,10 @@ You can read more about <a href="http://bioconductor.org/packages/SummarizedExpe
 <div id="sex-chromosomal-probes" class="section level1">
 <h1>Sex Chromosomal Probes</h1>
 <p>Having a <code>RangedSummarizedExperiment</code> class object expedites masking sex chromosomal probes.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">methData &lt;-<span class="st"> </span>methData[<span class="op">!</span>(<span class="kw">seqnames</span>(methData) <span class="op">%in%</span><span class="st"> </span><span class="kw">c</span>(<span class="st">&quot;chrX&quot;</span>, <span class="st">&quot;chrY&quot;</span>)),]</code></pre></div>
+<pre class="sourceCode r"><code class="sourceCode r">methData &lt;-<span class="st"> </span>methData[!(<span class="kw">seqnames</span>(methData) %in%<span class="st"> </span><span class="kw">c</span>(<span class="st">&quot;chrX&quot;</span>, <span class="st">&quot;chrY&quot;</span>)),]</code></pre>
 <hr />
-</div>
-<div id="references" class="section level1 unnumbered">
-<h1>References</h1>
-<div id="refs" class="references">
-<div id="ref-Chen2013">
-<p>Chen, Yi An, Mathieu Lemire, Sanaa Choufani, Darci T Butcher, Daria Grafodatskaya, Brent W Zanke, Steven Gallinger, Thomas J Hudson, and Rosanna Weksberg. 2013. “Discovery of cross-reactive probes and polymorphic CpGs in the Illumina Infinium HumanMethylation450 microarray.” <em>Epigenetics</em> 8 (2). Taylor &amp; Francis: 203–9. doi:<a href="https://doi.org/10.4161/epi.23470">10.4161/epi.23470</a>.</p>
-</div>
-<div id="ref-Zhou2017">
-<p>Zhou, Wanding, Peter W. Laird, and Hui Shen. 2017. “Comprehensive characterization, annotation and innovative use of Infinium DNA methylation BeadChip probes.” <em>Nucleic Acids Research</em> 45 (4). Oxford University Press: e22. doi:<a href="https://doi.org/10.1093/nar/gkw967">10.1093/nar/gkw967</a>.</p>
-</div>
+<div class="references">
+<p>Zhou, Wanding, Peter W. Laird, and Hui Shen. 2017. “Comprehensive Characterization, Annotation and Innovative Use of Infinium DNA Methylation BeadChip Probes.” <em>Nucleic Acids Research</em> 45 (4) (October): e22. doi:<a href="http://dx.doi.org/10.1093/nar/gkw967">10.1093/nar/gkw967</a>. <a href="https://academic.oup.com/nar/article-lookup/doi/10.1093/nar/gkw967" class="uri">https://academic.oup.com/nar/article-lookup/doi/10.1093/nar/gkw967</a>.</p>
 </div>
 </div>
 

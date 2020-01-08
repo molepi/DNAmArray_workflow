@@ -28,44 +28,22 @@
 
 <style type="text/css">code{white-space: pre;}</style>
 <style type="text/css" data-origin="pandoc">
-div.sourceCode { overflow-x: auto; }
 table.sourceCode, tr.sourceCode, td.lineNumbers, td.sourceCode {
   margin: 0; padding: 0; vertical-align: baseline; border: none; }
-table.sourceCode { width: 100%; line-height: 100%; background-color: #ffffff; color: #1f1c1b; }
-td.lineNumbers { text-align: right; padding-right: 4px; padding-left: 4px; background-color: #ffffff; color: #a0a0a0; border-right: 1px solid #a0a0a0; }
+table.sourceCode { width: 100%; line-height: 100%; }
+td.lineNumbers { text-align: right; padding-right: 4px; padding-left: 4px; background-color: #dddddd; }
 td.sourceCode { padding-left: 5px; }
-pre, code { color: #1f1c1b; background-color: #ffffff; }
-code > span.kw { color: #1f1c1b; font-weight: bold; } /* Keyword */
-code > span.dt { color: #0057ae; } /* DataType */
-code > span.dv { color: #b08000; } /* DecVal */
-code > span.bn { color: #b08000; } /* BaseN */
-code > span.fl { color: #b08000; } /* Float */
-code > span.cn { color: #aa5500; } /* Constant */
-code > span.ch { color: #924c9d; } /* Char */
-code > span.sc { color: #3daee9; } /* SpecialChar */
-code > span.st { color: #bf0303; } /* String */
-code > span.vs { color: #bf0303; } /* VerbatimString */
-code > span.ss { color: #ff5500; } /* SpecialString */
-code > span.im { color: #ff5500; } /* Import */
-code > span.co { color: #898887; } /* Comment */
-code > span.do { color: #607880; } /* Documentation */
-code > span.an { color: #ca60ca; } /* Annotation */
-code > span.cv { color: #0095ff; } /* CommentVar */
-code > span.ot { color: #006e28; } /* Other */
-code > span.fu { color: #644a9b; } /* Function */
-code > span.va { color: #0057ae; } /* Variable */
-code > span.cf { color: #1f1c1b; font-weight: bold; } /* ControlFlow */
-code > span.op { color: #1f1c1b; } /* Operator */
-code > span.bu { color: #644a9b; font-weight: bold; } /* BuiltIn */
-code > span.ex { color: #0095ff; font-weight: bold; } /* Extension */
-code > span.pp { color: #006e28; } /* Preprocessor */
-code > span.at { color: #0057ae; } /* Attribute */
-code > span.re { color: #0057ae; } /* RegionMarker */
-code > span.in { color: #b08000; } /* Information */
-code > span.wa { color: #bf0303; } /* Warning */
-code > span.al { color: #bf0303; font-weight: bold; } /* Alert */
-code > span.er { color: #bf0303; text-decoration: underline; } /* Error */
-code > span. { color: #1f1c1b; } /* Normal */
+code > span.kw { font-weight: bold; }
+code > span.dt { color: #800000; }
+code > span.dv { color: #0000ff; }
+code > span.bn { color: #0000ff; }
+code > span.fl { color: #800080; }
+code > span.ch { color: #ff00ff; }
+code > span.st { color: #dd0000; }
+code > span.co { color: #808080; font-style: italic; }
+code > span.al { color: #00ff00; font-weight: bold; }
+code > span.fu { color: #000080; }
+code > span.er { color: #ff0000; font-weight: bold; }
 
 </style>
 <script>
@@ -436,29 +414,29 @@ div.tocify {
 <hr />
 <div id="introduction" class="section level1">
 <h1>Introduction</h1>
-<p>Our workflow uses the Functional Normalization approach <span class="citation">(K. D. Hansen et al. 2014)</span>, which exploits internal control probes designed to detect technical variations without assaying biological differences. It has been shown to perform favourably when compared to other approaches <span class="citation">(Heiss and Brenner 2015, <span class="citation">Liu and Siegmund (2016)</span>)</span>.</p>
+<p>Our workflow uses the Functional Normalization approach <span class="citation">(K. D. Hansen et al. 2014)</span>, which exploits internal control probes designed to detect technical variations without assaying biological differences. It has been shown to perform favourably when compared to other approaches <span class="citation">(Heiss and Brenner 2015, <strong>???</strong>)</span>.</p>
 <p>Using the internal control probes avoids the problems associated with global normalization methods, where biological variation can be mistaken for a technical effect and removed. This is especially important in studies where groups are expected to have differential methylomes, such as multiple tissue studies <span class="citation">(Min et al. 2018)</span>.</p>
 <hr />
 </div>
 <div id="principal-components-selection" class="section level1">
 <h1>Principal Components Selection</h1>
 <p>The default of selecting only two principal components is often too low for this type of data, so our <code>screeplot()</code> function allows visualisation of control probe eigenvalues to help select the optimal number. Often you will see a drop-off in proportion of variance explained after a certain number of principal components, and this can indicate an efficient cut-off.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">par</span>(<span class="dt">mar=</span><span class="kw">c</span>(<span class="dv">5</span>,<span class="dv">5</span>,<span class="dv">4</span>,<span class="dv">2</span>), <span class="dt">mgp=</span><span class="kw">c</span>(<span class="fl">2.5</span>,<span class="dv">1</span>,<span class="dv">0</span>), <span class="dt">cex.main=</span><span class="fl">1.5</span>, <span class="dt">font.main=</span><span class="st">&quot;1&quot;</span>, <span class="dt">fg=</span><span class="st">&quot;#6b6b6b&quot;</span>, <span class="dt">col.main=</span><span class="st">&quot;#4b4b4b&quot;</span>)
-pc &lt;-<span class="st"> </span><span class="kw">screeplot</span>(RGset)</code></pre></div>
-<p><img src="03_Normalization_files/figure-html/402screeplot-1.png" width="672" /></p>
+<pre class="sourceCode r"><code class="sourceCode r"><span class="kw">par</span>(<span class="dt">mar=</span><span class="kw">c</span>(<span class="dv">5</span>,<span class="dv">5</span>,<span class="dv">4</span>,<span class="dv">2</span>), <span class="dt">mgp=</span><span class="kw">c</span>(<span class="fl">2.5</span>,<span class="dv">1</span>,<span class="dv">0</span>), <span class="dt">cex.main=</span><span class="fl">1.5</span>, <span class="dt">font.main=</span><span class="st">&quot;1&quot;</span>, <span class="dt">fg=</span><span class="st">&quot;#6b6b6b&quot;</span>, <span class="dt">col.main=</span><span class="st">&quot;#4b4b4b&quot;</span>)
+pc &lt;-<span class="st"> </span><span class="kw">screeplot</span>(RGset)</code></pre>
+<p><img src="03_Normalization_files/figure-html/301screeplot-1.png" width="672" /></p>
 <p>This plot shows that only a small amount of variance is explained after the sixth principal component. For this reason, we choose to carry out normalization using 6 principal components.</p>
 <hr />
 </div>
 <div id="functional-normalization" class="section level1">
 <h1>Functional Normalization</h1>
 <p>By default, functional normalization returns normalized copy number data making the returned <code>GenomicRatioSet</code> twice the size necessary when only beta-values or M-values are required. Therefore, we developed <code>preprocessFunnorm.DNAmArray()</code>, which adds an option not to return these to the <code>preprocessFunnorm()</code> function from <a href="https://bioconductor.org/packages/release/bioc/html/minfi.html"><strong>minfi</strong></a> <span class="citation">(Aryee et al. 2014)</span>.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">GRset &lt;-<span class="st"> </span><span class="kw">preprocessFunnorm.DNAmArray</span>(RGset, <span class="dt">nPCs=</span><span class="dv">6</span>, <span class="dt">keepCN=</span><span class="ot">FALSE</span>)</code></pre></div>
+<pre class="sourceCode r"><code class="sourceCode r">GRset &lt;-<span class="st"> </span><span class="kw">preprocessFunnorm.DNAmArray</span>(RGset, <span class="dt">nPCs=</span><span class="dv">6</span>, <span class="dt">keepCN=</span><span class="ot">FALSE</span>)</code></pre>
 <pre><code>## [preprocessFunnorm] Modified version not returning CN! 
 ## [preprocessFunnorm] Background and dye bias correction with noob 
 ## [preprocessFunnorm] Mapping to genome
 ## [preprocessFunnorm] Quantile extraction
 ## [preprocessFunnorm] Normalization</code></pre>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">GRset</code></pre></div>
+<pre class="sourceCode r"><code class="sourceCode r">GRset</code></pre>
 <pre><code>## class: GenomicRatioSet 
 ## dim: 485512 138 
 ## metadata(0):
@@ -479,25 +457,11 @@ pc &lt;-<span class="st"> </span><span class="kw">screeplot</span>(RGset)</code>
 <p>This function returns beta-values calculated with an offset of 100, similar to specifying <code>getBeta()</code> with option <code>type='Illumina'</code>. If required, these can be transformed to M-values using <a href="https://bioconductor.org/packages/release/bioc/html/minfi.html"><strong>minfi</strong></a>’s <code>getM()</code> which applies a logit2-transformation to the beta-values.</p>
 <p>From inspecting the <code>GenomicRatioSet</code> object, you can see that there is one <code>Beta</code> assay, with methylation values for 485,512 CpG sites.</p>
 <hr />
-</div>
-<div id="references" class="section level1 unnumbered">
-<h1>References</h1>
-<div id="refs" class="references">
-<div id="ref-Feinberg2014">
-<p>Aryee, Martin J., Andrew E. Jaffe, Hector Corrada-Bravo, Christine Ladd-Acosta, Andrew P. Feinberg, Kasper D. Hansen, and Rafael A. Irizarry. 2014. “Minfi: A flexible and comprehensive Bioconductor package for the analysis of Infinium DNA methylation microarrays.” <em>Bioinformatics</em> 30 (10). Oxford University Press: 1363–9. doi:<a href="https://doi.org/10.1093/bioinformatics/btu049">10.1093/bioinformatics/btu049</a>.</p>
-</div>
-<div id="ref-Hansen2014">
-<p>Hansen, Kasper D, Mathieu Lemire, Thomas J Hudson, Elana J Fertig, Celia MT Greenwood, Jean-Philippe Fortin, Aurélie Labbe, and Brent W Zanke. 2014. “Functional normalization of 450k methylation array data improves replication in large cancer studies.” <em>Genome Biology</em> 15 (11). BioMed Central: 503. doi:<a href="https://doi.org/10.1186/s13059-014-0503-2">10.1186/s13059-014-0503-2</a>.</p>
-</div>
-<div id="ref-Heiss2015">
-<p>Heiss, Jonathan A, and Hermann Brenner. 2015. “Between-array normalization for 450K data.” <em>Frontiers in Genetics</em> 6. Frontiers Media SA: 92. doi:<a href="https://doi.org/10.3389/fgene.2015.00092">10.3389/fgene.2015.00092</a>.</p>
-</div>
-<div id="ref-Liu2016">
-<p>Liu, Jie, and Kimberly D. Siegmund. 2016. “An evaluation of processing methods for HumanMethylation450 BeadChip data.” <em>BMC Genomics</em> 17 (1). BioMed Central: 469. doi:<a href="https://doi.org/10.1186/s12864-016-2819-7">10.1186/s12864-016-2819-7</a>.</p>
-</div>
-<div id="ref-Min2018">
-<p>Min, J L, G Hemani, G Davey Smith, C Relton, and M Suderman. 2018. “Meffil: efficient normalization and analysis of very large DNA methylation datasets.” <em>Bioinformatics (Oxford, England)</em> 34 (23). Oxford University Press: 3983–9. doi:<a href="https://doi.org/10.1093/bioinformatics/bty476">10.1093/bioinformatics/bty476</a>.</p>
-</div>
+<div class="references">
+<p>Aryee, Martin J., Andrew E. Jaffe, Hector Corrada-Bravo, Christine Ladd-Acosta, Andrew P. Feinberg, Kasper D. Hansen, and Rafael A. Irizarry. 2014. “Minfi: A Flexible and Comprehensive Bioconductor Package for the Analysis of Infinium DNA Methylation Microarrays.” <em>Bioinformatics</em> 30 (10) (May): 1363–1369. doi:<a href="http://dx.doi.org/10.1093/bioinformatics/btu049">10.1093/bioinformatics/btu049</a>. <a href="http://www.ncbi.nlm.nih.gov/pubmed/24478339 http://www.pubmedcentral.nih.gov/articlerender.fcgi?artid=PMC4016708" class="uri">http://www.ncbi.nlm.nih.gov/pubmed/24478339 http://www.pubmedcentral.nih.gov/articlerender.fcgi?artid=PMC4016708</a>.</p>
+<p>Hansen, Kasper D, Mathieu Lemire, Thomas J Hudson, Elana J Fertig, Celia MT Greenwood, Jean-Philippe Fortin, Aur<span>é</span>lie Labbe, and Brent W Zanke. 2014. “Functional Normalization of 450k Methylation Array Data Improves Replication in Large Cancer Studies.” <em>Genome Biology</em> 15 (11) (November): 503. doi:<a href="http://dx.doi.org/10.1186/s13059-014-0503-2">10.1186/s13059-014-0503-2</a>. <a href="http://www.ncbi.nlm.nih.gov/pubmed/25599564 http://www.pubmedcentral.nih.gov/articlerender.fcgi?artid=PMC4283580 http://genomebiology.biomedcentral.com/articles/10.1186/s13059-014-0503-2" class="uri">http://www.ncbi.nlm.nih.gov/pubmed/25599564 http://www.pubmedcentral.nih.gov/articlerender.fcgi?artid=PMC4283580 http://genomebiology.biomedcentral.com/articles/10.1186/s13059-014-0503-2</a>.</p>
+<p>Heiss, Jonathan A, and Hermann Brenner. 2015. “Between-Array Normalization for 450K Data.” <em>Frontiers in Genetics</em> 6: 92. doi:<a href="http://dx.doi.org/10.3389/fgene.2015.00092">10.3389/fgene.2015.00092</a>. <a href="http://www.ncbi.nlm.nih.gov/pubmed/25806048 http://www.pubmedcentral.nih.gov/articlerender.fcgi?artid=PMC4354407" class="uri">http://www.ncbi.nlm.nih.gov/pubmed/25806048 http://www.pubmedcentral.nih.gov/articlerender.fcgi?artid=PMC4354407</a>.</p>
+<p>Min, J L, G Hemani, G <span>Davey Smith</span>, C Relton, and M Suderman. 2018. “Meffil: Efficient Normalization and Analysis of Very Large DNA Methylation Datasets.” <em>Bioinformatics (Oxford, England)</em> 34 (23) (December): 3983–3989. doi:<a href="http://dx.doi.org/10.1093/bioinformatics/bty476">10.1093/bioinformatics/bty476</a>. <a href="http://www.ncbi.nlm.nih.gov/pubmed/29931280 http://www.pubmedcentral.nih.gov/articlerender.fcgi?artid=PMC6247925" class="uri">http://www.ncbi.nlm.nih.gov/pubmed/29931280 http://www.pubmedcentral.nih.gov/articlerender.fcgi?artid=PMC6247925</a>.</p>
 </div>
 </div>
 

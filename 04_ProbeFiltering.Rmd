@@ -7,13 +7,13 @@ We recommend performing probe-filtering by setting unreliably measured probes to
 
 Some observations need to be removed from the dataset since they provide little to no information that could skew analyses. Probes which have zero intensity or are based on very few (default: <3) beads are removed, based on a specified cut off. 
 
-```{r 502filter}
+```{r 401filter}
 RGset <- probeFiltering(RGset)
 ```
 
 There are differences between probe types that are used in `probeFiltering()`. Information on these can be extracted and stored using functions from [**minfi**](https://bioconductor.org/packages/release/bioc/html/minfi.html) [@Feinberg2014].
 
-```{r 503probeinfo}
+```{r 402probeinfo}
 locusNames <- getManifestInfo(RGset, "locusNames")
 typeII <- getProbeInfo(RGset, type="II")
 typeI <- getProbeInfo(RGset, type="I")
@@ -28,7 +28,7 @@ Additionally, samples where a large proportion (default: >5%) of probes were set
 
 Our function `reduce()` takes the normalized `GRset` from the previous section and the filtered `RGset` created above and returns filtered beta or M-values, which can be passed to the `probeMasking()` function. If M-values are specified as the output, these are scaled to have a range of 32 instead of to infinite values.
 
-```{r 504reduce}
+```{r 403reduce}
 betas <- reduce(GRset, RGset, what="beta")
 ```
 
@@ -46,13 +46,13 @@ The method that we advise using is [**MethyLImp**](https://github.com/pdilena/me
 
 Until the parallelized version is available, we advise using `imputePCA()` from [**missMDA**](https://www.rdocumentation.org/packages/missMDA/versions/1.14) [@Josse2012]. This performs well for its small computation time, and does not suffer from the beta-value bias that `impute.knn()` has been shown to [@DiLena2019].
 
-```{r 614nacount}
+```{r 404nacount}
 sum(is.na(betas))
 ```
 
 After filtering and preprocessing, our beta-value matrix has 51,758 missing values. Using the code below, we can impute them by implementing a low-rank approximation version of the iterative EM-PCA algorithm [@Dempster1977]. Since this function can impute values outside the [0,1] range of beta-values, we apply a simple post-imputation truncation of the overflowed values. This has been shown not to significantly affect the accuracy [@DiLena2019].
 
-```{r 614imputation}
+```{r 405impute}
 library(missMDA)
 betas <- imputePCA(betas)
 betas <- betas$completeObs
@@ -62,5 +62,3 @@ betas[betas>1] <- 1
 ```
 
 ***
-
-# References #

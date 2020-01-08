@@ -4,7 +4,7 @@ title:  |
   | 
   
 author:  | 
-  | Lucy Sinke, Maarten van Iterson, Davy Cats, Roderick Slieker, and Bas Heijmans
+  | Lucy Sinke, Maarten van Iterson, Davy Cats, BIOS Consortium, Roderick Slieker, and Bas Heijmans
   | <font size=2 color=#6b6b6b>Molecular Epidemiology, Department of Biomedical Data Sciences, Leiden University Medical Center, Leiden, The Netherlands</font>
   
 email: l.j.sinke@lumc.nl
@@ -13,7 +13,7 @@ email: l.j.sinke@lumc.nl
 ```{r, child="_setup.Rmd"}
 ```
 <div class="DOI">
-  [![DOI](C:/Users/ljsinke/Documents/git/GitHub/DNAmArray_workflow/data/zenodo.3332710.svg)](https://doi.org/10.5281/zenodo.3332710)
+  [![DOI](/exports/molepi/users/ljsinke/DNAmArray/DNAmArray_workflow/data/images/zenodo_3355292.svg)](http://doi.org/10.5281/zenodo.3355292)
 </div>
 
 ***
@@ -36,7 +36,5 @@ Furthermore, we have also developed packages used by this workflow.  [**MethylAi
 The [example data](https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE113018) [@Cobben2019] used in this workflow is available from the [NCBI Gene Expression Omnibus](https://www.ncbi.nlm.nih.gov/geo/) (GEO), a public repository of microarray data. It contains genome-wide DNA methylation data from whole blood obtained using the Illumina 450k microarray. The participants consist of 46 fetal alcohol spectrum disorder (FASD) cases and 92 controls from both a discovery and replication cohort.
 
 ***
-
-# References #
 
 

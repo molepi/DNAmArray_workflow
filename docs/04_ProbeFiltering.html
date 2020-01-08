@@ -28,44 +28,22 @@
 
 <style type="text/css">code{white-space: pre;}</style>
 <style type="text/css" data-origin="pandoc">
-div.sourceCode { overflow-x: auto; }
 table.sourceCode, tr.sourceCode, td.lineNumbers, td.sourceCode {
   margin: 0; padding: 0; vertical-align: baseline; border: none; }
-table.sourceCode { width: 100%; line-height: 100%; background-color: #ffffff; color: #1f1c1b; }
-td.lineNumbers { text-align: right; padding-right: 4px; padding-left: 4px; background-color: #ffffff; color: #a0a0a0; border-right: 1px solid #a0a0a0; }
+table.sourceCode { width: 100%; line-height: 100%; }
+td.lineNumbers { text-align: right; padding-right: 4px; padding-left: 4px; background-color: #dddddd; }
 td.sourceCode { padding-left: 5px; }
-pre, code { color: #1f1c1b; background-color: #ffffff; }
-code > span.kw { color: #1f1c1b; font-weight: bold; } /* Keyword */
-code > span.dt { color: #0057ae; } /* DataType */
-code > span.dv { color: #b08000; } /* DecVal */
-code > span.bn { color: #b08000; } /* BaseN */
-code > span.fl { color: #b08000; } /* Float */
-code > span.cn { color: #aa5500; } /* Constant */
-code > span.ch { color: #924c9d; } /* Char */
-code > span.sc { color: #3daee9; } /* SpecialChar */
-code > span.st { color: #bf0303; } /* String */
-code > span.vs { color: #bf0303; } /* VerbatimString */
-code > span.ss { color: #ff5500; } /* SpecialString */
-code > span.im { color: #ff5500; } /* Import */
-code > span.co { color: #898887; } /* Comment */
-code > span.do { color: #607880; } /* Documentation */
-code > span.an { color: #ca60ca; } /* Annotation */
-code > span.cv { color: #0095ff; } /* CommentVar */
-code > span.ot { color: #006e28; } /* Other */
-code > span.fu { color: #644a9b; } /* Function */
-code > span.va { color: #0057ae; } /* Variable */
-code > span.cf { color: #1f1c1b; font-weight: bold; } /* ControlFlow */
-code > span.op { color: #1f1c1b; } /* Operator */
-code > span.bu { color: #644a9b; font-weight: bold; } /* BuiltIn */
-code > span.ex { color: #0095ff; font-weight: bold; } /* Extension */
-code > span.pp { color: #006e28; } /* Preprocessor */
-code > span.at { color: #0057ae; } /* Attribute */
-code > span.re { color: #0057ae; } /* RegionMarker */
-code > span.in { color: #b08000; } /* Information */
-code > span.wa { color: #bf0303; } /* Warning */
-code > span.al { color: #bf0303; font-weight: bold; } /* Alert */
-code > span.er { color: #bf0303; text-decoration: underline; } /* Error */
-code > span. { color: #1f1c1b; } /* Normal */
+code > span.kw { font-weight: bold; }
+code > span.dt { color: #800000; }
+code > span.dv { color: #0000ff; }
+code > span.bn { color: #0000ff; }
+code > span.fl { color: #800080; }
+code > span.ch { color: #ff00ff; }
+code > span.st { color: #dd0000; }
+code > span.co { color: #808080; font-style: italic; }
+code > span.al { color: #00ff00; font-weight: bold; }
+code > span.fu { color: #000080; }
+code > span.er { color: #ff0000; font-weight: bold; }
 
 </style>
 <script>
@@ -438,7 +416,7 @@ div.tocify {
 <h1>Filtering on Intensities</h1>
 <p>We recommend performing probe-filtering by setting unreliably measured probes to NA. Unfortunately, Functional Normalization does not allow NA’s in the <code>RGChannelSet</code>. Therefore, it is best to run normalization and probe-filtering separately and combine the results afterwards using our <code>reduce()</code> function.</p>
 <p>Some observations need to be removed from the dataset since they provide little to no information that could skew analyses. Probes which have zero intensity or are based on very few (default: &lt;3) beads are removed, based on a specified cut off.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">RGset &lt;-<span class="st"> </span><span class="kw">probeFiltering</span>(RGset)</code></pre></div>
+<pre class="sourceCode r"><code class="sourceCode r">RGset &lt;-<span class="st"> </span><span class="kw">probeFiltering</span>(RGset)</code></pre>
 <pre><code>## Filtering on number of beads... 
 ## On average 0.07 % of the probes ( 622399 ) have number of beads below 3 
 ## Filtering on zero intensities... 
@@ -448,16 +426,16 @@ div.tocify {
 ## Set filtered probes in Red and/or Green channels to NA... 
 ## ... done  100  out of  138  ...</code></pre>
 <p>There are differences between probe types that are used in <code>probeFiltering()</code>. Information on these can be extracted and stored using functions from <a href="https://bioconductor.org/packages/release/bioc/html/minfi.html"><strong>minfi</strong></a> <span class="citation">(Aryee et al. 2014)</span>.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">locusNames &lt;-<span class="st"> </span><span class="kw">getManifestInfo</span>(RGset, <span class="st">&quot;locusNames&quot;</span>)
+<pre class="sourceCode r"><code class="sourceCode r">locusNames &lt;-<span class="st"> </span><span class="kw">getManifestInfo</span>(RGset, <span class="st">&quot;locusNames&quot;</span>)
 typeII &lt;-<span class="st"> </span><span class="kw">getProbeInfo</span>(RGset, <span class="dt">type=</span><span class="st">&quot;II&quot;</span>)
-typeI &lt;-<span class="st"> </span><span class="kw">getProbeInfo</span>(RGset, <span class="dt">type=</span><span class="st">&quot;I&quot;</span>)</code></pre></div>
+typeI &lt;-<span class="st"> </span><span class="kw">getProbeInfo</span>(RGset, <span class="dt">type=</span><span class="st">&quot;I&quot;</span>)</code></pre>
 <hr />
 </div>
 <div id="detection-p-values" class="section level1">
 <h1>Detection p-values</h1>
 <p>The negative controls on the array can be used to detect outlying samples via the detection p-values, which measure how likely it is a sample’s signal differs from the background. Signals that do not differ substantially (default: p&lt;0.01) are removed. We utilise <code>detectionP()</code> from <a href="https://bioconductor.org/packages/release/bioc/html/minfi.html"><strong>minfi</strong></a> inside our function to achieve this. Additionally, samples where a large proportion (default: &gt;5%) of probes were set to NA based on the above probe-level filtering are removed.</p>
 <p>Our function <code>reduce()</code> takes the normalized <code>GRset</code> from the previous section and the filtered <code>RGset</code> created above and returns filtered beta or M-values, which can be passed to the <code>probeMasking()</code> function. If M-values are specified as the output, these are scaled to have a range of 32 instead of to infinite values.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">betas &lt;-<span class="st"> </span><span class="kw">reduce</span>(GRset, RGset, <span class="dt">what=</span><span class="st">&quot;beta&quot;</span>)</code></pre></div>
+<pre class="sourceCode r"><code class="sourceCode r">betas &lt;-<span class="st"> </span><span class="kw">reduce</span>(GRset, RGset, <span class="dt">what=</span><span class="st">&quot;beta&quot;</span>)</code></pre>
 <pre><code>## Calculate and filter on detection P-value... 
 ## On average 0.14 % of the CpGs ( 485512 ) have detection P-value above the threshold  0.01 
 ## Transform to  beta -values... 
@@ -471,41 +449,26 @@ typeI &lt;-<span class="st"> </span><span class="kw">getProbeInfo</span>(RGset, 
 <h1>Imputation</h1>
 <p>Methylation profiles often contain multiple missing values, which can be assumed to be missing at random (MAR), since they are likely due to random experimental and technology-related errors, rather than associated with methylation status.</p>
 <p>Imputation of these values is beneficial for multiple algorithms, but its importance is highlighted in the use of predictors that rely on values from only a subset of CpGs. In these instances, the effect of a few missing sites could vastly alter estimated age, for example.</p>
-<p>DNA methylation values represent a limited-range continuous variable, for which many standard imputation methods are theoretically suitable. However, they struggle with larger datasets due to a lack of computational efficiency. For this reason, specific strategies have been developed to handle missing methylation data <span class="citation">(Mazumder et al. 2010, <span class="citation">Josse and Husson (2012)</span>, <span class="citation">Di Lena et al. (2019)</span>)</span>.</p>
-<p>The method that we advise using is <a href="https://github.com/pdilena/methyLImp"><strong>MethyLImp</strong></a> <span class="citation">(Di Lena et al. 2019)</span>, and we are in the process of developing a parallelized version of this for DNAmArray. This iterative algorithm exploits the high inter-sample correlation seen in methylation data <span class="citation">(Zhang et al. 2017)</span>, capturing it using linear regression. This method is both computationally efficient and has been shown to perform better than all current alternatives, whilst not requiring post-imputation truncation <span class="citation">(Di Lena et al. 2019)</span>.</p>
-<p>Until the parallelized version is available, we advise using <code>imputePCA()</code> from <a href="https://www.rdocumentation.org/packages/missMDA/versions/1.14"><strong>missMDA</strong></a> <span class="citation">(Josse and Husson 2012)</span>. This performs well for its small computation time, and does not suffer from the beta-value bias that <code>impute.knn()</code> has been shown to <span class="citation">(Di Lena et al. 2019)</span>.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">sum</span>(<span class="kw">is.na</span>(betas))</code></pre></div>
+<p>DNA methylation values represent a limited-range continuous variable, for which many standard imputation methods are theoretically suitable. However, they struggle with larger datasets due to a lack of computational efficiency. For this reason, specific strategies have been developed to handle missing methylation data <span class="citation">(Mazumder et al. 2010)</span>.</p>
+<p>The method that we advise using is <a href="https://github.com/pdilena/methyLImp"><strong>MethyLImp</strong></a> <span class="citation">(<span>Di Lena</span> et al. 2019)</span>, and we are in the process of developing a parallelized version of this for DNAmArray. This iterative algorithm exploits the high inter-sample correlation seen in methylation data <span class="citation">(Zhang et al. 2017)</span>, capturing it using linear regression. This method is both computationally efficient and has been shown to perform better than all current alternatives, whilst not requiring post-imputation truncation <span class="citation">(<span>Di Lena</span> et al. 2019)</span>.</p>
+<p>Until the parallelized version is available, we advise using <code>imputePCA()</code> from <a href="https://www.rdocumentation.org/packages/missMDA/versions/1.14"><strong>missMDA</strong></a> <span class="citation">(Josse and Husson 2012)</span>. This performs well for its small computation time, and does not suffer from the beta-value bias that <code>impute.knn()</code> has been shown to <span class="citation">(<span>Di Lena</span> et al. 2019)</span>.</p>
+<pre class="sourceCode r"><code class="sourceCode r"><span class="kw">sum</span>(<span class="kw">is.na</span>(betas))</code></pre>
 <pre><code>## [1] 51758</code></pre>
-<p>After filtering and preprocessing, our beta-value matrix has 51,758 missing values. Using the code below, we can impute them by implementing a low-rank approximation version of the iterative EM-PCA algorithm <span class="citation">(Dempster, Laird, and Rubin 1977)</span>. Since this function can impute values outside the [0,1] range of beta-values, we apply a simple post-imputation truncation of the overflowed values. This has been shown not to significantly affect the accuracy <span class="citation">(Di Lena et al. 2019)</span>.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(missMDA)
+<p>After filtering and preprocessing, our beta-value matrix has 51,758 missing values. Using the code below, we can impute them by implementing a low-rank approximation version of the iterative EM-PCA algorithm <span class="citation">(Dempster, Laird, and Rubin 1977)</span>. Since this function can impute values outside the [0,1] range of beta-values, we apply a simple post-imputation truncation of the overflowed values. This has been shown not to significantly affect the accuracy <span class="citation">(<span>Di Lena</span> et al. 2019)</span>.</p>
+<pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(missMDA)
 betas &lt;-<span class="st"> </span><span class="kw">imputePCA</span>(betas)
-betas &lt;-<span class="st"> </span>betas<span class="op">$</span>completeObs
+betas &lt;-<span class="st"> </span>betas$completeObs
 
-betas[betas<span class="op">&lt;</span><span class="dv">0</span>] &lt;-<span class="st"> </span><span class="dv">0</span>
-betas[betas<span class="op">&gt;</span><span class="dv">1</span>] &lt;-<span class="st"> </span><span class="dv">1</span></code></pre></div>
+betas[betas&lt;<span class="dv">0</span>] &lt;-<span class="st"> </span><span class="dv">0</span>
+betas[betas&gt;<span class="dv">1</span>] &lt;-<span class="st"> </span><span class="dv">1</span></code></pre>
 <hr />
-</div>
-<div id="references" class="section level1 unnumbered">
-<h1>References</h1>
-<div id="refs" class="references">
-<div id="ref-Feinberg2014">
-<p>Aryee, Martin J., Andrew E. Jaffe, Hector Corrada-Bravo, Christine Ladd-Acosta, Andrew P. Feinberg, Kasper D. Hansen, and Rafael A. Irizarry. 2014. “Minfi: A flexible and comprehensive Bioconductor package for the analysis of Infinium DNA methylation microarrays.” <em>Bioinformatics</em> 30 (10). Oxford University Press: 1363–9. doi:<a href="https://doi.org/10.1093/bioinformatics/btu049">10.1093/bioinformatics/btu049</a>.</p>
-</div>
-<div id="ref-Dempster1977">
-<p>Dempster, A P,; N M Laird, and; D B Rubin. 1977. “Maximum Likelihood from Incomplete Data via the EM Algorithm.” 1. Vol. 39. <a href="http://web.mit.edu/6.435/www/Dempster77.pdf" class="uri">http://web.mit.edu/6.435/www/Dempster77.pdf</a>.</p>
-</div>
-<div id="ref-DiLena2019">
-<p>Di Lena, Pietro, Claudia Sala, Andrea Prodi, and Christine Nardini. 2019. “Missing value estimation methods for DNA methylation data.” Edited by Jonathan Wren. <em>Bioinformatics</em>, February. doi:<a href="https://doi.org/10.1093/bioinformatics/btz134">10.1093/bioinformatics/btz134</a>.</p>
-</div>
-<div id="ref-Josse2012">
-<p>Josse, Julie, and François Husson. 2012. “Handling missing values in exploratory multivariate data analysis methods.” <a href="https://hal.archives-ouvertes.fr/hal-00811888" class="uri">https://hal.archives-ouvertes.fr/hal-00811888</a>.</p>
-</div>
-<div id="ref-Mazumder2010">
-<p>Mazumder, Rahul, Trevor Hastie, Hastie@stanford Edu, Robert Tibshirani, Tibs@stanford Edu, and Tommi Jaakkola. 2010. “Spectral Regularization Algorithms for Learning Large Incomplete Matrices.” Vol. 11. <a href="https://web.stanford.edu/{~}hastie/Papers/mazumder10a.pdf" class="uri">https://web.stanford.edu/{~}hastie/Papers/mazumder10a.pdf</a>.</p>
-</div>
-<div id="ref-Zhang2017">
-<p>Zhang, Ling, Wen Jun Xie, Sirui Liu, Luming Meng, Chan Gu, and Yi Qin Gao. 2017. “DNA Methylation Landscape Reflects the Spatial Organization of Chromatin in Different Cells.” <em>Biophysical Journal</em> 113 (7). The Biophysical Society: 1395. doi:<a href="https://doi.org/10.1016/J.BPJ.2017.08.019">10.1016/J.BPJ.2017.08.019</a>.</p>
-</div>
+<div class="references">
+<p>Aryee, Martin J., Andrew E. Jaffe, Hector Corrada-Bravo, Christine Ladd-Acosta, Andrew P. Feinberg, Kasper D. Hansen, and Rafael A. Irizarry. 2014. “Minfi: A Flexible and Comprehensive Bioconductor Package for the Analysis of Infinium DNA Methylation Microarrays.” <em>Bioinformatics</em> 30 (10) (May): 1363–1369. doi:<a href="http://dx.doi.org/10.1093/bioinformatics/btu049">10.1093/bioinformatics/btu049</a>. <a href="http://www.ncbi.nlm.nih.gov/pubmed/24478339 http://www.pubmedcentral.nih.gov/articlerender.fcgi?artid=PMC4016708" class="uri">http://www.ncbi.nlm.nih.gov/pubmed/24478339 http://www.pubmedcentral.nih.gov/articlerender.fcgi?artid=PMC4016708</a>.</p>
+<p>Dempster, A P, N M Laird, and D B Rubin. 1977. “Maximum Likelihood from Incomplete Data via the EM Algorithm.” 1. <em>Journal of the Royal Statistical Society. Series B (Methodological)</em>. Vol. 39. <a href="http://web.mit.edu/6.435/www/Dempster77.pdf" class="uri">http://web.mit.edu/6.435/www/Dempster77.pdf</a>.</p>
+<p><span>Di Lena</span>, Pietro, Claudia Sala, Andrea Prodi, and Christine Nardini. 2019. “Missing Value Estimation Methods for DNA Methylation Data.” Edited by Jonathan Wren. <em>Bioinformatics</em> (February). doi:<a href="http://dx.doi.org/10.1093/bioinformatics/btz134">10.1093/bioinformatics/btz134</a>. <a href="https://academic.oup.com/bioinformatics/advance-article/doi/10.1093/bioinformatics/btz134/5364016" class="uri">https://academic.oup.com/bioinformatics/advance-article/doi/10.1093/bioinformatics/btz134/5364016</a>.</p>
+<p>Josse, Julie, and Fran<span>ç</span>ois Husson. 2012. “Handling Missing Values in Exploratory Multivariate Data Analysis Methods.” <a href="https://hal.archives-ouvertes.fr/hal-00811888" class="uri">https://hal.archives-ouvertes.fr/hal-00811888</a>.</p>
+<p>Mazumder, Rahul, Trevor Hastie, Hastie@stanford Edu, Robert Tibshirani, Tibs@stanford Edu, and Tommi Jaakkola. 2010. “Spectral Regularization Algorithms for Learning Large Incomplete Matrices.” <em>Journal of Machine Learning Research</em>. Vol. 11. <a href="https://web.stanford.edu/{~}hastie/Papers/mazumder10a.pdf" class="uri">https://web.stanford.edu/{~}hastie/Papers/mazumder10a.pdf</a>.</p>
+<p>Zhang, Ling, Wen Jun Xie, Sirui Liu, Luming Meng, Chan Gu, and Yi Qin Gao. 2017. “DNA Methylation Landscape Reflects the Spatial Organization of Chromatin in Different Cells.” <em>Biophysical Journal</em> 113 (7) (October): 1395. doi:<a href="http://dx.doi.org/10.1016/J.BPJ.2017.08.019">10.1016/J.BPJ.2017.08.019</a>. <a href="http://www.ncbi.nlm.nih.gov/pubmed/28978434 http://www.pubmedcentral.nih.gov/articlerender.fcgi?artid=PMC5627392" class="uri">http://www.ncbi.nlm.nih.gov/pubmed/28978434 http://www.pubmedcentral.nih.gov/articlerender.fcgi?artid=PMC5627392</a>.</p>
 </div>
 </div>
 

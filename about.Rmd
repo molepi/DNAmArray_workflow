@@ -12,11 +12,11 @@ Contributors to the development of the package and workflow are:
 
 Development of the workflow and generation of previously used example data in LLS was funded by BBMRI-NL, a research infrastructure financed by the Dutch government (NWO 184.021.007).
 
-Maarten van Iterson is the main author of the package and associated workflow. Lucy Sinke is the current author and maintainer and should be contacted with any questions: *l.j.sinke@lumc.nl*
+Maarten van Iterson is the main author of the package and associated workflow. Lucy Sinke is the current author and maintainer and should be contacted with any questions: l.j.sinke@lumc.nl
 
 Paul Hop and Jenny van Dongen were involved in testing and improving the pipeline.
 
-Please cite van Iterson at al. [@VanIterson2017] when using the [**DNAmArray**](https://github.com/molepi/DNAmArray) package or workflow.
+Please cite van *Sinke, L., van Iterson, M., Cats, D., BIOS Consortium, Slieker, R., & Heijmans, B. (2019) 'DNAmArray: Streamlined workflow for the quality control, normalization, and analysis of Illumina methylation array data' http://doi.org/10.5281/zenodo.3355292* when using the [**DNAmArray**](https://github.com/molepi/DNAmArray) package or workflow.
 
 ```{r, child="_sessioninfo.Rmd"}
 ```

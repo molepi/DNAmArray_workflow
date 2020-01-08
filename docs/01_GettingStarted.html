@@ -28,44 +28,22 @@
 
 <style type="text/css">code{white-space: pre;}</style>
 <style type="text/css" data-origin="pandoc">
-div.sourceCode { overflow-x: auto; }
 table.sourceCode, tr.sourceCode, td.lineNumbers, td.sourceCode {
   margin: 0; padding: 0; vertical-align: baseline; border: none; }
-table.sourceCode { width: 100%; line-height: 100%; background-color: #ffffff; color: #1f1c1b; }
-td.lineNumbers { text-align: right; padding-right: 4px; padding-left: 4px; background-color: #ffffff; color: #a0a0a0; border-right: 1px solid #a0a0a0; }
+table.sourceCode { width: 100%; line-height: 100%; }
+td.lineNumbers { text-align: right; padding-right: 4px; padding-left: 4px; background-color: #dddddd; }
 td.sourceCode { padding-left: 5px; }
-pre, code { color: #1f1c1b; background-color: #ffffff; }
-code > span.kw { color: #1f1c1b; font-weight: bold; } /* Keyword */
-code > span.dt { color: #0057ae; } /* DataType */
-code > span.dv { color: #b08000; } /* DecVal */
-code > span.bn { color: #b08000; } /* BaseN */
-code > span.fl { color: #b08000; } /* Float */
-code > span.cn { color: #aa5500; } /* Constant */
-code > span.ch { color: #924c9d; } /* Char */
-code > span.sc { color: #3daee9; } /* SpecialChar */
-code > span.st { color: #bf0303; } /* String */
-code > span.vs { color: #bf0303; } /* VerbatimString */
-code > span.ss { color: #ff5500; } /* SpecialString */
-code > span.im { color: #ff5500; } /* Import */
-code > span.co { color: #898887; } /* Comment */
-code > span.do { color: #607880; } /* Documentation */
-code > span.an { color: #ca60ca; } /* Annotation */
-code > span.cv { color: #0095ff; } /* CommentVar */
-code > span.ot { color: #006e28; } /* Other */
-code > span.fu { color: #644a9b; } /* Function */
-code > span.va { color: #0057ae; } /* Variable */
-code > span.cf { color: #1f1c1b; font-weight: bold; } /* ControlFlow */
-code > span.op { color: #1f1c1b; } /* Operator */
-code > span.bu { color: #644a9b; font-weight: bold; } /* BuiltIn */
-code > span.ex { color: #0095ff; font-weight: bold; } /* Extension */
-code > span.pp { color: #006e28; } /* Preprocessor */
-code > span.at { color: #0057ae; } /* Attribute */
-code > span.re { color: #0057ae; } /* RegionMarker */
-code > span.in { color: #b08000; } /* Information */
-code > span.wa { color: #bf0303; } /* Warning */
-code > span.al { color: #bf0303; font-weight: bold; } /* Alert */
-code > span.er { color: #bf0303; text-decoration: underline; } /* Error */
-code > span. { color: #1f1c1b; } /* Normal */
+code > span.kw { font-weight: bold; }
+code > span.dt { color: #800000; }
+code > span.dv { color: #0000ff; }
+code > span.bn { color: #0000ff; }
+code > span.fl { color: #800080; }
+code > span.ch { color: #ff00ff; }
+code > span.st { color: #dd0000; }
+code > span.co { color: #808080; font-style: italic; }
+code > span.al { color: #00ff00; font-weight: bold; }
+code > span.fu { color: #000080; }
+code > span.er { color: #ff0000; font-weight: bold; }
 
 </style>
 <script>
@@ -440,15 +418,15 @@ div.tocify {
 <div id="install-using-the-devtools-package" class="section level3">
 <h3>Install using the <strong>devtools</strong>-package</h3>
 <p>First install the package <a href="https://github.com/hadley/devtools"><strong>devtools</strong></a>, then use the <code>install_github()</code> function to fetch the <a href="https://github.com/molepi/DNAmArray"><strong>DNAmArray</strong></a> package.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(devtools)
-<span class="kw">install_github</span>(<span class="st">&quot;molepi/DNAmArray&quot;</span>)</code></pre></div>
+<pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(devtools)
+<span class="kw">install_github</span>(<span class="st">&quot;molepi/DNAmArray&quot;</span>)</code></pre>
 </div>
 <div id="install-from-source-using-gitr" class="section level3">
 <h3>Install from source using <code>git/R</code></h3>
 <p>Using <a href="https://git-scm.com/">git</a>, you can <code>git clone</code> our repository and then install the package, changing <code>_x.y.z.</code> to the version you cloned.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">git clone git<span class="op">@</span>github.com<span class="op">/</span>molepi<span class="op">/</span>DNAmArray.git
+<pre class="sourceCode r"><code class="sourceCode r">git clone git@github.com/molepi/DNAmArray.git
 R CMD build DNAmArray
-R CMD INSTALL DNAmArray_x.y.z.tar.gz</code></pre></div>
+R CMD INSTALL DNAmArray_x.y.z.tar.gz</code></pre>
 <hr />
 </div>
 </div>
@@ -457,26 +435,19 @@ R CMD INSTALL DNAmArray_x.y.z.tar.gz</code></pre></div>
 <p>The first step of any analysis of microarray data involves importing the raw intensity files into your software program. In this example, we show how to import raw IDAT files from GEO into R, but similar strategies can be employed for all Illumina methylation array files when using R.</p>
 <p>Using <a href="http://bioconductor.org/packages/release/bioc/html/GEOquery.html"><strong>GEOquery</strong></a> <span class="citation">(Davis and Meltzer 2007)</span>, you can download the <a href="https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE113018">example data</a> <span class="citation">(Cobben et al. 2019)</span>. This package contains functions that bridge the gap between between <a href="https://www.bioconductor.org">BioConductor</a> tools and <a href="https://www.ncbi.nlm.nih.gov/geo/">GEO</a>, which is a public repository of microarray data.</p>
 <p>Initially, we use <code>getGEOSuppFiles()</code> to download the supplementary data to the current working directory. These consist of an archive containing the raw IDATs alongside some documentation. We extract these and store them in our chosen directory, ready for decompression.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(GEOquery)
+<pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(GEOquery)
 <span class="kw">getGEOSuppFiles</span>(<span class="st">&quot;GSE113018&quot;</span>)
-<span class="kw">untar</span>(<span class="dt">tarfile=</span><span class="st">&quot;./GSE113018/GSE113018_RAW.tar&quot;</span>, <span class="dt">exdir=</span><span class="st">&quot;./GSE113018/IDATs&quot;</span>)</code></pre></div>
+<span class="kw">untar</span>(<span class="dt">tarfile=</span><span class="st">&quot;./GSE113018/GSE113018_RAW.tar&quot;</span>, <span class="dt">exdir=</span><span class="st">&quot;./GSE113018/IDATs&quot;</span>)</code></pre>
 <p>After creating a list of files, we utilise the <code>gunzip()</code> function to efficiently unpack the data.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">setwd</span>(<span class="st">&quot;./GSE113018/IDATs&quot;</span>)
-<span class="kw">sapply</span>(<span class="kw">list.files</span>(), gunzip)</code></pre></div>
+<pre class="sourceCode r"><code class="sourceCode r"><span class="kw">setwd</span>(<span class="st">&quot;./GSE113018/IDATs&quot;</span>)
+<span class="kw">sapply</span>(<span class="kw">list.files</span>(), gunzip)</code></pre>
 <p>We then use <code>getGEO()</code> to import SOFT format microarray data into R as a large GSE-class list. This contains a multitude of information, but we extract the phenotypic and meta-data of interest.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">GSE113018 &lt;-<span class="st"> </span><span class="kw">getGEO</span>(<span class="dt">GEO=</span><span class="st">&quot;GSE113018&quot;</span>)
-targets &lt;-<span class="st"> </span><span class="kw">pData</span>(<span class="kw">phenoData</span>(GSE113018[[<span class="dv">1</span>]]))</code></pre></div>
+<pre class="sourceCode r"><code class="sourceCode r">GSE113018 &lt;-<span class="st"> </span><span class="kw">getGEO</span>(<span class="dt">GEO=</span><span class="st">&quot;GSE113018&quot;</span>)
+targets &lt;-<span class="st"> </span><span class="kw">pData</span>(<span class="kw">phenoData</span>(GSE113018[[<span class="dv">1</span>]]))</code></pre>
 <hr />
-</div>
-<div id="references" class="section level1 unnumbered">
-<h1>References</h1>
-<div id="refs" class="references">
-<div id="ref-Cobben2019">
-<p>Cobben, Jan M., Izabela M. Krzyzewska, Andrea Venema, Adri N. Mul, Abeltje Polstra, Alex V. Postma, Robert Smigiel, et al. 2019. “DNA-methylation abundantly associates with fetal alcohol spectrum disorder and its subphenotypes.” <em>Epigenomics</em>, March. Future Science Ltd London, UK, epi–2018–0221. doi:<a href="https://doi.org/10.2217/epi-2018-0221">10.2217/epi-2018-0221</a>.</p>
-</div>
-<div id="ref-Davis2007">
-<p>Davis, S., and P. S. Meltzer. 2007. “GEOquery: a bridge between the Gene Expression Omnibus (GEO) and BioConductor.” <em>Bioinformatics</em> 23 (14). Narnia: 1846–7. doi:<a href="https://doi.org/10.1093/bioinformatics/btm254">10.1093/bioinformatics/btm254</a>.</p>
-</div>
+<div class="references">
+<p>Cobben, Jan M., Izabela M. Krzyzewska, Andrea Venema, Adri N. Mul, Abeltje Polstra, Alex V. Postma, Robert Smigiel, et al. 2019. “DNA-Methylation Abundantly Associates with Fetal Alcohol Spectrum Disorder and Its Subphenotypes.” <em>Epigenomics</em> (March): epi–2018–0221. doi:<a href="http://dx.doi.org/10.2217/epi-2018-0221">10.2217/epi-2018-0221</a>. <a href="https://www.futuremedicine.com/doi/10.2217/epi-2018-0221" class="uri">https://www.futuremedicine.com/doi/10.2217/epi-2018-0221</a>.</p>
+<p>Davis, S., and P. S. Meltzer. 2007. “GEOquery: a Bridge Between the Gene Expression Omnibus (GEO) and BioConductor.” <em>Bioinformatics</em> 23 (14) (July): 1846–1847. doi:<a href="http://dx.doi.org/10.1093/bioinformatics/btm254">10.1093/bioinformatics/btm254</a>. <a href="https://academic.oup.com/bioinformatics/article-lookup/doi/10.1093/bioinformatics/btm254" class="uri">https://academic.oup.com/bioinformatics/article-lookup/doi/10.1093/bioinformatics/btm254</a>.</p>
 </div>
 </div>
 

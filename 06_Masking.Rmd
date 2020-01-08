@@ -3,13 +3,13 @@
 
 # Ambiguous probes #
 
-Several studies [@Chen2013, @Zhou2017] have characterized cross-reactive and polymorphic probes on both the 450k and EPIC methylation arrays and made suggestions for removal. We chose to remove probes identified by Zhou et al., since this set is actively maintained and supports both array sizes. Additionally, different sets are specified depending on the reference genome used.
+Several studies [@Zhou2017] have characterized cross-reactive and polymorphic probes on both the 450k and EPIC methylation arrays and made suggestions for removal. We chose to remove probes identified by Zhou et al., since this set is actively maintained and supports both array sizes. Additionally, different sets are specified depending on the reference genome used.
 
 In total, Zhou et al. suggest removal of probes for a variety of reasons, from ambiguous mapping and cross-reactivity to polymorphisms that interfere with extension. In general, around 60,000 probes are suggested for removal in 450k arrays, and 100,000 for EPIC. 
 
 We developed the `probeMasking()` function, which removes specified probes from either beta- or M- value matrices. In this instance, 59,780 CpG rows are removed. 
 
-```{r 505zhoumask}
+```{r 601zhoumask}
 betas <- probeMasking(betas, array="450", genome="hg19")
 ```
 
@@ -65,10 +65,10 @@ You can read more about [**SummarizedExperiment**](http://bioconductor.org/packa
 
 Having a `RangedSummarizedExperiment` class object expedites masking sex chromosomal probes. 
 
-``` {r sexmask}
+``` {r 604sexmask}
 methData <- methData[!(seqnames(methData) %in% c("chrX", "chrY")),]
 ```
 
 ***
 
-# References #
+

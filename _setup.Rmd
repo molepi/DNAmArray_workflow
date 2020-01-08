@@ -37,13 +37,9 @@ suppressPackageStartupMessages({
     Require(impute)
     Require(bacon)
 
-    require(BBMRIomics)
-
 })
 
 opts_chunk$set(cache = TRUE, eval = TRUE,
                cache.lazy = FALSE) ##see http://stackoverflow.com/questions/39417003/long-vectors-not-supported-yet-error-in-rmd-but-not-in-r-script
-
-path450k <- "/virdir/Backup/RP3_data/IlluminaHumanMethylation450k/450k/LLS"
 
 ```
