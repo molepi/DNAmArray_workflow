@@ -20,22 +20,8 @@ suppressPackageStartupMessages({
         require(DNAmArray)
     }
 
-    Require(knitr)
-    Require(MethylAid)
-    Require(minfi)
     Require(BiocParallel)
-    Require(BatchJobs)
-    Require(Biobase) 
-    Require(cate)
-    Require(limma)
-    Require(irlba)
-    Require(pheatmap)
-    Require(fastcluster)
-    Require(FDb.InfiniumMethylation.hg19)
-    Require(IlluminaHumanMethylation450kmanifest)
-    Require(IlluminaHumanMethylation450kanno.ilmn12.hg19)
-    Require(impute)
-    Require(bacon)
+    Require(knitr)
 
 })
 

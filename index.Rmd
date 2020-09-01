@@ -20,20 +20,19 @@ email: l.j.sinke@lumc.nl
 
 # Introduction #
 
-Here we provide a complete workflow for the preprocessing and analysis of DNA methylation array data. The workflow combines best practices in the field with in-house developed methodology, and is geared towards large-scale studies, including Epigenome-wide Association Studies (EWAS). Its development was informed by our research analysing [BIOS consortium](https://www.bbmri.nl/samples-images-data) data, which contains multiomics measures from 6 Dutch biobanks comprising ~4000 individuals [@Dekkers2016, @Slieker2016, @Bonder2017, @Luijk2018] .
+Here we provide a complete workflow for the preprocessing and analysis of DNA methylation array data. The workflow combines best practices in the field with in-house developed methodology, and is geared towards large-scale studies, including Epigenome-wide Association Studies (EWAS). Its development was informed by our research analysing [BIOS consortium](https://www.bbmri.nl/samples-images-data) data, which contains multiomics measures from 6 Dutch biobanks comprising ~4000 individuals (Dekkers, 2016; Slieker, 2016; Bonder, 2017; Luijk, 2018).
 
 The [**DNAmArray**](https://github.com/molepi/DNAmArray)-package contains a series of convenient functions for the quality control, normalization, and analysis of methylation array data. The workflow has been thoroughly tested for the Illumina 450k array but is similarly applicable to the newer 850k EPIC array.
 
-It is worth noting that this workflow makes extensive use of other [BioConductor](https://www.bioconductor.org) packages. For example, the [**DNAmArray**](https://github.com/molepi/DNAmArray) function `read.metharray.exp.par()` converts IDAT files to an `RGset` by harnessing functions from [**minfi**](https://bioconductor.org/packages/release/bioc/html/minfi.html) [@Feinberg2014] and combining them with [**BiocParallel**](https://bioconductor.org/packages/release/bioc/html/BiocParallel.html). Usually the required packages are installed automatically, but otherwise please refer to the relevant package's documentation.
+It is worth noting that this workflow makes extensive use of other [BioConductor](https://www.bioconductor.org) packages. For example, the [**DNAmArray**](https://github.com/molepi/DNAmArray) function `read.metharray.exp.par()` converts IDAT files to an `RGset` by harnessing functions from [**minfi**](https://bioconductor.org/packages/release/bioc/html/minfi.html) (Feinberg, 2014) and combining them with [**BiocParallel**](https://bioconductor.org/packages/release/bioc/html/BiocParallel.html). Usually the required packages are installed automatically, but otherwise please refer to the relevant package's documentation.
 
-Furthermore, we have also developed packages used by this workflow.  [**MethylAid**](http:/bioconductor.org/packages/MethylAid) [@Luijk2014] provides a web application to assist in performing interactive sample quality control, and [**bacon**](http:/bioconductor.org/packages/bacon)
-[@VanIterson2017] corrects for bias and inflation in ome-wide association studies, such as EWAS.
+Furthermore, we have also developed packages used by this workflow.  [**MethylAid**](http:/bioconductor.org/packages/MethylAid) (Luijk, 2014) provides a web application to assist in performing interactive sample quality control, and [**bacon**](http:/bioconductor.org/packages/bacon) (Van Iterson, 2017) corrects for bias and inflation in ome-wide association studies, such as EWAS.
 
 ***
 
 # Example Data #
 
-The [example data](https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE113018) [@Cobben2019] used in this workflow is available from the [NCBI Gene Expression Omnibus](https://www.ncbi.nlm.nih.gov/geo/) (GEO), a public repository of microarray data. It contains genome-wide DNA methylation data from whole blood obtained using the Illumina 450k microarray. The participants consist of 46 fetal alcohol spectrum disorder (FASD) cases and 92 controls from both a discovery and replication cohort.
+The [example data](https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE113018) (Cobben, 2019) used in this workflow is available from the [NCBI Gene Expression Omnibus](https://www.ncbi.nlm.nih.gov/geo/) (GEO), a public repository of microarray data. It contains genome-wide DNA methylation data from whole blood obtained using the Illumina 450k microarray. The participants consist of 46 fetal alcohol spectrum disorder (FASD) cases and 92 controls from both a discovery and replication cohort.
 
 ***
 

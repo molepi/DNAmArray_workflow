@@ -11,7 +11,7 @@ Some observations need to be removed from the dataset since they provide little 
 RGset <- probeFiltering(RGset)
 ```
 
-There are differences between probe types that are used in `probeFiltering()`. Information on these can be extracted and stored using functions from [**minfi**](https://bioconductor.org/packages/release/bioc/html/minfi.html) [@Feinberg2014].
+There are differences between probe types that are used in `probeFiltering()`. Information on these can be extracted and stored using functions from [**minfi**](https://bioconductor.org/packages/release/bioc/html/minfi.html) (Feinberg, 2014).
 
 ```{r 402probeinfo}
 locusNames <- getManifestInfo(RGset, "locusNames")
@@ -29,7 +29,7 @@ Additionally, samples where a large proportion (default: >5%) of probes were set
 Our function `reduce()` takes the normalized `GRset` from the previous section and the filtered `RGset` created above and returns filtered beta or M-values, which can be passed to the `probeMasking()` function. If M-values are specified as the output, these are scaled to have a range of 32 instead of to infinite values.
 
 ```{r 403reduce}
-betas <- reduce(GRset, RGset, what="beta")
+betas <- DNAmArray::reduce(GRset, RGset, what="beta")
 ```
 
 ***
@@ -40,17 +40,17 @@ Methylation profiles often contain multiple missing values, which can be assumed
 
 Imputation of these values is beneficial for multiple algorithms, but its importance is highlighted in the use of predictors that rely on values from only a subset of CpGs. In these instances, the effect of a few missing sites could vastly alter estimated age, for example. 
 
-DNA methylation values represent a limited-range continuous variable, for which many standard imputation methods are theoretically suitable. However, they struggle with larger datasets due to a lack of computational efficiency. For this reason, specific strategies have been developed to handle missing methylation data [@Mazumder2010, @Josse2012, @DiLena2019].
+DNA methylation values represent a limited-range continuous variable, for which many standard imputation methods are theoretically suitable. However, they struggle with larger datasets due to a lack of computational efficiency. For this reason, specific strategies have been developed to handle missing methylation data (Mazumder, 2010; Josse, 2012; Di Lena, 2019).
 
-The method that we advise using is [**MethyLImp**](https://github.com/pdilena/methyLImp) [@DiLena2019], and we are in the process of developing a parallelized version of this for DNAmArray. This iterative algorithm exploits the high inter-sample correlation seen in methylation data [@Zhang2017], capturing it using linear regression. This method is both computationally efficient and has been shown to perform better than all current alternatives, whilst not requiring post-imputation truncation [@DiLena2019]. 
+The method that we advise using is [**MethyLImp**](https://github.com/pdilena/methyLImp) (Di Lena, 2019), and we are in the process of developing a parallelized version of this for DNAmArray. This iterative algorithm exploits the high inter-sample correlation seen in methylation data (Zhang, 2017), capturing it using linear regression. This method is both computationally efficient and has been shown to perform better than all current alternatives, whilst not requiring post-imputation truncation (Di Lena, 2019). 
 
-Until the parallelized version is available, we advise using `imputePCA()` from [**missMDA**](https://www.rdocumentation.org/packages/missMDA/versions/1.14) [@Josse2012]. This performs well for its small computation time, and does not suffer from the beta-value bias that `impute.knn()` has been shown to [@DiLena2019].
+Until the parallelized version is available, we advise using `imputePCA()` from [**missMDA**](https://www.rdocumentation.org/packages/missMDA/versions/1.14) (Josse, 2012). This performs well for its small computation time, and does not suffer from the beta-value bias that `impute.knn()` has been shown to (Di Lena, 2019).
 
 ```{r 404nacount}
 sum(is.na(betas))
 ```
 
-After filtering and preprocessing, our beta-value matrix has 51,758 missing values. Using the code below, we can impute them by implementing a low-rank approximation version of the iterative EM-PCA algorithm [@Dempster1977]. Since this function can impute values outside the [0,1] range of beta-values, we apply a simple post-imputation truncation of the overflowed values. This has been shown not to significantly affect the accuracy [@DiLena2019].
+After filtering and preprocessing, our beta-value matrix has 51,758 missing values. Using the code below, we can impute them by implementing a low-rank approximation version of the iterative EM-PCA algorithm (Dempster, 1977). Since this function can impute values outside the [0,1] range of beta-values, we apply a simple post-imputation truncation of the overflowed values. This has been shown not to significantly affect the accuracy (Di Lena, 2019).
 
 ```{r 405impute}
 library(missMDA)

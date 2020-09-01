@@ -1,18 +1,17 @@
 <!DOCTYPE html>
 
-<html xmlns="http://www.w3.org/1999/xhtml">
+<html>
 
 <head>
 
 <meta charset="utf-8" />
-<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <meta name="generator" content="pandoc" />
 <meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
 
 
 
 
-<title></title>
+<title>05_Predict.utf8</title>
 
 <script src="site_libs/jquery-1.11.3/jquery.min.js"></script>
 <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -28,22 +27,72 @@
 
 <style type="text/css">code{white-space: pre;}</style>
 <style type="text/css" data-origin="pandoc">
-table.sourceCode, tr.sourceCode, td.lineNumbers, td.sourceCode {
-  margin: 0; padding: 0; vertical-align: baseline; border: none; }
-table.sourceCode { width: 100%; line-height: 100%; }
-td.lineNumbers { text-align: right; padding-right: 4px; padding-left: 4px; background-color: #dddddd; }
-td.sourceCode { padding-left: 5px; }
-code > span.kw { font-weight: bold; }
-code > span.dt { color: #800000; }
-code > span.dv { color: #0000ff; }
-code > span.bn { color: #0000ff; }
-code > span.fl { color: #800080; }
-code > span.ch { color: #ff00ff; }
-code > span.st { color: #dd0000; }
-code > span.co { color: #808080; font-style: italic; }
-code > span.al { color: #00ff00; font-weight: bold; }
-code > span.fu { color: #000080; }
-code > span.er { color: #ff0000; font-weight: bold; }
+a.sourceLine { display: inline-block; line-height: 1.25; }
+a.sourceLine { pointer-events: none; color: inherit; text-decoration: inherit; }
+a.sourceLine:empty { height: 1.2em; position: absolute; }
+.sourceCode { overflow: visible; }
+code.sourceCode { white-space: pre; position: relative; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+code.sourceCode { white-space: pre-wrap; }
+a.sourceLine { text-indent: -1em; padding-left: 1em; }
+}
+pre.numberSource a.sourceLine
+  { position: relative; }
+pre.numberSource a.sourceLine:empty
+  { position: absolute; }
+pre.numberSource a.sourceLine::before
+  { content: attr(data-line-number);
+    position: absolute; left: -5em; text-align: right; vertical-align: baseline;
+    border: none; pointer-events: all;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    background-color: #ffffff;
+    color: #a0a0a0;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #a0a0a0;  padding-left: 4px; }
+div.sourceCode
+  { color: #1f1c1b; background-color: #ffffff; }
+@media screen {
+a.sourceLine::before { text-decoration: underline; }
+}
+code span. { color: #1f1c1b; } /* Normal */
+code span.al { color: #bf0303; background-color: #f7e6e6; font-weight: bold; } /* Alert */
+code span.an { color: #ca60ca; } /* Annotation */
+code span.at { color: #0057ae; } /* Attribute */
+code span.bn { color: #b08000; } /* BaseN */
+code span.bu { color: #644a9b; font-weight: bold; } /* BuiltIn */
+code span.cf { color: #1f1c1b; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #924c9d; } /* Char */
+code span.cn { color: #aa5500; } /* Constant */
+code span.co { color: #898887; } /* Comment */
+code span.cv { color: #0095ff; } /* CommentVar */
+code span.do { color: #607880; } /* Documentation */
+code span.dt { color: #0057ae; } /* DataType */
+code span.dv { color: #b08000; } /* DecVal */
+code span.er { color: #bf0303; text-decoration: underline; } /* Error */
+code span.ex { color: #0095ff; font-weight: bold; } /* Extension */
+code span.fl { color: #b08000; } /* Float */
+code span.fu { color: #644a9b; } /* Function */
+code span.im { color: #ff5500; } /* Import */
+code span.in { color: #b08000; } /* Information */
+code span.kw { color: #1f1c1b; font-weight: bold; } /* Keyword */
+code span.op { color: #1f1c1b; } /* Operator */
+code span.ot { color: #006e28; } /* Other */
+code span.pp { color: #006e28; } /* Preprocessor */
+code span.re { color: #0057ae; background-color: #e0e9f8; } /* RegionMarker */
+code span.sc { color: #3daee9; } /* SpecialChar */
+code span.ss { color: #ff5500; } /* SpecialString */
+code span.st { color: #bf0303; } /* String */
+code span.va { color: #0057ae; } /* Variable */
+code span.vs { color: #bf0303; } /* VerbatimString */
+code span.wa { color: #bf0303; } /* Warning */
 
 </style>
 <script>
@@ -117,7 +166,6 @@ code {
 }
 img {
   max-width:100%;
-  height: auto;
 }
 .tabbed-pane {
   padding-top: 12px;
@@ -266,6 +314,7 @@ $(document).ready(function () {
   border: none;
   display: inline-block;
   border-radius: 4px;
+  background-color: transparent;
 }
 
 .tabset-dropdown > .nav-tabs.nav-tabs-open > li {
@@ -294,6 +343,12 @@ $(document).ready(function () {
 }
 }
 
+@media print {
+.toc-content {
+  /* see https://github.com/w3c/csswg-drafts/issues/4434 */
+  float: right;
+}
+}
 
 .toc-content {
   padding-left: 30px;
@@ -422,183 +477,147 @@ div.tocify {
 <h1>Predict Cell Counts</h1>
 <p>Using <a href="https://www.bbmri.nl/samples-images-data">BIOS consortium</a> data, which contains multiomics measures from 6 Dutch biobanks comprising ~4000 individuals, we trained a predictor for cell-type composition of whole blood samples. This was based on methylation values from 481,388 CpGs for 2,852 individuals and code for building the predictor can be found at the bottom of this page, should you wish to replicate the process in your own large dataset.</p>
 <p>In order to use our predictor, you must first load in the coefficients. This predictor takes age, sex, and sentrix position as covariates, so it is important to create a <code>wbcc_covar</code> variable with this information to input into the <code>predict_wbcc</code> function.</p>
-<pre class="sourceCode r"><code class="sourceCode r"><span class="kw">data</span>(<span class="st">&quot;DNAmPredictorCoef&quot;</span>)
-
-RGset$Sentrix_Position &lt;-<span class="st"> </span><span class="kw">substr</span>(RGset$Basename,<span class="dv">23</span>,<span class="dv">28</span>)
-wbcc_covar &lt;-<span class="st"> </span><span class="kw">as.data.frame</span>(<span class="kw">colData</span>(RGset)[,<span class="kw">c</span>(<span class="dv">28</span>,<span class="dv">32</span>,<span class="dv">36</span>)])
-<span class="kw">head</span>(wbcc_covar)</code></pre>
-<pre><code>##                               age    sex Sentrix_Position
-## GSM3092700_9985178096_R01C01 17.3 Female           R01C01
-## GSM3092701_9985178127_R03C02 11.3 Female           R03C02
-## GSM3092702_9986360109_R02C02  9.5   Male           R02C02
-## GSM3092703_9985178087_R01C01 15.0   Male           R01C01
-## GSM3092704_9985178090_R01C01  6.7   Male           R01C01
-## GSM3092705_9985178090_R04C01  8.3 Female           R04C01</code></pre>
+<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb1-1" data-line-number="1"><span class="kw">data</span>(<span class="st">&quot;DNAmPredictorCoef&quot;</span>)</a>
+<a class="sourceLine" id="cb1-2" data-line-number="2"></a>
+<a class="sourceLine" id="cb1-3" data-line-number="3">RGset<span class="op">$</span>Sentrix_Position &lt;-<span class="st"> </span><span class="kw">substr</span>(RGset<span class="op">$</span>Basename,<span class="dv">23</span>,<span class="dv">28</span>)</a>
+<a class="sourceLine" id="cb1-4" data-line-number="4">wbcc_covar &lt;-<span class="st"> </span><span class="kw">as.data.frame</span>(<span class="kw">colData</span>(RGset)[,<span class="kw">c</span>(<span class="dv">5</span>,<span class="dv">3</span>,<span class="dv">11</span>)])</a>
+<a class="sourceLine" id="cb1-5" data-line-number="5"><span class="kw">head</span>(wbcc_covar)</a></code></pre></div>
+<pre><code>##                              age            sex Sentrix_Position
+## GSM3092700_9985178096_R01C01  50 gender: Female           R01C01
+## GSM3092701_9985178127_R03C02  19 gender: Female           R03C02
+## GSM3092702_9986360109_R02C02 110   gender: Male           R02C02
+## GSM3092703_9985178087_R01C01  39   gender: Male           R01C01
+## GSM3092704_9985178090_R01C01  97   gender: Male           R01C01
+## GSM3092705_9985178090_R04C01 103 gender: Female           R04C01</code></pre>
 <p>As you can see, this information is available for us, but some changes are needed to ensure that each variable conforms to the predictor’s format. Covariates must be named with capital letters, so <code>Age</code>, <code>Sex</code>, and <code>Sentrix_Position</code>. Additionally, <code>Sex</code> needs to be coded numerically, with 0 signifying females and 1, males. <code>Sentrix_Position</code> also needs to be factorised and stored as a numeric variable.</p>
-<pre class="sourceCode r"><code class="sourceCode r">wbcc_covar[,<span class="dv">2</span>] &lt;-<span class="st"> </span><span class="kw">as.numeric</span>(wbcc_covar[,<span class="dv">2</span>])-<span class="dv">1</span>
-wbcc_covar[,<span class="dv">3</span>] &lt;-<span class="st"> </span><span class="kw">as.numeric</span>(<span class="kw">as.factor</span>(wbcc_covar[,<span class="dv">3</span>]))
-wbcc_covar &lt;-<span class="st"> </span><span class="kw">as.matrix</span>(wbcc_covar)
-<span class="kw">head</span>(wbcc_covar)</code></pre>
-<pre><code>##                               age sex Sentrix_Position
-## GSM3092700_9985178096_R01C01 17.3   0                1
-## GSM3092701_9985178127_R03C02 11.3   0                6
-## GSM3092702_9986360109_R02C02  9.5   1                4
-## GSM3092703_9985178087_R01C01 15.0   1                1
-## GSM3092704_9985178090_R01C01  6.7   1                1
-## GSM3092705_9985178090_R04C01  8.3   0                7</code></pre>
+<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb3-1" data-line-number="1">wbcc_covar[,<span class="dv">2</span>] &lt;-<span class="st"> </span><span class="kw">as.numeric</span>(wbcc_covar[,<span class="dv">2</span>])<span class="op">-</span><span class="dv">1</span></a>
+<a class="sourceLine" id="cb3-2" data-line-number="2">wbcc_covar[,<span class="dv">3</span>] &lt;-<span class="st"> </span><span class="kw">as.numeric</span>(<span class="kw">as.factor</span>(wbcc_covar[,<span class="dv">3</span>]))</a>
+<a class="sourceLine" id="cb3-3" data-line-number="3">wbcc_covar &lt;-<span class="st"> </span><span class="kw">as.matrix</span>(wbcc_covar)</a>
+<a class="sourceLine" id="cb3-4" data-line-number="4"><span class="kw">head</span>(wbcc_covar)</a></code></pre></div>
+<pre><code>##                              age sex Sentrix_Position
+## GSM3092700_9985178096_R01C01  50   0                1
+## GSM3092701_9985178127_R03C02  19   0                6
+## GSM3092702_9986360109_R02C02 110   1                4
+## GSM3092703_9985178087_R01C01  39   1                1
+## GSM3092704_9985178090_R01C01  97   1                1
+## GSM3092705_9985178090_R04C01 103   0                7</code></pre>
 <p>After this reformatting <code>wbcc_covar</code> is ready to be input into the <code>predict_wbcc</code> function. Next, we turn our attention to the methylation values in our dataset. Since our predictor was trained using 481,388 CpG sites, we want to extract the methylation values for those sites from our data. In the predictor, the CpG rows are prefixed with <code>data</code>, making them simple to extract for matching purposes.</p>
-<pre class="sourceCode r"><code class="sourceCode r">cgRows &lt;-<span class="st"> </span><span class="kw">row.names</span>(DNAmPredictorCoef)[<span class="kw">grep</span>(<span class="st">&quot;data&quot;</span>, <span class="kw">row.names</span>(DNAmPredictorCoef))] 
-
-<span class="kw">library</span>(stringr)
-cgRows &lt;-<span class="st"> </span><span class="kw">str_remove</span>(cgRows, <span class="st">&quot;data&quot;</span>)
-
-wbcc_betas &lt;-<span class="st"> </span>betas[<span class="kw">match</span>(cgRows, <span class="kw">rownames</span>(betas)),] 
-<span class="kw">dim</span>(wbcc_betas) </code></pre>
+<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb5-1" data-line-number="1">cgRows &lt;-<span class="st"> </span><span class="kw">row.names</span>(DNAmPredictorCoef)[<span class="kw">grep</span>(<span class="st">&quot;data&quot;</span>, <span class="kw">row.names</span>(DNAmPredictorCoef))] </a>
+<a class="sourceLine" id="cb5-2" data-line-number="2"></a>
+<a class="sourceLine" id="cb5-3" data-line-number="3"><span class="kw">library</span>(stringr)</a>
+<a class="sourceLine" id="cb5-4" data-line-number="4">cgRows &lt;-<span class="st"> </span><span class="kw">str_remove</span>(cgRows, <span class="st">&quot;data&quot;</span>)</a>
+<a class="sourceLine" id="cb5-5" data-line-number="5"></a>
+<a class="sourceLine" id="cb5-6" data-line-number="6">wbcc_betas &lt;-<span class="st"> </span>betas[<span class="kw">match</span>(cgRows, <span class="kw">rownames</span>(betas)),] </a>
+<a class="sourceLine" id="cb5-7" data-line-number="7"><span class="kw">dim</span>(wbcc_betas) </a></code></pre></div>
 <pre><code>## [1] 481388    138</code></pre>
-<pre class="sourceCode r"><code class="sourceCode r"><span class="kw">dim</span>(DNAmPredictorCoef) </code></pre>
+<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb7-1" data-line-number="1"><span class="kw">dim</span>(DNAmPredictorCoef) </a></code></pre></div>
 <pre><code>## [1] 481392      5</code></pre>
 <p>Looking at the dimensions of our <code>wbcc_betas</code> object in comparison with the <code>DNAmPredictorCoef</code> one, there are 4 missing rows in the beta value matrix. These represent the intercept along with the 3 covariates (<code>Age</code>, <code>Sex</code>, and <code>Sentrix_Position</code>). The last reformatting needed is to ensure that the rownames of the predictor and our dataset values match.</p>
 <p>Next, we can use the <code>predict_wbcc</code> function to predict cell counts for our whole blood samples. This carries out matrix multiplication between our data and the predictor coefficients, trained on the large <a href="https://www.bbmri.nl/samples-images-data">BIOS consortium</a> data. Since 51 cell-type percentages were predicted to be outside the 0-100% range, we also apply a post-prediction trunction to the values for these rare cell types.</p>
-<pre class="sourceCode r"><code class="sourceCode r"><span class="kw">rownames</span>(DNAmPredictorCoef) &lt;-<span class="st"> </span><span class="kw">str_remove</span>(<span class="kw">rownames</span>(DNAmPredictorCoef), <span class="st">&quot;data&quot;</span>)
-<span class="kw">rownames</span>(DNAmPredictorCoef) &lt;-<span class="st"> </span><span class="kw">str_remove</span>(<span class="kw">rownames</span>(DNAmPredictorCoef), <span class="st">&quot;covar&quot;</span>)
-
-predicted &lt;-<span class="st"> </span><span class="kw">predict_wbcc</span>(DNAmPredictorCoef, wbcc_betas, wbcc_covar, <span class="dt">ncomp=</span><span class="dv">40</span>)</code></pre>
+<div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb9-1" data-line-number="1"><span class="kw">rownames</span>(DNAmPredictorCoef) &lt;-<span class="st"> </span><span class="kw">str_remove</span>(<span class="kw">rownames</span>(DNAmPredictorCoef), <span class="st">&quot;data&quot;</span>)</a>
+<a class="sourceLine" id="cb9-2" data-line-number="2"><span class="kw">rownames</span>(DNAmPredictorCoef) &lt;-<span class="st"> </span><span class="kw">str_remove</span>(<span class="kw">rownames</span>(DNAmPredictorCoef), <span class="st">&quot;covar&quot;</span>)</a>
+<a class="sourceLine" id="cb9-3" data-line-number="3"></a>
+<a class="sourceLine" id="cb9-4" data-line-number="4">predicted &lt;-<span class="st"> </span><span class="kw">predict_wbcc</span>(DNAmPredictorCoef, wbcc_betas, wbcc_covar, <span class="dt">ncomp=</span><span class="dv">40</span>)</a></code></pre></div>
 <pre><code>## [1] &quot;There are 89976 NA&#39;s in the data matrix. These will be median imputed.&quot;</code></pre>
-<pre class="sourceCode r"><code class="sourceCode r">predicted[predicted&lt;<span class="dv">0</span>] &lt;-<span class="st"> </span><span class="dv">0</span>
-
-<span class="kw">head</span>(predicted)</code></pre>
-<pre><code>##                              baso_perc eos_perc lymph_perc mono_perc
-## GSM3092700_9985178096_R01C01 0.6263247 2.208560   33.03383  8.781183
-## GSM3092701_9985178127_R03C02 0.3418325 2.519044   40.09988 10.786837
-## GSM3092702_9986360109_R02C02 0.5336938 2.901718   47.76722  9.461366
-## GSM3092703_9985178087_R01C01 0.3377483 2.330022   40.02461  8.886835
-## GSM3092704_9985178090_R01C01 0.1166079 3.963368   45.87435  8.999143
-## GSM3092705_9985178090_R04C01 0.0000000 1.231380   39.65770  7.191975
-##                              neut_perc
-## GSM3092700_9985178096_R01C01  54.84142
-## GSM3092701_9985178127_R03C02  45.94737
-## GSM3092702_9986360109_R02C02  38.86701
-## GSM3092703_9985178087_R01C01  47.31953
-## GSM3092704_9985178090_R01C01  40.24994
-## GSM3092705_9985178090_R04C01  50.68405</code></pre>
+<div class="sourceCode" id="cb11"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb11-1" data-line-number="1">predicted[predicted<span class="op">&lt;</span><span class="dv">0</span>] &lt;-<span class="st"> </span><span class="dv">0</span></a>
+<a class="sourceLine" id="cb11-2" data-line-number="2"></a>
+<a class="sourceLine" id="cb11-3" data-line-number="3"><span class="kw">head</span>(predicted)</a></code></pre></div>
+<pre><code>##                              baso_perc eos_perc lymph_perc mono_perc neut_perc
+## GSM3092700_9985178096_R01C01 0.8649793 2.239715   31.43147  8.553607  56.17437
+## GSM3092701_9985178127_R03C02 0.3980295 2.526380   39.72257 10.733249  46.26124
+## GSM3092702_9986360109_R02C02 1.2671736 2.997470   42.84254  8.761936  42.96368
+## GSM3092703_9985178087_R01C01 0.5129077 2.352888   38.84856  8.719807  48.29784
+## GSM3092704_9985178090_R01C01 0.7756450 4.049402   41.44949  8.370699  43.93083
+## GSM3092705_9985178090_R04C01 0.6115671 1.321606   35.01724  6.532910  54.54430</code></pre>
 <p>Here, you see the predicted cell types for our whole blood samples. There is an estimated percentage for basophils, eosinophils, lymphocytes, monocytes, and neutrophils. These can then be added to the <code>colData</code> of our <code>RGset</code> for use in later analysis models.</p>
-<pre class="sourceCode r"><code class="sourceCode r"><span class="kw">colData</span>(RGset) &lt;-<span class="st"> </span><span class="kw">cbind</span>(<span class="kw">colData</span>(RGset),predicted)</code></pre>
+<div class="sourceCode" id="cb13"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb13-1" data-line-number="1"><span class="kw">colData</span>(RGset) &lt;-<span class="st"> </span><span class="kw">cbind</span>(<span class="kw">colData</span>(RGset),predicted)</a></code></pre></div>
 <hr />
 </div>
 <div id="predict-sex" class="section level1">
 <h1>Predict Sex</h1>
 <p>The <a href="https://github.com/molepi/DNAmArray"><strong>DNAmArray</strong></a> package contains a <code>getSex.DNAmArray()</code> function, which predicts the sex of your observations by inspecting intensities of X-chromosome signals.</p>
-<pre class="sourceCode r"><code class="sourceCode r">mid &lt;-<span class="st"> </span><span class="kw">match</span>(<span class="kw">colnames</span>(betas), targets$Basename)
-
-predictedSex &lt;-<span class="st"> </span><span class="kw">as.factor</span>(<span class="kw">getSex.DNAmArray</span>(betas))
-assumedSex &lt;-<span class="st"> </span>targets$sex[mid]
-
-<span class="kw">xtabs</span>(~predictedSex+assumedSex)</code></pre>
+<div class="sourceCode" id="cb14"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb14-1" data-line-number="1">mid &lt;-<span class="st"> </span><span class="kw">match</span>(<span class="kw">colnames</span>(betas), targets<span class="op">$</span>Basename)</a>
+<a class="sourceLine" id="cb14-2" data-line-number="2"></a>
+<a class="sourceLine" id="cb14-3" data-line-number="3">predictedSex &lt;-<span class="st"> </span><span class="kw">as.factor</span>(<span class="kw">getSex.DNAmArray</span>(betas))</a>
+<a class="sourceLine" id="cb14-4" data-line-number="4">assumedSex &lt;-<span class="st"> </span>targets<span class="op">$</span>sex[mid]</a>
+<a class="sourceLine" id="cb14-5" data-line-number="5"></a>
+<a class="sourceLine" id="cb14-6" data-line-number="6"><span class="kw">xtabs</span>(<span class="op">~</span>predictedSex<span class="op">+</span>assumedSex)</a></code></pre></div>
 <pre><code>##             assumedSex
-## predictedSex Female Male
-##       Female     55    0
-##       Male        0   83</code></pre>
+## predictedSex gender: Female gender: Male
+##       Female             55            0
+##       Male                0           83</code></pre>
 <p>As you can see, this is complete data, but the predicted and assumed sexes are identical. This means that we can feel increased confidence that no incorrect labelling or mix-ups are present.</p>
-<hr />
-</div>
-<div id="predict-chronological-age" class="section level1">
-<h1>Predict Chronological Age</h1>
-<p>Age can be predicted using Horvath’s or Hannum’s coefficients with <code>agep()</code> from <a href="https://bioconductor.org/packages/release/bioc/html/wateRmelon.html"><strong>wateRmelon</strong></a>. If you use Hannum’s, you will need to call the coefficients using <code>data(hannumCoef)</code> before prediction. The predicted and assumed ages are then combined into a data frame that can be used to visualize the results.</p>
-<pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(wateRmelon)
-<span class="kw">data</span>(hannumCoef)
-
-predictedAge &lt;-<span class="st"> </span><span class="kw">as.numeric</span>(<span class="kw">agep</span>(betas, <span class="dt">coeff=</span>hannumCoef, <span class="dt">method=</span><span class="st">&quot;hannum&quot;</span>))
-assumedAge &lt;-<span class="st"> </span><span class="kw">as.numeric</span>(targets$age[mid])
-
-ages &lt;-<span class="st"> </span><span class="kw">data.frame</span>(<span class="dt">Assumed=</span>assumedAge, <span class="dt">Predicted=</span>predictedAge)
-<span class="kw">head</span>(ages)</code></pre>
-<pre><code>##   Assumed Predicted
-## 1    17.3 22.099658
-## 2    11.3 10.538492
-## 3     9.5  5.488747
-## 4    15.0 21.714933
-## 5     6.7  5.234714
-## 6     8.3  2.190379</code></pre>
-<pre class="sourceCode r"><code class="sourceCode r"><span class="kw">ggplot</span>(ages, <span class="kw">aes</span>(<span class="dt">x=</span>Assumed, <span class="dt">y=</span>Predicted)) +<span class="st"> </span><span class="kw">ggtitle</span>(<span class="st">&quot;Assumed vs. Predicted Age&quot;</span>) +<span class="st"> </span>th3 +
-<span class="st">  </span><span class="kw">geom_point</span>(<span class="dt">shape=</span><span class="dv">16</span>, <span class="dt">color=</span><span class="st">&quot;#158cba&quot;</span>) +<span class="st"> </span><span class="kw">geom_smooth</span>(<span class="dt">method=</span>lm, <span class="dt">color=</span><span class="st">&quot;#D67D87&quot;</span>)</code></pre>
-<p><img src="05_Predict_files/figure-html/509plot-1.png" width="672" /></p>
-<p>The above graph shows that this prediction follows the general trend of the assumed ages, however the residuals are quite large. It may be possible to develop an improved predictor <span class="citation">(Zhang et al. 2018)</span>, and we plan to implement this.</p>
 <hr />
 </div>
 <div id="building-a-predictor" class="section level1">
 <h1>Building a Predictor</h1>
 <p>In order to build a cell-type composition predictor, you will need data on methylation status, cell-type composition, and relevant covariates for a large number of samples. In our case, we used data from the <a href="https://www.bbmri.nl/samples-images-data">BIOS consortium</a>, which is stored as a <a href="http://bioconductor.org/packages/SummarizedExperiment"><code>RangedSummarizedExperiment</code></a> class object. We first extract the methylation values, ensuring we keep only CpG sites with complete data. In our case, this was all 481,388 assayed DNA methylation sites.</p>
-<pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(BBMRIomics)
-<span class="kw">data</span>(methData_Betas_LLS_Freeze2_unrelated)
-
-<span class="kw">library</span>(SummarizedExperiment)
-wbccBetas &lt;-<span class="st"> </span><span class="kw">assays</span>(betas)$data
-keepBetas &lt;-<span class="st"> </span><span class="kw">apply</span>(wbccBetas, <span class="dv">1</span>, function(x) <span class="kw">all</span>(!<span class="kw">is.na</span>(x)))
-wbccBetas &lt;-<span class="st"> </span>wbccBetas[keepBetas, ]</code></pre>
+<div class="sourceCode" id="cb16"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb16-1" data-line-number="1"><span class="kw">library</span>(BBMRIomics)</a>
+<a class="sourceLine" id="cb16-2" data-line-number="2"><span class="kw">data</span>(methData_Betas_LLS_Freeze2_unrelated)</a>
+<a class="sourceLine" id="cb16-3" data-line-number="3"></a>
+<a class="sourceLine" id="cb16-4" data-line-number="4"><span class="kw">library</span>(SummarizedExperiment)</a>
+<a class="sourceLine" id="cb16-5" data-line-number="5">wbccBetas &lt;-<span class="st"> </span><span class="kw">assays</span>(betas)<span class="op">$</span>data</a>
+<a class="sourceLine" id="cb16-6" data-line-number="6">keepBetas &lt;-<span class="st"> </span><span class="kw">apply</span>(wbccBetas, <span class="dv">1</span>, <span class="cf">function</span>(x) <span class="kw">all</span>(<span class="op">!</span><span class="kw">is.na</span>(x)))</a>
+<a class="sourceLine" id="cb16-7" data-line-number="7">wbccBetas &lt;-<span class="st"> </span>wbccBetas[keepBetas, ]</a></code></pre></div>
 <p>Next, we extracted measured cell percentages, which will be used as a known outcome to train the predictor. The cell-types measured may vary between datasets, but we chose to predict basophils, eosinophils, neutrophils, lymphocytes, and monocytes. It could also be a viable strategy to combine basophils, eosinophils, and neutrophils into one granulocyte category if you are lacking power to detect changes in rarer cell-types.</p>
 <p>We also store relevant covariates, such as age, sex, and sentrix position, since these can confound associations between methylation and cell-type composition.</p>
-<pre class="sourceCode r"><code class="sourceCode r">cellPercentages &lt;-<span class="st"> </span><span class="kw">as.data.frame</span>(<span class="kw">colData</span>(betas)[, <span class="kw">c</span>(<span class="st">&quot;baso_perc&quot;</span>, <span class="st">&quot;eos_perc&quot;</span>, 
-                                                    <span class="st">&quot;lymph_perc&quot;</span>, <span class="st">&quot;mono_perc&quot;</span>, <span class="st">&quot;neut_perc&quot;</span>)])
-cellPercentages &lt;-<span class="st"> </span><span class="kw">apply</span>(cellPercentages, <span class="dv">2</span>, as.numeric)
-
-covariates &lt;-<span class="st"> </span><span class="kw">as.data.frame</span>(<span class="kw">colData</span>(betas))[, <span class="kw">c</span>(<span class="st">&quot;sampling_age&quot;</span>, <span class="st">&quot;sex&quot;</span>, <span class="st">&quot;sentrix_position&quot;</span>)]
-<span class="kw">colnames</span>(covariates) &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="st">&quot;Age&quot;</span>, <span class="st">&quot;Sex&quot;</span>, <span class="st">&quot;Sentrix_Position&quot;</span>)
-covariates[,<span class="dv">3</span>] &lt;-<span class="st"> </span><span class="kw">as.integer</span>(<span class="kw">as.factor</span>(covariates[,<span class="dv">3</span>]))
-covariates[,<span class="dv">2</span>] &lt;-<span class="st"> </span><span class="kw">as.integer</span>(<span class="kw">as.factor</span>(covariates[,<span class="dv">2</span>]))-<span class="dv">1</span>
-covariates &lt;-<span class="st"> </span><span class="kw">apply</span>(covariates, <span class="dv">2</span>, as.numeric)</code></pre>
+<div class="sourceCode" id="cb17"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb17-1" data-line-number="1">cellPercentages &lt;-<span class="st"> </span><span class="kw">as.data.frame</span>(<span class="kw">colData</span>(betas)[, <span class="kw">c</span>(<span class="st">&quot;baso_perc&quot;</span>, <span class="st">&quot;eos_perc&quot;</span>, </a>
+<a class="sourceLine" id="cb17-2" data-line-number="2">                                                    <span class="st">&quot;lymph_perc&quot;</span>, <span class="st">&quot;mono_perc&quot;</span>, <span class="st">&quot;neut_perc&quot;</span>)])</a>
+<a class="sourceLine" id="cb17-3" data-line-number="3">cellPercentages &lt;-<span class="st"> </span><span class="kw">apply</span>(cellPercentages, <span class="dv">2</span>, as.numeric)</a>
+<a class="sourceLine" id="cb17-4" data-line-number="4"></a>
+<a class="sourceLine" id="cb17-5" data-line-number="5">covariates &lt;-<span class="st"> </span><span class="kw">as.data.frame</span>(<span class="kw">colData</span>(betas))[, <span class="kw">c</span>(<span class="st">&quot;sampling_age&quot;</span>, <span class="st">&quot;sex&quot;</span>, <span class="st">&quot;sentrix_position&quot;</span>)]</a>
+<a class="sourceLine" id="cb17-6" data-line-number="6"><span class="kw">colnames</span>(covariates) &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="st">&quot;Age&quot;</span>, <span class="st">&quot;Sex&quot;</span>, <span class="st">&quot;Sentrix_Position&quot;</span>)</a>
+<a class="sourceLine" id="cb17-7" data-line-number="7">covariates[,<span class="dv">3</span>] &lt;-<span class="st"> </span><span class="kw">as.integer</span>(<span class="kw">as.factor</span>(covariates[,<span class="dv">3</span>]))</a>
+<a class="sourceLine" id="cb17-8" data-line-number="8">covariates[,<span class="dv">2</span>] &lt;-<span class="st"> </span><span class="kw">as.integer</span>(<span class="kw">as.factor</span>(covariates[,<span class="dv">2</span>]))<span class="op">-</span><span class="dv">1</span></a>
+<a class="sourceLine" id="cb17-9" data-line-number="9">covariates &lt;-<span class="st"> </span><span class="kw">apply</span>(covariates, <span class="dv">2</span>, as.numeric)</a></code></pre></div>
 <p>After ensuring that IDs were consistent between all three types of data, we ensured that our training set was only composed of complete data. Missing values in either the outcome or the covariates would interfere with building the model.</p>
-<pre class="sourceCode r"><code class="sourceCode r"><span class="kw">rownames</span>(covariates) &lt;-<span class="st"> </span><span class="kw">rownames</span>(cellPercentages) &lt;-<span class="st"> </span><span class="kw">colnames</span>(wbccBetas) &lt;-<span class="st"> </span><span class="kw">colData</span>(betas)$uuid
-throwCellPer &lt;-<span class="st"> </span><span class="kw">apply</span>(cellPercentages, <span class="dv">1</span>, function(x) <span class="kw">any</span>(<span class="kw">is.na</span>(x)))
-throwCovar &lt;-<span class="st"> </span><span class="kw">apply</span>(covariates, <span class="dv">1</span>, function(x) <span class="kw">any</span>(<span class="kw">is.na</span>(x)))
-
-completeCellPer &lt;-<span class="st"> </span><span class="kw">which</span>(!throwCellPer &amp;<span class="st"> </span>!throwCovar)
-completeCellPer &lt;-<span class="st"> </span>cellPercentages[completeCellPer,]
-completeCovar &lt;-<span class="st"> </span>covariates[<span class="kw">rownames</span>(completeCellPer),]
-completeBetas &lt;-<span class="st"> </span>wbccBetas[,<span class="kw">rownames</span>(completeCellPer)]</code></pre>
+<div class="sourceCode" id="cb18"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb18-1" data-line-number="1"><span class="kw">rownames</span>(covariates) &lt;-<span class="st"> </span><span class="kw">rownames</span>(cellPercentages) &lt;-<span class="st"> </span><span class="kw">colnames</span>(wbccBetas) &lt;-<span class="st"> </span><span class="kw">colData</span>(betas)<span class="op">$</span>uuid</a>
+<a class="sourceLine" id="cb18-2" data-line-number="2">throwCellPer &lt;-<span class="st"> </span><span class="kw">apply</span>(cellPercentages, <span class="dv">1</span>, <span class="cf">function</span>(x) <span class="kw">any</span>(<span class="kw">is.na</span>(x)))</a>
+<a class="sourceLine" id="cb18-3" data-line-number="3">throwCovar &lt;-<span class="st"> </span><span class="kw">apply</span>(covariates, <span class="dv">1</span>, <span class="cf">function</span>(x) <span class="kw">any</span>(<span class="kw">is.na</span>(x)))</a>
+<a class="sourceLine" id="cb18-4" data-line-number="4"></a>
+<a class="sourceLine" id="cb18-5" data-line-number="5">completeCellPer &lt;-<span class="st"> </span><span class="kw">which</span>(<span class="op">!</span>throwCellPer <span class="op">&amp;</span><span class="st"> </span><span class="op">!</span>throwCovar)</a>
+<a class="sourceLine" id="cb18-6" data-line-number="6">completeCellPer &lt;-<span class="st"> </span>cellPercentages[completeCellPer,]</a>
+<a class="sourceLine" id="cb18-7" data-line-number="7">completeCovar &lt;-<span class="st"> </span>covariates[<span class="kw">rownames</span>(completeCellPer),]</a>
+<a class="sourceLine" id="cb18-8" data-line-number="8">completeBetas &lt;-<span class="st"> </span>wbccBetas[,<span class="kw">rownames</span>(completeCellPer)]</a></code></pre></div>
 <p>Now that we have a complete data set, we want to split it into a training set and a test set. To do this we use the <code>createDataPartition</code> function from <a href="https://cran.r-project.org/web/packages/caret/index.html"><strong>caret</strong></a>. This is superior to using <code>sample</code>, since it preserves the proportion of the categories in the outcome variable, which can be disturbed if you sample randomly.</p>
 <p>It is important to <code>set.seed</code> when splitting your data, so that your models and results are replicable. In this instance, we chose to split the data 70:30, but assigning somewhere between 60% and 80% of your data to the training set is common and should work well.</p>
-<pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(caret)
-<span class="kw">set.seed</span>(<span class="dv">100</span>)
-
-trainRowNumbers &lt;-<span class="st"> </span><span class="kw">createDataPartition</span>(completeCellPer[,<span class="dv">1</span>], <span class="dt">p=</span><span class="fl">0.7</span>, <span class="dt">list=</span><span class="ot">FALSE</span>)
-
-trainBetas &lt;-<span class="st"> </span>completeBetas[, trainRowNumbers]
-trainCovar &lt;-<span class="st"> </span>completeCovar[trainRowNumbers, ]
-trainCellPer &lt;-<span class="st"> </span>completeCellPer[trainRowNumbers, ]
-
-testBetas &lt;-<span class="st"> </span>completeBetas[, -trainRowNumbers]
-testCovar &lt;-<span class="st"> </span>completeCovar[-trainRowNumbers, ]
-testCellPer &lt;-<span class="st"> </span>completeCellPer[-trainRowNumbers, ]</code></pre>
+<div class="sourceCode" id="cb19"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb19-1" data-line-number="1"><span class="kw">library</span>(caret)</a>
+<a class="sourceLine" id="cb19-2" data-line-number="2"><span class="kw">set.seed</span>(<span class="dv">100</span>)</a>
+<a class="sourceLine" id="cb19-3" data-line-number="3"></a>
+<a class="sourceLine" id="cb19-4" data-line-number="4">trainRowNumbers &lt;-<span class="st"> </span><span class="kw">createDataPartition</span>(completeCellPer[,<span class="dv">1</span>], <span class="dt">p=</span><span class="fl">0.7</span>, <span class="dt">list=</span><span class="ot">FALSE</span>)</a>
+<a class="sourceLine" id="cb19-5" data-line-number="5"></a>
+<a class="sourceLine" id="cb19-6" data-line-number="6">trainBetas &lt;-<span class="st"> </span>completeBetas[, trainRowNumbers]</a>
+<a class="sourceLine" id="cb19-7" data-line-number="7">trainCovar &lt;-<span class="st"> </span>completeCovar[trainRowNumbers, ]</a>
+<a class="sourceLine" id="cb19-8" data-line-number="8">trainCellPer &lt;-<span class="st"> </span>completeCellPer[trainRowNumbers, ]</a>
+<a class="sourceLine" id="cb19-9" data-line-number="9"></a>
+<a class="sourceLine" id="cb19-10" data-line-number="10">testBetas &lt;-<span class="st"> </span>completeBetas[, <span class="op">-</span>trainRowNumbers]</a>
+<a class="sourceLine" id="cb19-11" data-line-number="11">testCovar &lt;-<span class="st"> </span>completeCovar[<span class="op">-</span>trainRowNumbers, ]</a>
+<a class="sourceLine" id="cb19-12" data-line-number="12">testCellPer &lt;-<span class="st"> </span>completeCellPer[<span class="op">-</span>trainRowNumbers, ]</a></code></pre></div>
 <p>Training the predicted can be done with the <code>train_wbcc</code> function including in this pipeline. This takes methylation values, covariates, and cell percentages as inputs and uses <code>plsr</code> from the <a href="https://cran.r-project.org/web/packages/pls/index.html"><strong>pls</strong></a> package carry out multivariate regression using partial least squares. By default, the predictor is built using 50 components, but this can be modified using the <code>ncomp</code> option.</p>
 <p>Using <code>pls.options</code> allows you to utilise multiple cores when building the predictor, and this is advised. You can determine the optimal number of components using the <code>validationplot</code> function and, when determined, save the coefficients of your model with <code>coef</code>. Sometimes, it is also useful to know which covariates have the highest prediction value and store them, as shown below.</p>
-<pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(pls)
-<span class="kw">pls.options</span>(<span class="dt">parallel =</span> <span class="dv">10</span>)  
-
-DNAmPredictor &lt;-<span class="st"> </span><span class="kw">train_wbcc</span>(trainBetas, trainCovar, trainCellPer, <span class="dt">ncomp=</span><span class="dv">50</span>)
-
-<span class="kw">validationplot</span>(DNAmPredictor, <span class="dt">val.type=</span><span class="st">&quot;R2&quot;</span>)
-<span class="kw">validationplot</span>(DNAmPredictor, <span class="dt">val.type =</span> <span class="st">&quot;RMSEP&quot;</span>)
-DNAmPredictorCoef &lt;-<span class="st"> </span><span class="kw">coef</span>(DNAmPredictor, <span class="dt">ncomp =</span> <span class="dv">40</span>, <span class="dt">intercept =</span> <span class="ot">TRUE</span>)[, , <span class="dv">1</span>]
-
-W &lt;-<span class="st"> </span>DNAmPredictor$loading.weights
-ord &lt;-<span class="st"> </span><span class="kw">order</span>(<span class="kw">abs</span>(W[, <span class="dv">40</span>]), <span class="dt">decreasing =</span> <span class="ot">TRUE</span>)
-DNAmTop &lt;-<span class="st"> </span><span class="kw">gsub</span>(<span class="st">&quot;data|covariates&quot;</span>, <span class="st">&quot;&quot;</span>, <span class="kw">rownames</span>(W)[ord[<span class="dv">1</span>:<span class="dv">1000</span>]])</code></pre>
+<div class="sourceCode" id="cb20"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb20-1" data-line-number="1"><span class="kw">library</span>(pls)</a>
+<a class="sourceLine" id="cb20-2" data-line-number="2"><span class="kw">pls.options</span>(<span class="dt">parallel =</span> <span class="dv">10</span>)  </a>
+<a class="sourceLine" id="cb20-3" data-line-number="3"></a>
+<a class="sourceLine" id="cb20-4" data-line-number="4">DNAmPredictor &lt;-<span class="st"> </span><span class="kw">train_wbcc</span>(trainBetas, trainCovar, trainCellPer, <span class="dt">ncomp=</span><span class="dv">50</span>)</a>
+<a class="sourceLine" id="cb20-5" data-line-number="5"></a>
+<a class="sourceLine" id="cb20-6" data-line-number="6"><span class="kw">validationplot</span>(DNAmPredictor, <span class="dt">val.type=</span><span class="st">&quot;R2&quot;</span>)</a>
+<a class="sourceLine" id="cb20-7" data-line-number="7"><span class="kw">validationplot</span>(DNAmPredictor, <span class="dt">val.type =</span> <span class="st">&quot;RMSEP&quot;</span>)</a>
+<a class="sourceLine" id="cb20-8" data-line-number="8">DNAmPredictorCoef &lt;-<span class="st"> </span><span class="kw">coef</span>(DNAmPredictor, <span class="dt">ncomp =</span> <span class="dv">40</span>, <span class="dt">intercept =</span> <span class="ot">TRUE</span>)[, , <span class="dv">1</span>]</a>
+<a class="sourceLine" id="cb20-9" data-line-number="9"></a>
+<a class="sourceLine" id="cb20-10" data-line-number="10">W &lt;-<span class="st"> </span>DNAmPredictor<span class="op">$</span>loading.weights</a>
+<a class="sourceLine" id="cb20-11" data-line-number="11">ord &lt;-<span class="st"> </span><span class="kw">order</span>(<span class="kw">abs</span>(W[, <span class="dv">40</span>]), <span class="dt">decreasing =</span> <span class="ot">TRUE</span>)</a>
+<a class="sourceLine" id="cb20-12" data-line-number="12">DNAmTop &lt;-<span class="st"> </span><span class="kw">gsub</span>(<span class="st">&quot;data|covariates&quot;</span>, <span class="st">&quot;&quot;</span>, <span class="kw">rownames</span>(W)[ord[<span class="dv">1</span><span class="op">:</span><span class="dv">1000</span>]])</a></code></pre></div>
 <p>The data provided in this package is the DNAmPredictorCoef object stored above. This can be used to predict cell-type composition of whole blood samples as shown in the above sections, or you can use a predictor you build in a similar fashion.</p>
 <p>In order to assess the power of your predictor, you should then predict cell percentages in your test set, and use our <code>plot_wbcc</code> function to examine the correlation between measured and predicted cell counts.</p>
-<pre class="sourceCode r"><code class="sourceCode r">predicted &lt;-<span class="st"> </span><span class="kw">predict_wbcc</span>(DNAmPredictorCoef, testBetas, testCovar, <span class="dt">ncomp=</span><span class="dv">40</span>)
-measured &lt;-<span class="st"> </span>testCellPer
-
-<span class="kw">plot_wbcc</span>(measured, predicted)</code></pre>
-<div class="figure">
-<img src="data/images/corrplots.png" />
-</div>
+<div class="sourceCode" id="cb21"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb21-1" data-line-number="1">predicted &lt;-<span class="st"> </span><span class="kw">predict_wbcc</span>(DNAmPredictorCoef, testBetas, testCovar, <span class="dt">ncomp=</span><span class="dv">40</span>)</a>
+<a class="sourceLine" id="cb21-2" data-line-number="2">measured &lt;-<span class="st"> </span>testCellPer</a>
+<a class="sourceLine" id="cb21-3" data-line-number="3"></a>
+<a class="sourceLine" id="cb21-4" data-line-number="4"><span class="kw">plot_wbcc</span>(measured, predicted)</a></code></pre></div>
+<p><img src="data/images/corrplots.png" /></p>
 <p><br></p>
 <p>The above plots illustrate the relationship between measured cell counts in <a href="https://www.bbmri.nl/samples-images-data">BIOS consortium</a> data and predicted values in our test data. The correlation for neutrophils and lymphocytes is very strong, likely due to these being highly prevalent cell-types in whole blood samples. This agreement remains strong for eosinophils and monocytes, but is considerably weaker for the rarest cell type, basophils.</p>
 <p>We chose not to cluster granulocytes as the prediction for eosinophils and monocytes was good, despite these being less prevalent, and there was still positive correlation for the basophils. Overall, these plots show that our predictor has the power to estimate cell types and performs well in unseen samples.</p>
 <hr />
-<div class="references">
-<p>Zhang, Qian, Costanza L. Vallerga, Rosie M Walker, Tian Lin, Anjali K. Henders, Grant W. Montgomery, Ji He, et al. 2018. “Improved Prediction of Chronological Age from DNA Methylation Limits It as a Biomarker of Ageing.” <em>BioRxiv</em> (October): 327890. doi:<a href="http://dx.doi.org/10.1101/327890">10.1101/327890</a>. <a href="https://www.biorxiv.org/content/10.1101/327890v2.article-metrics" class="uri">https://www.biorxiv.org/content/10.1101/327890v2.article-metrics</a>.</p>
-</div>
 </div>
 
 
@@ -651,7 +670,7 @@ $(document).ready(function ()  {
       theme: "bootstrap3",
       context: '.toc-content',
       hashGenerator: function (text) {
-        return text.replace(/[.\\/?&!#<>]/g, '').replace(/\s/g, '_').toLowerCase();
+        return text.replace(/[.\\/?&!#<>]/g, '').replace(/\s/g, '_');
       },
       ignoreSelector: ".toc-ignore",
       scrollTo: 0

@@ -34,24 +34,28 @@ Using [**GEOquery**](http://bioconductor.org/packages/release/bioc/html/GEOquery
 
 Initially, we use `getGEOSuppFiles()` to download the supplementary data to the current working directory. These consist of an archive containing the raw IDATs alongside some documentation. We extract these and store them in our chosen directory, ready for decompression.
 
-```{r 103geoquery, eval=FALSE}
+```{r 103geoquery, message=FALSE}
 library(GEOquery)
+```
+
+```{r 104getgeofiles, eval=FALSE}
 getGEOSuppFiles("GSE113018")
-untar(tarfile="./GSE113018/GSE113018_RAW.tar", exdir="./GSE113018/IDATs")
+untar(tarfile="../GSE113018/GSE113018_RAW.tar", exdir="../GSE113018/IDATs")
 ```
 
 After creating a list of files, we utilise the `gunzip()` function to efficiently unpack the data.
 
 ```{r 104idats, eval=FALSE}
-setwd("./GSE113018/IDATs")
+setwd("../GSE113018/IDATs")
 sapply(list.files(), gunzip)
 ```
 
 We then use `getGEO()` to import SOFT format microarray data into R as a large GSE-class list. This contains a multitude of information, but we extract the phenotypic and meta-data of interest. 
 
-```{r 105getgeo, eval=FALSE}
-GSE113018 <- getGEO(GEO="GSE113018")
+```{r 105getgeo, warning=FALSE}
+GSE113018 <- getGEO(GEO = "GSE113018")
 targets <- pData(phenoData(GSE113018[[1]]))
+rm(GSE113018)
 ```
 
 ***

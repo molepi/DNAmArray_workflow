@@ -1,18 +1,17 @@
 <!DOCTYPE html>
 
-<html xmlns="http://www.w3.org/1999/xhtml">
+<html>
 
 <head>
 
 <meta charset="utf-8" />
-<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <meta name="generator" content="pandoc" />
 <meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
 
 
 
 
-<title></title>
+<title>02_SampleQualityControl.utf8</title>
 
 <script src="site_libs/jquery-1.11.3/jquery.min.js"></script>
 <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -28,22 +27,72 @@
 
 <style type="text/css">code{white-space: pre;}</style>
 <style type="text/css" data-origin="pandoc">
-table.sourceCode, tr.sourceCode, td.lineNumbers, td.sourceCode {
-  margin: 0; padding: 0; vertical-align: baseline; border: none; }
-table.sourceCode { width: 100%; line-height: 100%; }
-td.lineNumbers { text-align: right; padding-right: 4px; padding-left: 4px; background-color: #dddddd; }
-td.sourceCode { padding-left: 5px; }
-code > span.kw { font-weight: bold; }
-code > span.dt { color: #800000; }
-code > span.dv { color: #0000ff; }
-code > span.bn { color: #0000ff; }
-code > span.fl { color: #800080; }
-code > span.ch { color: #ff00ff; }
-code > span.st { color: #dd0000; }
-code > span.co { color: #808080; font-style: italic; }
-code > span.al { color: #00ff00; font-weight: bold; }
-code > span.fu { color: #000080; }
-code > span.er { color: #ff0000; font-weight: bold; }
+a.sourceLine { display: inline-block; line-height: 1.25; }
+a.sourceLine { pointer-events: none; color: inherit; text-decoration: inherit; }
+a.sourceLine:empty { height: 1.2em; position: absolute; }
+.sourceCode { overflow: visible; }
+code.sourceCode { white-space: pre; position: relative; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+code.sourceCode { white-space: pre-wrap; }
+a.sourceLine { text-indent: -1em; padding-left: 1em; }
+}
+pre.numberSource a.sourceLine
+  { position: relative; }
+pre.numberSource a.sourceLine:empty
+  { position: absolute; }
+pre.numberSource a.sourceLine::before
+  { content: attr(data-line-number);
+    position: absolute; left: -5em; text-align: right; vertical-align: baseline;
+    border: none; pointer-events: all;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    background-color: #ffffff;
+    color: #a0a0a0;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #a0a0a0;  padding-left: 4px; }
+div.sourceCode
+  { color: #1f1c1b; background-color: #ffffff; }
+@media screen {
+a.sourceLine::before { text-decoration: underline; }
+}
+code span. { color: #1f1c1b; } /* Normal */
+code span.al { color: #bf0303; background-color: #f7e6e6; font-weight: bold; } /* Alert */
+code span.an { color: #ca60ca; } /* Annotation */
+code span.at { color: #0057ae; } /* Attribute */
+code span.bn { color: #b08000; } /* BaseN */
+code span.bu { color: #644a9b; font-weight: bold; } /* BuiltIn */
+code span.cf { color: #1f1c1b; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #924c9d; } /* Char */
+code span.cn { color: #aa5500; } /* Constant */
+code span.co { color: #898887; } /* Comment */
+code span.cv { color: #0095ff; } /* CommentVar */
+code span.do { color: #607880; } /* Documentation */
+code span.dt { color: #0057ae; } /* DataType */
+code span.dv { color: #b08000; } /* DecVal */
+code span.er { color: #bf0303; text-decoration: underline; } /* Error */
+code span.ex { color: #0095ff; font-weight: bold; } /* Extension */
+code span.fl { color: #b08000; } /* Float */
+code span.fu { color: #644a9b; } /* Function */
+code span.im { color: #ff5500; } /* Import */
+code span.in { color: #b08000; } /* Information */
+code span.kw { color: #1f1c1b; font-weight: bold; } /* Keyword */
+code span.op { color: #1f1c1b; } /* Operator */
+code span.ot { color: #006e28; } /* Other */
+code span.pp { color: #006e28; } /* Preprocessor */
+code span.re { color: #0057ae; background-color: #e0e9f8; } /* RegionMarker */
+code span.sc { color: #3daee9; } /* SpecialChar */
+code span.ss { color: #ff5500; } /* SpecialString */
+code span.st { color: #bf0303; } /* String */
+code span.va { color: #0057ae; } /* Variable */
+code span.vs { color: #bf0303; } /* VerbatimString */
+code span.wa { color: #bf0303; } /* Warning */
 
 </style>
 <script>
@@ -117,7 +166,6 @@ code {
 }
 img {
   max-width:100%;
-  height: auto;
 }
 .tabbed-pane {
   padding-top: 12px;
@@ -266,6 +314,7 @@ $(document).ready(function () {
   border: none;
   display: inline-block;
   border-radius: 4px;
+  background-color: transparent;
 }
 
 .tabset-dropdown > .nav-tabs.nav-tabs-open > li {
@@ -294,6 +343,12 @@ $(document).ready(function () {
 }
 }
 
+@media print {
+.toc-content {
+  /* see https://github.com/w3c/csswg-drafts/issues/4434 */
+  float: right;
+}
+}
 
 .toc-content {
   padding-left: 30px;
@@ -414,48 +469,69 @@ div.tocify {
 <hr />
 <div id="using-methylaid" class="section level1">
 <h1>Using MethylAid</h1>
-<p>We now have the data we need to commence quality control, but some reformatting is needed. The <a href="http://bioconductor.org/packages/MethylAid"><strong>MethylAid</strong></a> <span class="citation">(Iterson et al. 2014)</span> package that we developed requires the targets data frame to store IDAT file root names in a <code>Basename</code> column. Sometimes, data comes with a sample sheet to faciliate this, but in this case the information needs to be extracted from the supplementary file column instead.</p>
-<pre class="sourceCode r"><code class="sourceCode r">targets$Basename &lt;-<span class="st"> </span><span class="kw">substring</span>(targets$supplementary_file,<span class="dv">68</span>,<span class="dv">95</span>)</code></pre>
+<p>We now have the data we need to commence quality control, but some reformatting is needed. The <a href="http://bioconductor.org/packages/MethylAid"><strong>MethylAid</strong></a> (Luijk, 2014) package that we developed requires the targets data frame to store IDAT file root names in a <code>Basename</code> column. Sometimes, data comes with a sample sheet to faciliate this, but in this case the information needs to be extracted from the supplementary file column instead.</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb1-1" data-line-number="1">targets<span class="op">$</span>Basename &lt;-<span class="st"> </span><span class="kw">substring</span>(targets<span class="op">$</span>supplementary_file,<span class="dv">68</span>,<span class="dv">95</span>)</a>
+<a class="sourceLine" id="cb1-2" data-line-number="2"><span class="kw">head</span>(targets<span class="op">$</span>Basename)</a></code></pre></div>
+<pre><code>## [1] &quot;GSM3092700_9985178096_R01C01&quot; &quot;GSM3092701_9985178127_R03C02&quot;
+## [3] &quot;GSM3092702_9986360109_R02C02&quot; &quot;GSM3092703_9985178087_R01C01&quot;
+## [5] &quot;GSM3092704_9985178090_R01C01&quot; &quot;GSM3092705_9985178090_R04C01&quot;</code></pre>
 <p>The following sample quality control steps require the <a href="http://bioconductor.org/packages/MethylAid"><strong>MethylAid</strong></a> and <a href="https://bioconductor.org/packages/release/bioc/html/BiocParallel.html"><strong>BiocParallel</strong></a> packages. Using parallel processing and/or batches will reduce both memory load and run-times when extracting intensities from IDAT files. Please see the <a href="http://bioconductor.org/packages/release/bioc/vignettes/MethylAid/inst/doc/MethylAid.pdf">MethylAid vignette</a> for more details.</p>
-<pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(MethylAid)
-<span class="kw">library</span>(BiocParallel)
-BPPARAM &lt;-<span class="st"> </span><span class="kw">MulticoreParam</span>(<span class="dv">10</span>)
-sData &lt;-<span class="st"> </span><span class="kw">summarize</span>(targets, <span class="dt">batchSize=</span><span class="dv">50</span>, <span class="dt">BPPARAM=</span>BPPARAM)</code></pre>
+<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb3-1" data-line-number="1"><span class="kw">library</span>(MethylAid)</a>
+<a class="sourceLine" id="cb3-2" data-line-number="2"><span class="kw">library</span>(BiocParallel)</a>
+<a class="sourceLine" id="cb3-3" data-line-number="3">BPPARAM &lt;-<span class="st"> </span><span class="kw">MulticoreParam</span>(<span class="dv">6</span>)</a>
+<a class="sourceLine" id="cb3-4" data-line-number="4">sData &lt;-<span class="st"> </span><span class="kw">summarize</span>(targets, <span class="dt">batchSize=</span><span class="dv">50</span>, <span class="dt">BPPARAM=</span>BPPARAM, <span class="dt">base=</span><span class="st">&quot;../GSE113018/IDATs&quot;</span>)</a></code></pre></div>
+<pre><code>## Start summarization ...</code></pre>
+<pre><code>## Summarize data in parallel...</code></pre>
+<pre><code>## Prepare data for plotting ...</code></pre>
+<pre><code>## ... Finished summarization.</code></pre>
 <p>After this <code>summarize()</code>, the Shiny web application can be launched to <code>visualize()</code> the data and identify outliers. In this instance, there are no apparent outliers, but if found they can be removed from the dataset. To easier visualise if your data conforms to typical patterns, you can utilise the <a href="http://bioconductor.org/packages/release/data/experiment/html/MethylAidData.html"><strong>MethylAidData</strong></a> package alongside the <code>background</code> option. Darker blue colours indicate regions where many observations are found in the example data, and can serve as a guide for expected peak areas.</p>
-<pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(MethylAidData)
-<span class="kw">data</span>(exampleDataLarge)
-outliers &lt;-<span class="st"> </span><span class="kw">visualize</span>(sData, <span class="dt">background=</span>exampleDataLarge)
-targets &lt;-<span class="st"> </span>targets[!(<span class="kw">rownames</span>(targets) %in%<span class="st"> </span><span class="kw">rownames</span>(outliers)), ]</code></pre>
-<div class="figure">
-<img src="data/images/methylaid-eg.PNG" />
-</div>
+<div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb8-1" data-line-number="1"><span class="kw">library</span>(MethylAidData)</a>
+<a class="sourceLine" id="cb8-2" data-line-number="2"><span class="kw">data</span>(exampleDataLarge)</a>
+<a class="sourceLine" id="cb8-3" data-line-number="3">outliers &lt;-<span class="st"> </span><span class="kw">visualize</span>(sData, <span class="dt">background=</span>exampleDataLarge)</a>
+<a class="sourceLine" id="cb8-4" data-line-number="4">targets &lt;-<span class="st"> </span>targets[<span class="op">!</span>(<span class="kw">rownames</span>(targets) <span class="op">%in%</span><span class="st"> </span><span class="kw">rownames</span>(outliers)), ]</a></code></pre></div>
+<p><img src="data/images/methylaid-eg.PNG" /></p>
 <p><br> This image shows an example of the plots available in <a href="http://bioconductor.org/packages/MethylAid"><strong>MethylAid</strong></a>. Observations can be coloured by phenotype, outliers can be highlighted, and the background option can be toggled off and on.</p>
 <hr />
 </div>
 <div id="preparing-targets" class="section level1">
 <h1>Preparing <code>targets</code></h1>
 <p>Before progressing further, it can help to take some time to get familiar with the <code>targets</code> data frame, removing duplicate information and converting variables to relevant classes.</p>
-<pre class="sourceCode r"><code class="sourceCode r"><span class="kw">head</span>(targets[<span class="kw">c</span>(<span class="dv">28</span>,<span class="dv">30</span>,<span class="dv">32</span>,<span class="dv">34</span>)])</code></pre>
-<pre><code>##             age cc_status    sex                     Basename
-## GSM3092700 17.3   control Female GSM3092700_9985178096_R01C01
-## GSM3092701 11.3   control Female GSM3092701_9985178127_R03C02
-## GSM3092702  9.5   control   Male GSM3092702_9986360109_R02C02
-## GSM3092703 15.0   control   Male GSM3092703_9985178087_R01C01
-## GSM3092704  6.7   control   Male GSM3092704_9985178090_R01C01
-## GSM3092705  8.3   control Female GSM3092705_9985178090_R04C01</code></pre>
+<div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb9-1" data-line-number="1"><span class="kw">library</span>(tidyverse)</a>
+<a class="sourceLine" id="cb9-2" data-line-number="2"></a>
+<a class="sourceLine" id="cb9-3" data-line-number="3">targets &lt;-<span class="st"> </span><span class="kw">select</span>(targets, geo_accession,</a>
+<a class="sourceLine" id="cb9-4" data-line-number="4">                           <span class="dt">cohort =</span> source_name_ch1,</a>
+<a class="sourceLine" id="cb9-5" data-line-number="5">                           <span class="dt">sex =</span> characteristics_ch1,</a>
+<a class="sourceLine" id="cb9-6" data-line-number="6">                           <span class="dt">cc =</span> characteristics_ch1<span class="fl">.1</span>,</a>
+<a class="sourceLine" id="cb9-7" data-line-number="7">                           <span class="dt">age =</span> characteristics_ch1<span class="fl">.2</span>,</a>
+<a class="sourceLine" id="cb9-8" data-line-number="8">                           <span class="dt">growth =</span> characteristics_ch1<span class="fl">.3</span>,</a>
+<a class="sourceLine" id="cb9-9" data-line-number="9">                           <span class="dt">facial =</span> characteristics_ch1<span class="fl">.4</span>,</a>
+<a class="sourceLine" id="cb9-10" data-line-number="10">                           <span class="dt">cns =</span> characteristics_ch1<span class="fl">.5</span>,</a>
+<a class="sourceLine" id="cb9-11" data-line-number="11">                           Basename)</a>
+<a class="sourceLine" id="cb9-12" data-line-number="12">targets<span class="op">$</span>age &lt;-<span class="st"> </span><span class="kw">as.numeric</span>(targets<span class="op">$</span>age)</a>
+<a class="sourceLine" id="cb9-13" data-line-number="13"></a>
+<a class="sourceLine" id="cb9-14" data-line-number="14"><span class="kw">str</span>(targets)</a></code></pre></div>
+<pre><code>## &#39;data.frame&#39;:    138 obs. of  9 variables:
+##  $ geo_accession: chr  &quot;GSM3092700&quot; &quot;GSM3092701&quot; &quot;GSM3092702&quot; &quot;GSM3092703&quot; ...
+##  $ cohort       : Factor w/ 2 levels &quot;FASD_discovery&quot;,..: 1 1 1 1 1 1 1 1 1 1 ...
+##  $ sex          : Factor w/ 2 levels &quot;gender: Female&quot;,..: 1 1 2 2 2 1 2 2 2 2 ...
+##  $ cc           : Factor w/ 2 levels &quot;disease state: control&quot;,..: 1 1 1 1 1 1 1 1 1 1 ...
+##  $ age          : num  50 19 110 39 97 103 5 25 13 44 ...
+##  $ growth       : Factor w/ 5 levels &quot;growth: 1&quot;,&quot;growth: 2&quot;,..: 5 5 5 5 5 5 5 5 5 5 ...
+##  $ facial       : Factor w/ 5 levels &quot;facial: 1&quot;,&quot;facial: 2&quot;,..: 5 5 5 5 5 5 5 5 5 5 ...
+##  $ cns          : Factor w/ 5 levels &quot;cns: 1&quot;,&quot;cns: 2&quot;,..: 5 5 5 5 5 5 5 5 5 5 ...
+##  $ Basename     : chr  &quot;GSM3092700_9985178096_R01C01&quot; &quot;GSM3092701_9985178127_R03C02&quot; &quot;GSM3092702_9986360109_R02C02&quot; &quot;GSM3092703_9985178087_R01C01&quot; ...</code></pre>
 <p>This data frame consists of 138 observations, with 46 fetal alcohol spectrum disorder (FASD) cases and 92 controls, and phenotypic information for 36 variables is stored after cleaning. This includes values that quantify the severity of FASD in cases, such as <code>facial</code>, <code>growth</code>, and <code>cns</code>, as well as covariates we want to adjust for in the analysis, like <code>age</code> and <code>sex</code>.</p>
 <hr />
 </div>
 <div id="creating-an-rgset" class="section level1">
 <h1>Creating an <code>RGset</code></h1>
-<p>For the rest of the pipeline, our data will need to be available as an <code>RGChannelSetExtended</code> object. Reading in large numbers of IDAT files is memory-intensive and time-consuming. Therefore, our <a href="https://github.com/molepi/DNAmArray"><strong>DNAmArray</strong></a> package offers the <code>read.metharray.exp.par()</code> function, which distributes the IDAT files to each of the workers registered using <a href="https://bioconductor.org/packages/release/bioc/html/BiocParallel.html"><strong>BiocParallel</strong></a>. It then passes them in batches to <code>read.metharray.exp()</code> from <a href="http://bioconductor.org/packages/minfi"><strong>minfi</strong></a> <span class="citation">(Aryee et al. 2014)</span> and combines the returned <code>RGset</code> objects.</p>
-<pre class="sourceCode r"><code class="sourceCode r"><span class="kw">register</span>(<span class="kw">MulticoreParam</span>(<span class="dv">6</span>))
-RGset &lt;-<span class="st"> </span><span class="kw">read.metharray.exp.par</span>(<span class="dt">base=</span><span class="st">&quot;../GSE113018/IDATs&quot;</span>, targets, <span class="dt">verbose=</span><span class="ot">FALSE</span>, <span class="dt">extended=</span><span class="ot">TRUE</span>)</code></pre>
-<pre><code>## Reading multiple idat-files in parallel</code></pre>
-<pre><code>## Combining the RGsets to one big RGset</code></pre>
+<p>For the rest of the pipeline, our data will need to be available as an <code>RGChannelSetExtended</code> object. Reading in large numbers of IDAT files is memory-intensive and time-consuming. Therefore, our <a href="https://github.com/molepi/DNAmArray"><strong>DNAmArray</strong></a> package offers the <code>read.metharray.exp.par()</code> function, which distributes the IDAT files to each of the workers registered using <a href="https://bioconductor.org/packages/release/bioc/html/BiocParallel.html"><strong>BiocParallel</strong></a>. It then passes them in batches to <code>read.metharray.exp()</code> from <a href="http://bioconductor.org/packages/minfi"><strong>minfi</strong></a> (Feinberg, 2014) and combines the returned <code>RGset</code> objects.</p>
+<div class="sourceCode" id="cb11"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb11-1" data-line-number="1"><span class="kw">library</span>(DNAmArray)</a>
+<a class="sourceLine" id="cb11-2" data-line-number="2"><span class="kw">register</span>(<span class="kw">MulticoreParam</span>(<span class="dv">6</span>))</a>
+<a class="sourceLine" id="cb11-3" data-line-number="3">RGset &lt;-<span class="st"> </span><span class="kw">read.metharray.exp</span>(<span class="dt">base=</span><span class="st">&quot;../GSE113018/IDATs&quot;</span>, targets, <span class="dt">verbose=</span><span class="ot">FALSE</span>, <span class="dt">extended=</span><span class="ot">TRUE</span>)</a></code></pre></div>
 <p>Reading data in parallel is subject to errors and debugging is often difficult. Recently, <a href="https://bioconductor.org/packages/release/bioc/html/BiocParallel.html"><strong>BiocParallel</strong></a> has been extended with a comprehensive set of functions for debugging on various parallel architectures. If problems arise, we recommend using <code>BatchJobsParam()</code> with the <code>log=TRUE</code> option in order to facilitate resolution.</p>
 <p>Our data is now an <code>RGset</code> object that can used for visualization. You can see below that inside this object the <code>colData</code> holds the same information as <code>targets</code>, and that there are 5 <code>assay</code> layers. The annotation information tells us that the methylation was measured using a 450k array and that hg19 is the reference genome.</p>
-<pre class="sourceCode r"><code class="sourceCode r">RGset</code></pre>
+<div class="sourceCode" id="cb12"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb12-1" data-line-number="1">RGset</a></code></pre></div>
 <pre><code>## class: RGChannelSetExtended 
 ## dim: 622399 138 
 ## metadata(0):
@@ -473,47 +549,62 @@ RGset &lt;-<span class="st"> </span><span class="kw">read.metharray.exp.par</spa
 </div>
 <div id="beta-values" class="section level1">
 <h1>Beta values</h1>
-<p>In order to further visualize the data, we store the beta values using the <code>getBeta()</code> function from <a href="https://bioconductor.org/packages/rel%20ease/bioc/html/minfi.html"><strong>minfi</strong></a> <span class="citation">(Aryee et al. 2014)</span>. The <code>type=&quot;Illumina&quot;</code> option adds 100 to the denominator of the beta-value calculation, preventing NA values being recorded when the methylated and unmethylated signal are both 0.</p>
-<pre class="sourceCode r"><code class="sourceCode r">betas &lt;-<span class="st"> </span><span class="kw">getBeta</span>(RGset, <span class="dt">type=</span><span class="st">&quot;Illumina&quot;</span>)</code></pre>
+<p>In order to further visualize the data, we store the beta values using the <code>getBeta()</code> function from <a href="https://bioconductor.org/packages/rel%20ease/bioc/html/minfi.html"><strong>minfi</strong></a> (Feinberg, 2014). The <code>type=&quot;Illumina&quot;</code> option adds 100 to the denominator of the beta-value calculation, preventing NA values being recorded when the methylated and unmethylated signal are both 0.</p>
+<div class="sourceCode" id="cb14"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb14-1" data-line-number="1">betas &lt;-<span class="st"> </span><span class="kw">getBeta</span>(RGset, <span class="dt">type=</span><span class="st">&quot;Illumina&quot;</span>)</a></code></pre></div>
 <hr />
 </div>
 <div id="beta-density-plots" class="section level1">
 <h1>Beta density plots</h1>
-<p>Using <code>densityPlot()</code> from <a href="https://bioconductor.org/packages/release/bioc/html/minfi.html"><strong>minfi</strong></a> <span class="citation">(Aryee et al. 2014)</span>, we can visualize the per sample average beta-value distribution. This gives us a global impression of the data and allows us to identify possible anomalous samples. We expect this distribution to be bimodal with the peaks representing methylated and unmethylated signals. Any centre peaks should be further investigated for problems, such as ambiguous mapping.</p>
-<pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(minfi)
-<span class="kw">par</span>(<span class="dt">mar=</span><span class="kw">c</span>(<span class="dv">4</span>,<span class="dv">4</span>,<span class="dv">3</span>,<span class="dv">2</span>), <span class="dt">mgp=</span><span class="kw">c</span>(<span class="fl">2.5</span>,<span class="dv">1</span>,<span class="dv">0</span>), <span class="dt">cex.main=</span><span class="fl">1.5</span>, <span class="dt">font.main=</span><span class="st">&quot;1&quot;</span>, <span class="dt">fg=</span><span class="st">&quot;#6b6b6b&quot;</span>, <span class="dt">col.main=</span><span class="st">&quot;#4b4b4b&quot;</span>)
-<span class="kw">densityPlot</span>(RGset, <span class="dt">main=</span><span class="st">&quot;Beta density plot&quot;</span>, <span class="dt">xlab=</span><span class="st">&quot;Beta values&quot;</span>, <span class="dt">panel.first=</span><span class="kw">ggbg</span>()) </code></pre>
-<p><img src="02_SampleQualityControl_files/figure-html/210betaplot-1.png" width="672" /></p>
+<p>Using <code>densityPlot()</code> from <a href="https://bioconductor.org/packages/release/bioc/html/minfi.html"><strong>minfi</strong></a> (Feinberg, 2014), we can visualize the per sample average beta-value distribution. This gives us a global impression of the data and allows us to identify possible anomalous samples. We expect this distribution to be bimodal with the peaks representing methylated and unmethylated signals. Any centre peaks should be further investigated for problems, such as ambiguous mapping.</p>
+<div class="sourceCode" id="cb15"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb15-1" data-line-number="1"><span class="kw">library</span>(minfi)</a>
+<a class="sourceLine" id="cb15-2" data-line-number="2"></a>
+<a class="sourceLine" id="cb15-3" data-line-number="3">ggbg &lt;-<span class="st"> </span><span class="cf">function</span>() {</a>
+<a class="sourceLine" id="cb15-4" data-line-number="4">  <span class="kw">points</span>(<span class="dv">0</span>, <span class="dv">0</span>, <span class="dt">pch=</span><span class="dv">16</span>, <span class="dt">cex=</span><span class="fl">1e6</span>, <span class="dt">col=</span><span class="st">&quot;grey90&quot;</span>)</a>
+<a class="sourceLine" id="cb15-5" data-line-number="5">  <span class="kw">grid</span>(<span class="dt">col=</span><span class="st">&quot;white&quot;</span>, <span class="dt">lty=</span><span class="dv">1</span>)</a>
+<a class="sourceLine" id="cb15-6" data-line-number="6">}</a>
+<a class="sourceLine" id="cb15-7" data-line-number="7"></a>
+<a class="sourceLine" id="cb15-8" data-line-number="8"><span class="kw">par</span>(<span class="dt">mar=</span><span class="kw">c</span>(<span class="dv">4</span>,<span class="dv">4</span>,<span class="dv">3</span>,<span class="dv">2</span>), <span class="dt">mgp=</span><span class="kw">c</span>(<span class="fl">2.5</span>,<span class="dv">1</span>,<span class="dv">0</span>), </a>
+<a class="sourceLine" id="cb15-9" data-line-number="9">    <span class="dt">cex.main=</span><span class="fl">1.5</span>, <span class="dt">font.main=</span><span class="st">&quot;1&quot;</span>, </a>
+<a class="sourceLine" id="cb15-10" data-line-number="10">    <span class="dt">fg=</span><span class="st">&quot;#6b6b6b&quot;</span>, <span class="dt">col.main=</span><span class="st">&quot;#4b4b4b&quot;</span>)</a>
+<a class="sourceLine" id="cb15-11" data-line-number="11"></a>
+<a class="sourceLine" id="cb15-12" data-line-number="12"><span class="kw">densityPlot</span>(RGset, </a>
+<a class="sourceLine" id="cb15-13" data-line-number="13">            <span class="dt">main=</span><span class="st">&quot;Beta density plot&quot;</span>, </a>
+<a class="sourceLine" id="cb15-14" data-line-number="14">            <span class="dt">xlab=</span><span class="st">&quot;Beta values&quot;</span>, </a>
+<a class="sourceLine" id="cb15-15" data-line-number="15">            <span class="dt">panel.first=</span><span class="kw">ggbg</span>()) </a></code></pre></div>
+<p><img src="02_SampleQualityControl_files/figure-html/209betaplot-1.png" width="672" /></p>
 <p>For this data, the density plot is clearly bimodal with no obvious outliers.</p>
 <hr />
 </div>
 <div id="principal-components-plot" class="section level1">
 <h1>Principal components plot</h1>
 <p>Using the <code>prcomp_irlba()</code> function from <a href="https://cran.r-project.org/web/packages/irlba/index.html"><strong>irlba</strong></a> we can calculate principal components. By assessing the amount of variance explained by these and visualising them, we can better interpret the data. The package <a href="https://cran.r-project.org/web/packages/ggfortify/index.html"><strong>ggfortify</strong></a> helps <a href="https://ggplot2.tidyverse.org/"><strong>ggplot2</strong></a> interpret PCA objects, allowing <code>prcomp</code> objects to be passed to the <code>autoplot()</code> function.</p>
-<pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(irlba)
-pc &lt;-<span class="st"> </span><span class="kw">prcomp_irlba</span>(<span class="kw">t</span>(betas), <span class="dt">n=</span><span class="dv">6</span>)
-<span class="kw">summary</span>(pc)</code></pre>
+<div class="sourceCode" id="cb16"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb16-1" data-line-number="1"><span class="kw">library</span>(irlba)</a>
+<a class="sourceLine" id="cb16-2" data-line-number="2"></a>
+<a class="sourceLine" id="cb16-3" data-line-number="3">pc &lt;-<span class="st"> </span><span class="kw">prcomp_irlba</span>(<span class="kw">t</span>(betas), <span class="dt">n=</span><span class="dv">6</span>)</a>
+<a class="sourceLine" id="cb16-4" data-line-number="4"><span class="kw">summary</span>(pc)</a></code></pre></div>
 <pre><code>## Importance of components:
 ##                            PC1     PC2     PC3     PC4     PC5    PC6
 ## Standard deviation     14.4041 10.1145 7.65700 6.83199 4.96062 3.7490
 ## Proportion of Variance  0.2303  0.1136 0.06509 0.05182 0.02732 0.0156
 ## Cumulative Proportion   0.2303  0.3439 0.40903 0.46085 0.48817 0.5038</code></pre>
-<pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(ggfortify)
-<span class="kw">autoplot</span>(pc, <span class="dt">data=</span>targets, <span class="dt">colour=</span><span class="st">&quot;sex&quot;</span>, <span class="dt">main=</span><span class="st">&quot;Principal components plot&quot;</span>) +<span class="st"> </span>th1</code></pre>
+<div class="sourceCode" id="cb18"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb18-1" data-line-number="1"><span class="kw">library</span>(ggfortify)</a>
+<a class="sourceLine" id="cb18-2" data-line-number="2"></a>
+<a class="sourceLine" id="cb18-3" data-line-number="3"><span class="kw">autoplot</span>(pc, <span class="dt">data=</span>targets, <span class="dt">colour=</span><span class="st">&quot;sex&quot;</span>, </a>
+<a class="sourceLine" id="cb18-4" data-line-number="4">         <span class="dt">main=</span><span class="st">&quot;Principal components plot&quot;</span>)</a></code></pre></div>
 <p><img src="02_SampleQualityControl_files/figure-html/212pcplot-1.png" width="672" /></p>
 <p>In this instance, our principal components explain over 50% of the variance in the data and there is evidence of clustering in the plot. By passing the original data to the <code>autoplot()</code> function using the <code>data</code> option, we can investigate clustering by colouring candidate variables. Our data has yet to undergo probe masking, which removes sex chromosome data, so groups of principal components according to whether an individual is male or female appear in the plot.</p>
 <hr />
 </div>
 <div id="checking-sample-relationships" class="section level1">
 <h1>Checking Sample Relationships</h1>
-<p><a href="http://bioconductor.org/packages/release/bioc/html/omicsPrint.html"><strong>omicsPrint</strong></a> <span class="citation">(<span>Van Iterson</span> et al. 2018)</span> is a package we developed to detect data linkage errors through inspecting sample relations in multiple omics studies. Included with the package is the <code>hm450.manifest.pop.GoNL</code> data, which stores SNP probe information in a <code>GRanges</code> class object. This is then used to create a subset of the beta values for genotyping.</p>
-<pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(omicsPrint)
-<span class="kw">data</span>(hm450.manifest.pop.GoNL)
-
-cpgs &lt;-<span class="st"> </span><span class="kw">names</span>(hm450.manifest.pop.GoNL[<span class="kw">mcols</span>(hm450.manifest.pop.GoNL)$MASK.snp5.EAS])
-cpgs &lt;-<span class="st"> </span><span class="kw">na.omit</span>(<span class="kw">match</span>(cpgs, <span class="kw">rownames</span>(betas)))
-omicsBetas &lt;-<span class="st"> </span>betas[cpgs,]
-omicsBetas[<span class="dv">1</span>:<span class="dv">10</span>, <span class="dv">1</span>:<span class="dv">2</span>]</code></pre>
+<p><a href="http://bioconductor.org/packages/release/bioc/html/omicsPrint.html"><strong>omicsPrint</strong></a> (Van Iterson, 2018) is a package we developed to detect data linkage errors through inspecting sample relations in multiple omics studies. Included with the package is the <code>hm450.manifest.pop.GoNL</code> data, which stores SNP probe information in a <code>GRanges</code> class object. This is then used to create a subset of the beta values for genotyping.</p>
+<div class="sourceCode" id="cb19"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb19-1" data-line-number="1"><span class="kw">library</span>(omicsPrint)</a>
+<a class="sourceLine" id="cb19-2" data-line-number="2"><span class="kw">data</span>(hm450.manifest.pop.GoNL)</a>
+<a class="sourceLine" id="cb19-3" data-line-number="3"></a>
+<a class="sourceLine" id="cb19-4" data-line-number="4">cpgs &lt;-<span class="st"> </span><span class="kw">names</span>(hm450.manifest.pop.GoNL[<span class="kw">mcols</span>(hm450.manifest.pop.GoNL)<span class="op">$</span>MASK.snp5.EAS])</a>
+<a class="sourceLine" id="cb19-5" data-line-number="5">cpgs &lt;-<span class="st"> </span><span class="kw">na.omit</span>(<span class="kw">match</span>(cpgs, <span class="kw">rownames</span>(betas)))</a>
+<a class="sourceLine" id="cb19-6" data-line-number="6">omicsBetas &lt;-<span class="st"> </span>betas[cpgs,]</a>
+<a class="sourceLine" id="cb19-7" data-line-number="7">omicsBetas[<span class="dv">1</span><span class="op">:</span><span class="dv">10</span>, <span class="dv">1</span><span class="op">:</span><span class="dv">2</span>]</a></code></pre></div>
 <pre><code>##            GSM3092700_9985178096_R01C01 GSM3092701_9985178127_R03C02
 ## cg08477687                   0.54468085                   0.54966887
 ## cg00645010                   0.24275471                   0.32130207
@@ -526,31 +617,36 @@ omicsBetas[<span class="dv">1</span>:<span class="dv">10</span>, <span class="dv
 ## cg23999112                   0.74222364                   0.75032102
 ## cg01062849                   0.88731665                   0.88230847</code></pre>
 <p>The function <code>beta2genotype()</code> then genotypes the observations by measuring homozygous or heterozygous alleles at these SNP probes. Lastly <code>alleleSharing()</code> assesses the relationships between different individuals, which can be unrelated, twins, or identical. The results can then be visualised using the <code>inferRelations()</code> function.</p>
-<pre class="sourceCode r"><code class="sourceCode r">dnamCalls &lt;-<span class="st"> </span><span class="kw">beta2genotype</span>(omicsBetas, <span class="dt">assayName=</span><span class="st">&quot;exprs&quot;</span>)
-<span class="kw">dim</span>(dnamCalls)</code></pre>
+<div class="sourceCode" id="cb21"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb21-1" data-line-number="1">dnamCalls &lt;-<span class="st"> </span><span class="kw">beta2genotype</span>(omicsBetas, <span class="dt">assayName=</span><span class="st">&quot;exprs&quot;</span>)</a>
+<a class="sourceLine" id="cb21-2" data-line-number="2"><span class="kw">dim</span>(dnamCalls)</a></code></pre></div>
 <pre><code>## [1] 779 138</code></pre>
-<pre class="sourceCode r"><code class="sourceCode r">dnamCalls[<span class="dv">1</span>:<span class="dv">10</span>, <span class="dv">1</span>:<span class="dv">2</span>]</code></pre>
+<div class="sourceCode" id="cb23"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb23-1" data-line-number="1">dnamCalls[<span class="dv">1</span><span class="op">:</span><span class="dv">5</span>, <span class="dv">1</span><span class="op">:</span><span class="dv">2</span>]</a></code></pre></div>
 <pre><code>##            GSM3092700_9985178096_R01C01 GSM3092701_9985178127_R03C02
 ## cg12213037                            2                            3
 ## cg19405842                            2                            1
 ## cg01296877                            2                            3
 ## cg21783012                            2                            2
-## cg10091792                            3                            3
-## cg08121686                            2                            3
-## cg04882216                            3                            3
-## cg26422465                            2                            1
-## cg00345083                            2                            2
-## cg15075357                            1                            1</code></pre>
-<pre class="sourceCode r"><code class="sourceCode r">omicsData &lt;-<span class="st"> </span><span class="kw">alleleSharing</span>(dnamCalls, <span class="dt">verbose=</span><span class="ot">TRUE</span>)
-mismatches &lt;-<span class="st"> </span><span class="kw">inferRelations</span>(omicsData)</code></pre>
+## cg10091792                            3                            3</code></pre>
+<div class="sourceCode" id="cb25"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb25-1" data-line-number="1">omicsData &lt;-<span class="st"> </span><span class="kw">alleleSharing</span>(dnamCalls, <span class="dt">verbose=</span><span class="ot">TRUE</span>)</a>
+<a class="sourceLine" id="cb25-2" data-line-number="2"><span class="kw">head</span>(omicsData)</a></code></pre></div>
+<pre><code>##       mean       var                   colnames.x                   colnames.y
+## 1 2.000000 0.0000000 GSM3092700_9985178096_R01C01 GSM3092700_9985178096_R01C01
+## 2 1.644416 0.2474334 GSM3092701_9985178127_R03C02 GSM3092700_9985178096_R01C01
+## 3 1.682927 0.2502351 GSM3092702_9986360109_R02C02 GSM3092700_9985178096_R01C01
+## 4 1.594352 0.2953922 GSM3092703_9985178087_R01C01 GSM3092700_9985178096_R01C01
+## 5 1.290116 0.4504292 GSM3092704_9985178090_R01C01 GSM3092700_9985178096_R01C01
+## 6 1.317073 0.4147595 GSM3092705_9985178090_R04C01 GSM3092700_9985178096_R01C01
+##    relation
+## 1 identical
+## 2 unrelated
+## 3 unrelated
+## 4 unrelated
+## 5 unrelated
+## 6 unrelated</code></pre>
+<div class="sourceCode" id="cb27"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb27-1" data-line-number="1">mismatches &lt;-<span class="st"> </span><span class="kw">inferRelations</span>(omicsData)</a></code></pre></div>
 <p><img src="02_SampleQualityControl_files/figure-html/214genotype-1.png" width="672" /></p>
-<p>Since there are no twins or relatives in our data, all observations are shown as unrelated. In data with sample relationships, this would be shown in the above graph as green or black clusters <span class="citation">(<span>Van Iterson</span> et al. 2018)</span>. It is important to carry out this type of visualization before probe-filtering as otherwise the genotyping will be based on very few SNPs.</p>
+<p>Since there are no twins or relatives in our data, all observations are shown as unrelated. In data with sample relationships, this would be shown in the above graph as green or black clusters (Van Iterson, 2018). It is important to carry out this type of visualization before probe-filtering as otherwise the genotyping will be based on very few SNPs.</p>
 <hr />
-<div class="references">
-<p>Aryee, Martin J., Andrew E. Jaffe, Hector Corrada-Bravo, Christine Ladd-Acosta, Andrew P. Feinberg, Kasper D. Hansen, and Rafael A. Irizarry. 2014. “Minfi: A Flexible and Comprehensive Bioconductor Package for the Analysis of Infinium DNA Methylation Microarrays.” <em>Bioinformatics</em> 30 (10) (May): 1363–1369. doi:<a href="http://dx.doi.org/10.1093/bioinformatics/btu049">10.1093/bioinformatics/btu049</a>. <a href="http://www.ncbi.nlm.nih.gov/pubmed/24478339 http://www.pubmedcentral.nih.gov/articlerender.fcgi?artid=PMC4016708" class="uri">http://www.ncbi.nlm.nih.gov/pubmed/24478339 http://www.pubmedcentral.nih.gov/articlerender.fcgi?artid=PMC4016708</a>.</p>
-<p>Iterson, Maarten van, Elmar W. Tobi, Roderick C. Slieker, Wouter <span>Den Hollander</span>, Ren<span>é</span> Luijk, P. Eline Slagboom, and Bastiaan T. Heijmans. 2014. “MethylAid: Visual and Interactive Quality Control of Large Illumina 450k Datasets.” <em>Bioinformatics</em> 30 (23) (December): 3435–3437. doi:<a href="http://dx.doi.org/10.1093/bioinformatics/btu566">10.1093/bioinformatics/btu566</a>. <a href="https://academic.oup.com/bioinformatics/article-lookup/doi/10.1093/bioinformatics/btu566" class="uri">https://academic.oup.com/bioinformatics/article-lookup/doi/10.1093/bioinformatics/btu566</a>.</p>
-<p><span>Van Iterson</span>, Maarten, Davy Cats, Paul Hop, and Bastiaan T Heijmans. 2018. “OmicsPrint: Detection of Data Linkage Errors in Multiple Omics Studies.” Edited by Oliver Stegle. <em>Bioinformatics</em> 34 (12) (June): 2142–2143. doi:<a href="http://dx.doi.org/10.1093/bioinformatics/bty062">10.1093/bioinformatics/bty062</a>. <a href="https://academic.oup.com/bioinformatics/article/34/12/2142/4840579" class="uri">https://academic.oup.com/bioinformatics/article/34/12/2142/4840579</a>.</p>
-</div>
 </div>
 
 
@@ -603,7 +699,7 @@ $(document).ready(function ()  {
       theme: "bootstrap3",
       context: '.toc-content',
       hashGenerator: function (text) {
-        return text.replace(/[.\\/?&!#<>]/g, '').replace(/\s/g, '_').toLowerCase();
+        return text.replace(/[.\\/?&!#<>]/g, '').replace(/\s/g, '_');
       },
       ignoreSelector: ".toc-ignore",
       scrollTo: 0

@@ -3,9 +3,9 @@
 
 # Introduction #
 
-Our workflow uses the Functional Normalization approach [@Hansen2014], which exploits internal control probes designed to detect technical variations without assaying biological differences. It has been shown to perform favourably when compared to other approaches [@Heiss2015, @Liu2016]. 
+Our workflow uses the Functional Normalization approach (Hansen, 2014), which exploits internal control probes designed to detect technical variations without assaying biological differences. It has been shown to perform favourably when compared to other approaches (Heiss, 2015; Liu, 2016). 
 
-Using the internal control probes avoids the problems associated with global normalization methods, where biological variation can be mistaken for a technical effect and removed. This is especially important in studies where groups are expected to have differential methylomes, such as multiple tissue studies [@Min2018].
+Using the internal control probes avoids the problems associated with global normalization methods, where biological variation can be mistaken for a technical effect and removed. This is especially important in studies where groups are expected to have differential methylomes, such as multiple tissue studies (Min, 2018).
 
 ***
 
@@ -24,7 +24,7 @@ This plot shows that only a small amount of variance is explained after the sixt
 
 # Functional Normalization #
 
-By default, functional normalization returns normalized copy number data making the returned `GenomicRatioSet` twice the size necessary when only beta-values or M-values are required. Therefore, we developed `preprocessFunnorm.DNAmArray()`, which adds an option not to return these to the `preprocessFunnorm()` function from [**minfi**](https://bioconductor.org/packages/release/bioc/html/minfi.html) [@Feinberg2014].
+By default, functional normalization returns normalized copy number data making the returned `GenomicRatioSet` twice the size necessary when only beta-values or M-values are required. Therefore, we developed `preprocessFunnorm.DNAmArray()`, which adds an option not to return these to the `preprocessFunnorm()` function from [**minfi**](https://bioconductor.org/packages/release/bioc/html/minfi.html) (Feinberg, 2014).
 
 ```{r 302funnorm}
 GRset <- preprocessFunnorm.DNAmArray(RGset, nPCs=6, keepCN=FALSE)

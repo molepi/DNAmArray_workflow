@@ -19,7 +19,7 @@ In order to use our predictor, you must first load in the coefficients. This pre
 data("DNAmPredictorCoef")
 
 RGset$Sentrix_Position <- substr(RGset$Basename,23,28)
-wbcc_covar <- as.data.frame(colData(RGset)[,c(28,32,36)])
+wbcc_covar <- as.data.frame(colData(RGset)[,c(5,3,11)])
 head(wbcc_covar)
 ```
 
@@ -49,7 +49,7 @@ Looking at the dimensions of our `wbcc_betas` object in comparison with the `DNA
 
 Next, we can use the `predict_wbcc` function to predict cell counts for our whole blood samples. This carries out matrix multiplication between our data and the predictor coefficients, trained on the large [BIOS consortium](https://www.bbmri.nl/samples-images-data) data. Since 51 cell-type percentages were predicted to be outside the 0-100% range, we also apply a post-prediction trunction to the values for these rare cell types.
 
-```{r 504predict}
+```{r 504predict, warning=FALSE}
 rownames(DNAmPredictorCoef) <- str_remove(rownames(DNAmPredictorCoef), "data")
 rownames(DNAmPredictorCoef) <- str_remove(rownames(DNAmPredictorCoef), "covar")
 
@@ -81,37 +81,6 @@ xtabs(~predictedSex+assumedSex)
 ```
 
 As you can see, this is complete data, but the predicted and assumed sexes are identical. This means that we can feel increased confidence that no incorrect labelling or mix-ups are present.
-
-***
-
-# Predict Chronological Age #
-
-Age can be predicted using Horvath's or Hannum's coefficients with `agep()` from [**wateRmelon**](https://bioconductor.org/packages/release/bioc/html/wateRmelon.html). If you use Hannum's, you will need to call the coefficients using `data(hannumCoef)` before prediction. The predicted and assumed ages are then combined into a data frame that can be used to visualize the results.
-
-```{r 507agep, message=FALSE, warning=FALSE}
-library(wateRmelon)
-data(hannumCoef)
-
-predictedAge <- as.numeric(agep(betas, coeff=hannumCoef, method="hannum"))
-assumedAge <- as.numeric(targets$age[mid])
-
-ages <- data.frame(Assumed=assumedAge, Predicted=predictedAge)
-head(ages)
-```
-
-```{r 508theme, echo=FALSE}
-th3 <- theme(text=element_text(size=12), 
-             panel.border=element_rect(fill=NA, color="#cdcdcd", size=1, linetype=1), 
-             plot.title=element_text(size=20, hjust=0.5, margin=margin(0,0,15,0)), 
-             plot.margin=margin(20,25,25,25))
-```
-
-```{r 509plot}
-ggplot(ages, aes(x=Assumed, y=Predicted)) + ggtitle("Assumed vs. Predicted Age") + th3 +
-  geom_point(shape=16, color="#158cba") + geom_smooth(method=lm, color="#D67D87")
-```
-
-The above graph shows that this prediction follows the general trend of the assumed ages, however the residuals are quite large. It may be possible to develop an improved predictor [@Zhang2018], and we plan to implement this.
 
 ***
 

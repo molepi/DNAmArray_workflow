@@ -1,18 +1,17 @@
 <!DOCTYPE html>
 
-<html xmlns="http://www.w3.org/1999/xhtml">
+<html>
 
 <head>
 
 <meta charset="utf-8" />
-<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <meta name="generator" content="pandoc" />
 <meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
 
 
 
 
-<title></title>
+<title>01_GettingStarted.utf8</title>
 
 <script src="site_libs/jquery-1.11.3/jquery.min.js"></script>
 <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -28,22 +27,72 @@
 
 <style type="text/css">code{white-space: pre;}</style>
 <style type="text/css" data-origin="pandoc">
-table.sourceCode, tr.sourceCode, td.lineNumbers, td.sourceCode {
-  margin: 0; padding: 0; vertical-align: baseline; border: none; }
-table.sourceCode { width: 100%; line-height: 100%; }
-td.lineNumbers { text-align: right; padding-right: 4px; padding-left: 4px; background-color: #dddddd; }
-td.sourceCode { padding-left: 5px; }
-code > span.kw { font-weight: bold; }
-code > span.dt { color: #800000; }
-code > span.dv { color: #0000ff; }
-code > span.bn { color: #0000ff; }
-code > span.fl { color: #800080; }
-code > span.ch { color: #ff00ff; }
-code > span.st { color: #dd0000; }
-code > span.co { color: #808080; font-style: italic; }
-code > span.al { color: #00ff00; font-weight: bold; }
-code > span.fu { color: #000080; }
-code > span.er { color: #ff0000; font-weight: bold; }
+a.sourceLine { display: inline-block; line-height: 1.25; }
+a.sourceLine { pointer-events: none; color: inherit; text-decoration: inherit; }
+a.sourceLine:empty { height: 1.2em; position: absolute; }
+.sourceCode { overflow: visible; }
+code.sourceCode { white-space: pre; position: relative; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+code.sourceCode { white-space: pre-wrap; }
+a.sourceLine { text-indent: -1em; padding-left: 1em; }
+}
+pre.numberSource a.sourceLine
+  { position: relative; }
+pre.numberSource a.sourceLine:empty
+  { position: absolute; }
+pre.numberSource a.sourceLine::before
+  { content: attr(data-line-number);
+    position: absolute; left: -5em; text-align: right; vertical-align: baseline;
+    border: none; pointer-events: all;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    background-color: #ffffff;
+    color: #a0a0a0;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #a0a0a0;  padding-left: 4px; }
+div.sourceCode
+  { color: #1f1c1b; background-color: #ffffff; }
+@media screen {
+a.sourceLine::before { text-decoration: underline; }
+}
+code span. { color: #1f1c1b; } /* Normal */
+code span.al { color: #bf0303; background-color: #f7e6e6; font-weight: bold; } /* Alert */
+code span.an { color: #ca60ca; } /* Annotation */
+code span.at { color: #0057ae; } /* Attribute */
+code span.bn { color: #b08000; } /* BaseN */
+code span.bu { color: #644a9b; font-weight: bold; } /* BuiltIn */
+code span.cf { color: #1f1c1b; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #924c9d; } /* Char */
+code span.cn { color: #aa5500; } /* Constant */
+code span.co { color: #898887; } /* Comment */
+code span.cv { color: #0095ff; } /* CommentVar */
+code span.do { color: #607880; } /* Documentation */
+code span.dt { color: #0057ae; } /* DataType */
+code span.dv { color: #b08000; } /* DecVal */
+code span.er { color: #bf0303; text-decoration: underline; } /* Error */
+code span.ex { color: #0095ff; font-weight: bold; } /* Extension */
+code span.fl { color: #b08000; } /* Float */
+code span.fu { color: #644a9b; } /* Function */
+code span.im { color: #ff5500; } /* Import */
+code span.in { color: #b08000; } /* Information */
+code span.kw { color: #1f1c1b; font-weight: bold; } /* Keyword */
+code span.op { color: #1f1c1b; } /* Operator */
+code span.ot { color: #006e28; } /* Other */
+code span.pp { color: #006e28; } /* Preprocessor */
+code span.re { color: #0057ae; background-color: #e0e9f8; } /* RegionMarker */
+code span.sc { color: #3daee9; } /* SpecialChar */
+code span.ss { color: #ff5500; } /* SpecialString */
+code span.st { color: #bf0303; } /* String */
+code span.va { color: #0057ae; } /* Variable */
+code span.vs { color: #bf0303; } /* VerbatimString */
+code span.wa { color: #bf0303; } /* Warning */
 
 </style>
 <script>
@@ -117,7 +166,6 @@ code {
 }
 img {
   max-width:100%;
-  height: auto;
 }
 .tabbed-pane {
   padding-top: 12px;
@@ -266,6 +314,7 @@ $(document).ready(function () {
   border: none;
   display: inline-block;
   border-radius: 4px;
+  background-color: transparent;
 }
 
 .tabset-dropdown > .nav-tabs.nav-tabs-open > li {
@@ -294,6 +343,12 @@ $(document).ready(function () {
 }
 }
 
+@media print {
+.toc-content {
+  /* see https://github.com/w3c/csswg-drafts/issues/4434 */
+  float: right;
+}
+}
 
 .toc-content {
   padding-left: 30px;
@@ -418,37 +473,44 @@ div.tocify {
 <div id="install-using-the-devtools-package" class="section level3">
 <h3>Install using the <strong>devtools</strong>-package</h3>
 <p>First install the package <a href="https://github.com/hadley/devtools"><strong>devtools</strong></a>, then use the <code>install_github()</code> function to fetch the <a href="https://github.com/molepi/DNAmArray"><strong>DNAmArray</strong></a> package.</p>
-<pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(devtools)
-<span class="kw">install_github</span>(<span class="st">&quot;molepi/DNAmArray&quot;</span>)</code></pre>
+<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb1-1" data-line-number="1"><span class="kw">library</span>(devtools)</a>
+<a class="sourceLine" id="cb1-2" data-line-number="2"><span class="kw">install_github</span>(<span class="st">&quot;molepi/DNAmArray&quot;</span>)</a></code></pre></div>
 </div>
 <div id="install-from-source-using-gitr" class="section level3">
 <h3>Install from source using <code>git/R</code></h3>
 <p>Using <a href="https://git-scm.com/">git</a>, you can <code>git clone</code> our repository and then install the package, changing <code>_x.y.z.</code> to the version you cloned.</p>
-<pre class="sourceCode r"><code class="sourceCode r">git clone git@github.com/molepi/DNAmArray.git
-R CMD build DNAmArray
-R CMD INSTALL DNAmArray_x.y.z.tar.gz</code></pre>
+<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb2-1" data-line-number="1">git clone git<span class="op">@</span>github.com<span class="op">/</span>molepi<span class="op">/</span>DNAmArray.git</a>
+<a class="sourceLine" id="cb2-2" data-line-number="2">R CMD build DNAmArray</a>
+<a class="sourceLine" id="cb2-3" data-line-number="3">R CMD INSTALL DNAmArray_x.y.z.tar.gz</a></code></pre></div>
 <hr />
 </div>
 </div>
 <div id="importing-idats" class="section level1">
 <h1>Importing IDATs</h1>
 <p>The first step of any analysis of microarray data involves importing the raw intensity files into your software program. In this example, we show how to import raw IDAT files from GEO into R, but similar strategies can be employed for all Illumina methylation array files when using R.</p>
-<p>Using <a href="http://bioconductor.org/packages/release/bioc/html/GEOquery.html"><strong>GEOquery</strong></a> <span class="citation">(Davis and Meltzer 2007)</span>, you can download the <a href="https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE113018">example data</a> <span class="citation">(Cobben et al. 2019)</span>. This package contains functions that bridge the gap between between <a href="https://www.bioconductor.org">BioConductor</a> tools and <a href="https://www.ncbi.nlm.nih.gov/geo/">GEO</a>, which is a public repository of microarray data.</p>
+<p>Using <a href="http://bioconductor.org/packages/release/bioc/html/GEOquery.html"><strong>GEOquery</strong></a> <span class="citation">[@Davis2007]</span>, you can download the <a href="https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE113018">example data</a> <span class="citation">[@Cobben2019]</span>. This package contains functions that bridge the gap between between <a href="https://www.bioconductor.org">BioConductor</a> tools and <a href="https://www.ncbi.nlm.nih.gov/geo/">GEO</a>, which is a public repository of microarray data.</p>
 <p>Initially, we use <code>getGEOSuppFiles()</code> to download the supplementary data to the current working directory. These consist of an archive containing the raw IDATs alongside some documentation. We extract these and store them in our chosen directory, ready for decompression.</p>
-<pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(GEOquery)
-<span class="kw">getGEOSuppFiles</span>(<span class="st">&quot;GSE113018&quot;</span>)
-<span class="kw">untar</span>(<span class="dt">tarfile=</span><span class="st">&quot;./GSE113018/GSE113018_RAW.tar&quot;</span>, <span class="dt">exdir=</span><span class="st">&quot;./GSE113018/IDATs&quot;</span>)</code></pre>
+<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb3-1" data-line-number="1"><span class="kw">library</span>(GEOquery)</a></code></pre></div>
+<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb4-1" data-line-number="1"><span class="kw">getGEOSuppFiles</span>(<span class="st">&quot;GSE113018&quot;</span>)</a>
+<a class="sourceLine" id="cb4-2" data-line-number="2"><span class="kw">untar</span>(<span class="dt">tarfile=</span><span class="st">&quot;../GSE113018/GSE113018_RAW.tar&quot;</span>, <span class="dt">exdir=</span><span class="st">&quot;../GSE113018/IDATs&quot;</span>)</a></code></pre></div>
 <p>After creating a list of files, we utilise the <code>gunzip()</code> function to efficiently unpack the data.</p>
-<pre class="sourceCode r"><code class="sourceCode r"><span class="kw">setwd</span>(<span class="st">&quot;./GSE113018/IDATs&quot;</span>)
-<span class="kw">sapply</span>(<span class="kw">list.files</span>(), gunzip)</code></pre>
+<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb5-1" data-line-number="1"><span class="kw">setwd</span>(<span class="st">&quot;../GSE113018/IDATs&quot;</span>)</a>
+<a class="sourceLine" id="cb5-2" data-line-number="2"><span class="kw">sapply</span>(<span class="kw">list.files</span>(), gunzip)</a></code></pre></div>
 <p>We then use <code>getGEO()</code> to import SOFT format microarray data into R as a large GSE-class list. This contains a multitude of information, but we extract the phenotypic and meta-data of interest.</p>
-<pre class="sourceCode r"><code class="sourceCode r">GSE113018 &lt;-<span class="st"> </span><span class="kw">getGEO</span>(<span class="dt">GEO=</span><span class="st">&quot;GSE113018&quot;</span>)
-targets &lt;-<span class="st"> </span><span class="kw">pData</span>(<span class="kw">phenoData</span>(GSE113018[[<span class="dv">1</span>]]))</code></pre>
+<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb6-1" data-line-number="1">GSE113018 &lt;-<span class="st"> </span><span class="kw">getGEO</span>(<span class="dt">GEO =</span> <span class="st">&quot;GSE113018&quot;</span>)</a></code></pre></div>
+<pre><code>## Found 1 file(s)</code></pre>
+<pre><code>## GSE113018_series_matrix.txt.gz</code></pre>
+<pre><code>## Parsed with column specification:
+## cols(
+##   .default = col_double(),
+##   ID_REF = col_character()
+## )</code></pre>
+<pre><code>## See spec(...) for full column specifications.</code></pre>
+<pre><code>## File stored at:</code></pre>
+<pre><code>## /tmp/RtmpTxAC2D/GPL16304.soft</code></pre>
+<div class="sourceCode" id="cb13"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb13-1" data-line-number="1">targets &lt;-<span class="st"> </span><span class="kw">pData</span>(<span class="kw">phenoData</span>(GSE113018[[<span class="dv">1</span>]]))</a>
+<a class="sourceLine" id="cb13-2" data-line-number="2"><span class="kw">rm</span>(GSE113018)</a></code></pre></div>
 <hr />
-<div class="references">
-<p>Cobben, Jan M., Izabela M. Krzyzewska, Andrea Venema, Adri N. Mul, Abeltje Polstra, Alex V. Postma, Robert Smigiel, et al. 2019. “DNA-Methylation Abundantly Associates with Fetal Alcohol Spectrum Disorder and Its Subphenotypes.” <em>Epigenomics</em> (March): epi–2018–0221. doi:<a href="http://dx.doi.org/10.2217/epi-2018-0221">10.2217/epi-2018-0221</a>. <a href="https://www.futuremedicine.com/doi/10.2217/epi-2018-0221" class="uri">https://www.futuremedicine.com/doi/10.2217/epi-2018-0221</a>.</p>
-<p>Davis, S., and P. S. Meltzer. 2007. “GEOquery: a Bridge Between the Gene Expression Omnibus (GEO) and BioConductor.” <em>Bioinformatics</em> 23 (14) (July): 1846–1847. doi:<a href="http://dx.doi.org/10.1093/bioinformatics/btm254">10.1093/bioinformatics/btm254</a>. <a href="https://academic.oup.com/bioinformatics/article-lookup/doi/10.1093/bioinformatics/btm254" class="uri">https://academic.oup.com/bioinformatics/article-lookup/doi/10.1093/bioinformatics/btm254</a>.</p>
-</div>
 </div>
 
 
@@ -501,7 +563,7 @@ $(document).ready(function ()  {
       theme: "bootstrap3",
       context: '.toc-content',
       hashGenerator: function (text) {
-        return text.replace(/[.\\/?&!#<>]/g, '').replace(/\s/g, '_').toLowerCase();
+        return text.replace(/[.\\/?&!#<>]/g, '').replace(/\s/g, '_');
       },
       ignoreSelector: ".toc-ignore",
       scrollTo: 0

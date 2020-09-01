@@ -1,18 +1,17 @@
 <!DOCTYPE html>
 
-<html xmlns="http://www.w3.org/1999/xhtml">
+<html>
 
 <head>
 
 <meta charset="utf-8" />
-<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <meta name="generator" content="pandoc" />
 <meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
 
 
 
 
-<title></title>
+<title>03_Normalization.utf8</title>
 
 <script src="site_libs/jquery-1.11.3/jquery.min.js"></script>
 <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -28,22 +27,72 @@
 
 <style type="text/css">code{white-space: pre;}</style>
 <style type="text/css" data-origin="pandoc">
-table.sourceCode, tr.sourceCode, td.lineNumbers, td.sourceCode {
-  margin: 0; padding: 0; vertical-align: baseline; border: none; }
-table.sourceCode { width: 100%; line-height: 100%; }
-td.lineNumbers { text-align: right; padding-right: 4px; padding-left: 4px; background-color: #dddddd; }
-td.sourceCode { padding-left: 5px; }
-code > span.kw { font-weight: bold; }
-code > span.dt { color: #800000; }
-code > span.dv { color: #0000ff; }
-code > span.bn { color: #0000ff; }
-code > span.fl { color: #800080; }
-code > span.ch { color: #ff00ff; }
-code > span.st { color: #dd0000; }
-code > span.co { color: #808080; font-style: italic; }
-code > span.al { color: #00ff00; font-weight: bold; }
-code > span.fu { color: #000080; }
-code > span.er { color: #ff0000; font-weight: bold; }
+a.sourceLine { display: inline-block; line-height: 1.25; }
+a.sourceLine { pointer-events: none; color: inherit; text-decoration: inherit; }
+a.sourceLine:empty { height: 1.2em; position: absolute; }
+.sourceCode { overflow: visible; }
+code.sourceCode { white-space: pre; position: relative; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+code.sourceCode { white-space: pre-wrap; }
+a.sourceLine { text-indent: -1em; padding-left: 1em; }
+}
+pre.numberSource a.sourceLine
+  { position: relative; }
+pre.numberSource a.sourceLine:empty
+  { position: absolute; }
+pre.numberSource a.sourceLine::before
+  { content: attr(data-line-number);
+    position: absolute; left: -5em; text-align: right; vertical-align: baseline;
+    border: none; pointer-events: all;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    background-color: #ffffff;
+    color: #a0a0a0;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #a0a0a0;  padding-left: 4px; }
+div.sourceCode
+  { color: #1f1c1b; background-color: #ffffff; }
+@media screen {
+a.sourceLine::before { text-decoration: underline; }
+}
+code span. { color: #1f1c1b; } /* Normal */
+code span.al { color: #bf0303; background-color: #f7e6e6; font-weight: bold; } /* Alert */
+code span.an { color: #ca60ca; } /* Annotation */
+code span.at { color: #0057ae; } /* Attribute */
+code span.bn { color: #b08000; } /* BaseN */
+code span.bu { color: #644a9b; font-weight: bold; } /* BuiltIn */
+code span.cf { color: #1f1c1b; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #924c9d; } /* Char */
+code span.cn { color: #aa5500; } /* Constant */
+code span.co { color: #898887; } /* Comment */
+code span.cv { color: #0095ff; } /* CommentVar */
+code span.do { color: #607880; } /* Documentation */
+code span.dt { color: #0057ae; } /* DataType */
+code span.dv { color: #b08000; } /* DecVal */
+code span.er { color: #bf0303; text-decoration: underline; } /* Error */
+code span.ex { color: #0095ff; font-weight: bold; } /* Extension */
+code span.fl { color: #b08000; } /* Float */
+code span.fu { color: #644a9b; } /* Function */
+code span.im { color: #ff5500; } /* Import */
+code span.in { color: #b08000; } /* Information */
+code span.kw { color: #1f1c1b; font-weight: bold; } /* Keyword */
+code span.op { color: #1f1c1b; } /* Operator */
+code span.ot { color: #006e28; } /* Other */
+code span.pp { color: #006e28; } /* Preprocessor */
+code span.re { color: #0057ae; background-color: #e0e9f8; } /* RegionMarker */
+code span.sc { color: #3daee9; } /* SpecialChar */
+code span.ss { color: #ff5500; } /* SpecialString */
+code span.st { color: #bf0303; } /* String */
+code span.va { color: #0057ae; } /* Variable */
+code span.vs { color: #bf0303; } /* VerbatimString */
+code span.wa { color: #bf0303; } /* Warning */
 
 </style>
 <script>
@@ -117,7 +166,6 @@ code {
 }
 img {
   max-width:100%;
-  height: auto;
 }
 .tabbed-pane {
   padding-top: 12px;
@@ -266,6 +314,7 @@ $(document).ready(function () {
   border: none;
   display: inline-block;
   border-radius: 4px;
+  background-color: transparent;
 }
 
 .tabset-dropdown > .nav-tabs.nav-tabs-open > li {
@@ -294,6 +343,12 @@ $(document).ready(function () {
 }
 }
 
+@media print {
+.toc-content {
+  /* see https://github.com/w3c/csswg-drafts/issues/4434 */
+  float: right;
+}
+}
 
 .toc-content {
   padding-left: 30px;
@@ -414,29 +469,29 @@ div.tocify {
 <hr />
 <div id="introduction" class="section level1">
 <h1>Introduction</h1>
-<p>Our workflow uses the Functional Normalization approach <span class="citation">(K. D. Hansen et al. 2014)</span>, which exploits internal control probes designed to detect technical variations without assaying biological differences. It has been shown to perform favourably when compared to other approaches <span class="citation">(Heiss and Brenner 2015, <strong>???</strong>)</span>.</p>
-<p>Using the internal control probes avoids the problems associated with global normalization methods, where biological variation can be mistaken for a technical effect and removed. This is especially important in studies where groups are expected to have differential methylomes, such as multiple tissue studies <span class="citation">(Min et al. 2018)</span>.</p>
+<p>Our workflow uses the Functional Normalization approach (Hansen, 2014), which exploits internal control probes designed to detect technical variations without assaying biological differences. It has been shown to perform favourably when compared to other approaches (Heiss, 2015; Liu, 2016).</p>
+<p>Using the internal control probes avoids the problems associated with global normalization methods, where biological variation can be mistaken for a technical effect and removed. This is especially important in studies where groups are expected to have differential methylomes, such as multiple tissue studies (Min, 2018).</p>
 <hr />
 </div>
 <div id="principal-components-selection" class="section level1">
 <h1>Principal Components Selection</h1>
 <p>The default of selecting only two principal components is often too low for this type of data, so our <code>screeplot()</code> function allows visualisation of control probe eigenvalues to help select the optimal number. Often you will see a drop-off in proportion of variance explained after a certain number of principal components, and this can indicate an efficient cut-off.</p>
-<pre class="sourceCode r"><code class="sourceCode r"><span class="kw">par</span>(<span class="dt">mar=</span><span class="kw">c</span>(<span class="dv">5</span>,<span class="dv">5</span>,<span class="dv">4</span>,<span class="dv">2</span>), <span class="dt">mgp=</span><span class="kw">c</span>(<span class="fl">2.5</span>,<span class="dv">1</span>,<span class="dv">0</span>), <span class="dt">cex.main=</span><span class="fl">1.5</span>, <span class="dt">font.main=</span><span class="st">&quot;1&quot;</span>, <span class="dt">fg=</span><span class="st">&quot;#6b6b6b&quot;</span>, <span class="dt">col.main=</span><span class="st">&quot;#4b4b4b&quot;</span>)
-pc &lt;-<span class="st"> </span><span class="kw">screeplot</span>(RGset)</code></pre>
+<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb1-1" data-line-number="1"><span class="kw">par</span>(<span class="dt">mar=</span><span class="kw">c</span>(<span class="dv">5</span>,<span class="dv">5</span>,<span class="dv">4</span>,<span class="dv">2</span>), <span class="dt">mgp=</span><span class="kw">c</span>(<span class="fl">2.5</span>,<span class="dv">1</span>,<span class="dv">0</span>), <span class="dt">cex.main=</span><span class="fl">1.5</span>, <span class="dt">font.main=</span><span class="st">&quot;1&quot;</span>, <span class="dt">fg=</span><span class="st">&quot;#6b6b6b&quot;</span>, <span class="dt">col.main=</span><span class="st">&quot;#4b4b4b&quot;</span>)</a>
+<a class="sourceLine" id="cb1-2" data-line-number="2">pc &lt;-<span class="st"> </span><span class="kw">screeplot</span>(RGset)</a></code></pre></div>
 <p><img src="03_Normalization_files/figure-html/301screeplot-1.png" width="672" /></p>
 <p>This plot shows that only a small amount of variance is explained after the sixth principal component. For this reason, we choose to carry out normalization using 6 principal components.</p>
 <hr />
 </div>
 <div id="functional-normalization" class="section level1">
 <h1>Functional Normalization</h1>
-<p>By default, functional normalization returns normalized copy number data making the returned <code>GenomicRatioSet</code> twice the size necessary when only beta-values or M-values are required. Therefore, we developed <code>preprocessFunnorm.DNAmArray()</code>, which adds an option not to return these to the <code>preprocessFunnorm()</code> function from <a href="https://bioconductor.org/packages/release/bioc/html/minfi.html"><strong>minfi</strong></a> <span class="citation">(Aryee et al. 2014)</span>.</p>
-<pre class="sourceCode r"><code class="sourceCode r">GRset &lt;-<span class="st"> </span><span class="kw">preprocessFunnorm.DNAmArray</span>(RGset, <span class="dt">nPCs=</span><span class="dv">6</span>, <span class="dt">keepCN=</span><span class="ot">FALSE</span>)</code></pre>
+<p>By default, functional normalization returns normalized copy number data making the returned <code>GenomicRatioSet</code> twice the size necessary when only beta-values or M-values are required. Therefore, we developed <code>preprocessFunnorm.DNAmArray()</code>, which adds an option not to return these to the <code>preprocessFunnorm()</code> function from <a href="https://bioconductor.org/packages/release/bioc/html/minfi.html"><strong>minfi</strong></a> (Feinberg, 2014).</p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb2-1" data-line-number="1">GRset &lt;-<span class="st"> </span><span class="kw">preprocessFunnorm.DNAmArray</span>(RGset, <span class="dt">nPCs=</span><span class="dv">6</span>, <span class="dt">keepCN=</span><span class="ot">FALSE</span>)</a></code></pre></div>
 <pre><code>## [preprocessFunnorm] Modified version not returning CN! 
 ## [preprocessFunnorm] Background and dye bias correction with noob 
 ## [preprocessFunnorm] Mapping to genome
 ## [preprocessFunnorm] Quantile extraction
 ## [preprocessFunnorm] Normalization</code></pre>
-<pre class="sourceCode r"><code class="sourceCode r">GRset</code></pre>
+<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb4-1" data-line-number="1">GRset</a></code></pre></div>
 <pre><code>## class: GenomicRatioSet 
 ## dim: 485512 138 
 ## metadata(0):
@@ -446,7 +501,7 @@ pc &lt;-<span class="st"> </span><span class="kw">screeplot</span>(RGset)</code>
 ## colnames(138): GSM3092700_9985178096_R01C01
 ##   GSM3092701_9985178127_R03C02 ... GSM3093566_9020331152_R05C01
 ##   GSM3093567_9020331152_R06C01
-## colData names(38): title public_date ... yMed predictedSex
+## colData names(13): geo_accession cohort ... yMed predictedSex
 ## Annotation
 ##   array: IlluminaHumanMethylation450k
 ##   annotation: ilmn12.hg19
@@ -457,12 +512,6 @@ pc &lt;-<span class="st"> </span><span class="kw">screeplot</span>(RGset)</code>
 <p>This function returns beta-values calculated with an offset of 100, similar to specifying <code>getBeta()</code> with option <code>type='Illumina'</code>. If required, these can be transformed to M-values using <a href="https://bioconductor.org/packages/release/bioc/html/minfi.html"><strong>minfi</strong></a>’s <code>getM()</code> which applies a logit2-transformation to the beta-values.</p>
 <p>From inspecting the <code>GenomicRatioSet</code> object, you can see that there is one <code>Beta</code> assay, with methylation values for 485,512 CpG sites.</p>
 <hr />
-<div class="references">
-<p>Aryee, Martin J., Andrew E. Jaffe, Hector Corrada-Bravo, Christine Ladd-Acosta, Andrew P. Feinberg, Kasper D. Hansen, and Rafael A. Irizarry. 2014. “Minfi: A Flexible and Comprehensive Bioconductor Package for the Analysis of Infinium DNA Methylation Microarrays.” <em>Bioinformatics</em> 30 (10) (May): 1363–1369. doi:<a href="http://dx.doi.org/10.1093/bioinformatics/btu049">10.1093/bioinformatics/btu049</a>. <a href="http://www.ncbi.nlm.nih.gov/pubmed/24478339 http://www.pubmedcentral.nih.gov/articlerender.fcgi?artid=PMC4016708" class="uri">http://www.ncbi.nlm.nih.gov/pubmed/24478339 http://www.pubmedcentral.nih.gov/articlerender.fcgi?artid=PMC4016708</a>.</p>
-<p>Hansen, Kasper D, Mathieu Lemire, Thomas J Hudson, Elana J Fertig, Celia MT Greenwood, Jean-Philippe Fortin, Aur<span>é</span>lie Labbe, and Brent W Zanke. 2014. “Functional Normalization of 450k Methylation Array Data Improves Replication in Large Cancer Studies.” <em>Genome Biology</em> 15 (11) (November): 503. doi:<a href="http://dx.doi.org/10.1186/s13059-014-0503-2">10.1186/s13059-014-0503-2</a>. <a href="http://www.ncbi.nlm.nih.gov/pubmed/25599564 http://www.pubmedcentral.nih.gov/articlerender.fcgi?artid=PMC4283580 http://genomebiology.biomedcentral.com/articles/10.1186/s13059-014-0503-2" class="uri">http://www.ncbi.nlm.nih.gov/pubmed/25599564 http://www.pubmedcentral.nih.gov/articlerender.fcgi?artid=PMC4283580 http://genomebiology.biomedcentral.com/articles/10.1186/s13059-014-0503-2</a>.</p>
-<p>Heiss, Jonathan A, and Hermann Brenner. 2015. “Between-Array Normalization for 450K Data.” <em>Frontiers in Genetics</em> 6: 92. doi:<a href="http://dx.doi.org/10.3389/fgene.2015.00092">10.3389/fgene.2015.00092</a>. <a href="http://www.ncbi.nlm.nih.gov/pubmed/25806048 http://www.pubmedcentral.nih.gov/articlerender.fcgi?artid=PMC4354407" class="uri">http://www.ncbi.nlm.nih.gov/pubmed/25806048 http://www.pubmedcentral.nih.gov/articlerender.fcgi?artid=PMC4354407</a>.</p>
-<p>Min, J L, G Hemani, G <span>Davey Smith</span>, C Relton, and M Suderman. 2018. “Meffil: Efficient Normalization and Analysis of Very Large DNA Methylation Datasets.” <em>Bioinformatics (Oxford, England)</em> 34 (23) (December): 3983–3989. doi:<a href="http://dx.doi.org/10.1093/bioinformatics/bty476">10.1093/bioinformatics/bty476</a>. <a href="http://www.ncbi.nlm.nih.gov/pubmed/29931280 http://www.pubmedcentral.nih.gov/articlerender.fcgi?artid=PMC6247925" class="uri">http://www.ncbi.nlm.nih.gov/pubmed/29931280 http://www.pubmedcentral.nih.gov/articlerender.fcgi?artid=PMC6247925</a>.</p>
-</div>
 </div>
 
 
@@ -515,7 +564,7 @@ $(document).ready(function ()  {
       theme: "bootstrap3",
       context: '.toc-content',
       hashGenerator: function (text) {
-        return text.replace(/[.\\/?&!#<>]/g, '').replace(/\s/g, '_').toLowerCase();
+        return text.replace(/[.\\/?&!#<>]/g, '').replace(/\s/g, '_');
       },
       ignoreSelector: ".toc-ignore",
       scrollTo: 0
