@@ -85,7 +85,7 @@ RGset
 
 # Beta values #
 
-In order to further visualize the data, we store the beta values using the `getBeta()` function from [**minfi**](https://bioconductor.org/packages/rel ease/bioc/html/minfi.html) (Feinberg, 2014). The `type="Illumina"` option adds 100 to the denominator of the beta-value calculation, preventing NA values being recorded when the methylated and unmethylated signal are both 0.
+In order to further visualize the data, we store the beta values using the `getBeta()` function from [**minfi**](https://bioconductor.org/packages/release/bioc/html/minfi.html) (Feinberg, 2014). The `type="Illumina"` option adds 100 to the denominator of the beta-value calculation, preventing NA values being recorded when the methylated and unmethylated signal are both 0.
 
 ```{r 208betas}
 betas <- getBeta(RGset, type="Illumina")
