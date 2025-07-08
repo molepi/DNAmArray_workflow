@@ -4,36 +4,65 @@ title:  |
   | 
   
 author:  | 
-  | Lucy Sinke, Maarten van Iterson, Davy Cats, BIOS Consortium, Roderick Slieker, and Bas Heijmans
+  | Lucy Sinke, Maarten van Iterson, Davy Cats, BIOS Consortium, and Bas Heijmans
   | <font size=2 color=#6b6b6b>Molecular Epidemiology, Department of Biomedical Data Sciences, Leiden University Medical Center, Leiden, The Netherlands</font>
-  
-email: l.j.sinke@lumc.nl
 ---
 
 ```{r, child="_setup.Rmd"}
 ```
 <div class="DOI">
-  [![DOI](/exports/molepi/users/ljsinke/DNAmArray/DNAmArray_workflow/data/images/zenodo_3355292.svg)](http://doi.org/10.5281/zenodo.3355292)
+  [![DOI](../data/images/zenodo_3355292.svg)](http://doi.org/10.5281/zenodo.3355292)
 </div>
 
 ***
 
 # Introduction #
 
-Here we provide a complete workflow for the preprocessing and analysis of DNA methylation array data. The workflow combines best practices in the field with in-house developed methodology, and is geared towards large-scale studies, including Epigenome-wide Association Studies (EWAS). Its development was informed by our research analysing [BIOS consortium](https://www.bbmri.nl/samples-images-data) data, which contains multiomics measures from 6 Dutch biobanks comprising ~4000 individuals (Dekkers, 2016; Slieker, 2016; Bonder, 2017; Luijk, 2018).
+`DNAmArray` is a comprehensive and modular workflow for the pre-processing, quality control, and analysis of DNA methylation (DNAm) array data, tailored for large-scale epigenome-wide association studies (EWAS). It integrates best practices in the field with in-house developed tools, and has been informed by almost a decade of research using the [Biobank-based Integrative Omics Study (BIOS) consortium](https://www.bbmri.nl/samples-images-data) data. The BIOS dataset combines blood-based DNAm and gene expression from across six Dutch biobanks and around 4,000 individuals, and has been used to extensively advance our understanding of epigenetic regulation and health<sup>1-8</sup>.
 
-The [**DNAmArray**](https://github.com/molepi/DNAmArray)-package contains a series of convenient functions for the quality control, normalization, and analysis of methylation array data. The workflow has been thoroughly tested for the Illumina 450k and EPIC array but is similarly applicable to the newer EPICv2 array.
+The workflow combines a series of convenient [**DNAmArray**](https://github.com/molepi/DNAmArray) functions with [BioConductor](https://www.bioconductor.org) packages, including: 
 
-It is worth noting that this workflow makes extensive use of other [BioConductor](https://www.bioconductor.org) packages. For example, the [**DNAmArray**](https://github.com/molepi/DNAmArray) function `read.metharray.exp.par()` converts IDAT files to an `RGset` by harnessing functions from [**minfi**](https://bioconductor.org/packages/release/bioc/html/minfi.html) (Feinberg, 2014) and combining them with [**BiocParallel**](https://bioconductor.org/packages/release/bioc/html/BiocParallel.html). Usually the required packages are installed automatically, but otherwise please refer to the relevant package's documentation.
+* [**minfi**](https://bioconductor.org/packages/release/bioc/html/minfi.html) for reading in IDAT files and normalization<sup>9</sup>, 
+* [**MethylAid**](https://www.bioconductor.org/packages/release/bioc/html/MethylAid.html) for sample-level quality control<sup>10</sup>, 
+* [**bacon**](https://bioconductor.org/packages/release/bioc/html/bacon.html) for controlling bias and inflation in EWAS test statistics<sup>11</sup>, and 
+* [**omicsPrint**](https://bioconductor.org/packages/release/bioc/html/omicsPrint.html) for identifying and resolving sample mismatches<sup>12</sup>. 
 
-Furthermore, we have also developed packages used by this workflow.  [**MethylAid**](http:/bioconductor.org/packages/MethylAid) (Luijk, 2014) provides a web application to assist in performing interactive sample quality control, and [**bacon**](http:/bioconductor.org/packages/bacon) (Van Iterson, 2017) corrects for bias and inflation in ome-wide association studies, such as EWAS.
+While thoroughly validated on DNAm data profiled using the Illumina Infinium HumanMethylation450 and EPIC arrays, notes within this documentation also outline any changes needed to apply `DNAmArray` to Infinium MethylationEPIC v2.0 BeadChip data. In addition, any dependencies should be installed automatically, but otherwise please refer to the relevant package's documentation (and let us know by opening a GitHub [issue](https://github.com/molepi/DNAmArray/issues)!)
+
+In conclusion, `DNAmArray` provides a scalable, reproducible, and EWAS-ready framework for DNA methylation data analysis, compatible with evolving technologies and suitable for integration with downstream follow-up analyses.
 
 ***
 
 # Example Data #
 
-The [example data](https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE116339) (Curtis et al., 2019) used in this workflow is available from the [NCBI Gene Expression Omnibus](https://www.ncbi.nlm.nih.gov/geo/) (GEO), a public repository of microarray data. It contains genome-wide DNA methylation data from whole blood obtained using the Illumina EPIC microarray. The participants consist of 679 children exposed to polybrominated biphenyl (PBB), an endocrine-disrupting compound, which was accidently added to the food supply in Michigan in the 1970’s.
+The [example data](https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE116339)<sup>13</sup> used in this workflow is available from the [NCBI Gene Expression Omnibus](https://www.ncbi.nlm.nih.gov/geo/) (GEO), a public repository of microarray data. It contains genome-wide DNA methylation data from whole blood obtained using the Illumina Infinium MethylationEPIC BeadChip microarray. The participants consist of 679 children exposed to polybrominated biphenyl (PBB), an endocrine-disrupting compound, which was accidentally added to the food supply in Michigan in the 1970’s.
 
 ***
 
+# References #
 
+<sup>1</sup>: Dekkers, K.F., van Iterson, M., Slieker, R.C., <i>et al</i>. [Blood lipids influence DNA methylation in circulating cells](https://doi.org/10.1186/s13059-016-1000-6). <i>Genome Biol.</i> <b>17</b>, 138 (2016).
+
+<sup>2</sup>: Slieker, R.C., van Iterson, M., Luijk, R. <i>et al</i>. [Age-related accrual of methylomic variability is linked to fundamental ageing mechanisms](https://doi.org/10.1186/s13059-016-1053-6). <i> Genome Biol.</i> <b>17</b>, 191 (2016).
+
+<sup>3</sup>: Bonder, M., Luijk, R., Zhernakova, D. <i>et al</i>. [Disease variants alter transcription factor levels and methylation of their binding sites](https://doi.org/10.1038/ng.3721). <i>Nat Genet.</i> <b>49</b>, 131-138 (2017).
+
+<sup>4</sup>: Luijk, R., Wu, H., Ward-Caviness, C.K. <i>et al</i>. [Autosomal genetic variation is associated with DNA methylation in regions variably escaping X-chromosome inactivation](https://doi.org/10.1038/s41467-018-05714-3). <i> Nat Commun.</i> <b>9</b>, 3738 (2018).
+
+<sup>5</sup>: van Rooij, J., Mandaviya, P.R., Claringbould, A., <i>et al</i>. [Evaluation of commonly used analysis strategies for epigenome- and transcriptome-wide association studies through replication of large-scale population studies](https://doi.org/10.1186/s13059-019-1878-x). <i>Genome Biol.</i> <b>20</b>, 1:235 (2019).
+
+<sup>6</sup>: Hop, P.J., Luijk, R., Daxinger, L., <i>et al</i>. [Genome-wide identification of genes regulating DNA methylation using genetic anchors for causal inference](https://doi.org/10.1186/s13059-020-02114-z). <i>Genome Biol.</i> <b>21</b>, 220 (2020).
+
+<sup>7</sup>: Dekkers, K.F., Slieker, R.C., Ioan-Facsinay, A. <i>et al</i>. [Lipid-induced transcriptomic changes in blood link to lipid metabolism and allergic response](https://doi.org/10.1038/s41467-022-35663-x). <i>Nat Commun.</i> <b>14</b>, 544 (2023).
+
+<sup>8</sup>: Lui, Y., Sinke, L., Jonkman, T.H., <i>et al</i>. [The inactive X chromosome accumulates widespread epigenetic variability with age](https://doi.org/10.1186/s13148-023-01549-y). <i>Clin Epigenetics.</i> <b>15</b>, 135 (2023).
+
+<sup>9</sup>: Aryee, M.J., Jaffe, A.E., Corrada-Bravo, H. <i>et al</i>. [Minfi: a flexible and comprehensive Bioconductor package for the analysis of Infinium DNA methylation microarrays](https://doi.org/10.1093/bioinformatics/btu049). <i>Bioinformatics.</i> <b>30</b>, 10 (2014).
+
+<sup>10</sup>: van Iterson, M., Tobi, E.W., Slieker, R.C., <i>et al</i>. [MethylAid: visual and interactive quality control of large Illumina 450k datasets](https://doi.org/10.1093/bioinformatics/btu566). <i>Bioinformatics</i> <b>30</b>, 23 (2014).
+
+<sup>11</sup>: van Iterson, M., van Zwet, E.W., BIOS consortium, <i>et al</i>. [Controlling bias and inflation in epigenome- and transcriptome-wide association studies using the empirical null distribution](https://doi.org/10.1186/s13059-016-1131-9). <i>Genome Biol.</i> <b>18</b>, 19 (2017).
+
+<sup>12</sup>: van Iterson, M., Cats, D., Hop, P. <i>et al</i>. [omicsPrint: detection of data linkage errors in multiple omics studies](https://doi.org/10.1093/bioinformatics/bty062). <i>Bioinformatics.</i> <b>34</b>, 12 (2018).
+
+<sup>13</sup>: Curtis, S.W., Cobb, D.O., Kilaru, V. <i>et al</i>. [Exposure to polybrominated biphenyl (PBB) associates with genome-wide DNA methylation differences in peripheral blood](https://doi.org/10.1080/15592294.2019.1565590). <i>Epigenetics.</i> <b>14</b>, 1:52-66 (2019).
