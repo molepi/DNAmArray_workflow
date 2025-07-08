@@ -35,34 +35,34 @@ In conclusion, `DNAmArray` provides a scalable, reproducible, and EWAS-ready fra
 
 # Example Data #
 
-The [example data](https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE116339)<sup>13</sup> used in this workflow is available from the [NCBI Gene Expression Omnibus](https://www.ncbi.nlm.nih.gov/geo/) (GEO), a public repository of microarray data. It contains genome-wide DNA methylation data from whole blood obtained using the Illumina Infinium MethylationEPIC BeadChip microarray. The participants consist of 679 children exposed to polybrominated biphenyl (PBB), an endocrine-disrupting compound, which was accidentally added to the food supply in Michigan in the 1970’s.
+The [example data](https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE116339)<sup>13</sup> used in this workflow is available from the [NCBI Gene Expression Omnibus](https://www.ncbi.nlm.nih.gov/geo/) (GEO), a public repository of microarray data. It contains genome-wide DNA methylation data from whole blood obtained using the Illumina Infinium MethylationEPIC BeadChip microarray. The participants consist of 679 children exposed to polybrominated biphenyl (PBB), an endocrine-disrupting compound, which was accidentally added to the food supply in Michigan in the 1970s.
 
 ***
 
 # References #
 
-<sup>1</sup>: Dekkers, K.F., van Iterson, M., Slieker, R.C., <i>et al</i>. [Blood lipids influence DNA methylation in circulating cells](https://doi.org/10.1186/s13059-016-1000-6). <i>Genome Biol.</i> <b>17</b>, 138 (2016).
+<sup>1</sup> Dekkers, K.F., van Iterson, M., Slieker, R.C., <i>et al</i>. [Blood lipids influence DNA methylation in circulating cells](https://doi.org/10.1186/s13059-016-1000-6). <i>Genome Biol.</i> <b>17</b>, 138 (2016).
 
-<sup>2</sup>: Slieker, R.C., van Iterson, M., Luijk, R. <i>et al</i>. [Age-related accrual of methylomic variability is linked to fundamental ageing mechanisms](https://doi.org/10.1186/s13059-016-1053-6). <i> Genome Biol.</i> <b>17</b>, 191 (2016).
+<sup>2</sup> Slieker, R.C., van Iterson, M., Luijk, R. <i>et al</i>. [Age-related accrual of methylomic variability is linked to fundamental ageing mechanisms](https://doi.org/10.1186/s13059-016-1053-6). <i> Genome Biol.</i> <b>17</b>, 191 (2016).
 
-<sup>3</sup>: Bonder, M., Luijk, R., Zhernakova, D. <i>et al</i>. [Disease variants alter transcription factor levels and methylation of their binding sites](https://doi.org/10.1038/ng.3721). <i>Nat Genet.</i> <b>49</b>, 131-138 (2017).
+<sup>3</sup> Bonder, M., Luijk, R., Zhernakova, D. <i>et al</i>. [Disease variants alter transcription factor levels and methylation of their binding sites](https://doi.org/10.1038/ng.3721). <i>Nat Genet.</i> <b>49</b>, 131-138 (2017).
 
-<sup>4</sup>: Luijk, R., Wu, H., Ward-Caviness, C.K. <i>et al</i>. [Autosomal genetic variation is associated with DNA methylation in regions variably escaping X-chromosome inactivation](https://doi.org/10.1038/s41467-018-05714-3). <i> Nat Commun.</i> <b>9</b>, 3738 (2018).
+<sup>4</sup> Luijk, R., Wu, H., Ward-Caviness, C.K. <i>et al</i>. [Autosomal genetic variation is associated with DNA methylation in regions variably escaping X-chromosome inactivation](https://doi.org/10.1038/s41467-018-05714-3). <i> Nat Commun.</i> <b>9</b>, 3738 (2018).
 
-<sup>5</sup>: van Rooij, J., Mandaviya, P.R., Claringbould, A., <i>et al</i>. [Evaluation of commonly used analysis strategies for epigenome- and transcriptome-wide association studies through replication of large-scale population studies](https://doi.org/10.1186/s13059-019-1878-x). <i>Genome Biol.</i> <b>20</b>, 1:235 (2019).
+<sup>5</sup> van Rooij, J., Mandaviya, P.R., Claringbould, A., <i>et al</i>. [Evaluation of commonly used analysis strategies for epigenome- and transcriptome-wide association studies through replication of large-scale population studies](https://doi.org/10.1186/s13059-019-1878-x). <i>Genome Biol.</i> <b>20</b>, 1:235 (2019).
 
-<sup>6</sup>: Hop, P.J., Luijk, R., Daxinger, L., <i>et al</i>. [Genome-wide identification of genes regulating DNA methylation using genetic anchors for causal inference](https://doi.org/10.1186/s13059-020-02114-z). <i>Genome Biol.</i> <b>21</b>, 220 (2020).
+<sup>6</sup> Hop, P.J., Luijk, R., Daxinger, L., <i>et al</i>. [Genome-wide identification of genes regulating DNA methylation using genetic anchors for causal inference](https://doi.org/10.1186/s13059-020-02114-z). <i>Genome Biol.</i> <b>21</b>, 220 (2020).
 
-<sup>7</sup>: Dekkers, K.F., Slieker, R.C., Ioan-Facsinay, A. <i>et al</i>. [Lipid-induced transcriptomic changes in blood link to lipid metabolism and allergic response](https://doi.org/10.1038/s41467-022-35663-x). <i>Nat Commun.</i> <b>14</b>, 544 (2023).
+<sup>7</sup> Dekkers, K.F., Slieker, R.C., Ioan-Facsinay, A. <i>et al</i>. [Lipid-induced transcriptomic changes in blood link to lipid metabolism and allergic response](https://doi.org/10.1038/s41467-022-35663-x). <i>Nat Commun.</i> <b>14</b>, 544 (2023).
 
-<sup>8</sup>: Lui, Y., Sinke, L., Jonkman, T.H., <i>et al</i>. [The inactive X chromosome accumulates widespread epigenetic variability with age](https://doi.org/10.1186/s13148-023-01549-y). <i>Clin Epigenetics.</i> <b>15</b>, 135 (2023).
+<sup>8</sup> Lui, Y., Sinke, L., Jonkman, T.H., <i>et al</i>. [The inactive X chromosome accumulates widespread epigenetic variability with age](https://doi.org/10.1186/s13148-023-01549-y). <i>Clin Epigenetics.</i> <b>15</b>, 135 (2023).
 
-<sup>9</sup>: Aryee, M.J., Jaffe, A.E., Corrada-Bravo, H. <i>et al</i>. [Minfi: a flexible and comprehensive Bioconductor package for the analysis of Infinium DNA methylation microarrays](https://doi.org/10.1093/bioinformatics/btu049). <i>Bioinformatics.</i> <b>30</b>, 10 (2014).
+<sup>9</sup> Aryee, M.J., Jaffe, A.E., Corrada-Bravo, H. <i>et al</i>. [Minfi: a flexible and comprehensive Bioconductor package for the analysis of Infinium DNA methylation microarrays](https://doi.org/10.1093/bioinformatics/btu049). <i>Bioinformatics.</i> <b>30</b>, 10 (2014).
 
-<sup>10</sup>: van Iterson, M., Tobi, E.W., Slieker, R.C., <i>et al</i>. [MethylAid: visual and interactive quality control of large Illumina 450k datasets](https://doi.org/10.1093/bioinformatics/btu566). <i>Bioinformatics</i> <b>30</b>, 23 (2014).
+<sup>10</sup> van Iterson, M., Tobi, E.W., Slieker, R.C., <i>et al</i>. [MethylAid: visual and interactive quality control of large Illumina 450k datasets](https://doi.org/10.1093/bioinformatics/btu566). <i>Bioinformatics</i> <b>30</b>, 23 (2014).
 
-<sup>11</sup>: van Iterson, M., van Zwet, E.W., BIOS consortium, <i>et al</i>. [Controlling bias and inflation in epigenome- and transcriptome-wide association studies using the empirical null distribution](https://doi.org/10.1186/s13059-016-1131-9). <i>Genome Biol.</i> <b>18</b>, 19 (2017).
+<sup>11</sup> van Iterson, M., van Zwet, E.W., BIOS consortium, <i>et al</i>. [Controlling bias and inflation in epigenome- and transcriptome-wide association studies using the empirical null distribution](https://doi.org/10.1186/s13059-016-1131-9). <i>Genome Biol.</i> <b>18</b>, 19 (2017).
 
-<sup>12</sup>: van Iterson, M., Cats, D., Hop, P. <i>et al</i>. [omicsPrint: detection of data linkage errors in multiple omics studies](https://doi.org/10.1093/bioinformatics/bty062). <i>Bioinformatics.</i> <b>34</b>, 12 (2018).
+<sup>12</sup> van Iterson, M., Cats, D., Hop, P. <i>et al</i>. [omicsPrint: detection of data linkage errors in multiple omics studies](https://doi.org/10.1093/bioinformatics/bty062). <i>Bioinformatics.</i> <b>34</b>, 12 (2018).
 
-<sup>13</sup>: Curtis, S.W., Cobb, D.O., Kilaru, V. <i>et al</i>. [Exposure to polybrominated biphenyl (PBB) associates with genome-wide DNA methylation differences in peripheral blood](https://doi.org/10.1080/15592294.2019.1565590). <i>Epigenetics.</i> <b>14</b>, 1:52-66 (2019).
+<sup>13</sup> Curtis, S.W., Cobb, D.O., Kilaru, V. <i>et al</i>. [Exposure to polybrominated biphenyl (PBB) associates with genome-wide DNA methylation differences in peripheral blood](https://doi.org/10.1080/15592294.2019.1565590). <i>Epigenetics.</i> <b>14</b>, 1:52-66 (2019).

@@ -5,36 +5,47 @@
 
 # Using MethylAid #
 
-We now have the data we need to commence quality control, but some reformatting is needed. The [**MethylAid**](http://bioconductor.org/packages/MethylAid)
-(Luijk, 2014) package that we developed requires the targets data frame to store IDAT file root names in a `Basename` column. Sometimes, data comes with a sample sheet to faciliate this, but in this case the information needs to be extracted from the supplementary file column instead. 
+## Summarizing IDATs ##
+
+The [**MethylAid**](http://bioconductor.org/packages/MethylAid)<sup>1</sup> package, which will be used for quality control in this workflow, requires the targets data frame to contain a `Basename` variable that points to IDAT file names. Sometimes, data comes with a sample sheet to facilitate this, but in this example the information is extracted from the supplementary file column instead. 
 
 ```{r 202basename}
 targets$Basename <- substring(targets$supplementary_file,68,106)
 head(targets$Basename)
 ```
 
-The following sample quality control steps require the [**MethylAid**](http://bioconductor.org/packages/MethylAid) and [**BiocParallel**](https://bioconductor.org/packages/release/bioc/html/BiocParallel.html) packages. Using parallel processing and/or batches will reduce both memory load and run-times when extracting intensities from IDAT files. Please see the [MethylAid vignette](http://bioconductor.org/packages/release/bioc/vignettes/MethylAid/inst/doc/MethylAid.pdf) for more details.
+The following sample quality control steps will also require the [**BiocParallel**](https://bioconductor.org/packages/release/bioc/html/BiocParallel.html) package. Using parallel processing and/or batches will reduce both memory load and run-times when extracting intensities from IDAT files. Please see the [MethylAid vignette](http://bioconductor.org/packages/release/bioc/vignettes/MethylAid/inst/doc/MethylAid.pdf) for more details.
+
+Required packages are loaded:
 
 ```{r 203sdata, warning=F, message=F}
 library(MethylAid)
 library(BiocParallel)
 library(IlluminaHumanMethylationEPICmanifest)
-BPPARAM <- MulticoreParam(6)
-sData <- MethylAid::summarize(targets, batchSize=50, base="../GSE116339/IDATs")
-save(sData, file="./data/sData_example_small.Rdata")
-```
-
-After this `summarize()`, the Shiny web application can be launched to `visualize()` the data and identify outliers. In this instance, there are no apparent outliers, but if found they can be removed from the dataset. To easier visualise if your data conforms to typical patterns, you can utilise the [**MethylAidData**](http://bioconductor.org/packages/release/data/experiment/html/MethylAidData.html) package alongside the `background` option. Darker blue colours indicate regions where many observations are found in the example data, and can serve as a guide for expected peak areas. 
-
-```{r 204methylaid, eval=FALSE}
-library(MethylAidData)
 library(ggplot2)
 library(ggrepel)
 library(reshape2)
-data(exampleDataLarge)
 ```
 
-List of QC probes
+The available number of cores is set usnig `MulticoreParam`, and IDATs are summarized using the `summarize` function.
+
+```{r 203sdata, warning=F, message=F}
+BPPARAM <- MulticoreParam(6)
+sData <- MethylAid::summarize(targets, batchSize=50, base="../GSE116339/IDATs")
+```
+
+```{r}
+load("./data/sData_example_small.Rdata")
+```
+
+
+***
+
+## Plotting outliers ##
+
+Plots to visualize sample quality are included in the `DNAmArray` package and their use is outlined below.
+
+First, a list of QC probes needs to be initialized.
 
 ```{r 205qcprobe}
 qcProbes = list(
@@ -50,14 +61,6 @@ qcProbes = list(
   NC = "^NEGATIVE$"
 )
 ```
-
-Read in function to make MethylAid plots
-
-```{r 206qcscripts}
-source("./data/MethylAid_plots.R")
-```
-
-## Plots
 
 Enable detection P function to adjust p < P VALUE so 0.0001 or so as well as 0.01. 
 
@@ -408,3 +411,6 @@ Since there are no twins or relatives in our data, all observations are shown as
 
 ***
 
+# References #
+
+<sup>1</sup> van Iterson, M., Tobi, E.W., Slieker, R.C., <i>et al</i>. [MethylAid: visual and interactive quality control of large Illumina 450k datasets](https://doi.org/10.1093/bioinformatics/btu566). <i>Bioinformatics</i> <b>30</b>, 23 (2014).

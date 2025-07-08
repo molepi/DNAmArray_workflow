@@ -1,24 +1,26 @@
 
 ***
 
-Propose and email Bas list of authors and acknowledgements. Remove SLieker. 
-
 # Installation #
   
-The [**DNAmArray**](https://github.com/molepi/DNAmArray)-package can be installed in several ways, and has been successfully for >= R-4.4.1 on various Linux-builds and for >= R-4.4.1 on Windows.
+The [**DNAmArray**](https://github.com/molepi/DNAmArray) package can be installed in several ways, and has been tested for >= R-4.4.3 on various Linux-builds and Windows.
 
-### Install using the **devtools**-package ###
+***
 
-First install the package [**devtools**](https://github.com/hadley/devtools), then use the `install_github()` function to fetch the [**DNAmArray**](https://github.com/molepi/DNAmArray) package.
+### Install using **devtools** ###
+
+First, install [**devtools**](https://github.com/hadley/devtools), and then use the `install_github()` function to fetch the [**DNAmArray**](https://github.com/molepi/DNAmArray) package.
 
 ```{r 101devtools, eval=FALSE}
 library(devtools)
 install_github("molepi/DNAmArray")
 ```
 
+***
+
 ### Install from source using `git/R` ###
 
-Using [git](https://git-scm.com/), you can `git clone` our repository and then install the package, changing `_x.y.z.` to the version you cloned.
+Using [git](https://git-scm.com/), you can `git clone` our repository and then install the package, changing `_x.y.z.` to the relevant version.
 
 ```{r 102git, eval=FALSE}
 git clone git@github.com/molepi/DNAmArray.git
@@ -30,34 +32,30 @@ R CMD INSTALL DNAmArray_x.y.z.tar.gz
 
 # Importing IDATs #
 
-The first step of any analysis of microarray data involves importing the raw intensity files into your software program. In this example, we show how to import raw IDAT files from GEO into R, but similar strategies can be employed for all Illumina methylation array files when using R. 
+The first step in analysing microarray data is importing raw intensity files into your software program. In this example, we show how to import raw IDAT files from GEO into R, but similar strategies can be employed for all Illumina DNAm array files when using R. 
 
-Using [**GEOquery**](http://bioconductor.org/packages/release/bioc/html/GEOquery.html) [@Davis2007], you can download the [example data](https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE113018) [@Cobben2019]. This package contains functions that bridge the gap between between [BioConductor](https://www.bioconductor.org) tools and [GEO](https://www.ncbi.nlm.nih.gov/geo/), which is a public repository of microarray data.
+[**GEOquery**](https://bioconductor.org/packages/release/bioc/html/GEOquery.html)<sup>1</sup>, a package containing functions that bridge the gap between [BioConductor](https://www.bioconductor.org) tools and [GEO](https://www.ncbi.nlm.nih.gov/geo/), can be used to download the [example data](https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE113018)<sup>2</sup>. 
 
-Initially, we use `getGEOSuppFiles()` to download the supplementary data to the current working directory. These consist of an archive containing the raw IDATs alongside some documentation. We extract these and store them in our chosen directory, ready for decompression.
-
-Here we choose to use example data from: Curtis SW, Cobb DO, Kilaru V, Terrell ML et al. Exposure to polybrominated biphenyl (PBB) associates with genome-wide DNA methylation differences in peripheral blood. Epigenetics 2019 Jan;14(1):52-66. PMID: 30676242. 
-
-Polybrominated biphenyl (PBB) is an endocrine-disrupting compound which was accidently added to the food supply in Michigan in the 1970’s. Highly exposed individuals and their children have numerous health problems, though the underlying mechanism behind these health problems remains unknown. Other endocrine-disrupting compounds have been linked to epigenetic differences, but no epigenetic studies have been done for PBB. In this study, DNA from the blood of individuals with PBB exposure from the Michigan PBB Registry was interrogated with the MethylationEPIC BeadChip (N = 659). Associations between each of the ~850,000 CpG sites and current, serum PBB levels were tested with a linear regression that controlled for age, sex, and cell type proportions. We show that exposure to PBB is associated with differences in epigenetic marks that suggest that it is acting similarly to estrogen and is associated with dysregulated immune system pathways.	DNA methylation was assessed in peripheral blood from people exposed to polybrominated biphenyl (PBB). Peripheral blood DNA was extracted, bisulfite converted and genome-wide DNA methylation was interrogated using the HumanMethylationEPIC BeadChip (Illumina).
-	
-	
 ```{r 103geoquery, message=FALSE}
+library(DNAmArray)
 library(GEOquery)
 ```
+
+Using the `getGEOSuppFiles()` function, supplementary data is downloaded to the current working directory. These consist of the raw IDAT files alongside relevant documentation. 
 
 ```{r 104getgeofiles, eval=FALSE}
 getGEOSuppFiles("GSE116339")
 untar(tarfile="../GSE116339/GSE116339_RAW.tar", exdir="../GSE116339/IDATs")
 ```
 
-After creating a list of files, we utilise the `gunzip()` function to efficiently unpack the data.
+The data can then be efficiently unpacked using the `gunzip()` function.
 
 ```{r 104idats, eval=FALSE}
 setwd("../GSE116339/IDATs")
 sapply(list.files(), gunzip)
 ```
 
-We then use `getGEO()` to import SOFT format microarray data into R as a large GSE-class list. This contains a multitude of information, but we extract the phenotypic and meta-data of interest. 
+`getGEO()` can then be used to import SOFT format microarray data into R as a large GSE-class list, and extract the metadata of interest. 
 
 ```{r 105getgeo}
 GSE116339 <- getGEO(filename='./data/GSE116339_series_matrix.txt.gz', getGPL = FALSE)
@@ -69,9 +67,9 @@ rm(GSE116339)
 
 # Preparing `targets` #
 
-Before progressing further, it can help to take some time to get familiar with the `targets` data frame, removing duplicate information and converting variables to relevant classes. 
+Before progressing further, take some time to get familiar with the `targets` data frame, removing duplicate information and converting variables to relevant classes. 
 
-``` {r 106structure}
+``` {r 106structure, warning=F}
 library(tidyverse)
 
 targets <- targets %>% dplyr::select(sample_ID = `sample_id:ch1`,
@@ -109,13 +107,10 @@ This data frame consists of 679 observations and phenotypic information for 51 v
 
 ***
 
-# Subset #
+# References #
 
-For this workflow example we use only 64 of the 679 samples
+<sup>1</sup> Davis, S. and Meltzer, P.S. [GEOquery: a bridge between the Gene Expression Omnibus (GEO) and BioConductor](https://doi.org/10.1093/bioinformatics/btm254). <i>Bioinformatics.</i> <b>23</b>, 14 (2007).
 
-```{r 107subset}
-targets <- targets[1:64,]
-```
+<sup>2</sup> Curtis, S.W., Cobb, D.O., Kilaru, V. <i>et al</i>. [Exposure to polybrominated biphenyl (PBB) associates with genome-wide DNA methylation differences in peripheral blood](https://doi.org/10.1080/15592294.2019.1565590). <i>Epigenetics.</i> <b>14</b>, 1:52-66 (2019).
 
-***
 
