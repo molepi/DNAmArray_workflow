@@ -11,7 +11,7 @@ author:  |
 ```{r, child="_setup.Rmd"}
 ```
 <div class="DOI">
-  [![DOI](../data/images/zenodo_3355292.svg)](http://doi.org/10.5281/zenodo.3355292)
+  [![DOI](data/images/zenodo.3355292.svg)](http://doi.org/10.5281/zenodo.3355292)
 </div>
 
 ***
