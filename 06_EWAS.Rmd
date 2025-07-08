@@ -1,0 +1,144 @@
+
+***
+
+# Covariates #
+
+Each column in the `RGset` colData should be considered as a potential covariate in our models. Both technical and biological factors should be investigated as these may introduce batch effects or be clinically relevant. In order to assess this, we convert each column to a categorical variable whose correlations can be visualised. 
+
+Homogenous columns can be excluded, as any variables that do not change by definition cannot explain variation in the data. In this instance, the `description` for all samples is peripheral whole blood, so there is no need to investigate a tissue effect. However, in some instances samples may be taken from different tissues, and in this type of study analysis must be done separately for each to correctly separate clinically relevant methylation changes from tissue-specific methylation differences. 
+
+Look at previous heatmap
+
+```{r}
+col_fun <- colorRamp2(c(-1, 0, 1), c("#458797", "white", "#ce67a6"))
+
+Heatmap(
+  t(cxy),                              
+  col = col_fun,  
+  border = 'grey5',
+  cluster_columns = FALSE,            
+  show_row_dend = TRUE,             
+  show_column_dend = FALSE,      
+  name = "Value",                 
+  row_names_gp = gpar(fontsize = 8), 
+  column_names_gp = gpar(fontsize = 8), 
+  cell_fun = function(j, i, x, y, width, height, fill) {
+    grid.rect(x, y, width, height, 
+              gp = gpar(col = "white", lwd = 1, fill = NA))
+    grid.text(ifelse(abs(t(cxy)[i,j]) > 0.4,
+                     sprintf("%.2f", round(t(cxy)[i, j], 2)),
+                     ""), 
+              x, y, gp = gpar(fontsize = 6, col = "black"))
+  }
+)
+```
+
+By examining the correlations in the data, we can build our model in a more informed manner. The first PC is highly correlated with sex and, as is usual in EWAS, we intend to include this as a confounder. 
+Cell counts appear of substantial importance and will also be adjusted for. Model specification should be informed by a combination of prior knowledge and inspection of patterns in the data. 
+
+Adjust for plate and sex.
+
+***
+
+# SVA #
+
+Notes from meeting: use SVA
+
+Yunfeng: Null should correct for all except var of interest
+
+```{r}
+library(sva)
+
+mod = model.matrix(~log_total_pbb, data=targets)
+mod0 = model.matrix(~1,data=targets)
+
+betas_imputed <- impute.knn(betas)
+betas_imputed <- betas_imputed$data
+
+n.sv = num.sv(betas_imputed,mod,method="leek")
+n.sv
+#svobj = sva(betas_imputed,mod,mod0,n.sv=n.sv)
+```
+
+***
+
+# Limma #
+
+[**Limma**](https://bioconductor.org/packages/release/bioc/html/limma.html) is a package with excellent documentation that can be useful for smaller samples, due to the optional empirical Bayes step. Running [**limma**](https://bioconductor.org/packages/release/bioc/html/limma.html) is similar to running [**cate**](https://cran.r-project.org/web/packages/cate/index.html), except that the beta matrix does not need transposing and test statistics and p-values need to be manually derived.
+Formula
+
+Maybe mention gee
+
+```{r}
+formula <- ~log_total_pbb + age + plate
+```
+
+Design
+
+```{r}
+design <- model.matrix(formula, 
+                       data=targets)
+head(design)
+```
+
+Discuss random effects
+Fit models
+
+```{r}
+fit <- lmFit(betas, design)
+```
+
+Save
+
+```{r}
+coef <- fit$coefficients[, 2]
+se <- fit$stdev.unscaled[, 2] * fit$sigma
+tstat <- coef / se
+pval <- 2 * pt(-abs(tstat), fit$df.residual)
+n <- ncol(design) + fit$df.residual
+```
+
+As shown, results from [**limma**](https://bioconductor.org/packages/release/bioc/html/limma.html) are comparable with those from [**cate**](https://cran.r-project.org/web/packages/cate/index.html). Here, the same number of DMPs are identified and top hits are identical, albeit with slightly differing p-values. Despite this, for the reasons specified above, we still advise using [**cate**](https://cran.r-project.org/web/packages/cate/index.html) unless your sample size is small enough to require the `eBayes` option. 
+
+Linear mixed models and linear models can both work well for performing EWAS and, when looking solely at top hits, are unlikely to differ greatly from results obtained using [**cate**](https://cran.r-project.org/web/packages/cate/index.html) or [**limma**](https://bioconductor.org/packages/release/bioc/html/limma.html).
+
+***
+
+# `bacon` #
+
+We developed a package called [**bacon**](http://bioconductor.org/packages/bacon) [@VanIterson2017] to estimate and correct for bias and inflation of test statistics in EWAS. This maximizes power while properly controlling the false positive rate, by estimating the empirical null distribution using Bayesian statistics. The utility of the tool was illustrated through the application of meta-analysis by performing epigenome- and transcriptome-wide association studies (EWASs/TWASs) on age and smoking which highlighted an overlap in differential methylation and expression of associated genes. It can be used to remove inflation and
+bias often observed in EWAS.
+
+```{r 709bacon}
+library(bacon)
+bc <- bacon::bacon(teststatistics = tstat,
+                   effectsizes = coef,
+                   standarderrors = se,
+                   verbose = TRUE)
+
+bc
+bacon::inflation(bc)
+bacon::bias(bc)
+pval <- bacon::pval(bc)
+tstat <- bacon::tstat(bc)
+
+print(plot(bc, type="hist"))
+print(plot(bc, type="qq"))
+bc <- bacon::bacon(teststatistics = tstat,
+                   effectsizes = coef,
+                   standarderrors = se,
+                   verbose = TRUE)
+
+
+bc
+bacon::inflation(bc)
+bacon::bias(bc)
+```
+
+Plots can be used to compare adjustment using [**cate**](https://cran.r-project.org/web/packages/cate/index.html) with that using [**bacon**](http://bioconductor.org/packages/bacon), and bacon-adjusted [**limma**](https://bioconductor.org/packages/release/bioc/html/limma.html) and [**cate**](https://cran.r-project.org/web/packages/cate/index.html) values can be compared side by side. 
+
+
+After looking at these plots, strong bias is observed, and running [**bacon**](http://bioconductor.org/packages/bacon) should be seriously considered. 
+
+***
+

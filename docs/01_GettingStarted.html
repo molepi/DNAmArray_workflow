@@ -11,44 +11,71 @@
 
 
 
-<title>01_GettingStarted.utf8</title>
+<title>01_GettingStarted.knit</title>
 
-<script src="site_libs/jquery-1.11.3/jquery.min.js"></script>
+<script src="site_libs/header-attrs-2.29/header-attrs.js"></script>
+<script src="site_libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <link href="site_libs/bootstrap-3.3.5/css/lumen.min.css" rel="stylesheet" />
 <script src="site_libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
 <script src="site_libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
 <script src="site_libs/bootstrap-3.3.5/shim/respond.min.js"></script>
-<script src="site_libs/jqueryui-1.11.4/jquery-ui.min.js"></script>
+<style>h1 {font-size: 34px;}
+       h1.title {font-size: 38px;}
+       h2 {font-size: 30px;}
+       h3 {font-size: 24px;}
+       h4 {font-size: 18px;}
+       h5 {font-size: 16px;}
+       h6 {font-size: 12px;}
+       code {color: inherit; background-color: rgba(0, 0, 0, 0.04);}
+       pre:not([class]) { background-color: white }</style>
+<script src="site_libs/jqueryui-1.13.2/jquery-ui.min.js"></script>
 <link href="site_libs/tocify-1.9.1/jquery.tocify.css" rel="stylesheet" />
 <script src="site_libs/tocify-1.9.1/jquery.tocify.js"></script>
 <script src="site_libs/navigation-1.1/tabsets.js"></script>
 
+<style type="text/css">
+  code{white-space: pre-wrap;}
+  span.smallcaps{font-variant: small-caps;}
+  span.underline{text-decoration: underline;}
+  div.column{display: inline-block; vertical-align: top; width: 50%;}
+  div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+  ul.task-list{list-style: none;}
+    </style>
 
-<style type="text/css">code{white-space: pre;}</style>
+
+
+<style type="text/css">
+  code {
+    white-space: pre;
+  }
+  .sourceCode {
+    overflow: visible;
+  }
+</style>
 <style type="text/css" data-origin="pandoc">
-a.sourceLine { display: inline-block; line-height: 1.25; }
-a.sourceLine { pointer-events: none; color: inherit; text-decoration: inherit; }
-a.sourceLine:empty { height: 1.2em; position: absolute; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
 .sourceCode { overflow: visible; }
-code.sourceCode { white-space: pre; position: relative; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
 div.sourceCode { margin: 1em 0; }
 pre.sourceCode { margin: 0; }
 @media screen {
 div.sourceCode { overflow: auto; }
 }
 @media print {
-code.sourceCode { white-space: pre-wrap; }
-a.sourceLine { text-indent: -1em; padding-left: 1em; }
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
 }
-pre.numberSource a.sourceLine
-  { position: relative; }
-pre.numberSource a.sourceLine:empty
-  { position: absolute; }
-pre.numberSource a.sourceLine::before
-  { content: attr(data-line-number);
-    position: absolute; left: -5em; text-align: right; vertical-align: baseline;
-    border: none; pointer-events: all;
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
     -webkit-touch-callout: none; -webkit-user-select: none;
     -khtml-user-select: none; -moz-user-select: none;
     -ms-user-select: none; user-select: none;
@@ -60,9 +87,9 @@ pre.numberSource { margin-left: 3em; border-left: 1px solid #a0a0a0;  padding-le
 div.sourceCode
   { color: #1f1c1b; background-color: #ffffff; }
 @media screen {
-a.sourceLine::before { text-decoration: underline; }
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
 }
-code span. { color: #1f1c1b; } /* Normal */
+code span { color: #1f1c1b; } /* Normal */
 code span.al { color: #bf0303; background-color: #f7e6e6; font-weight: bold; } /* Alert */
 code span.an { color: #ca60ca; } /* Annotation */
 code span.at { color: #0057ae; } /* Attribute */
@@ -102,13 +129,20 @@ code span.wa { color: #bf0303; } /* Warning */
   for (var i = 0; i < sheets.length; i++) {
     if (sheets[i].ownerNode.dataset["origin"] !== "pandoc") continue;
     try { var rules = sheets[i].cssRules; } catch (e) { continue; }
-    for (var j = 0; j < rules.length; j++) {
+    var j = 0;
+    while (j < rules.length) {
       var rule = rules[j];
       // check if there is a div.sourceCode rule
-      if (rule.type !== rule.STYLE_RULE || rule.selectorText !== "div.sourceCode") continue;
+      if (rule.type !== rule.STYLE_RULE || rule.selectorText !== "div.sourceCode") {
+        j++;
+        continue;
+      }
       var style = rule.style.cssText;
       // check if color or background-color is set
-      if (rule.style.color === '' && rule.style.backgroundColor === '') continue;
+      if (rule.style.color === '' && rule.style.backgroundColor === '') {
+        j++;
+        continue;
+      }
       // replace div.sourceCode by a pre.sourceCode rule
       sheets[i].deleteRule(j);
       sheets[i].insertRule('pre.sourceCode{' + style + '}', j);
@@ -116,39 +150,9 @@ code span.wa { color: #bf0303; } /* Warning */
   }
 })();
 </script>
-<style type="text/css">
-  pre:not([class]) {
-    background-color: white;
-  }
-</style>
 
 
-<style type="text/css">
-h1 {
-  font-size: 34px;
-}
-h1.title {
-  font-size: 38px;
-}
-h2 {
-  font-size: 30px;
-}
-h3 {
-  font-size: 24px;
-}
-h4 {
-  font-size: 18px;
-}
-h5 {
-  font-size: 16px;
-}
-h6 {
-  font-size: 12px;
-}
-.table th:not([align]) {
-  text-align: left;
-}
-</style>
+
 
 <link rel="stylesheet" href="style.css" type="text/css" />
 
@@ -159,10 +163,6 @@ h6 {
   max-width: 940px;
   margin-left: auto;
   margin-right: auto;
-}
-code {
-  color: inherit;
-  background-color: rgba(0, 0, 0, 0.04);
 }
 img {
   max-width:100%;
@@ -179,40 +179,16 @@ button.code-folding-btn:focus {
 summary {
   display: list-item;
 }
+details > summary > p:only-child {
+  display: inline;
+}
+pre code {
+  padding: 0;
+}
 </style>
 
 
 <style type="text/css">
-/* padding for bootstrap navbar */
-body {
-  padding-top: 54px;
-  padding-bottom: 40px;
-}
-/* offset scroll position for anchor links (for fixed navbar)  */
-.section h1 {
-  padding-top: 59px;
-  margin-top: -59px;
-}
-.section h2 {
-  padding-top: 59px;
-  margin-top: -59px;
-}
-.section h3 {
-  padding-top: 59px;
-  margin-top: -59px;
-}
-.section h4 {
-  padding-top: 59px;
-  margin-top: -59px;
-}
-.section h5 {
-  padding-top: 59px;
-  margin-top: -59px;
-}
-.section h6 {
-  padding-top: 59px;
-  margin-top: -59px;
-}
 .dropdown-submenu {
   position: relative;
 }
@@ -240,7 +216,7 @@ body {
   margin-right: -10px;
 }
 .dropdown-submenu:hover>a:after {
-  border-left-color: #ffffff;
+  border-left-color: #adb5bd;
 }
 .dropdown-submenu.pull-left {
   float: none;
@@ -252,7 +228,7 @@ body {
 }
 </style>
 
-<script>
+<script type="text/javascript">
 // manage active state of menu based on current page
 $(document).ready(function () {
   // active menu anchor
@@ -262,11 +238,28 @@ $(document).ready(function () {
     href = "index.html";
   var menuAnchor = $('a[href="' + href + '"]');
 
-  // mark it active
-  menuAnchor.parent().addClass('active');
+  // mark the anchor link active (and if it's in a dropdown, also mark that active)
+  var dropdown = menuAnchor.closest('li.dropdown');
+  if (window.bootstrap) { // Bootstrap 4+
+    menuAnchor.addClass('active');
+    dropdown.find('> .dropdown-toggle').addClass('active');
+  } else { // Bootstrap 3
+    menuAnchor.parent().addClass('active');
+    dropdown.addClass('active');
+  }
 
-  // if it's got a parent navbar menu mark it active as well
-  menuAnchor.closest('li.dropdown').addClass('active');
+  // Navbar adjustments
+  var navHeight = $(".navbar").first().height() + 15;
+  var style = document.createElement('style');
+  var pt = "padding-top: " + navHeight + "px; ";
+  var mt = "margin-top: -" + navHeight + "px; ";
+  var css = "";
+  // offset scroll position for anchor links (for fixed navbar)
+  for (var i = 1; i <= 6; i++) {
+    css += ".section h" + i + "{ " + pt + mt + "}\n";
+  }
+  style.innerHTML = "body {" + pt + "padding-bottom: 40px; }\n" + css;
+  document.head.appendChild(style);
 });
 </script>
 
@@ -278,13 +271,12 @@ $(document).ready(function () {
   max-height: 500px;
   min-height: 44px;
   overflow-y: auto;
-  background: white;
   border: 1px solid #ddd;
   border-radius: 4px;
 }
 
-.tabset-dropdown > .nav-tabs > li.active:before {
-  content: "";
+.tabset-dropdown > .nav-tabs > li.active:before, .tabset-dropdown > .nav-tabs.nav-tabs-open:before {
+  content: "\e259";
   font-family: 'Glyphicons Halflings';
   display: inline-block;
   padding: 10px;
@@ -292,16 +284,9 @@ $(document).ready(function () {
 }
 
 .tabset-dropdown > .nav-tabs.nav-tabs-open > li.active:before {
-  content: "&#xe258;";
-  border: none;
-}
-
-.tabset-dropdown > .nav-tabs.nav-tabs-open:before {
-  content: "";
+  content: "\e258";
   font-family: 'Glyphicons Halflings';
-  display: inline-block;
-  padding: 10px;
-  border-right: 1px solid #ddd;
+  border: none;
 }
 
 .tabset-dropdown > .nav-tabs > li.active {
@@ -404,7 +389,7 @@ div.tocify {
 
 
 <!-- setup 3col/9col grid for toc_float and main content  -->
-<div class="row-fluid">
+<div class="row">
 <div class="col-xs-12 col-sm-4 col-md-3">
 <div id="TOC" class="tocify">
 </div>
@@ -418,7 +403,7 @@ div.tocify {
 <div class="navbar navbar-default  navbar-fixed-top" role="navigation">
   <div class="container">
     <div class="navbar-header">
-      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-bs-toggle="collapse" data-target="#navbar" data-bs-target="#navbar">
         <span class="icon-bar"></span>
         <span class="icon-bar"></span>
         <span class="icon-bar"></span>
@@ -458,7 +443,7 @@ div.tocify {
   </div><!--/.container -->
 </div><!--/.navbar -->
 
-<div class="fluid-row" id="header">
+<div id="header">
 
 
 
@@ -469,47 +454,155 @@ div.tocify {
 <hr />
 <div id="installation" class="section level1">
 <h1>Installation</h1>
-<p>The <a href="https://github.com/molepi/DNAmArray"><strong>DNAmArray</strong></a>-package can be installed in several ways, and has been successfully for &gt;= R-3.2.0 on various Linux-builds and for &gt;= R-3.5.3 on Windows.</p>
+<p>The <a
+href="https://github.com/molepi/DNAmArray"><strong>DNAmArray</strong></a>-package
+can be installed in several ways, and has been successfully for &gt;=
+R-4.4.1 on various Linux-builds and for &gt;= R-4.4.1 on Windows.</p>
 <div id="install-using-the-devtools-package" class="section level3">
 <h3>Install using the <strong>devtools</strong>-package</h3>
-<p>First install the package <a href="https://github.com/hadley/devtools"><strong>devtools</strong></a>, then use the <code>install_github()</code> function to fetch the <a href="https://github.com/molepi/DNAmArray"><strong>DNAmArray</strong></a> package.</p>
-<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb1-1" data-line-number="1"><span class="kw">library</span>(devtools)</a>
-<a class="sourceLine" id="cb1-2" data-line-number="2"><span class="kw">install_github</span>(<span class="st">&quot;molepi/DNAmArray&quot;</span>)</a></code></pre></div>
+<p>First install the package <a
+href="https://github.com/hadley/devtools"><strong>devtools</strong></a>,
+then use the <code>install_github()</code> function to fetch the <a
+href="https://github.com/molepi/DNAmArray"><strong>DNAmArray</strong></a>
+package.</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" tabindex="-1"></a><span class="fu">library</span>(devtools)</span>
+<span id="cb1-2"><a href="#cb1-2" tabindex="-1"></a><span class="fu">install_github</span>(<span class="st">&quot;molepi/DNAmArray&quot;</span>)</span></code></pre></div>
 </div>
 <div id="install-from-source-using-gitr" class="section level3">
 <h3>Install from source using <code>git/R</code></h3>
-<p>Using <a href="https://git-scm.com/">git</a>, you can <code>git clone</code> our repository and then install the package, changing <code>_x.y.z.</code> to the version you cloned.</p>
-<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb2-1" data-line-number="1">git clone git<span class="op">@</span>github.com<span class="op">/</span>molepi<span class="op">/</span>DNAmArray.git</a>
-<a class="sourceLine" id="cb2-2" data-line-number="2">R CMD build DNAmArray</a>
-<a class="sourceLine" id="cb2-3" data-line-number="3">R CMD INSTALL DNAmArray_x.y.z.tar.gz</a></code></pre></div>
+<p>Using <a href="https://git-scm.com/">git</a>, you can
+<code>git clone</code> our repository and then install the package,
+changing <code>_x.y.z.</code> to the version you cloned.</p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" tabindex="-1"></a>git clone git<span class="sc">@</span>github.com<span class="sc">/</span>molepi<span class="sc">/</span>DNAmArray.git</span>
+<span id="cb2-2"><a href="#cb2-2" tabindex="-1"></a>R CMD build DNAmArray</span>
+<span id="cb2-3"><a href="#cb2-3" tabindex="-1"></a>R CMD INSTALL DNAmArray_x.y.z.tar.gz</span></code></pre></div>
 <hr />
 </div>
 </div>
 <div id="importing-idats" class="section level1">
 <h1>Importing IDATs</h1>
-<p>The first step of any analysis of microarray data involves importing the raw intensity files into your software program. In this example, we show how to import raw IDAT files from GEO into R, but similar strategies can be employed for all Illumina methylation array files when using R.</p>
-<p>Using <a href="http://bioconductor.org/packages/release/bioc/html/GEOquery.html"><strong>GEOquery</strong></a> <span class="citation">[@Davis2007]</span>, you can download the <a href="https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE113018">example data</a> <span class="citation">[@Cobben2019]</span>. This package contains functions that bridge the gap between between <a href="https://www.bioconductor.org">BioConductor</a> tools and <a href="https://www.ncbi.nlm.nih.gov/geo/">GEO</a>, which is a public repository of microarray data.</p>
-<p>Initially, we use <code>getGEOSuppFiles()</code> to download the supplementary data to the current working directory. These consist of an archive containing the raw IDATs alongside some documentation. We extract these and store them in our chosen directory, ready for decompression.</p>
-<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb3-1" data-line-number="1"><span class="kw">library</span>(GEOquery)</a></code></pre></div>
-<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb4-1" data-line-number="1"><span class="kw">getGEOSuppFiles</span>(<span class="st">&quot;GSE113018&quot;</span>)</a>
-<a class="sourceLine" id="cb4-2" data-line-number="2"><span class="kw">untar</span>(<span class="dt">tarfile=</span><span class="st">&quot;../GSE113018/GSE113018_RAW.tar&quot;</span>, <span class="dt">exdir=</span><span class="st">&quot;../GSE113018/IDATs&quot;</span>)</a></code></pre></div>
-<p>After creating a list of files, we utilise the <code>gunzip()</code> function to efficiently unpack the data.</p>
-<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb5-1" data-line-number="1"><span class="kw">setwd</span>(<span class="st">&quot;../GSE113018/IDATs&quot;</span>)</a>
-<a class="sourceLine" id="cb5-2" data-line-number="2"><span class="kw">sapply</span>(<span class="kw">list.files</span>(), gunzip)</a></code></pre></div>
-<p>We then use <code>getGEO()</code> to import SOFT format microarray data into R as a large GSE-class list. This contains a multitude of information, but we extract the phenotypic and meta-data of interest.</p>
-<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb6-1" data-line-number="1">GSE113018 &lt;-<span class="st"> </span><span class="kw">getGEO</span>(<span class="dt">GEO =</span> <span class="st">&quot;GSE113018&quot;</span>)</a></code></pre></div>
-<pre><code>## Found 1 file(s)</code></pre>
-<pre><code>## GSE113018_series_matrix.txt.gz</code></pre>
-<pre><code>## Parsed with column specification:
-## cols(
-##   .default = col_double(),
-##   ID_REF = col_character()
-## )</code></pre>
-<pre><code>## See spec(...) for full column specifications.</code></pre>
-<pre><code>## File stored at:</code></pre>
-<pre><code>## /tmp/RtmpTxAC2D/GPL16304.soft</code></pre>
-<div class="sourceCode" id="cb13"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb13-1" data-line-number="1">targets &lt;-<span class="st"> </span><span class="kw">pData</span>(<span class="kw">phenoData</span>(GSE113018[[<span class="dv">1</span>]]))</a>
-<a class="sourceLine" id="cb13-2" data-line-number="2"><span class="kw">rm</span>(GSE113018)</a></code></pre></div>
+<p>The first step of any analysis of microarray data involves importing
+the raw intensity files into your software program. In this example, we
+show how to import raw IDAT files from GEO into R, but similar
+strategies can be employed for all Illumina methylation array files when
+using R.</p>
+<p>Using <a
+href="http://bioconductor.org/packages/release/bioc/html/GEOquery.html"><strong>GEOquery</strong></a>
+<span class="citation">[@Davis2007]</span>, you can download the <a
+href="https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE113018">example
+data</a> <span class="citation">[@Cobben2019]</span>. This package
+contains functions that bridge the gap between between <a
+href="https://www.bioconductor.org">BioConductor</a> tools and <a
+href="https://www.ncbi.nlm.nih.gov/geo/">GEO</a>, which is a public
+repository of microarray data.</p>
+<p>Initially, we use <code>getGEOSuppFiles()</code> to download the
+supplementary data to the current working directory. These consist of an
+archive containing the raw IDATs alongside some documentation. We
+extract these and store them in our chosen directory, ready for
+decompression.</p>
+<p>Here we choose to use example data from: Curtis SW, Cobb DO, Kilaru
+V, Terrell ML et al. Exposure to polybrominated biphenyl (PBB)
+associates with genome-wide DNA methylation differences in peripheral
+blood. Epigenetics 2019 Jan;14(1):52-66. PMID: 30676242.</p>
+<p>Polybrominated biphenyl (PBB) is an endocrine-disrupting compound
+which was accidently added to the food supply in Michigan in the 1970’s.
+Highly exposed individuals and their children have numerous health
+problems, though the underlying mechanism behind these health problems
+remains unknown. Other endocrine-disrupting compounds have been linked
+to epigenetic differences, but no epigenetic studies have been done for
+PBB. In this study, DNA from the blood of individuals with PBB exposure
+from the Michigan PBB Registry was interrogated with the MethylationEPIC
+BeadChip (N = 659). Associations between each of the ~850,000 CpG sites
+and current, serum PBB levels were tested with a linear regression that
+controlled for age, sex, and cell type proportions. We show that
+exposure to PBB is associated with differences in epigenetic marks that
+suggest that it is acting similarly to estrogen and is associated with
+dysregulated immune system pathways. DNA methylation was assessed in
+peripheral blood from people exposed to polybrominated biphenyl (PBB).
+Peripheral blood DNA was extracted, bisulfite converted and genome-wide
+DNA methylation was interrogated using the HumanMethylationEPIC BeadChip
+(Illumina).</p>
+<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" tabindex="-1"></a><span class="fu">library</span>(GEOquery)</span></code></pre></div>
+<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" tabindex="-1"></a><span class="fu">getGEOSuppFiles</span>(<span class="st">&quot;GSE116339&quot;</span>)</span>
+<span id="cb4-2"><a href="#cb4-2" tabindex="-1"></a><span class="fu">untar</span>(<span class="at">tarfile=</span><span class="st">&quot;../GSE116339/GSE116339_RAW.tar&quot;</span>, <span class="at">exdir=</span><span class="st">&quot;../GSE116339/IDATs&quot;</span>)</span></code></pre></div>
+<p>After creating a list of files, we utilise the <code>gunzip()</code>
+function to efficiently unpack the data.</p>
+<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" tabindex="-1"></a><span class="fu">setwd</span>(<span class="st">&quot;../GSE116339/IDATs&quot;</span>)</span>
+<span id="cb5-2"><a href="#cb5-2" tabindex="-1"></a><span class="fu">sapply</span>(<span class="fu">list.files</span>(), gunzip)</span></code></pre></div>
+<p>We then use <code>getGEO()</code> to import SOFT format microarray
+data into R as a large GSE-class list. This contains a multitude of
+information, but we extract the phenotypic and meta-data of
+interest.</p>
+<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" tabindex="-1"></a>GSE116339 <span class="ot">&lt;-</span> <span class="fu">getGEO</span>(<span class="at">filename=</span><span class="st">&#39;./data/GSE116339_series_matrix.txt.gz&#39;</span>, <span class="at">getGPL =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb6-2"><a href="#cb6-2" tabindex="-1"></a>targets <span class="ot">&lt;-</span> <span class="fu">phenoData</span>(GSE116339)<span class="sc">@</span>data</span>
+<span id="cb6-3"><a href="#cb6-3" tabindex="-1"></a><span class="fu">rm</span>(GSE116339)</span></code></pre></div>
+<hr />
+</div>
+<div id="preparing-targets" class="section level1">
+<h1>Preparing <code>targets</code></h1>
+<p>Before progressing further, it can help to take some time to get
+familiar with the <code>targets</code> data frame, removing duplicate
+information and converting variables to relevant classes.</p>
+<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span>
+<span id="cb7-2"><a href="#cb7-2" tabindex="-1"></a></span>
+<span id="cb7-3"><a href="#cb7-3" tabindex="-1"></a>targets <span class="ot">&lt;-</span> targets <span class="sc">%&gt;%</span> dplyr<span class="sc">::</span><span class="fu">select</span>(<span class="at">sample_ID =</span> <span class="st">`</span><span class="at">sample_id:ch1</span><span class="st">`</span>,</span>
+<span id="cb7-4"><a href="#cb7-4" tabindex="-1"></a>                              geo_accession,</span>
+<span id="cb7-5"><a href="#cb7-5" tabindex="-1"></a>                              <span class="at">sex =</span> <span class="st">`</span><span class="at">gender:ch1</span><span class="st">`</span>,</span>
+<span id="cb7-6"><a href="#cb7-6" tabindex="-1"></a>                              <span class="at">age =</span> <span class="st">`</span><span class="at">age:ch1</span><span class="st">`</span>,</span>
+<span id="cb7-7"><a href="#cb7-7" tabindex="-1"></a>                              <span class="at">log_total_pbb =</span> <span class="st">`</span><span class="at">ln(totalpbb):ch1</span><span class="st">`</span>,</span>
+<span id="cb7-8"><a href="#cb7-8" tabindex="-1"></a>                              <span class="at">pbb_153 =</span> <span class="st">`</span><span class="at">pbb-153:ch1</span><span class="st">`</span>,</span>
+<span id="cb7-9"><a href="#cb7-9" tabindex="-1"></a>                              <span class="at">pbb_77 =</span> <span class="st">`</span><span class="at">pbb-77:ch1</span><span class="st">`</span>,</span>
+<span id="cb7-10"><a href="#cb7-10" tabindex="-1"></a>                              <span class="at">pbb_101 =</span> <span class="st">`</span><span class="at">pbb-101:ch1</span><span class="st">`</span>,</span>
+<span id="cb7-11"><a href="#cb7-11" tabindex="-1"></a>                              <span class="at">pbb_180 =</span> <span class="st">`</span><span class="at">pbb-180:ch1</span><span class="st">`</span>,</span>
+<span id="cb7-12"><a href="#cb7-12" tabindex="-1"></a>                              supplementary_file) <span class="sc">%&gt;%</span> </span>
+<span id="cb7-13"><a href="#cb7-13" tabindex="-1"></a>  <span class="fu">separate</span>(supplementary_file, <span class="at">sep=</span><span class="st">&quot;_&quot;</span>, <span class="at">remove=</span>F, <span class="at">into=</span><span class="fu">c</span>(<span class="cn">NA</span>, <span class="st">&quot;plate&quot;</span>, <span class="st">&quot;row&quot;</span>, <span class="cn">NA</span>)) <span class="sc">%&gt;%</span> </span>
+<span id="cb7-14"><a href="#cb7-14" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">age =</span> <span class="fu">as.numeric</span>(age),</span>
+<span id="cb7-15"><a href="#cb7-15" tabindex="-1"></a>         <span class="at">log_total_pbb =</span> <span class="fu">as.numeric</span>(log_total_pbb),</span>
+<span id="cb7-16"><a href="#cb7-16" tabindex="-1"></a>         <span class="at">pbb_153 =</span> <span class="fu">as.numeric</span>(pbb_153),</span>
+<span id="cb7-17"><a href="#cb7-17" tabindex="-1"></a>         <span class="at">pbb_77 =</span> <span class="fu">as.numeric</span>(pbb_77),</span>
+<span id="cb7-18"><a href="#cb7-18" tabindex="-1"></a>         <span class="at">pbb_101 =</span> <span class="fu">as.numeric</span>(pbb_101),</span>
+<span id="cb7-19"><a href="#cb7-19" tabindex="-1"></a>         <span class="at">pbb_180 =</span> <span class="fu">as.numeric</span>(pbb_180),</span>
+<span id="cb7-20"><a href="#cb7-20" tabindex="-1"></a>         <span class="at">row =</span> <span class="fu">as.numeric</span>(<span class="fu">substr</span>(row, <span class="dv">3</span>, <span class="dv">3</span>)))</span></code></pre></div>
+<pre><code>## Warning: There was 1 warning in `mutate()`.
+## ℹ In argument: `log_total_pbb = as.numeric(log_total_pbb)`.
+## Caused by warning:
+## ! NAs introduced by coercion</code></pre>
+<div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" tabindex="-1"></a><span class="fu">str</span>(targets)</span></code></pre></div>
+<pre><code>## &#39;data.frame&#39;:    679 obs. of  12 variables:
+##  $ sample_ID         : chr  &quot;3141584&quot; &quot;10120245&quot; &quot;99990005&quot; &quot;12130802&quot; ...
+##  $ geo_accession     : chr  &quot;GSM3228562&quot; &quot;GSM3228563&quot; &quot;GSM3228564&quot; &quot;GSM3228565&quot; ...
+##  $ sex               : chr  &quot;Female&quot; &quot;Female&quot; &quot;Male&quot; &quot;Male&quot; ...
+##  $ age               : num  75 31.5 46.7 46.4 53.6 ...
+##  $ log_total_pbb     : num  -2.542 -2.754 -0.371 0.115 -1.548 ...
+##  $ pbb_153           : num  0.069 0.054 0.68 1.107 0.203 ...
+##  $ pbb_77            : num  0 0 0 0 0 0 0 0 0 0 ...
+##  $ pbb_101           : num  0 0 0 0.008 0 0 0 0 0 0 ...
+##  $ pbb_180           : num  0 0 0 0 0 0 0 0 0 0 ...
+##  $ supplementary_file: chr  &quot;ftp://ftp.ncbi.nlm.nih.gov/geo/samples/GSM3228nnn/GSM3228562/suppl/GSM3228562_200550980002_R01C01_Grn.idat.gz&quot; &quot;ftp://ftp.ncbi.nlm.nih.gov/geo/samples/GSM3228nnn/GSM3228563/suppl/GSM3228563_200550980002_R02C01_Grn.idat.gz&quot; &quot;ftp://ftp.ncbi.nlm.nih.gov/geo/samples/GSM3228nnn/GSM3228564/suppl/GSM3228564_200550980002_R03C01_Grn.idat.gz&quot; &quot;ftp://ftp.ncbi.nlm.nih.gov/geo/samples/GSM3228nnn/GSM3228565/suppl/GSM3228565_200550980002_R04C01_Grn.idat.gz&quot; ...
+##  $ plate             : chr  &quot;200550980002&quot; &quot;200550980002&quot; &quot;200550980002&quot; &quot;200550980002&quot; ...
+##  $ row               : num  1 2 3 4 5 6 7 8 1 3 ...</code></pre>
+<p>This data frame consists of 679 observations and phenotypic
+information for 51 variables is stored after cleaning. This
+includes:</p>
+<ul>
+<li><code>sample_ID</code> - the ID of the sample</li>
+<li><code>geo_accession</code> - the GEO accession number of the
+sample</li>
+<li><code>sex</code> - male or female</li>
+<li><code>age</code> - age of the individual</li>
+<li><code>log_total_pbb</code>, <code>pbb_153</code>,
+<code>pbb_77</code>, <code>pb_101</code>, <code>pbb_180</code> -
+exposure levels</li>
+<li><code>supplementary_file</code> - location of IDAT file</li>
+<li><code>plate</code> - EPIC array number</li>
+<li><code>row</code> - row number on the array (continuous)</li>
+</ul>
+<hr />
+</div>
+<div id="subset" class="section level1">
+<h1>Subset</h1>
+<p>For this workflow example we use only 64 of the 679 samples</p>
+<div class="sourceCode" id="cb11"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" tabindex="-1"></a>targets <span class="ot">&lt;-</span> targets[<span class="dv">1</span><span class="sc">:</span><span class="dv">64</span>,]</span></code></pre></div>
 <hr />
 </div>
 
@@ -524,7 +617,7 @@ div.tocify {
 
 // add bootstrap table styles to pandoc tables
 function bootstrapStylePandocTables() {
-  $('tr.header').parent('thead').parent('table').addClass('table table-condensed');
+  $('tr.odd').parent('tbody').parent('table').addClass('table table-condensed');
 }
 $(document).ready(function () {
   bootstrapStylePandocTables();
@@ -542,7 +635,7 @@ $(document).ready(function () {
 
 $(document).ready(function () {
   $('.tabset-dropdown > .nav-tabs > li').click(function () {
-    $(this).parent().toggleClass('nav-tabs-open')
+    $(this).parent().toggleClass('nav-tabs-open');
   });
 });
 </script>
@@ -551,6 +644,9 @@ $(document).ready(function () {
 
 <script>
 $(document).ready(function ()  {
+
+    // temporarily add toc-ignore selector to headers for the consistency with Pandoc
+    $('.unlisted.unnumbered').addClass('toc-ignore')
 
     // move toc-ignore selectors from section div to header
     $('div.section.toc-ignore')

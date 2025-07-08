@@ -1,9 +1,11 @@
 
 ***
 
+Propose and email Bas list of authors and acknowledgements. Remove SLieker. 
+
 # Installation #
   
-The [**DNAmArray**](https://github.com/molepi/DNAmArray)-package can be installed in several ways, and has been successfully for >= R-3.2.0 on various Linux-builds and for >= R-3.5.3 on Windows.
+The [**DNAmArray**](https://github.com/molepi/DNAmArray)-package can be installed in several ways, and has been successfully for >= R-4.4.1 on various Linux-builds and for >= R-4.4.1 on Windows.
 
 ### Install using the **devtools**-package ###
 
@@ -34,30 +36,86 @@ Using [**GEOquery**](http://bioconductor.org/packages/release/bioc/html/GEOquery
 
 Initially, we use `getGEOSuppFiles()` to download the supplementary data to the current working directory. These consist of an archive containing the raw IDATs alongside some documentation. We extract these and store them in our chosen directory, ready for decompression.
 
+Here we choose to use example data from: Curtis SW, Cobb DO, Kilaru V, Terrell ML et al. Exposure to polybrominated biphenyl (PBB) associates with genome-wide DNA methylation differences in peripheral blood. Epigenetics 2019 Jan;14(1):52-66. PMID: 30676242. 
+
+Polybrominated biphenyl (PBB) is an endocrine-disrupting compound which was accidently added to the food supply in Michigan in the 1970’s. Highly exposed individuals and their children have numerous health problems, though the underlying mechanism behind these health problems remains unknown. Other endocrine-disrupting compounds have been linked to epigenetic differences, but no epigenetic studies have been done for PBB. In this study, DNA from the blood of individuals with PBB exposure from the Michigan PBB Registry was interrogated with the MethylationEPIC BeadChip (N = 659). Associations between each of the ~850,000 CpG sites and current, serum PBB levels were tested with a linear regression that controlled for age, sex, and cell type proportions. We show that exposure to PBB is associated with differences in epigenetic marks that suggest that it is acting similarly to estrogen and is associated with dysregulated immune system pathways.	DNA methylation was assessed in peripheral blood from people exposed to polybrominated biphenyl (PBB). Peripheral blood DNA was extracted, bisulfite converted and genome-wide DNA methylation was interrogated using the HumanMethylationEPIC BeadChip (Illumina).
+	
+	
 ```{r 103geoquery, message=FALSE}
 library(GEOquery)
 ```
 
 ```{r 104getgeofiles, eval=FALSE}
-getGEOSuppFiles("GSE113018")
-untar(tarfile="../GSE113018/GSE113018_RAW.tar", exdir="../GSE113018/IDATs")
+getGEOSuppFiles("GSE116339")
+untar(tarfile="../GSE116339/GSE116339_RAW.tar", exdir="../GSE116339/IDATs")
 ```
 
 After creating a list of files, we utilise the `gunzip()` function to efficiently unpack the data.
 
 ```{r 104idats, eval=FALSE}
-setwd("../GSE113018/IDATs")
+setwd("../GSE116339/IDATs")
 sapply(list.files(), gunzip)
 ```
 
 We then use `getGEO()` to import SOFT format microarray data into R as a large GSE-class list. This contains a multitude of information, but we extract the phenotypic and meta-data of interest. 
 
-```{r 105getgeo, warning=FALSE}
-GSE113018 <- getGEO(GEO = "GSE113018")
-targets <- pData(phenoData(GSE113018[[1]]))
-rm(GSE113018)
+```{r 105getgeo}
+GSE116339 <- getGEO(filename='./data/GSE116339_series_matrix.txt.gz', getGPL = FALSE)
+targets <- phenoData(GSE116339)@data
+rm(GSE116339)
 ```
 
 ***
 
+# Preparing `targets` #
+
+Before progressing further, it can help to take some time to get familiar with the `targets` data frame, removing duplicate information and converting variables to relevant classes. 
+
+``` {r 106structure}
+library(tidyverse)
+
+targets <- targets %>% dplyr::select(sample_ID = `sample_id:ch1`,
+                              geo_accession,
+                              sex = `gender:ch1`,
+                              age = `age:ch1`,
+                              log_total_pbb = `ln(totalpbb):ch1`,
+                              pbb_153 = `pbb-153:ch1`,
+                              pbb_77 = `pbb-77:ch1`,
+                              pbb_101 = `pbb-101:ch1`,
+                              pbb_180 = `pbb-180:ch1`,
+                              supplementary_file) %>% 
+  separate(supplementary_file, sep="_", remove=F, into=c(NA, "plate", "row", NA)) %>% 
+  mutate(age = as.numeric(age),
+         log_total_pbb = as.numeric(log_total_pbb),
+         pbb_153 = as.numeric(pbb_153),
+         pbb_77 = as.numeric(pbb_77),
+         pbb_101 = as.numeric(pbb_101),
+         pbb_180 = as.numeric(pbb_180),
+         row = as.numeric(substr(row, 3, 3)))
+
+str(targets)
+```
+
+This data frame consists of 679 observations and phenotypic information for 51 variables is stored after cleaning. This includes:
+
+* `sample_ID` - the ID of the sample
+* `geo_accession` - the GEO accession number of the sample
+* `sex` - male or female
+* `age` - age of the individual
+* `log_total_pbb`, `pbb_153`, `pbb_77`, `pb_101`, `pbb_180` - exposure levels
+* `supplementary_file` - location of IDAT file
+* `plate` - EPIC array number
+* `row` - row number on the array (continuous)
+
+***
+
+# Subset #
+
+For this workflow example we use only 64 of the 679 samples
+
+```{r 107subset}
+targets <- targets[1:64,]
+```
+
+***
 
