@@ -3,7 +3,7 @@
 
 # Installation #
   
-The [**DNAmArray**](https://github.com/molepi/DNAmArray)-package can be installed in several ways, and has been successfully for >= R-3.2.0 on various Linux-builds and for >= R-3.5.3 on Windows.
+The [**DNAmArray**](https://github.com/molepi/DNAmArray)-package can be installed in several ways, and has been successfully for >= R-4.4.1 on various Linux-builds and for >= R-4.4.1 on Windows.
 
 ### Install using the **devtools**-package ###
 
@@ -39,7 +39,7 @@ library(GEOquery)
 ```
 
 ```{r 104getgeofiles, eval=FALSE}
-getGEOSuppFiles("GSE113018")
+getGEOSuppFiles("GSE293007")
 untar(tarfile="../GSE113018/GSE113018_RAW.tar", exdir="../GSE113018/IDATs")
 ```
 
