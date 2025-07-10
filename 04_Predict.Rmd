@@ -1,0 +1,97 @@
+```{r, child="_setup.Rmd"}
+```
+
+***
+
+# Phenotype Prediction #
+
+## Imputation ##
+
+It can be useful to predict phenotypes in your data, either for comparison to assumed categories or to help impute missing values. 
+
+It is important to carry out predictions prior to probe masking, as many probes masked for analysis (e.g. those on sex chromosomes) are still useful for predicting phenotypes. Additionally, if you have missing values packages such as [**MethyLImp2**](https://www.bioconductor.org/packages/release/bioc/html/methyLImp2.html)<sup>20</sup> can be used to impute them. We advise imputing missing values before phenotype prediction, since many predictors use only a subset of available probes and missing data can seriously impact accuracy. 
+
+Of note, EPICv2 CpGs have technical suffixes for CpG names, which predictors may not be updated for. Additionally, CpGs have up to 10 replicates. We advise selecting one of these at random to use in prediction, or selecting the one with the best performing detection p-value, which can be inspected using `detectionP()` from `minfi`.
+
+***
+
+## Cell counts ##
+
+The `EPIDish` package can be used to predict blood cell types. It is a R package that infers the proportions of a priori known cell-types present in a sample representing a mixture of such cell-types. Right now, the package can be used on DNAm data of blood-tissue of any age, from birth to old-age, generic epithelial tissue and breast tissue. The package also provides a function that allows the identification of differentially methylated cell-types and their directionality of change in Epigenome-Wide Association Studies.
+
+```{r 401epidish}
+data(cent12CT.m)
+
+BloodFrac.m <- epidish(beta.m = betas, 
+                       ref.m = cent12CT.m, 
+                       method = "RPC")$estF
+```
+
+After proportions of cell types have been estimated, they can be plotted and inspected.
+
+```{r 402plot}
+BloodFrac.m_long <- pivot_longer(as.data.frame(BloodFrac.m), cols = colnames(BloodFrac.m))
+
+BloodFrac.m_long %>% 
+  ggplot(aes(y=name, x=value)) +
+  geom_boxplot() +
+  theme_bw() + ylab('')
+```
+
+Cell counts can be added to `targets` for use later when building EWAS models.
+
+```{r 403add}
+table(rownames(as.data.frame(BloodFrac.m)) == rownames(targets))
+
+targets <- cbind(targets, BloodFrac.m)
+colData(RGset) <- DataFrame(targets)
+```
+
+***
+
+# Predict Sex #
+
+Sex can also be predicted from CpGs on the X-chromosome. These can be subset using the annotations described earlier.
+
+```{r 404anno}
+anno <- read_tsv("./data/EPIC.hg19.manifest.tsv.gz")
+
+anno <- anno %>% 
+  dplyr::select(
+    cpg = probeID,
+    chr = CpG_chrm,
+    start = CpG_beg,
+    end = CpG_end,
+    strand = probe_strand,
+    gene_HGNC,
+    MASK_general,
+    probeType
+  ) %>% 
+  mutate(
+    chr = substr(chr,4,5)
+  )
+
+chrX <- (anno %>% filter(chr == "X" & probeType == "cg"))$cpg
+head(chrX)
+```
+
+The number of CpGs used in the prediction can be shown in a table, and subset from the beta values.
+
+```{r 405tab}
+table(rownames(betas) %in% chrX)
+
+betaX <- betas[rownames(betas) %in% chrX, ]
+```
+
+Then a measure can be calculated, determining the sex of each sample and tabulated against recorded sex.
+
+```{r 406res}
+nopoX <- colSums(betaX >= 0.2 & betaX <= 0.6, na.rm=T)
+nopoX <- ifelse(nopoX <= 8000, "Male", "Female")
+table(nopoX, targets$sex)
+```
+
+As you can see, this is complete data, but the predicted and assumed sexes are identical. This means that we can feel increased confidence that no incorrect labelling or mix-ups are present.
+
+***
+

@@ -55,7 +55,7 @@
 </style>
 <style type="text/css" data-origin="pandoc">
 pre > code.sourceCode { white-space: pre; position: relative; }
-pre > code.sourceCode > span { line-height: 1.25; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
 pre > code.sourceCode > span:empty { height: 1.2em; }
 .sourceCode { overflow: visible; }
 code.sourceCode > span { color: inherit; text-decoration: inherit; }
@@ -416,22 +416,22 @@ div.tocify {
   <a href="01_GettingStarted.html">Getting Started</a>
 </li>
 <li>
-  <a href="02_SampleQualityControl.html">Sample-level QC</a>
+  <a href="02_SampleQualityControl.html">Sample QC</a>
 </li>
 <li>
-  <a href="03_Normalization.html">Normalization</a>
+  <a href="03_Normalization.html">Normalize</a>
 </li>
 <li>
-  <a href="04_ProbeFiltering.html">Probe-level QC</a>
+  <a href="04_Predict.html">Predict</a>
 </li>
 <li>
-  <a href="05_Predict.html">Predictors</a>
+  <a href="05_ProbeQC.html">Probe QC</a>
 </li>
 <li>
-  <a href="06_Masking.html">Underperforming Probes</a>
+  <a href="06_EWAS.html">Analyse</a>
 </li>
 <li>
-  <a href="07_EWAS.html">Analysis</a>
+  <a href="07_Interpret.html">Interpret</a>
 </li>
       </ul>
       <ul class="nav navbar-nav navbar-right">
@@ -455,3348 +455,391 @@ div.tocify {
 <div id="covariates" class="section level1">
 <h1>Covariates</h1>
 <p>Each column in the <code>RGset</code> colData should be considered as
-a potential covariate in our models. Both technical and biological
+a potential covariate in EWAS models. Both technical and biological
 factors should be investigated as these may introduce batch effects or
-be clinically relevant. In order to assess this, we convert each column
-to a categorical variable whose correlations can be visualised.</p>
-<p>Homogenous columns can be excluded, as any variables that do not
-change by definition cannot explain variation in the data. In this
-instance, the <code>description</code> for all samples is peripheral
-whole blood, so there is no need to investigate a tissue effect.
-However, in some instances samples may be taken from different tissues,
-and in this type of study analysis must be done separately for each to
-correctly separate clinically relevant methylation changes from
-tissue-specific methylation differences.</p>
-<p>Look at previous heatmap</p>
-<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" tabindex="-1"></a>col_fun <span class="ot">&lt;-</span> <span class="fu">colorRamp2</span>(<span class="fu">c</span>(<span class="sc">-</span><span class="dv">1</span>, <span class="dv">0</span>, <span class="dv">1</span>), <span class="fu">c</span>(<span class="st">&quot;#458797&quot;</span>, <span class="st">&quot;white&quot;</span>, <span class="st">&quot;#ce67a6&quot;</span>))</span>
+be clinically relevant. In order to assess this, you can visualize
+correlations with PCs as done previously in this workflow.</p>
+<p>Any constant variables are removed from the heatmap, as they will not
+explain variance in the data.</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" tabindex="-1"></a>plot_vars <span class="ot">&lt;-</span> <span class="fu">apply</span>(targets, <span class="dv">2</span>, <span class="cf">function</span>(x) <span class="fu">sd</span>(<span class="fu">as.numeric</span>(<span class="fu">factor</span>(x)), <span class="at">na.rm=</span>T))</span>
 <span id="cb1-2"><a href="#cb1-2" tabindex="-1"></a></span>
-<span id="cb1-3"><a href="#cb1-3" tabindex="-1"></a><span class="fu">Heatmap</span>(</span>
-<span id="cb1-4"><a href="#cb1-4" tabindex="-1"></a>  <span class="fu">t</span>(cxy),                              </span>
-<span id="cb1-5"><a href="#cb1-5" tabindex="-1"></a>  <span class="at">col =</span> col_fun,  </span>
-<span id="cb1-6"><a href="#cb1-6" tabindex="-1"></a>  <span class="at">border =</span> <span class="st">&#39;grey5&#39;</span>,</span>
-<span id="cb1-7"><a href="#cb1-7" tabindex="-1"></a>  <span class="at">cluster_columns =</span> <span class="cn">FALSE</span>,            </span>
-<span id="cb1-8"><a href="#cb1-8" tabindex="-1"></a>  <span class="at">show_row_dend =</span> <span class="cn">TRUE</span>,             </span>
-<span id="cb1-9"><a href="#cb1-9" tabindex="-1"></a>  <span class="at">show_column_dend =</span> <span class="cn">FALSE</span>,      </span>
-<span id="cb1-10"><a href="#cb1-10" tabindex="-1"></a>  <span class="at">name =</span> <span class="st">&quot;Value&quot;</span>,                 </span>
-<span id="cb1-11"><a href="#cb1-11" tabindex="-1"></a>  <span class="at">row_names_gp =</span> <span class="fu">gpar</span>(<span class="at">fontsize =</span> <span class="dv">8</span>), </span>
-<span id="cb1-12"><a href="#cb1-12" tabindex="-1"></a>  <span class="at">column_names_gp =</span> <span class="fu">gpar</span>(<span class="at">fontsize =</span> <span class="dv">8</span>), </span>
-<span id="cb1-13"><a href="#cb1-13" tabindex="-1"></a>  <span class="at">cell_fun =</span> <span class="cf">function</span>(j, i, x, y, width, height, fill) {</span>
-<span id="cb1-14"><a href="#cb1-14" tabindex="-1"></a>    <span class="fu">grid.rect</span>(x, y, width, height, </span>
-<span id="cb1-15"><a href="#cb1-15" tabindex="-1"></a>              <span class="at">gp =</span> <span class="fu">gpar</span>(<span class="at">col =</span> <span class="st">&quot;white&quot;</span>, <span class="at">lwd =</span> <span class="dv">1</span>, <span class="at">fill =</span> <span class="cn">NA</span>))</span>
-<span id="cb1-16"><a href="#cb1-16" tabindex="-1"></a>    <span class="fu">grid.text</span>(<span class="fu">ifelse</span>(<span class="fu">abs</span>(<span class="fu">t</span>(cxy)[i,j]) <span class="sc">&gt;</span> <span class="fl">0.4</span>,</span>
-<span id="cb1-17"><a href="#cb1-17" tabindex="-1"></a>                     <span class="fu">sprintf</span>(<span class="st">&quot;%.2f&quot;</span>, <span class="fu">round</span>(<span class="fu">t</span>(cxy)[i, j], <span class="dv">2</span>)),</span>
-<span id="cb1-18"><a href="#cb1-18" tabindex="-1"></a>                     <span class="st">&quot;&quot;</span>), </span>
-<span id="cb1-19"><a href="#cb1-19" tabindex="-1"></a>              x, y, <span class="at">gp =</span> <span class="fu">gpar</span>(<span class="at">fontsize =</span> <span class="dv">6</span>, <span class="at">col =</span> <span class="st">&quot;black&quot;</span>))</span>
-<span id="cb1-20"><a href="#cb1-20" tabindex="-1"></a>  }</span>
-<span id="cb1-21"><a href="#cb1-21" tabindex="-1"></a>)</span></code></pre></div>
-<p><img src="06_EWAS_files/figure-html/unnamed-chunk-1-1.png" width="672" /></p>
+<span id="cb1-3"><a href="#cb1-3" tabindex="-1"></a>plot_vars <span class="ot">&lt;-</span> <span class="fu">names</span>(plot_vars[<span class="sc">!</span>plot_vars <span class="sc">%in%</span> <span class="fu">c</span>(<span class="cn">NA</span>, <span class="dv">0</span>)])</span>
+<span id="cb1-4"><a href="#cb1-4" tabindex="-1"></a>plot_vars</span></code></pre></div>
+<pre><code>##  [1] &quot;sample_ID&quot;          &quot;geo_accession&quot;      &quot;sex&quot;                &quot;age&quot;                &quot;log_total_pbb&quot;      &quot;pbb_153&quot;           
+##  [7] &quot;pbb_77&quot;             &quot;pbb_101&quot;            &quot;pbb_180&quot;            &quot;supplementary_file&quot; &quot;plate&quot;              &quot;row&quot;               
+## [13] &quot;Basename&quot;           &quot;CD4Tnv&quot;             &quot;Baso&quot;               &quot;CD4Tmem&quot;            &quot;Bmem&quot;               &quot;Bnv&quot;               
+## [19] &quot;Treg&quot;               &quot;CD8Tmem&quot;            &quot;CD8Tnv&quot;             &quot;Eos&quot;                &quot;NK&quot;                 &quot;Neu&quot;               
+## [25] &quot;Mono&quot;</code></pre>
+<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" tabindex="-1"></a>heatmap_df <span class="ot">&lt;-</span> targets <span class="sc">%&gt;%</span> </span>
+<span id="cb3-2"><a href="#cb3-2" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">select</span>(<span class="fu">any_of</span>(plot_vars))</span></code></pre></div>
+<p>All variables are then converted to numeric and correlations between
+them and the PCs are calculated.</p>
+<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" tabindex="-1"></a>heatmap_df <span class="ot">&lt;-</span> <span class="fu">apply</span>(heatmap_df, <span class="dv">2</span>, <span class="cf">function</span>(x) <span class="fu">as.numeric</span>(<span class="fu">factor</span>(x)))</span>
+<span id="cb4-2"><a href="#cb4-2" tabindex="-1"></a></span>
+<span id="cb4-3"><a href="#cb4-3" tabindex="-1"></a>cxy <span class="ot">&lt;-</span> <span class="fu">round</span>(<span class="fu">cor</span>(pca<span class="sc">$</span>x, <span class="fu">scale</span>(heatmap_df), <span class="at">use=</span><span class="st">&quot;pairwise.complete.obs&quot;</span>),<span class="dv">2</span>) </span></code></pre></div>
+<p>A heatmap can then be used to visualize these correlations and
+uncover measured variables that explain a large proportion of DNAm
+variance.</p>
+<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" tabindex="-1"></a>col_fun <span class="ot">&lt;-</span> <span class="fu">colorRamp2</span>(<span class="fu">c</span>(<span class="sc">-</span><span class="dv">1</span>, <span class="dv">0</span>, <span class="dv">1</span>), <span class="fu">c</span>(<span class="st">&quot;#000042&quot;</span>, <span class="st">&quot;white&quot;</span>, <span class="st">&quot;#800000&quot;</span>))</span>
+<span id="cb5-2"><a href="#cb5-2" tabindex="-1"></a></span>
+<span id="cb5-3"><a href="#cb5-3" tabindex="-1"></a><span class="fu">Heatmap</span>(</span>
+<span id="cb5-4"><a href="#cb5-4" tabindex="-1"></a>  <span class="fu">t</span>(cxy),                              </span>
+<span id="cb5-5"><a href="#cb5-5" tabindex="-1"></a>  <span class="at">col =</span> col_fun,  </span>
+<span id="cb5-6"><a href="#cb5-6" tabindex="-1"></a>  <span class="at">border =</span> <span class="st">&#39;grey5&#39;</span>,</span>
+<span id="cb5-7"><a href="#cb5-7" tabindex="-1"></a>  <span class="at">cluster_columns =</span> <span class="cn">FALSE</span>,            </span>
+<span id="cb5-8"><a href="#cb5-8" tabindex="-1"></a>  <span class="at">show_row_dend =</span> <span class="cn">TRUE</span>,             </span>
+<span id="cb5-9"><a href="#cb5-9" tabindex="-1"></a>  <span class="at">show_column_dend =</span> <span class="cn">FALSE</span>,      </span>
+<span id="cb5-10"><a href="#cb5-10" tabindex="-1"></a>  <span class="at">name =</span> <span class="st">&quot;Value&quot;</span>,                 </span>
+<span id="cb5-11"><a href="#cb5-11" tabindex="-1"></a>  <span class="at">row_names_gp =</span> <span class="fu">gpar</span>(<span class="at">fontsize =</span> <span class="dv">8</span>), </span>
+<span id="cb5-12"><a href="#cb5-12" tabindex="-1"></a>  <span class="at">column_names_gp =</span> <span class="fu">gpar</span>(<span class="at">fontsize =</span> <span class="dv">8</span>), </span>
+<span id="cb5-13"><a href="#cb5-13" tabindex="-1"></a>  <span class="at">cell_fun =</span> <span class="cf">function</span>(j, i, x, y, width, height, fill) {</span>
+<span id="cb5-14"><a href="#cb5-14" tabindex="-1"></a>    <span class="fu">grid.rect</span>(x, y, width, height, </span>
+<span id="cb5-15"><a href="#cb5-15" tabindex="-1"></a>              <span class="at">gp =</span> <span class="fu">gpar</span>(<span class="at">col =</span> <span class="st">&quot;white&quot;</span>, <span class="at">lwd =</span> <span class="dv">1</span>, <span class="at">fill =</span> <span class="cn">NA</span>))</span>
+<span id="cb5-16"><a href="#cb5-16" tabindex="-1"></a>    <span class="fu">grid.text</span>(<span class="fu">ifelse</span>(<span class="fu">abs</span>(<span class="fu">t</span>(cxy)[i,j]) <span class="sc">&gt;</span> <span class="fl">0.4</span>,</span>
+<span id="cb5-17"><a href="#cb5-17" tabindex="-1"></a>                     <span class="fu">sprintf</span>(<span class="st">&quot;%.2f&quot;</span>, <span class="fu">round</span>(<span class="fu">t</span>(cxy)[i, j], <span class="dv">2</span>)),</span>
+<span id="cb5-18"><a href="#cb5-18" tabindex="-1"></a>                     <span class="st">&quot;&quot;</span>), </span>
+<span id="cb5-19"><a href="#cb5-19" tabindex="-1"></a>              x, y, <span class="at">gp =</span> <span class="fu">gpar</span>(<span class="at">fontsize =</span> <span class="dv">8</span>, <span class="at">col =</span> <span class="st">&quot;white&quot;</span>))</span>
+<span id="cb5-20"><a href="#cb5-20" tabindex="-1"></a>  }</span>
+<span id="cb5-21"><a href="#cb5-21" tabindex="-1"></a>)</span></code></pre></div>
+<p><img src="06_EWAS_files/figure-html/603heatmap-1.png" width="672" /></p>
 <p>By examining the correlations in the data, we can build our model in
-a more informed manner. The first PC is highly correlated with sex and,
-as is usual in EWAS, we intend to include this as a confounder. Cell
-counts appear of substantial importance and will also be adjusted for.
-Model specification should be informed by a combination of prior
-knowledge and inspection of patterns in the data.</p>
-<p>Adjust for plate and sex.</p>
+a more informed manner. The second PC is highly correlated with sex and,
+as is usual in EWAS, we intend to include this as a confounder.</p>
+<p>Some predicted cell counts appear of substantial importance and we
+advise also adjusting for these. Model specification should be informed
+by a combination of prior knowledge and inspection of patterns in the
+data.</p>
 <hr />
 </div>
 <div id="sva" class="section level1">
 <h1>SVA</h1>
-<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" tabindex="-1"></a><span class="fu">library</span>(sva)</span></code></pre></div>
-<pre><code>## Loading required package: mgcv</code></pre>
-<pre><code>## Loading required package: nlme</code></pre>
-<pre><code>## 
-## Attaching package: &#39;nlme&#39;</code></pre>
-<pre><code>## The following object is masked from &#39;package:Biostrings&#39;:
-## 
-##     collapse</code></pre>
-<pre><code>## The following object is masked from &#39;package:IRanges&#39;:
-## 
-##     collapse</code></pre>
-<pre><code>## The following object is masked from &#39;package:dplyr&#39;:
-## 
-##     collapse</code></pre>
-<pre><code>## This is mgcv 1.9-1. For overview type &#39;help(&quot;mgcv-package&quot;)&#39;.</code></pre>
-<pre><code>## Loading required package: genefilter</code></pre>
-<pre><code>## 
-## Attaching package: &#39;genefilter&#39;</code></pre>
-<pre><code>## The following object is masked from &#39;package:MASS&#39;:
-## 
-##     area</code></pre>
-<pre><code>## The following object is masked from &#39;package:ComplexHeatmap&#39;:
-## 
-##     dist2</code></pre>
-<pre><code>## The following objects are masked from &#39;package:MatrixGenerics&#39;:
-## 
-##     rowSds, rowVars</code></pre>
-<pre><code>## The following objects are masked from &#39;package:matrixStats&#39;:
-## 
-##     rowSds, rowVars</code></pre>
-<pre><code>## The following object is masked from &#39;package:readr&#39;:
-## 
-##     spec</code></pre>
-<div class="sourceCode" id="cb17"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" tabindex="-1"></a>mod <span class="ot">=</span> <span class="fu">model.matrix</span>(<span class="sc">~</span>log_total_pbb, <span class="at">data=</span>targets)</span>
-<span id="cb17-2"><a href="#cb17-2" tabindex="-1"></a>mod0 <span class="ot">=</span> <span class="fu">model.matrix</span>(<span class="sc">~</span><span class="dv">1</span>,<span class="at">data=</span>targets)</span>
-<span id="cb17-3"><a href="#cb17-3" tabindex="-1"></a></span>
-<span id="cb17-4"><a href="#cb17-4" tabindex="-1"></a>betas_imputed <span class="ot">&lt;-</span> <span class="fu">impute.knn</span>(betas)</span></code></pre></div>
-<pre><code>## Cluster size 745368 broken into 262418 482950 
-## Cluster size 262418 broken into 199145 63273 
-## Cluster size 199145 broken into 133003 66142 
-## Cluster size 133003 broken into 72958 60045 
-## Cluster size 72958 broken into 33662 39296 
-## Cluster size 33662 broken into 25016 8646 
-## Cluster size 25016 broken into 13681 11335 
-## Cluster size 13681 broken into 5539 8142 
-## Cluster size 5539 broken into 2848 2691 
-## Cluster size 2848 broken into 1509 1339 
-## Cluster size 1509 broken into 330 1179 
-## Done cluster 330 
-## Done cluster 1179 
-## Done cluster 1509 
-## Done cluster 1339 
-## Done cluster 2848 
-## Cluster size 2691 broken into 516 2175 
-## Done cluster 516 
-## Cluster size 2175 broken into 847 1328 
-## Done cluster 847 
-## Done cluster 1328 
-## Done cluster 2175 
-## Done cluster 2691 
-## Done cluster 5539 
-## Cluster size 8142 broken into 4689 3453 
-## Cluster size 4689 broken into 2706 1983 
-## Cluster size 2706 broken into 567 2139 
-## Done cluster 567 
-## Cluster size 2139 broken into 46 2093 
-## Done cluster 46 
-## Cluster size 2093 broken into 724 1369 
-## Done cluster 724 
-## Done cluster 1369 
-## Done cluster 2093 
-## Done cluster 2139 
-## Done cluster 2706 
-## Cluster size 1983 broken into 1903 80 
-## Cluster size 1903 broken into 441 1462 
-## Done cluster 441 
-## Done cluster 1462 
-## Done cluster 1903 
-## Done cluster 80 
-## Done cluster 1983 
-## Done cluster 4689 
-## Cluster size 3453 broken into 803 2650 
-## Done cluster 803 
-## Cluster size 2650 broken into 1256 1394 
-## Done cluster 1256 
-## Done cluster 1394 
-## Done cluster 2650 
-## Done cluster 3453 
-## Done cluster 8142 
-## Done cluster 13681 
-## Cluster size 11335 broken into 6165 5170 
-## Cluster size 6165 broken into 4730 1435 
-## Cluster size 4730 broken into 4625 105 
-## Cluster size 4625 broken into 2844 1781 
-## Cluster size 2844 broken into 1641 1203 
-## Cluster size 1641 broken into 1271 370 
-## Done cluster 1271 
-## Done cluster 370 
-## Done cluster 1641 
-## Done cluster 1203 
-## Done cluster 2844 
-## Cluster size 1781 broken into 1433 348 
-## Done cluster 1433 
-## Done cluster 348 
-## Done cluster 1781 
-## Done cluster 4625 
-## Done cluster 105 
-## Done cluster 4730 
-## Done cluster 1435 
-## Done cluster 6165 
-## Cluster size 5170 broken into 3939 1231 
-## Cluster size 3939 broken into 1283 2656 
-## Done cluster 1283 
-## Cluster size 2656 broken into 1093 1563 
-## Done cluster 1093 
-## Cluster size 1563 broken into 286 1277 
-## Done cluster 286 
-## Done cluster 1277 
-## Done cluster 1563 
-## Done cluster 2656 
-## Done cluster 3939 
-## Done cluster 1231 
-## Done cluster 5170 
-## Done cluster 11335 
-## Done cluster 25016 
-## Cluster size 8646 broken into 6027 2619 
-## Cluster size 6027 broken into 2851 3176 
-## Cluster size 2851 broken into 1643 1208 
-## Cluster size 1643 broken into 713 930 
-## Done cluster 713 
-## Done cluster 930 
-## Done cluster 1643 
-## Done cluster 1208 
-## Done cluster 2851 
-## Cluster size 3176 broken into 1844 1332 
-## Cluster size 1844 broken into 856 988 
-## Done cluster 856 
-## Done cluster 988 
-## Done cluster 1844 
-## Done cluster 1332 
-## Done cluster 3176 
-## Done cluster 6027 
-## Cluster size 2619 broken into 770 1849 
-## Done cluster 770 
-## Cluster size 1849 broken into 807 1042 
-## Done cluster 807 
-## Done cluster 1042 
-## Done cluster 1849 
-## Done cluster 2619 
-## Done cluster 8646 
-## Done cluster 33662 
-## Cluster size 39296 broken into 29537 9759 
-## Cluster size 29537 broken into 14050 15487 
-## Cluster size 14050 broken into 6806 7244 
-## Cluster size 6806 broken into 227 6579 
-## Done cluster 227 
-## Cluster size 6579 broken into 2747 3832 
-## Cluster size 2747 broken into 1491 1256 
-## Done cluster 1491 
-## Done cluster 1256 
-## Done cluster 2747 
-## Cluster size 3832 broken into 1016 2816 
-## Done cluster 1016 
-## Cluster size 2816 broken into 1457 1359 
-## Done cluster 1457 
-## Done cluster 1359 
-## Done cluster 2816 
-## Done cluster 3832 
-## Done cluster 6579 
-## Done cluster 6806 
-## Cluster size 7244 broken into 1038 6206 
-## Done cluster 1038 
-## Cluster size 6206 broken into 3174 3032 
-## Cluster size 3174 broken into 1395 1779 
-## Done cluster 1395 
-## Cluster size 1779 broken into 1742 37 
-## Cluster size 1742 broken into 975 767 
-## Done cluster 975 
-## Done cluster 767 
-## Done cluster 1742 
-## Done cluster 37 
-## Done cluster 1779 
-## Done cluster 3174 
-## Cluster size 3032 broken into 1428 1604 
-## Done cluster 1428 
-## Cluster size 1604 broken into 571 1033 
-## Done cluster 571 
-## Done cluster 1033 
-## Done cluster 1604 
-## Done cluster 3032 
-## Done cluster 6206 
-## Done cluster 7244 
-## Done cluster 14050 
-## Cluster size 15487 broken into 7938 7549 
-## Cluster size 7938 broken into 3711 4227 
-## Cluster size 3711 broken into 536 3175 
-## Done cluster 536 
-## Cluster size 3175 broken into 25 3150 
-## Done cluster 25 
-## Cluster size 3150 broken into 3116 34 
-## Cluster size 3116 broken into 1703 1413 
-## Cluster size 1703 broken into 966 737 
-## Done cluster 966 
-## Done cluster 737 
-## Done cluster 1703 
-## Done cluster 1413 
-## Done cluster 3116 
-## Done cluster 34 
-## Done cluster 3150 
-## Done cluster 3175 
-## Done cluster 3711 
-## Cluster size 4227 broken into 349 3878 
-## Done cluster 349 
-## Cluster size 3878 broken into 49 3829 
-## Done cluster 49 
-## Cluster size 3829 broken into 1751 2078 
-## Cluster size 1751 broken into 854 897 
-## Done cluster 854 
-## Done cluster 897 
-## Done cluster 1751 
-## Cluster size 2078 broken into 919 1159 
-## Done cluster 919 
-## Done cluster 1159 
-## Done cluster 2078 
-## Done cluster 3829 
-## Done cluster 3878 
-## Done cluster 4227 
-## Done cluster 7938 
-## Cluster size 7549 broken into 4000 3549 
-## Cluster size 4000 broken into 831 3169 
-## Done cluster 831 
-## Cluster size 3169 broken into 2580 589 
-## Cluster size 2580 broken into 1005 1575 
-## Done cluster 1005 
-## Cluster size 1575 broken into 970 605 
-## Done cluster 970 
-## Done cluster 605 
-## Done cluster 1575 
-## Done cluster 2580 
-## Done cluster 589 
-## Done cluster 3169 
-## Done cluster 4000 
-## Cluster size 3549 broken into 2244 1305 
-## Cluster size 2244 broken into 2154 90 
-## Cluster size 2154 broken into 1059 1095 
-## Done cluster 1059 
-## Done cluster 1095 
-## Done cluster 2154 
-## Done cluster 90 
-## Done cluster 2244 
-## Done cluster 1305 
-## Done cluster 3549 
-## Done cluster 7549 
-## Done cluster 15487 
-## Done cluster 29537 
-## Cluster size 9759 broken into 3019 6740 
-## Cluster size 3019 broken into 1725 1294 
-## Cluster size 1725 broken into 1029 696 
-## Done cluster 1029 
-## Done cluster 696 
-## Done cluster 1725 
-## Done cluster 1294 
-## Done cluster 3019 
-## Cluster size 6740 broken into 3362 3378 
-## Cluster size 3362 broken into 23 3339 
-## Done cluster 23 
-## Cluster size 3339 broken into 1419 1920 
-## Done cluster 1419 
-## Cluster size 1920 broken into 1028 892 
-## Done cluster 1028 
-## Done cluster 892 
-## Done cluster 1920 
-## Done cluster 3339 
-## Done cluster 3362 
-## Cluster size 3378 broken into 734 2644 
-## Done cluster 734 
-## Cluster size 2644 broken into 1290 1354 
-## Done cluster 1290 
-## Done cluster 1354 
-## Done cluster 2644 
-## Done cluster 3378 
-## Done cluster 6740 
-## Done cluster 9759 
-## Done cluster 39296 
-## Done cluster 72958 
-## Cluster size 60045 broken into 26542 33503 
-## Cluster size 26542 broken into 12975 13567 
-## Cluster size 12975 broken into 7067 5908 
-## Cluster size 7067 broken into 4459 2608 
-## Cluster size 4459 broken into 1995 2464 
-## Cluster size 1995 broken into 1110 885 
-## Done cluster 1110 
-## Done cluster 885 
-## Done cluster 1995 
-## Cluster size 2464 broken into 1173 1291 
-## Done cluster 1173 
-## Done cluster 1291 
-## Done cluster 2464 
-## Done cluster 4459 
-## Cluster size 2608 broken into 2452 156 
-## Cluster size 2452 broken into 994 1458 
-## Done cluster 994 
-## Done cluster 1458 
-## Done cluster 2452 
-## Done cluster 156 
-## Done cluster 2608 
-## Done cluster 7067 
-## Cluster size 5908 broken into 1713 4195 
-## Cluster size 1713 broken into 662 1051 
-## Done cluster 662 
-## Done cluster 1051 
-## Done cluster 1713 
-## Cluster size 4195 broken into 2286 1909 
-## Cluster size 2286 broken into 2285 1 
-## Cluster size 2285 broken into 876 1409 
-## Done cluster 876 
-## Done cluster 1409 
-## Done cluster 2285 
-## Done cluster 1 
-## Done cluster 2286 
-## Cluster size 1909 broken into 1011 898 
-## Done cluster 1011 
-## Done cluster 898 
-## Done cluster 1909 
-## Done cluster 4195 
-## Done cluster 5908 
-## Done cluster 12975 
-## Cluster size 13567 broken into 5717 7850 
-## Cluster size 5717 broken into 3544 2173 
-## Cluster size 3544 broken into 1515 2029 
-## Cluster size 1515 broken into 1033 482 
-## Done cluster 1033 
-## Done cluster 482 
-## Done cluster 1515 
-## Cluster size 2029 broken into 2028 1 
-## Cluster size 2028 broken into 992 1036 
-## Done cluster 992 
-## Done cluster 1036 
-## Done cluster 2028 
-## Done cluster 1 
-## Done cluster 2029 
-## Done cluster 3544 
-## Cluster size 2173 broken into 892 1281 
-## Done cluster 892 
-## Done cluster 1281 
-## Done cluster 2173 
-## Done cluster 5717 
-## Cluster size 7850 broken into 3348 4502 
-## Cluster size 3348 broken into 1653 1695 
-## Cluster size 1653 broken into 777 876 
-## Done cluster 777 
-## Done cluster 876 
-## Done cluster 1653 
-## Cluster size 1695 broken into 1192 503 
-## Done cluster 1192 
-## Done cluster 503 
-## Done cluster 1695 
-## Done cluster 3348 
-## Cluster size 4502 broken into 2040 2462 
-## Cluster size 2040 broken into 1317 723 
-## Done cluster 1317 
-## Done cluster 723 
-## Done cluster 2040 
-## Cluster size 2462 broken into 1463 999 
-## Done cluster 1463 
-## Done cluster 999 
-## Done cluster 2462 
-## Done cluster 4502 
-## Done cluster 7850 
-## Done cluster 13567 
-## Done cluster 26542 
-## Cluster size 33503 broken into 12490 21013 
-## Cluster size 12490 broken into 4269 8221 
-## Cluster size 4269 broken into 2464 1805 
-## Cluster size 2464 broken into 1650 814 
-## Cluster size 1650 broken into 845 805 
-## Done cluster 845 
-## Done cluster 805 
-## Done cluster 1650 
-## Done cluster 814 
-## Done cluster 2464 
-## Cluster size 1805 broken into 1326 479 
-## Done cluster 1326 
-## Done cluster 479 
-## Done cluster 1805 
-## Done cluster 4269 
-## Cluster size 8221 broken into 4666 3555 
-## Cluster size 4666 broken into 2518 2148 
-## Cluster size 2518 broken into 2244 274 
-## Cluster size 2244 broken into 683 1561 
-## Done cluster 683 
-## Cluster size 1561 broken into 927 634 
-## Done cluster 927 
-## Done cluster 634 
-## Done cluster 1561 
-## Done cluster 2244 
-## Done cluster 274 
-## Done cluster 2518 
-## Cluster size 2148 broken into 1137 1011 
-## Done cluster 1137 
-## Done cluster 1011 
-## Done cluster 2148 
-## Done cluster 4666 
-## Cluster size 3555 broken into 1625 1930 
-## Cluster size 1625 broken into 864 761 
-## Done cluster 864 
-## Done cluster 761 
-## Done cluster 1625 
-## Cluster size 1930 broken into 997 933 
-## Done cluster 997 
-## Done cluster 933 
-## Done cluster 1930 
-## Done cluster 3555 
-## Done cluster 8221 
-## Done cluster 12490 
-## Cluster size 21013 broken into 11698 9315 
-## Cluster size 11698 broken into 5639 6059 
-## Cluster size 5639 broken into 2789 2850 
-## Cluster size 2789 broken into 1221 1568 
-## Done cluster 1221 
-## Cluster size 1568 broken into 375 1193 
-## Done cluster 375 
-## Done cluster 1193 
-## Done cluster 1568 
-## Done cluster 2789 
-## Cluster size 2850 broken into 1345 1505 
-## Done cluster 1345 
-## Cluster size 1505 broken into 854 651 
-## Done cluster 854 
-## Done cluster 651 
-## Done cluster 1505 
-## Done cluster 2850 
-## Done cluster 5639 
-## Cluster size 6059 broken into 2227 3832 
-## Cluster size 2227 broken into 277 1950 
-## Done cluster 277 
-## Cluster size 1950 broken into 841 1109 
-## Done cluster 841 
-## Done cluster 1109 
-## Done cluster 1950 
-## Done cluster 2227 
-## Cluster size 3832 broken into 1729 2103 
-## Cluster size 1729 broken into 238 1491 
-## Done cluster 238 
-## Done cluster 1491 
-## Done cluster 1729 
-## Cluster size 2103 broken into 1594 509 
-## Cluster size 1594 broken into 1583 11 
-## Cluster size 1583 broken into 577 1006 
-## Done cluster 577 
-## Done cluster 1006 
-## Done cluster 1583 
-## Done cluster 11 
-## Done cluster 1594 
-## Done cluster 509 
-## Done cluster 2103 
-## Done cluster 3832 
-## Done cluster 6059 
-## Done cluster 11698 
-## Cluster size 9315 broken into 4487 4828 
-## Cluster size 4487 broken into 1867 2620 
-## Cluster size 1867 broken into 1077 790 
-## Done cluster 1077 
-## Done cluster 790 
-## Done cluster 1867 
-## Cluster size 2620 broken into 1246 1374 
-## Done cluster 1246 
-## Done cluster 1374 
-## Done cluster 2620 
-## Done cluster 4487 
-## Cluster size 4828 broken into 2161 2667 
-## Cluster size 2161 broken into 1307 854 
-## Done cluster 1307 
-## Done cluster 854 
-## Done cluster 2161 
-## Cluster size 2667 broken into 1483 1184 
-## Done cluster 1483 
-## Done cluster 1184 
-## Done cluster 2667 
-## Done cluster 4828 
-## Done cluster 9315 
-## Done cluster 21013 
-## Done cluster 33503 
-## Done cluster 60045 
-## Done cluster 133003 
-## Cluster size 66142 broken into 25047 41095 
-## Cluster size 25047 broken into 9894 15153 
-## Cluster size 9894 broken into 3731 6163 
-## Cluster size 3731 broken into 898 2833 
-## Done cluster 898 
-## Cluster size 2833 broken into 1554 1279 
-## Cluster size 1554 broken into 923 631 
-## Done cluster 923 
-## Done cluster 631 
-## Done cluster 1554 
-## Done cluster 1279 
-## Done cluster 2833 
-## Done cluster 3731 
-## Cluster size 6163 broken into 2582 3581 
-## Cluster size 2582 broken into 1633 949 
-## Cluster size 1633 broken into 1066 567 
-## Done cluster 1066 
-## Done cluster 567 
-## Done cluster 1633 
-## Done cluster 949 
-## Done cluster 2582 
-## Cluster size 3581 broken into 3481 100 
-## Cluster size 3481 broken into 826 2655 
-## Done cluster 826 
-## Cluster size 2655 broken into 1405 1250 
-## Done cluster 1405 
-## Done cluster 1250 
-## Done cluster 2655 
-## Done cluster 3481 
-## Done cluster 100 
-## Done cluster 3581 
-## Done cluster 6163 
-## Done cluster 9894 
-## Cluster size 15153 broken into 2422 12731 
-## Cluster size 2422 broken into 1629 793 
-## Cluster size 1629 broken into 1016 613 
-## Done cluster 1016 
-## Done cluster 613 
-## Done cluster 1629 
-## Done cluster 793 
-## Done cluster 2422 
-## Cluster size 12731 broken into 6443 6288 
-## Cluster size 6443 broken into 4753 1690 
-## Cluster size 4753 broken into 2451 2302 
-## Cluster size 2451 broken into 2046 405 
-## Cluster size 2046 broken into 70 1976 
-## Done cluster 70 
-## Cluster size 1976 broken into 1956 20 
-## Cluster size 1956 broken into 964 992 
-## Done cluster 964 
-## Done cluster 992 
-## Done cluster 1956 
-## Done cluster 20 
-## Done cluster 1976 
-## Done cluster 2046 
-## Done cluster 405 
-## Done cluster 2451 
-## Cluster size 2302 broken into 1256 1046 
-## Done cluster 1256 
-## Done cluster 1046 
-## Done cluster 2302 
-## Done cluster 4753 
-## Cluster size 1690 broken into 841 849 
-## Done cluster 841 
-## Done cluster 849 
-## Done cluster 1690 
-## Done cluster 6443 
-## Cluster size 6288 broken into 2234 4054 
-## Cluster size 2234 broken into 904 1330 
-## Done cluster 904 
-## Done cluster 1330 
-## Done cluster 2234 
-## Cluster size 4054 broken into 2103 1951 
-## Cluster size 2103 broken into 1128 975 
-## Done cluster 1128 
-## Done cluster 975 
-## Done cluster 2103 
-## Cluster size 1951 broken into 1458 493 
-## Done cluster 1458 
-## Done cluster 493 
-## Done cluster 1951 
-## Done cluster 4054 
-## Done cluster 6288 
-## Done cluster 12731 
-## Done cluster 15153 
-## Done cluster 25047 
-## Cluster size 41095 broken into 41094 1 
-## Cluster size 41094 broken into 8158 32936 
-## Cluster size 8158 broken into 6135 2023 
-## Cluster size 6135 broken into 2415 3720 
-## Cluster size 2415 broken into 1208 1207 
-## Done cluster 1208 
-## Done cluster 1207 
-## Done cluster 2415 
-## Cluster size 3720 broken into 2338 1382 
-## Cluster size 2338 broken into 1087 1251 
-## Done cluster 1087 
-## Done cluster 1251 
-## Done cluster 2338 
-## Done cluster 1382 
-## Done cluster 3720 
-## Done cluster 6135 
-## Cluster size 2023 broken into 593 1430 
-## Done cluster 593 
-## Done cluster 1430 
-## Done cluster 2023 
-## Done cluster 8158 
-## Cluster size 32936 broken into 19779 13157 
-## Cluster size 19779 broken into 9916 9863 
-## Cluster size 9916 broken into 5475 4441 
-## Cluster size 5475 broken into 3852 1623 
-## Cluster size 3852 broken into 1727 2125 
-## Cluster size 1727 broken into 846 881 
-## Done cluster 846 
-## Done cluster 881 
-## Done cluster 1727 
-## Cluster size 2125 broken into 1218 907 
-## Done cluster 1218 
-## Done cluster 907 
-## Done cluster 2125 
-## Done cluster 3852 
-## Cluster size 1623 broken into 998 625 
-## Done cluster 998 
-## Done cluster 625 
-## Done cluster 1623 
-## Done cluster 5475 
-## Cluster size 4441 broken into 263 4178 
-## Done cluster 263 
-## Cluster size 4178 broken into 1826 2352 
-## Cluster size 1826 broken into 781 1045 
-## Done cluster 781 
-## Done cluster 1045 
-## Done cluster 1826 
-## Cluster size 2352 broken into 1703 649 
-## Cluster size 1703 broken into 25 1678 
-## Done cluster 25 
-## Cluster size 1678 broken into 1109 569 
-## Done cluster 1109 
-## Done cluster 569 
-## Done cluster 1678 
-## Done cluster 1703 
-## Done cluster 649 
-## Done cluster 2352 
-## Done cluster 4178 
-## Done cluster 4441 
-## Done cluster 9916 
-## Cluster size 9863 broken into 4414 5449 
-## Cluster size 4414 broken into 1518 2896 
-## Cluster size 1518 broken into 1335 183 
-## Done cluster 1335 
-## Done cluster 183 
-## Done cluster 1518 
-## Cluster size 2896 broken into 2792 104 
-## Cluster size 2792 broken into 699 2093 
-## Done cluster 699 
-## Cluster size 2093 broken into 3 2090 
-## Done cluster 3 
-## Cluster size 2090 broken into 2021 69 
-## Cluster size 2021 broken into 1771 250 
-## Cluster size 1771 broken into 1104 667 
-## Done cluster 1104 
-## Done cluster 667 
-## Done cluster 1771 
-## Done cluster 250 
-## Done cluster 2021 
-## Done cluster 69 
-## Done cluster 2090 
-## Done cluster 2093 
-## Done cluster 2792 
-## Done cluster 104 
-## Done cluster 2896 
-## Done cluster 4414 
-## Cluster size 5449 broken into 2056 3393 
-## Cluster size 2056 broken into 1611 445 
-## Cluster size 1611 broken into 906 705 
-## Done cluster 906 
-## Done cluster 705 
-## Done cluster 1611 
-## Done cluster 445 
-## Done cluster 2056 
-## Cluster size 3393 broken into 2351 1042 
-## Cluster size 2351 broken into 408 1943 
-## Done cluster 408 
-## Cluster size 1943 broken into 1029 914 
-## Done cluster 1029 
-## Done cluster 914 
-## Done cluster 1943 
-## Done cluster 2351 
-## Done cluster 1042 
-## Done cluster 3393 
-## Done cluster 5449 
-## Done cluster 9863 
-## Done cluster 19779 
-## Cluster size 13157 broken into 7201 5956 
-## Cluster size 7201 broken into 2997 4204 
-## Cluster size 2997 broken into 1184 1813 
-## Done cluster 1184 
-## Cluster size 1813 broken into 954 859 
-## Done cluster 954 
-## Done cluster 859 
-## Done cluster 1813 
-## Done cluster 2997 
-## Cluster size 4204 broken into 2635 1569 
-## Cluster size 2635 broken into 1284 1351 
-## Done cluster 1284 
-## Done cluster 1351 
-## Done cluster 2635 
-## Cluster size 1569 broken into 3 1566 
-## Done cluster 3 
-## Cluster size 1566 broken into 199 1367 
-## Done cluster 199 
-## Done cluster 1367 
-## Done cluster 1566 
-## Done cluster 1569 
-## Done cluster 4204 
-## Done cluster 7201 
-## Cluster size 5956 broken into 3588 2368 
-## Cluster size 3588 broken into 2375 1213 
-## Cluster size 2375 broken into 1121 1254 
-## Done cluster 1121 
-## Done cluster 1254 
-## Done cluster 2375 
-## Done cluster 1213 
-## Done cluster 3588 
-## Cluster size 2368 broken into 1361 1007 
-## Done cluster 1361 
-## Done cluster 1007 
-## Done cluster 2368 
-## Done cluster 5956 
-## Done cluster 13157 
-## Done cluster 32936 
-## Done cluster 41094 
-## Done cluster 1 
-## Done cluster 41095 
-## Done cluster 66142 
-## Done cluster 199145 
-## Cluster size 63273 broken into 29936 33337 
-## Cluster size 29936 broken into 15190 14746 
-## Cluster size 15190 broken into 7661 7529 
-## Cluster size 7661 broken into 3832 3829 
-## Cluster size 3832 broken into 2009 1823 
-## Cluster size 2009 broken into 847 1162 
-## Done cluster 847 
-## Done cluster 1162 
-## Done cluster 2009 
-## Cluster size 1823 broken into 1795 28 
-## Cluster size 1795 broken into 1771 24 
-## Cluster size 1771 broken into 1768 3 
-## Cluster size 1768 broken into 703 1065 
-## Done cluster 703 
-## Done cluster 1065 
-## Done cluster 1768 
-## Done cluster 3 
-## Done cluster 1771 
-## Done cluster 24 
-## Done cluster 1795 
-## Done cluster 28 
-## Done cluster 1823 
-## Done cluster 3832 
-## Cluster size 3829 broken into 1986 1843 
-## Cluster size 1986 broken into 935 1051 
-## Done cluster 935 
-## Done cluster 1051 
-## Done cluster 1986 
-## Cluster size 1843 broken into 459 1384 
-## Done cluster 459 
-## Done cluster 1384 
-## Done cluster 1843 
-## Done cluster 3829 
-## Done cluster 7661 
-## Cluster size 7529 broken into 4236 3293 
-## Cluster size 4236 broken into 2036 2200 
-## Cluster size 2036 broken into 1196 840 
-## Done cluster 1196 
-## Done cluster 840 
-## Done cluster 2036 
-## Cluster size 2200 broken into 792 1408 
-## Done cluster 792 
-## Done cluster 1408 
-## Done cluster 2200 
-## Done cluster 4236 
-## Cluster size 3293 broken into 2473 820 
-## Cluster size 2473 broken into 1169 1304 
-## Done cluster 1169 
-## Done cluster 1304 
-## Done cluster 2473 
-## Done cluster 820 
-## Done cluster 3293 
-## Done cluster 7529 
-## Done cluster 15190 
-## Cluster size 14746 broken into 9491 5255 
-## Cluster size 9491 broken into 2945 6546 
-## Cluster size 2945 broken into 1344 1601 
-## Done cluster 1344 
-## Cluster size 1601 broken into 802 799 
-## Done cluster 802 
-## Done cluster 799 
-## Done cluster 1601 
-## Done cluster 2945 
-## Cluster size 6546 broken into 2081 4465 
-## Cluster size 2081 broken into 2080 1 
-## Cluster size 2080 broken into 2075 5 
-## Cluster size 2075 broken into 2074 1 
-## Cluster size 2074 broken into 73 2001 
-## Done cluster 73 
-## Cluster size 2001 broken into 1094 907 
-## Done cluster 1094 
-## Done cluster 907 
-## Done cluster 2001 
-## Done cluster 2074 
-## Done cluster 1 
-## Done cluster 2075 
-## Done cluster 5 
-## Done cluster 2080 
-## Done cluster 1 
-## Done cluster 2081 
-## Cluster size 4465 broken into 4464 1 
-## Cluster size 4464 broken into 2272 2192 
-## Cluster size 2272 broken into 439 1833 
-## Done cluster 439 
-## Cluster size 1833 broken into 818 1015 
-## Done cluster 818 
-## Done cluster 1015 
-## Done cluster 1833 
-## Done cluster 2272 
-## Cluster size 2192 broken into 937 1255 
-## Done cluster 937 
-## Done cluster 1255 
-## Done cluster 2192 
-## Done cluster 4464 
-## Done cluster 1 
-## Done cluster 4465 
-## Done cluster 6546 
-## Done cluster 9491 
-## Cluster size 5255 broken into 1734 3521 
-## Cluster size 1734 broken into 1028 706 
-## Done cluster 1028 
-## Done cluster 706 
-## Done cluster 1734 
-## Cluster size 3521 broken into 1920 1601 
-## Cluster size 1920 broken into 811 1109 
-## Done cluster 811 
-## Done cluster 1109 
-## Done cluster 1920 
-## Cluster size 1601 broken into 1054 547 
-## Done cluster 1054 
-## Done cluster 547 
-## Done cluster 1601 
-## Done cluster 3521 
-## Done cluster 5255 
-## Done cluster 14746 
-## Done cluster 29936 
-## Cluster size 33337 broken into 18265 15072 
-## Cluster size 18265 broken into 8910 9355 
-## Cluster size 8910 broken into 1109 7801 
-## Done cluster 1109 
-## Cluster size 7801 broken into 2757 5044 
-## Cluster size 2757 broken into 1531 1226 
-## Cluster size 1531 broken into 748 783 
-## Done cluster 748 
-## Done cluster 783 
-## Done cluster 1531 
-## Done cluster 1226 
-## Done cluster 2757 
-## Cluster size 5044 broken into 2594 2450 
-## Cluster size 2594 broken into 2385 209 
-## Cluster size 2385 broken into 440 1945 
-## Done cluster 440 
-## Cluster size 1945 broken into 803 1142 
-## Done cluster 803 
-## Done cluster 1142 
-## Done cluster 1945 
-## Done cluster 2385 
-## Done cluster 209 
-## Done cluster 2594 
-## Cluster size 2450 broken into 1026 1424 
-## Done cluster 1026 
-## Done cluster 1424 
-## Done cluster 2450 
-## Done cluster 5044 
-## Done cluster 7801 
-## Done cluster 8910 
-## Cluster size 9355 broken into 3068 6287 
-## Cluster size 3068 broken into 2769 299 
-## Cluster size 2769 broken into 1541 1228 
-## Cluster size 1541 broken into 901 640 
-## Done cluster 901 
-## Done cluster 640 
-## Done cluster 1541 
-## Done cluster 1228 
-## Done cluster 2769 
-## Done cluster 299 
-## Done cluster 3068 
-## Cluster size 6287 broken into 4487 1800 
-## Cluster size 4487 broken into 3780 707 
-## Cluster size 3780 broken into 1464 2316 
-## Done cluster 1464 
-## Cluster size 2316 broken into 3 2313 
-## Done cluster 3 
-## Cluster size 2313 broken into 931 1382 
-## Done cluster 931 
-## Done cluster 1382 
-## Done cluster 2313 
-## Done cluster 2316 
-## Done cluster 3780 
-## Done cluster 707 
-## Done cluster 4487 
-## Cluster size 1800 broken into 1497 303 
-## Done cluster 1497 
-## Done cluster 303 
-## Done cluster 1800 
-## Done cluster 6287 
-## Done cluster 9355 
-## Done cluster 18265 
-## Cluster size 15072 broken into 8782 6290 
-## Cluster size 8782 broken into 4142 4640 
-## Cluster size 4142 broken into 1328 2814 
-## Done cluster 1328 
-## Cluster size 2814 broken into 661 2153 
-## Done cluster 661 
-## Cluster size 2153 broken into 1388 765 
-## Done cluster 1388 
-## Done cluster 765 
-## Done cluster 2153 
-## Done cluster 2814 
-## Done cluster 4142 
-## Cluster size 4640 broken into 2814 1826 
-## Cluster size 2814 broken into 1386 1428 
-## Done cluster 1386 
-## Done cluster 1428 
-## Done cluster 2814 
-## Cluster size 1826 broken into 275 1551 
-## Done cluster 275 
-## Cluster size 1551 broken into 77 1474 
-## Done cluster 77 
-## Done cluster 1474 
-## Done cluster 1551 
-## Done cluster 1826 
-## Done cluster 4640 
-## Done cluster 8782 
-## Cluster size 6290 broken into 3025 3265 
-## Cluster size 3025 broken into 929 2096 
-## Done cluster 929 
-## Cluster size 2096 broken into 879 1217 
-## Done cluster 879 
-## Done cluster 1217 
-## Done cluster 2096 
-## Done cluster 3025 
-## Cluster size 3265 broken into 893 2372 
-## Done cluster 893 
-## Cluster size 2372 broken into 1589 783 
-## Cluster size 1589 broken into 804 785 
-## Done cluster 804 
-## Done cluster 785 
-## Done cluster 1589 
-## Done cluster 783 
-## Done cluster 2372 
-## Done cluster 3265 
-## Done cluster 6290 
-## Done cluster 15072 
-## Done cluster 33337 
-## Done cluster 63273 
-## Done cluster 262418 
-## Cluster size 482950 broken into 347626 135324 
-## Cluster size 347626 broken into 187820 159806 
-## Cluster size 187820 broken into 186012 1808 
-## Cluster size 186012 broken into 134430 51582 
-## Cluster size 134430 broken into 134148 282 
-## Cluster size 134148 broken into 76541 57607 
-## Cluster size 76541 broken into 35937 40604 
-## Cluster size 35937 broken into 30879 5058 
-## Cluster size 30879 broken into 30826 53 
-## Cluster size 30826 broken into 15315 15511 
-## Cluster size 15315 broken into 7475 7840 
-## Cluster size 7475 broken into 4252 3223 
-## Cluster size 4252 broken into 1332 2920 
-## Done cluster 1332 
-## Cluster size 2920 broken into 1496 1424 
-## Done cluster 1496 
-## Done cluster 1424 
-## Done cluster 2920 
-## Done cluster 4252 
-## Cluster size 3223 broken into 650 2573 
-## Done cluster 650 
-## Cluster size 2573 broken into 2553 20 
-## Cluster size 2553 broken into 2527 26 
-## Cluster size 2527 broken into 1645 882 
-## Cluster size 1645 broken into 1640 5 
-## Cluster size 1640 broken into 339 1301 
-## Done cluster 339 
-## Done cluster 1301 
-## Done cluster 1640 
-## Done cluster 5 
-## Done cluster 1645 
-## Done cluster 882 
-## Done cluster 2527 
-## Done cluster 26 
-## Done cluster 2553 
-## Done cluster 20 
-## Done cluster 2573 
-## Done cluster 3223 
-## Done cluster 7475 
-## Cluster size 7840 broken into 7718 122 
-## Cluster size 7718 broken into 125 7593 
-## Done cluster 125 
-## Cluster size 7593 broken into 6948 645 
-## Cluster size 6948 broken into 3171 3777 
-## Cluster size 3171 broken into 3139 32 
-## Cluster size 3139 broken into 802 2337 
-## Done cluster 802 
-## Cluster size 2337 broken into 798 1539 
-## Done cluster 798 
-## Cluster size 1539 broken into 6 1533 
-## Done cluster 6 
-## Cluster size 1533 broken into 1101 432 
-## Done cluster 1101 
-## Done cluster 432 
-## Done cluster 1533 
-## Done cluster 1539 
-## Done cluster 2337 
-## Done cluster 3139 
-## Done cluster 32 
-## Done cluster 3171 
-## Cluster size 3777 broken into 3770 7 
-## Cluster size 3770 broken into 1277 2493 
-## Done cluster 1277 
-## Cluster size 2493 broken into 2319 174 
-## Cluster size 2319 broken into 1212 1107 
-## Done cluster 1212 
-## Done cluster 1107 
-## Done cluster 2319 
-## Done cluster 174 
-## Done cluster 2493 
-## Done cluster 3770 
-## Done cluster 7 
-## Done cluster 3777 
-## Done cluster 6948 
-## Done cluster 645 
-## Done cluster 7593 
-## Done cluster 7718 
-## Done cluster 122 
-## Done cluster 7840 
-## Done cluster 15315 
-## Cluster size 15511 broken into 4810 10701 
-## Cluster size 4810 broken into 4611 199 
-## Cluster size 4611 broken into 4610 1 
-## Cluster size 4610 broken into 35 4575 
-## Done cluster 35 
-## Cluster size 4575 broken into 406 4169 
-## Done cluster 406 
-## Cluster size 4169 broken into 3201 968 
-## Cluster size 3201 broken into 2068 1133 
-## Cluster size 2068 broken into 2052 16 
-## Cluster size 2052 broken into 726 1326 
-## Done cluster 726 
-## Done cluster 1326 
-## Done cluster 2052 
-## Done cluster 16 
-## Done cluster 2068 
-## Done cluster 1133 
-## Done cluster 3201 
-## Done cluster 968 
-## Done cluster 4169 
-## Done cluster 4575 
-## Done cluster 4610 
-## Done cluster 1 
-## Done cluster 4611 
-## Done cluster 199 
-## Done cluster 4810 
-## Cluster size 10701 broken into 4299 6402 
-## Cluster size 4299 broken into 338 3961 
-## Done cluster 338 
-## Cluster size 3961 broken into 3883 78 
-## Cluster size 3883 broken into 527 3356 
-## Done cluster 527 
-## Cluster size 3356 broken into 61 3295 
-## Done cluster 61 
-## Cluster size 3295 broken into 3275 20 
-## Cluster size 3275 broken into 1978 1297 
-## Cluster size 1978 broken into 10 1968 
-## Done cluster 10 
-## Cluster size 1968 broken into 1225 743 
-## Done cluster 1225 
-## Done cluster 743 
-## Done cluster 1968 
-## Done cluster 1978 
-## Done cluster 1297 
-## Done cluster 3275 
-## Done cluster 20 
-## Done cluster 3295 
-## Done cluster 3356 
-## Done cluster 3883 
-## Done cluster 78 
-## Done cluster 3961 
-## Done cluster 4299 
-## Cluster size 6402 broken into 63 6339 
-## Done cluster 63 
-## Cluster size 6339 broken into 6112 227 
-## Cluster size 6112 broken into 68 6044 
-## Done cluster 68 
-## Cluster size 6044 broken into 1117 4927 
-## Done cluster 1117 
-## Cluster size 4927 broken into 2836 2091 
-## Cluster size 2836 broken into 1824 1012 
-## Cluster size 1824 broken into 1475 349 
-## Done cluster 1475 
-## Done cluster 349 
-## Done cluster 1824 
-## Done cluster 1012 
-## Done cluster 2836 
-## Cluster size 2091 broken into 5 2086 
-## Done cluster 5 
-## Cluster size 2086 broken into 618 1468 
-## Done cluster 618 
-## Done cluster 1468 
-## Done cluster 2086 
-## Done cluster 2091 
-## Done cluster 4927 
-## Done cluster 6044 
-## Done cluster 6112 
-## Done cluster 227 
-## Done cluster 6339 
-## Done cluster 6402 
-## Done cluster 10701 
-## Done cluster 15511 
-## Done cluster 30826 
-## Done cluster 53 
-## Done cluster 30879 
-## Cluster size 5058 broken into 274 4784 
-## Done cluster 274 
-## Cluster size 4784 broken into 2698 2086 
-## Cluster size 2698 broken into 1232 1466 
-## Done cluster 1232 
-## Done cluster 1466 
-## Done cluster 2698 
-## Cluster size 2086 broken into 90 1996 
-## Done cluster 90 
-## Cluster size 1996 broken into 1992 4 
-## Cluster size 1992 broken into 1276 716 
-## Done cluster 1276 
-## Done cluster 716 
-## Done cluster 1992 
-## Done cluster 4 
-## Done cluster 1996 
-## Done cluster 2086 
-## Done cluster 4784 
-## Done cluster 5058 
-## Done cluster 35937 
-## Cluster size 40604 broken into 22133 18471 
-## Cluster size 22133 broken into 12162 9971 
-## Cluster size 12162 broken into 12130 32 
-## Cluster size 12130 broken into 4135 7995 
-## Cluster size 4135 broken into 3578 557 
-## Cluster size 3578 broken into 1036 2542 
-## Done cluster 1036 
-## Cluster size 2542 broken into 1420 1122 
-## Done cluster 1420 
-## Done cluster 1122 
-## Done cluster 2542 
-## Done cluster 3578 
-## Done cluster 557 
-## Done cluster 4135 
-## Cluster size 7995 broken into 17 7978 
-## Done cluster 17 
-## Cluster size 7978 broken into 4105 3873 
-## Cluster size 4105 broken into 1934 2171 
-## Cluster size 1934 broken into 82 1852 
-## Done cluster 82 
-## Cluster size 1852 broken into 1833 19 
-## Cluster size 1833 broken into 1776 57 
-## Cluster size 1776 broken into 1053 723 
-## Done cluster 1053 
-## Done cluster 723 
-## Done cluster 1776 
-## Done cluster 57 
-## Done cluster 1833 
-## Done cluster 19 
-## Done cluster 1852 
-## Done cluster 1934 
-## Cluster size 2171 broken into 2143 28 
-## Cluster size 2143 broken into 1195 948 
-## Done cluster 1195 
-## Done cluster 948 
-## Done cluster 2143 
-## Done cluster 28 
-## Done cluster 2171 
-## Done cluster 4105 
-## Cluster size 3873 broken into 1077 2796 
-## Done cluster 1077 
-## Cluster size 2796 broken into 1446 1350 
-## Done cluster 1446 
-## Done cluster 1350 
-## Done cluster 2796 
-## Done cluster 3873 
-## Done cluster 7978 
-## Done cluster 7995 
-## Done cluster 12130 
-## Done cluster 32 
-## Done cluster 12162 
-## Cluster size 9971 broken into 733 9238 
-## Done cluster 733 
-## Cluster size 9238 broken into 5865 3373 
-## Cluster size 5865 broken into 1600 4265 
-## Cluster size 1600 broken into 659 941 
-## Done cluster 659 
-## Done cluster 941 
-## Done cluster 1600 
-## Cluster size 4265 broken into 34 4231 
-## Done cluster 34 
-## Cluster size 4231 broken into 1911 2320 
-## Cluster size 1911 broken into 29 1882 
-## Done cluster 29 
-## Cluster size 1882 broken into 1860 22 
-## Cluster size 1860 broken into 887 973 
-## Done cluster 887 
-## Done cluster 973 
-## Done cluster 1860 
-## Done cluster 22 
-## Done cluster 1882 
-## Done cluster 1911 
-## Cluster size 2320 broken into 2289 31 
-## Cluster size 2289 broken into 32 2257 
-## Done cluster 32 
-## Cluster size 2257 broken into 739 1518 
-## Done cluster 739 
-## Cluster size 1518 broken into 1459 59 
-## Done cluster 1459 
-## Done cluster 59 
-## Done cluster 1518 
-## Done cluster 2257 
-## Done cluster 2289 
-## Done cluster 31 
-## Done cluster 2320 
-## Done cluster 4231 
-## Done cluster 4265 
-## Done cluster 5865 
-## Cluster size 3373 broken into 1601 1772 
-## Cluster size 1601 broken into 716 885 
-## Done cluster 716 
-## Done cluster 885 
-## Done cluster 1601 
-## Cluster size 1772 broken into 65 1707 
-## Done cluster 65 
-## Cluster size 1707 broken into 1265 442 
-## Done cluster 1265 
-## Done cluster 442 
-## Done cluster 1707 
-## Done cluster 1772 
-## Done cluster 3373 
-## Done cluster 9238 
-## Done cluster 9971 
-## Done cluster 22133 
-## Cluster size 18471 broken into 10343 8128 
-## Cluster size 10343 broken into 1533 8810 
-## Cluster size 1533 broken into 1383 150 
-## Done cluster 1383 
-## Done cluster 150 
-## Done cluster 1533 
-## Cluster size 8810 broken into 4633 4177 
-## Cluster size 4633 broken into 3448 1185 
-## Cluster size 3448 broken into 1360 2088 
-## Done cluster 1360 
-## Cluster size 2088 broken into 2055 33 
-## Cluster size 2055 broken into 484 1571 
-## Done cluster 484 
-## Cluster size 1571 broken into 1143 428 
-## Done cluster 1143 
-## Done cluster 428 
-## Done cluster 1571 
-## Done cluster 2055 
-## Done cluster 33 
-## Done cluster 2088 
-## Done cluster 3448 
-## Done cluster 1185 
-## Done cluster 4633 
-## Cluster size 4177 broken into 22 4155 
-## Done cluster 22 
-## Cluster size 4155 broken into 1119 3036 
-## Done cluster 1119 
-## Cluster size 3036 broken into 18 3018 
-## Done cluster 18 
-## Cluster size 3018 broken into 1605 1413 
-## Cluster size 1605 broken into 763 842 
-## Done cluster 763 
-## Done cluster 842 
-## Done cluster 1605 
-## Done cluster 1413 
-## Done cluster 3018 
-## Done cluster 3036 
-## Done cluster 4155 
-## Done cluster 4177 
-## Done cluster 8810 
-## Done cluster 10343 
-## Cluster size 8128 broken into 5120 3008 
-## Cluster size 5120 broken into 4988 132 
-## Cluster size 4988 broken into 23 4965 
-## Done cluster 23 
-## Cluster size 4965 broken into 2414 2551 
-## Cluster size 2414 broken into 1407 1007 
-## Done cluster 1407 
-## Done cluster 1007 
-## Done cluster 2414 
-## Cluster size 2551 broken into 550 2001 
-## Done cluster 550 
-## Cluster size 2001 broken into 1778 223 
-## Cluster size 1778 broken into 891 887 
-## Done cluster 891 
-## Done cluster 887 
-## Done cluster 1778 
-## Done cluster 223 
-## Done cluster 2001 
-## Done cluster 2551 
-## Done cluster 4965 
-## Done cluster 4988 
-## Done cluster 132 
-## Done cluster 5120 
-## Cluster size 3008 broken into 1236 1772 
-## Done cluster 1236 
-## Cluster size 1772 broken into 1032 740 
-## Done cluster 1032 
-## Done cluster 740 
-## Done cluster 1772 
-## Done cluster 3008 
-## Done cluster 8128 
-## Done cluster 18471 
-## Done cluster 40604 
-## Done cluster 76541 
-## Cluster size 57607 broken into 24627 32980 
-## Cluster size 24627 broken into 13263 11364 
-## Cluster size 13263 broken into 9732 3531 
-## Cluster size 9732 broken into 121 9611 
-## Done cluster 121 
-## Cluster size 9611 broken into 9364 247 
-## Cluster size 9364 broken into 11 9353 
-## Done cluster 11 
-## Cluster size 9353 broken into 9238 115 
-## Cluster size 9238 broken into 4288 4950 
-## Cluster size 4288 broken into 1496 2792 
-## Done cluster 1496 
-## Cluster size 2792 broken into 2786 6 
-## Cluster size 2786 broken into 625 2161 
-## Done cluster 625 
-## Cluster size 2161 broken into 2136 25 
-## Cluster size 2136 broken into 1046 1090 
-## Done cluster 1046 
-## Done cluster 1090 
-## Done cluster 2136 
-## Done cluster 25 
-## Done cluster 2161 
-## Done cluster 2786 
-## Done cluster 6 
-## Done cluster 2792 
-## Done cluster 4288 
-## Cluster size 4950 broken into 2890 2060 
-## Cluster size 2890 broken into 1486 1404 
-## Done cluster 1486 
-## Done cluster 1404 
-## Done cluster 2890 
-## Cluster size 2060 broken into 2 2058 
-## Done cluster 2 
-## Cluster size 2058 broken into 958 1100 
-## Done cluster 958 
-## Done cluster 1100 
-## Done cluster 2058 
-## Done cluster 2060 
-## Done cluster 4950 
-## Done cluster 9238 
-## Done cluster 115 
-## Done cluster 9353 
-## Done cluster 9364 
-## Done cluster 247 
-## Done cluster 9611 
-## Done cluster 9732 
-## Cluster size 3531 broken into 1351 2180 
-## Done cluster 1351 
-## Cluster size 2180 broken into 990 1190 
-## Done cluster 990 
-## Done cluster 1190 
-## Done cluster 2180 
-## Done cluster 3531 
-## Done cluster 13263 
-## Cluster size 11364 broken into 6043 5321 
-## Cluster size 6043 broken into 206 5837 
-## Done cluster 206 
-## Cluster size 5837 broken into 16 5821 
-## Done cluster 16 
-## Cluster size 5821 broken into 2532 3289 
-## Cluster size 2532 broken into 2386 146 
-## Cluster size 2386 broken into 2380 6 
-## Cluster size 2380 broken into 1404 976 
-## Done cluster 1404 
-## Done cluster 976 
-## Done cluster 2380 
-## Done cluster 6 
-## Done cluster 2386 
-## Done cluster 146 
-## Done cluster 2532 
-## Cluster size 3289 broken into 2020 1269 
-## Cluster size 2020 broken into 1017 1003 
-## Done cluster 1017 
-## Done cluster 1003 
-## Done cluster 2020 
-## Done cluster 1269 
-## Done cluster 3289 
-## Done cluster 5821 
-## Done cluster 5837 
-## Done cluster 6043 
-## Cluster size 5321 broken into 100 5221 
-## Done cluster 100 
-## Cluster size 5221 broken into 2254 2967 
-## Cluster size 2254 broken into 2186 68 
-## Cluster size 2186 broken into 1706 480 
-## Cluster size 1706 broken into 17 1689 
-## Done cluster 17 
-## Cluster size 1689 broken into 1686 3 
-## Cluster size 1686 broken into 1681 5 
-## Cluster size 1681 broken into 1 1680 
-## Done cluster 1 
-## Cluster size 1680 broken into 892 788 
-## Done cluster 892 
-## Done cluster 788 
-## Done cluster 1680 
-## Done cluster 1681 
-## Done cluster 5 
-## Done cluster 1686 
-## Done cluster 3 
-## Done cluster 1689 
-## Done cluster 1706 
-## Done cluster 480 
-## Done cluster 2186 
-## Done cluster 68 
-## Done cluster 2254 
-## Cluster size 2967 broken into 2851 116 
-## Cluster size 2851 broken into 1621 1230 
-## Cluster size 1621 broken into 765 856 
-## Done cluster 765 
-## Done cluster 856 
-## Done cluster 1621 
-## Done cluster 1230 
-## Done cluster 2851 
-## Done cluster 116 
-## Done cluster 2967 
-## Done cluster 5221 
-## Done cluster 5321 
-## Done cluster 11364 
-## Done cluster 24627 
-## Cluster size 32980 broken into 32803 177 
-## Cluster size 32803 broken into 17147 15656 
-## Cluster size 17147 broken into 107 17040 
-## Done cluster 107 
-## Cluster size 17040 broken into 6361 10679 
-## Cluster size 6361 broken into 6261 100 
-## Cluster size 6261 broken into 279 5982 
-## Done cluster 279 
-## Cluster size 5982 broken into 5962 20 
-## Cluster size 5962 broken into 3123 2839 
-## Cluster size 3123 broken into 3102 21 
-## Cluster size 3102 broken into 1919 1183 
-## Cluster size 1919 broken into 1914 5 
-## Cluster size 1914 broken into 917 997 
-## Done cluster 917 
-## Done cluster 997 
-## Done cluster 1914 
-## Done cluster 5 
-## Done cluster 1919 
-## Done cluster 1183 
-## Done cluster 3102 
-## Done cluster 21 
-## Done cluster 3123 
-## Cluster size 2839 broken into 2801 38 
-## Cluster size 2801 broken into 1570 1231 
-## Cluster size 1570 broken into 1196 374 
-## Done cluster 1196 
-## Done cluster 374 
-## Done cluster 1570 
-## Done cluster 1231 
-## Done cluster 2801 
-## Done cluster 38 
-## Done cluster 2839 
-## Done cluster 5962 
-## Done cluster 20 
-## Done cluster 5982 
-## Done cluster 6261 
-## Done cluster 100 
-## Done cluster 6361 
-## Cluster size 10679 broken into 3437 7242 
-## Cluster size 3437 broken into 3334 103 
-## Cluster size 3334 broken into 1011 2323 
-## Done cluster 1011 
-## Cluster size 2323 broken into 1223 1100 
-## Done cluster 1223 
-## Done cluster 1100 
-## Done cluster 2323 
-## Done cluster 3334 
-## Done cluster 103 
-## Done cluster 3437 
-## Cluster size 7242 broken into 4095 3147 
-## Cluster size 4095 broken into 4007 88 
-## Cluster size 4007 broken into 2278 1729 
-## Cluster size 2278 broken into 2272 6 
-## Cluster size 2272 broken into 712 1560 
-## Done cluster 712 
-## Cluster size 1560 broken into 1545 15 
-## Cluster size 1545 broken into 1266 279 
-## Done cluster 1266 
-## Done cluster 279 
-## Done cluster 1545 
-## Done cluster 15 
-## Done cluster 1560 
-## Done cluster 2272 
-## Done cluster 6 
-## Done cluster 2278 
-## Cluster size 1729 broken into 211 1518 
-## Done cluster 211 
-## Cluster size 1518 broken into 297 1221 
-## Done cluster 297 
-## Done cluster 1221 
-## Done cluster 1518 
-## Done cluster 1729 
-## Done cluster 4007 
-## Done cluster 88 
-## Done cluster 4095 
-## Cluster size 3147 broken into 55 3092 
-## Done cluster 55 
-## Cluster size 3092 broken into 69 3023 
-## Done cluster 69 
-## Cluster size 3023 broken into 2712 311 
-## Cluster size 2712 broken into 7 2705 
-## Done cluster 7 
-## Cluster size 2705 broken into 13 2692 
-## Done cluster 13 
-## Cluster size 2692 broken into 1100 1592 
-## Done cluster 1100 
-## Cluster size 1592 broken into 585 1007 
-## Done cluster 585 
-## Done cluster 1007 
-## Done cluster 1592 
-## Done cluster 2692 
-## Done cluster 2705 
-## Done cluster 2712 
-## Done cluster 311 
-## Done cluster 3023 
-## Done cluster 3092 
-## Done cluster 3147 
-## Done cluster 7242 
-## Done cluster 10679 
-## Done cluster 17040 
-## Done cluster 17147 
-## Cluster size 15656 broken into 54 15602 
-## Done cluster 54 
-## Cluster size 15602 broken into 7146 8456 
-## Cluster size 7146 broken into 6106 1040 
-## Cluster size 6106 broken into 142 5964 
-## Done cluster 142 
-## Cluster size 5964 broken into 298 5666 
-## Done cluster 298 
-## Cluster size 5666 broken into 2442 3224 
-## Cluster size 2442 broken into 6 2436 
-## Done cluster 6 
-## Cluster size 2436 broken into 1547 889 
-## Cluster size 1547 broken into 42 1505 
-## Done cluster 42 
-## Cluster size 1505 broken into 28 1477 
-## Done cluster 28 
-## Done cluster 1477 
-## Done cluster 1505 
-## Done cluster 1547 
-## Done cluster 889 
-## Done cluster 2436 
-## Done cluster 2442 
-## Cluster size 3224 broken into 1354 1870 
-## Done cluster 1354 
-## Cluster size 1870 broken into 946 924 
-## Done cluster 946 
-## Done cluster 924 
-## Done cluster 1870 
-## Done cluster 3224 
-## Done cluster 5666 
-## Done cluster 5964 
-## Done cluster 6106 
-## Done cluster 1040 
-## Done cluster 7146 
-## Cluster size 8456 broken into 6470 1986 
-## Cluster size 6470 broken into 3603 2867 
-## Cluster size 3603 broken into 1754 1849 
-## Cluster size 1754 broken into 1240 514 
-## Done cluster 1240 
-## Done cluster 514 
-## Done cluster 1754 
-## Cluster size 1849 broken into 1325 524 
-## Done cluster 1325 
-## Done cluster 524 
-## Done cluster 1849 
-## Done cluster 3603 
-## Cluster size 2867 broken into 96 2771 
-## Done cluster 96 
-## Cluster size 2771 broken into 4 2767 
-## Done cluster 4 
-## Cluster size 2767 broken into 2747 20 
-## Cluster size 2747 broken into 2740 7 
-## Cluster size 2740 broken into 1391 1349 
-## Done cluster 1391 
-## Done cluster 1349 
-## Done cluster 2740 
-## Done cluster 7 
-## Done cluster 2747 
-## Done cluster 20 
-## Done cluster 2767 
-## Done cluster 2771 
-## Done cluster 2867 
-## Done cluster 6470 
-## Cluster size 1986 broken into 1775 211 
-## Cluster size 1775 broken into 1678 97 
-## Cluster size 1678 broken into 750 928 
-## Done cluster 750 
-## Done cluster 928 
-## Done cluster 1678 
-## Done cluster 97 
-## Done cluster 1775 
-## Done cluster 211 
-## Done cluster 1986 
-## Done cluster 8456 
-## Done cluster 15602 
-## Done cluster 15656 
-## Done cluster 32803 
-## Done cluster 177 
-## Done cluster 32980 
-## Done cluster 57607 
-## Done cluster 134148 
-## Done cluster 282 
-## Done cluster 134430 
-## Cluster size 51582 broken into 26473 25109 
-## Cluster size 26473 broken into 8523 17950 
-## Cluster size 8523 broken into 7033 1490 
-## Cluster size 7033 broken into 4903 2130 
-## Cluster size 4903 broken into 2483 2420 
-## Cluster size 2483 broken into 1258 1225 
-## Done cluster 1258 
-## Done cluster 1225 
-## Done cluster 2483 
-## Cluster size 2420 broken into 1801 619 
-## Cluster size 1801 broken into 921 880 
-## Done cluster 921 
-## Done cluster 880 
-## Done cluster 1801 
-## Done cluster 619 
-## Done cluster 2420 
-## Done cluster 4903 
-## Cluster size 2130 broken into 849 1281 
-## Done cluster 849 
-## Done cluster 1281 
-## Done cluster 2130 
-## Done cluster 7033 
-## Done cluster 1490 
-## Done cluster 8523 
-## Cluster size 17950 broken into 8444 9506 
-## Cluster size 8444 broken into 5277 3167 
-## Cluster size 5277 broken into 7 5270 
-## Done cluster 7 
-## Cluster size 5270 broken into 2357 2913 
-## Cluster size 2357 broken into 9 2348 
-## Done cluster 9 
-## Cluster size 2348 broken into 270 2078 
-## Done cluster 270 
-## Cluster size 2078 broken into 1212 866 
-## Done cluster 1212 
-## Done cluster 866 
-## Done cluster 2078 
-## Done cluster 2348 
-## Done cluster 2357 
-## Cluster size 2913 broken into 1928 985 
-## Cluster size 1928 broken into 1891 37 
-## Cluster size 1891 broken into 790 1101 
-## Done cluster 790 
-## Done cluster 1101 
-## Done cluster 1891 
-## Done cluster 37 
-## Done cluster 1928 
-## Done cluster 985 
-## Done cluster 2913 
-## Done cluster 5270 
-## Done cluster 5277 
-## Cluster size 3167 broken into 2365 802 
-## Cluster size 2365 broken into 1173 1192 
-## Done cluster 1173 
-## Done cluster 1192 
-## Done cluster 2365 
-## Done cluster 802 
-## Done cluster 3167 
-## Done cluster 8444 
-## Cluster size 9506 broken into 5489 4017 
-## Cluster size 5489 broken into 5473 16 
-## Cluster size 5473 broken into 5467 6 
-## Cluster size 5467 broken into 1750 3717 
-## Cluster size 1750 broken into 1749 1 
-## Cluster size 1749 broken into 1183 566 
-## Done cluster 1183 
-## Done cluster 566 
-## Done cluster 1749 
-## Done cluster 1 
-## Done cluster 1750 
-## Cluster size 3717 broken into 1858 1859 
-## Cluster size 1858 broken into 1044 814 
-## Done cluster 1044 
-## Done cluster 814 
-## Done cluster 1858 
-## Cluster size 1859 broken into 993 866 
-## Done cluster 993 
-## Done cluster 866 
-## Done cluster 1859 
-## Done cluster 3717 
-## Done cluster 5467 
-## Done cluster 6 
-## Done cluster 5473 
-## Done cluster 16 
-## Done cluster 5489 
-## Cluster size 4017 broken into 6 4011 
-## Done cluster 6 
-## Cluster size 4011 broken into 2766 1245 
-## Cluster size 2766 broken into 1245 1521 
-## Done cluster 1245 
-## Cluster size 1521 broken into 916 605 
-## Done cluster 916 
-## Done cluster 605 
-## Done cluster 1521 
-## Done cluster 2766 
-## Done cluster 1245 
-## Done cluster 4011 
-## Done cluster 4017 
-## Done cluster 9506 
-## Done cluster 17950 
-## Done cluster 26473 
-## Cluster size 25109 broken into 10678 14431 
-## Cluster size 10678 broken into 6437 4241 
-## Cluster size 6437 broken into 3727 2710 
-## Cluster size 3727 broken into 10 3717 
-## Done cluster 10 
-## Cluster size 3717 broken into 1075 2642 
-## Done cluster 1075 
-## Cluster size 2642 broken into 1450 1192 
-## Done cluster 1450 
-## Done cluster 1192 
-## Done cluster 2642 
-## Done cluster 3717 
-## Done cluster 3727 
-## Cluster size 2710 broken into 2669 41 
-## Cluster size 2669 broken into 24 2645 
-## Done cluster 24 
-## Cluster size 2645 broken into 1232 1413 
-## Done cluster 1232 
-## Done cluster 1413 
-## Done cluster 2645 
-## Done cluster 2669 
-## Done cluster 41 
-## Done cluster 2710 
-## Done cluster 6437 
-## Cluster size 4241 broken into 3250 991 
-## Cluster size 3250 broken into 1185 2065 
-## Done cluster 1185 
-## Cluster size 2065 broken into 1472 593 
-## Done cluster 1472 
-## Done cluster 593 
-## Done cluster 2065 
-## Done cluster 3250 
-## Done cluster 991 
-## Done cluster 4241 
-## Done cluster 10678 
-## Cluster size 14431 broken into 1 14430 
-## Done cluster 1 
-## Cluster size 14430 broken into 8033 6397 
-## Cluster size 8033 broken into 3387 4646 
-## Cluster size 3387 broken into 1973 1414 
-## Cluster size 1973 broken into 1401 572 
-## Done cluster 1401 
-## Done cluster 572 
-## Done cluster 1973 
-## Done cluster 1414 
-## Done cluster 3387 
-## Cluster size 4646 broken into 3149 1497 
-## Cluster size 3149 broken into 490 2659 
-## Done cluster 490 
-## Cluster size 2659 broken into 2614 45 
-## Cluster size 2614 broken into 1294 1320 
-## Done cluster 1294 
-## Done cluster 1320 
-## Done cluster 2614 
-## Done cluster 45 
-## Done cluster 2659 
-## Done cluster 3149 
-## Done cluster 1497 
-## Done cluster 4646 
-## Done cluster 8033 
-## Cluster size 6397 broken into 3427 2970 
-## Cluster size 3427 broken into 2138 1289 
-## Cluster size 2138 broken into 956 1182 
-## Done cluster 956 
-## Done cluster 1182 
-## Done cluster 2138 
-## Done cluster 1289 
-## Done cluster 3427 
-## Cluster size 2970 broken into 252 2718 
-## Done cluster 252 
-## Cluster size 2718 broken into 1271 1447 
-## Done cluster 1271 
-## Done cluster 1447 
-## Done cluster 2718 
-## Done cluster 2970 
-## Done cluster 6397 
-## Done cluster 14430 
-## Done cluster 14431 
-## Done cluster 25109 
-## Done cluster 51582 
-## Done cluster 186012 
-## Cluster size 1808 broken into 802 1006 
-## Done cluster 802 
-## Done cluster 1006 
-## Done cluster 1808 
-## Done cluster 187820 
-## Cluster size 159806 broken into 120373 39433 
-## Cluster size 120373 broken into 63342 57031 
-## Cluster size 63342 broken into 29845 33497 
-## Cluster size 29845 broken into 22715 7130 
-## Cluster size 22715 broken into 71 22644 
-## Done cluster 71 
-## Cluster size 22644 broken into 9977 12667 
-## Cluster size 9977 broken into 15 9962 
-## Done cluster 15 
-## Cluster size 9962 broken into 9824 138 
-## Cluster size 9824 broken into 420 9404 
-## Done cluster 420 
-## Cluster size 9404 broken into 109 9295 
-## Done cluster 109 
-## Cluster size 9295 broken into 5621 3674 
-## Cluster size 5621 broken into 5610 11 
-## Cluster size 5610 broken into 1117 4493 
-## Done cluster 1117 
-## Cluster size 4493 broken into 3985 508 
-## Cluster size 3985 broken into 1937 2048 
-## Cluster size 1937 broken into 24 1913 
-## Done cluster 24 
-## Cluster size 1913 broken into 717 1196 
-## Done cluster 717 
-## Done cluster 1196 
-## Done cluster 1913 
-## Done cluster 1937 
-## Cluster size 2048 broken into 8 2040 
-## Done cluster 8 
-## Cluster size 2040 broken into 907 1133 
-## Done cluster 907 
-## Done cluster 1133 
-## Done cluster 2040 
-## Done cluster 2048 
-## Done cluster 3985 
-## Done cluster 508 
-## Done cluster 4493 
-## Done cluster 5610 
-## Done cluster 11 
-## Done cluster 5621 
-## Cluster size 3674 broken into 1804 1870 
-## Cluster size 1804 broken into 572 1232 
-## Done cluster 572 
-## Done cluster 1232 
-## Done cluster 1804 
-## Cluster size 1870 broken into 1852 18 
-## Cluster size 1852 broken into 738 1114 
-## Done cluster 738 
-## Done cluster 1114 
-## Done cluster 1852 
-## Done cluster 18 
-## Done cluster 1870 
-## Done cluster 3674 
-## Done cluster 9295 
-## Done cluster 9404 
-## Done cluster 9824 
-## Done cluster 138 
-## Done cluster 9962 
-## Done cluster 9977 
-## Cluster size 12667 broken into 5916 6751 
-## Cluster size 5916 broken into 2528 3388 
-## Cluster size 2528 broken into 2409 119 
-## Cluster size 2409 broken into 2373 36 
-## Cluster size 2373 broken into 829 1544 
-## Done cluster 829 
-## Cluster size 1544 broken into 217 1327 
-## Done cluster 217 
-## Done cluster 1327 
-## Done cluster 1544 
-## Done cluster 2373 
-## Done cluster 36 
-## Done cluster 2409 
-## Done cluster 119 
-## Done cluster 2528 
-## Cluster size 3388 broken into 2346 1042 
-## Cluster size 2346 broken into 1325 1021 
-## Done cluster 1325 
-## Done cluster 1021 
-## Done cluster 2346 
-## Done cluster 1042 
-## Done cluster 3388 
-## Done cluster 5916 
-## Cluster size 6751 broken into 1664 5087 
-## Cluster size 1664 broken into 1647 17 
-## Cluster size 1647 broken into 60 1587 
-## Done cluster 60 
-## Cluster size 1587 broken into 244 1343 
-## Done cluster 244 
-## Done cluster 1343 
-## Done cluster 1587 
-## Done cluster 1647 
-## Done cluster 17 
-## Done cluster 1664 
-## Cluster size 5087 broken into 1 5086 
-## Done cluster 1 
-## Cluster size 5086 broken into 5015 71 
-## Cluster size 5015 broken into 2662 2353 
-## Cluster size 2662 broken into 1841 821 
-## Cluster size 1841 broken into 1012 829 
-## Done cluster 1012 
-## Done cluster 829 
-## Done cluster 1841 
-## Done cluster 821 
-## Done cluster 2662 
-## Cluster size 2353 broken into 2298 55 
-## Cluster size 2298 broken into 2048 250 
-## Cluster size 2048 broken into 927 1121 
-## Done cluster 927 
-## Done cluster 1121 
-## Done cluster 2048 
-## Done cluster 250 
-## Done cluster 2298 
-## Done cluster 55 
-## Done cluster 2353 
-## Done cluster 5015 
-## Done cluster 71 
-## Done cluster 5086 
-## Done cluster 5087 
-## Done cluster 6751 
-## Done cluster 12667 
-## Done cluster 22644 
-## Done cluster 22715 
-## Cluster size 7130 broken into 24 7106 
-## Done cluster 24 
-## Cluster size 7106 broken into 5232 1874 
-## Cluster size 5232 broken into 1986 3246 
-## Cluster size 1986 broken into 1874 112 
-## Cluster size 1874 broken into 8 1866 
-## Done cluster 8 
-## Cluster size 1866 broken into 617 1249 
-## Done cluster 617 
-## Done cluster 1249 
-## Done cluster 1866 
-## Done cluster 1874 
-## Done cluster 112 
-## Done cluster 1986 
-## Cluster size 3246 broken into 2005 1241 
-## Cluster size 2005 broken into 3 2002 
-## Done cluster 3 
-## Cluster size 2002 broken into 1154 848 
-## Done cluster 1154 
-## Done cluster 848 
-## Done cluster 2002 
-## Done cluster 2005 
-## Done cluster 1241 
-## Done cluster 3246 
-## Done cluster 5232 
-## Cluster size 1874 broken into 1872 2 
-## Cluster size 1872 broken into 1229 643 
-## Done cluster 1229 
-## Done cluster 643 
-## Done cluster 1872 
-## Done cluster 2 
-## Done cluster 1874 
-## Done cluster 7106 
-## Done cluster 7130 
-## Done cluster 29845 
-## Cluster size 33497 broken into 20365 13132 
-## Cluster size 20365 broken into 19811 554 
-## Cluster size 19811 broken into 4865 14946 
-## Cluster size 4865 broken into 3723 1142 
-## Cluster size 3723 broken into 3715 8 
-## Cluster size 3715 broken into 3606 109 
-## Cluster size 3606 broken into 1604 2002 
-## Cluster size 1604 broken into 6 1598 
-## Done cluster 6 
-## Cluster size 1598 broken into 922 676 
-## Done cluster 922 
-## Done cluster 676 
-## Done cluster 1598 
-## Done cluster 1604 
-## Cluster size 2002 broken into 1456 546 
-## Done cluster 1456 
-## Done cluster 546 
-## Done cluster 2002 
-## Done cluster 3606 
-## Done cluster 109 
-## Done cluster 3715 
-## Done cluster 8 
-## Done cluster 3723 
-## Done cluster 1142 
-## Done cluster 4865 
-## Cluster size 14946 broken into 8900 6046 
-## Cluster size 8900 broken into 4216 4684 
-## Cluster size 4216 broken into 2247 1969 
-## Cluster size 2247 broken into 1822 425 
-## Cluster size 1822 broken into 300 1522 
-## Done cluster 300 
-## Cluster size 1522 broken into 695 827 
-## Done cluster 695 
-## Done cluster 827 
-## Done cluster 1522 
-## Done cluster 1822 
-## Done cluster 425 
-## Done cluster 2247 
-## Cluster size 1969 broken into 1193 776 
-## Done cluster 1193 
-## Done cluster 776 
-## Done cluster 1969 
-## Done cluster 4216 
-## Cluster size 4684 broken into 1682 3002 
-## Cluster size 1682 broken into 29 1653 
-## Done cluster 29 
-## Cluster size 1653 broken into 542 1111 
-## Done cluster 542 
-## Done cluster 1111 
-## Done cluster 1653 
-## Done cluster 1682 
-## Cluster size 3002 broken into 1593 1409 
-## Cluster size 1593 broken into 561 1032 
-## Done cluster 561 
-## Done cluster 1032 
-## Done cluster 1593 
-## Done cluster 1409 
-## Done cluster 3002 
-## Done cluster 4684 
-## Done cluster 8900 
-## Cluster size 6046 broken into 4805 1241 
-## Cluster size 4805 broken into 2488 2317 
-## Cluster size 2488 broken into 1559 929 
-## Cluster size 1559 broken into 1120 439 
-## Done cluster 1120 
-## Done cluster 439 
-## Done cluster 1559 
-## Done cluster 929 
-## Done cluster 2488 
-## Cluster size 2317 broken into 42 2275 
-## Done cluster 42 
-## Cluster size 2275 broken into 1618 657 
-## Cluster size 1618 broken into 405 1213 
-## Done cluster 405 
-## Done cluster 1213 
-## Done cluster 1618 
-## Done cluster 657 
-## Done cluster 2275 
-## Done cluster 2317 
-## Done cluster 4805 
-## Done cluster 1241 
-## Done cluster 6046 
-## Done cluster 14946 
-## Done cluster 19811 
-## Done cluster 554 
-## Done cluster 20365 
-## Cluster size 13132 broken into 7250 5882 
-## Cluster size 7250 broken into 1480 5770 
-## Done cluster 1480 
-## Cluster size 5770 broken into 5746 24 
-## Cluster size 5746 broken into 2550 3196 
-## Cluster size 2550 broken into 133 2417 
-## Done cluster 133 
-## Cluster size 2417 broken into 2265 152 
-## Cluster size 2265 broken into 2225 40 
-## Cluster size 2225 broken into 2120 105 
-## Cluster size 2120 broken into 1123 997 
-## Done cluster 1123 
-## Done cluster 997 
-## Done cluster 2120 
-## Done cluster 105 
-## Done cluster 2225 
-## Done cluster 40 
-## Done cluster 2265 
-## Done cluster 152 
-## Done cluster 2417 
-## Done cluster 2550 
-## Cluster size 3196 broken into 13 3183 
-## Done cluster 13 
-## Cluster size 3183 broken into 2267 916 
-## Cluster size 2267 broken into 2226 41 
-## Cluster size 2226 broken into 42 2184 
-## Done cluster 42 
-## Cluster size 2184 broken into 1491 693 
-## Done cluster 1491 
-## Done cluster 693 
-## Done cluster 2184 
-## Done cluster 2226 
-## Done cluster 41 
-## Done cluster 2267 
-## Done cluster 916 
-## Done cluster 3183 
-## Done cluster 3196 
-## Done cluster 5746 
-## Done cluster 24 
-## Done cluster 5770 
-## Done cluster 7250 
-## Cluster size 5882 broken into 431 5451 
-## Done cluster 431 
-## Cluster size 5451 broken into 2968 2483 
-## Cluster size 2968 broken into 1316 1652 
-## Done cluster 1316 
-## Cluster size 1652 broken into 272 1380 
-## Done cluster 272 
-## Done cluster 1380 
-## Done cluster 1652 
-## Done cluster 2968 
-## Cluster size 2483 broken into 2461 22 
-## Cluster size 2461 broken into 2388 73 
-## Cluster size 2388 broken into 1575 813 
-## Cluster size 1575 broken into 603 972 
-## Done cluster 603 
-## Done cluster 972 
-## Done cluster 1575 
-## Done cluster 813 
-## Done cluster 2388 
-## Done cluster 73 
-## Done cluster 2461 
-## Done cluster 22 
-## Done cluster 2483 
-## Done cluster 5451 
-## Done cluster 5882 
-## Done cluster 13132 
-## Done cluster 33497 
-## Done cluster 63342 
-## Cluster size 57031 broken into 23033 33998 
-## Cluster size 23033 broken into 16733 6300 
-## Cluster size 16733 broken into 7835 8898 
-## Cluster size 7835 broken into 283 7552 
-## Done cluster 283 
-## Cluster size 7552 broken into 332 7220 
-## Done cluster 332 
-## Cluster size 7220 broken into 2162 5058 
-## Cluster size 2162 broken into 1049 1113 
-## Done cluster 1049 
-## Done cluster 1113 
-## Done cluster 2162 
-## Cluster size 5058 broken into 2358 2700 
-## Cluster size 2358 broken into 1100 1258 
-## Done cluster 1100 
-## Done cluster 1258 
-## Done cluster 2358 
-## Cluster size 2700 broken into 2684 16 
-## Cluster size 2684 broken into 2066 618 
-## Cluster size 2066 broken into 2060 6 
-## Cluster size 2060 broken into 1136 924 
-## Done cluster 1136 
-## Done cluster 924 
-## Done cluster 2060 
-## Done cluster 6 
-## Done cluster 2066 
-## Done cluster 618 
-## Done cluster 2684 
-## Done cluster 16 
-## Done cluster 2700 
-## Done cluster 5058 
-## Done cluster 7220 
-## Done cluster 7552 
-## Done cluster 7835 
-## Cluster size 8898 broken into 8874 24 
-## Cluster size 8874 broken into 76 8798 
-## Done cluster 76 
-## Cluster size 8798 broken into 25 8773 
-## Done cluster 25 
-## Cluster size 8773 broken into 4443 4330 
-## Cluster size 4443 broken into 2316 2127 
-## Cluster size 2316 broken into 52 2264 
-## Done cluster 52 
-## Cluster size 2264 broken into 2251 13 
-## Cluster size 2251 broken into 1159 1092 
-## Done cluster 1159 
-## Done cluster 1092 
-## Done cluster 2251 
-## Done cluster 13 
-## Done cluster 2264 
-## Done cluster 2316 
-## Cluster size 2127 broken into 510 1617 
-## Done cluster 510 
-## Cluster size 1617 broken into 668 949 
-## Done cluster 668 
-## Done cluster 949 
-## Done cluster 1617 
-## Done cluster 2127 
-## Done cluster 4443 
-## Cluster size 4330 broken into 4329 1 
-## Cluster size 4329 broken into 2161 2168 
-## Cluster size 2161 broken into 617 1544 
-## Done cluster 617 
-## Cluster size 1544 broken into 753 791 
-## Done cluster 753 
-## Done cluster 791 
-## Done cluster 1544 
-## Done cluster 2161 
-## Cluster size 2168 broken into 595 1573 
-## Done cluster 595 
-## Cluster size 1573 broken into 706 867 
-## Done cluster 706 
-## Done cluster 867 
-## Done cluster 1573 
-## Done cluster 2168 
-## Done cluster 4329 
-## Done cluster 1 
-## Done cluster 4330 
-## Done cluster 8773 
-## Done cluster 8798 
-## Done cluster 8874 
-## Done cluster 24 
-## Done cluster 8898 
-## Done cluster 16733 
-## Cluster size 6300 broken into 1589 4711 
-## Cluster size 1589 broken into 228 1361 
-## Done cluster 228 
-## Done cluster 1361 
-## Done cluster 1589 
-## Cluster size 4711 broken into 2136 2575 
-## Cluster size 2136 broken into 88 2048 
-## Done cluster 88 
-## Cluster size 2048 broken into 1610 438 
-## Cluster size 1610 broken into 19 1591 
-## Done cluster 19 
-## Cluster size 1591 broken into 1584 7 
-## Cluster size 1584 broken into 7 1577 
-## Done cluster 7 
-## Cluster size 1577 broken into 737 840 
-## Done cluster 737 
-## Done cluster 840 
-## Done cluster 1577 
-## Done cluster 1584 
-## Done cluster 7 
-## Done cluster 1591 
-## Done cluster 1610 
-## Done cluster 438 
-## Done cluster 2048 
-## Done cluster 2136 
-## Cluster size 2575 broken into 22 2553 
-## Done cluster 22 
-## Cluster size 2553 broken into 1105 1448 
-## Done cluster 1105 
-## Done cluster 1448 
-## Done cluster 2553 
-## Done cluster 2575 
-## Done cluster 4711 
-## Done cluster 6300 
-## Done cluster 23033 
-## Cluster size 33998 broken into 71 33927 
-## Done cluster 71 
-## Cluster size 33927 broken into 21635 12292 
-## Cluster size 21635 broken into 10636 10999 
-## Cluster size 10636 broken into 4439 6197 
-## Cluster size 4439 broken into 3482 957 
-## Cluster size 3482 broken into 3450 32 
-## Cluster size 3450 broken into 1506 1944 
-## Cluster size 1506 broken into 1493 13 
-## Done cluster 1493 
-## Done cluster 13 
-## Done cluster 1506 
-## Cluster size 1944 broken into 1497 447 
-## Done cluster 1497 
-## Done cluster 447 
-## Done cluster 1944 
-## Done cluster 3450 
-## Done cluster 32 
-## Done cluster 3482 
-## Done cluster 957 
-## Done cluster 4439 
-## Cluster size 6197 broken into 1006 5191 
-## Done cluster 1006 
-## Cluster size 5191 broken into 40 5151 
-## Done cluster 40 
-## Cluster size 5151 broken into 3935 1216 
-## Cluster size 3935 broken into 2096 1839 
-## Cluster size 2096 broken into 1343 753 
-## Done cluster 1343 
-## Done cluster 753 
-## Done cluster 2096 
-## Cluster size 1839 broken into 10 1829 
-## Done cluster 10 
-## Cluster size 1829 broken into 924 905 
-## Done cluster 924 
-## Done cluster 905 
-## Done cluster 1829 
-## Done cluster 1839 
-## Done cluster 3935 
-## Done cluster 1216 
-## Done cluster 5151 
-## Done cluster 5191 
-## Done cluster 6197 
-## Done cluster 10636 
-## Cluster size 10999 broken into 6372 4627 
-## Cluster size 6372 broken into 3143 3229 
-## Cluster size 3143 broken into 1821 1322 
-## Cluster size 1821 broken into 692 1129 
-## Done cluster 692 
-## Done cluster 1129 
-## Done cluster 1821 
-## Done cluster 1322 
-## Done cluster 3143 
-## Cluster size 3229 broken into 2143 1086 
-## Cluster size 2143 broken into 2108 35 
-## Cluster size 2108 broken into 933 1175 
-## Done cluster 933 
-## Done cluster 1175 
-## Done cluster 2108 
-## Done cluster 35 
-## Done cluster 2143 
-## Done cluster 1086 
-## Done cluster 3229 
-## Done cluster 6372 
-## Cluster size 4627 broken into 7 4620 
-## Done cluster 7 
-## Cluster size 4620 broken into 1018 3602 
-## Done cluster 1018 
-## Cluster size 3602 broken into 3479 123 
-## Cluster size 3479 broken into 518 2961 
-## Done cluster 518 
-## Cluster size 2961 broken into 1413 1548 
-## Done cluster 1413 
-## Cluster size 1548 broken into 446 1102 
-## Done cluster 446 
-## Done cluster 1102 
-## Done cluster 1548 
-## Done cluster 2961 
-## Done cluster 3479 
-## Done cluster 123 
-## Done cluster 3602 
-## Done cluster 4620 
-## Done cluster 4627 
-## Done cluster 10999 
-## Done cluster 21635 
-## Cluster size 12292 broken into 11946 346 
-## Cluster size 11946 broken into 11788 158 
-## Cluster size 11788 broken into 7303 4485 
-## Cluster size 7303 broken into 5454 1849 
-## Cluster size 5454 broken into 5281 173 
-## Cluster size 5281 broken into 869 4412 
-## Done cluster 869 
-## Cluster size 4412 broken into 4410 2 
-## Cluster size 4410 broken into 1606 2804 
-## Cluster size 1606 broken into 887 719 
-## Done cluster 887 
-## Done cluster 719 
-## Done cluster 1606 
-## Cluster size 2804 broken into 915 1889 
-## Done cluster 915 
-## Cluster size 1889 broken into 846 1043 
-## Done cluster 846 
-## Done cluster 1043 
-## Done cluster 1889 
-## Done cluster 2804 
-## Done cluster 4410 
-## Done cluster 2 
-## Done cluster 4412 
-## Done cluster 5281 
-## Done cluster 173 
-## Done cluster 5454 
-## Cluster size 1849 broken into 1774 75 
-## Cluster size 1774 broken into 1715 59 
-## Cluster size 1715 broken into 1649 66 
-## Cluster size 1649 broken into 361 1288 
-## Done cluster 361 
-## Done cluster 1288 
-## Done cluster 1649 
-## Done cluster 66 
-## Done cluster 1715 
-## Done cluster 59 
-## Done cluster 1774 
-## Done cluster 75 
-## Done cluster 1849 
-## Done cluster 7303 
-## Cluster size 4485 broken into 4305 180 
-## Cluster size 4305 broken into 35 4270 
-## Done cluster 35 
-## Cluster size 4270 broken into 74 4196 
-## Done cluster 74 
-## Cluster size 4196 broken into 2538 1658 
-## Cluster size 2538 broken into 28 2510 
-## Done cluster 28 
-## Cluster size 2510 broken into 2378 132 
-## Cluster size 2378 broken into 1493 885 
-## Done cluster 1493 
-## Done cluster 885 
-## Done cluster 2378 
-## Done cluster 132 
-## Done cluster 2510 
-## Done cluster 2538 
-## Cluster size 1658 broken into 1556 102 
-## Cluster size 1556 broken into 24 1532 
-## Done cluster 24 
-## Cluster size 1532 broken into 903 629 
-## Done cluster 903 
-## Done cluster 629 
-## Done cluster 1532 
-## Done cluster 1556 
-## Done cluster 102 
-## Done cluster 1658 
-## Done cluster 4196 
-## Done cluster 4270 
-## Done cluster 4305 
-## Done cluster 180 
-## Done cluster 4485 
-## Done cluster 11788 
-## Done cluster 158 
-## Done cluster 11946 
-## Done cluster 346 
-## Done cluster 12292 
-## Done cluster 33927 
-## Done cluster 33998 
-## Done cluster 57031 
-## Done cluster 120373 
-## Cluster size 39433 broken into 29056 10377 
-## Cluster size 29056 broken into 20835 8221 
-## Cluster size 20835 broken into 11491 9344 
-## Cluster size 11491 broken into 7038 4453 
-## Cluster size 7038 broken into 4104 2934 
-## Cluster size 4104 broken into 4098 6 
-## Cluster size 4098 broken into 27 4071 
-## Done cluster 27 
-## Cluster size 4071 broken into 2062 2009 
-## Cluster size 2062 broken into 817 1245 
-## Done cluster 817 
-## Done cluster 1245 
-## Done cluster 2062 
-## Cluster size 2009 broken into 1232 777 
-## Done cluster 1232 
-## Done cluster 777 
-## Done cluster 2009 
-## Done cluster 4071 
-## Done cluster 4098 
-## Done cluster 6 
-## Done cluster 4104 
-## Cluster size 2934 broken into 2891 43 
-## Cluster size 2891 broken into 1514 1377 
-## Cluster size 1514 broken into 360 1154 
-## Done cluster 360 
-## Done cluster 1154 
-## Done cluster 1514 
-## Done cluster 1377 
-## Done cluster 2891 
-## Done cluster 43 
-## Done cluster 2934 
-## Done cluster 7038 
-## Cluster size 4453 broken into 4355 98 
-## Cluster size 4355 broken into 1367 2988 
-## Done cluster 1367 
-## Cluster size 2988 broken into 1865 1123 
-## Cluster size 1865 broken into 1665 200 
-## Cluster size 1665 broken into 907 758 
-## Done cluster 907 
-## Done cluster 758 
-## Done cluster 1665 
-## Done cluster 200 
-## Done cluster 1865 
-## Done cluster 1123 
-## Done cluster 2988 
-## Done cluster 4355 
-## Done cluster 98 
-## Done cluster 4453 
-## Done cluster 11491 
-## Cluster size 9344 broken into 4713 4631 
-## Cluster size 4713 broken into 689 4024 
-## Done cluster 689 
-## Cluster size 4024 broken into 2334 1690 
-## Cluster size 2334 broken into 54 2280 
-## Done cluster 54 
-## Cluster size 2280 broken into 1025 1255 
-## Done cluster 1025 
-## Done cluster 1255 
-## Done cluster 2280 
-## Done cluster 2334 
-## Cluster size 1690 broken into 1682 8 
-## Cluster size 1682 broken into 667 1015 
-## Done cluster 667 
-## Done cluster 1015 
-## Done cluster 1682 
-## Done cluster 8 
-## Done cluster 1690 
-## Done cluster 4024 
-## Done cluster 4713 
-## Cluster size 4631 broken into 1976 2655 
-## Cluster size 1976 broken into 1907 69 
-## Cluster size 1907 broken into 46 1861 
-## Done cluster 46 
-## Cluster size 1861 broken into 29 1832 
-## Done cluster 29 
-## Cluster size 1832 broken into 24 1808 
-## Done cluster 24 
-## Cluster size 1808 broken into 656 1152 
-## Done cluster 656 
-## Done cluster 1152 
-## Done cluster 1808 
-## Done cluster 1832 
-## Done cluster 1861 
-## Done cluster 1907 
-## Done cluster 69 
-## Done cluster 1976 
-## Cluster size 2655 broken into 2541 114 
-## Cluster size 2541 broken into 270 2271 
-## Done cluster 270 
-## Cluster size 2271 broken into 1082 1189 
-## Done cluster 1082 
-## Done cluster 1189 
-## Done cluster 2271 
-## Done cluster 2541 
-## Done cluster 114 
-## Done cluster 2655 
-## Done cluster 4631 
-## Done cluster 9344 
-## Done cluster 20835 
-## Cluster size 8221 broken into 5930 2291 
-## Cluster size 5930 broken into 3 5927 
-## Done cluster 3 
-## Cluster size 5927 broken into 5 5922 
-## Done cluster 5 
-## Cluster size 5922 broken into 2680 3242 
-## Cluster size 2680 broken into 1430 1250 
-## Done cluster 1430 
-## Done cluster 1250 
-## Done cluster 2680 
-## Cluster size 3242 broken into 1363 1879 
-## Done cluster 1363 
-## Cluster size 1879 broken into 1260 619 
-## Done cluster 1260 
-## Done cluster 619 
-## Done cluster 1879 
-## Done cluster 3242 
-## Done cluster 5922 
-## Done cluster 5927 
-## Done cluster 5930 
-## Cluster size 2291 broken into 1339 952 
-## Done cluster 1339 
-## Done cluster 952 
-## Done cluster 2291 
-## Done cluster 8221 
-## Done cluster 29056 
-## Cluster size 10377 broken into 5020 5357 
-## Cluster size 5020 broken into 37 4983 
-## Done cluster 37 
-## Cluster size 4983 broken into 2958 2025 
-## Cluster size 2958 broken into 1688 1270 
-## Cluster size 1688 broken into 767 921 
-## Done cluster 767 
-## Done cluster 921 
-## Done cluster 1688 
-## Done cluster 1270 
-## Done cluster 2958 
-## Cluster size 2025 broken into 998 1027 
-## Done cluster 998 
-## Done cluster 1027 
-## Done cluster 2025 
-## Done cluster 4983 
-## Done cluster 5020 
-## Cluster size 5357 broken into 3034 2323 
-## Cluster size 3034 broken into 1457 1577 
-## Done cluster 1457 
-## Cluster size 1577 broken into 833 744 
-## Done cluster 833 
-## Done cluster 744 
-## Done cluster 1577 
-## Done cluster 3034 
-## Cluster size 2323 broken into 2314 9 
-## Cluster size 2314 broken into 1035 1279 
-## Done cluster 1035 
-## Done cluster 1279 
-## Done cluster 2314 
-## Done cluster 9 
-## Done cluster 2323 
-## Done cluster 5357 
-## Done cluster 10377 
-## Done cluster 39433 
-## Done cluster 159806 
-## Done cluster 347626 
-## Cluster size 135324 broken into 79150 56174 
-## Cluster size 79150 broken into 18139 61011 
-## Cluster size 18139 broken into 8311 9828 
-## Cluster size 8311 broken into 6139 2172 
-## Cluster size 6139 broken into 2714 3425 
-## Cluster size 2714 broken into 1784 930 
-## Cluster size 1784 broken into 480 1304 
-## Done cluster 480 
-## Done cluster 1304 
-## Done cluster 1784 
-## Done cluster 930 
-## Done cluster 2714 
-## Cluster size 3425 broken into 1829 1596 
-## Cluster size 1829 broken into 1805 24 
-## Cluster size 1805 broken into 1091 714 
-## Done cluster 1091 
-## Done cluster 714 
-## Done cluster 1805 
-## Done cluster 24 
-## Done cluster 1829 
-## Cluster size 1596 broken into 702 894 
-## Done cluster 702 
-## Done cluster 894 
-## Done cluster 1596 
-## Done cluster 3425 
-## Done cluster 6139 
-## Cluster size 2172 broken into 1462 710 
-## Done cluster 1462 
-## Done cluster 710 
-## Done cluster 2172 
-## Done cluster 8311 
-## Cluster size 9828 broken into 9618 210 
-## Cluster size 9618 broken into 2713 6905 
-## Cluster size 2713 broken into 504 2209 
-## Done cluster 504 
-## Cluster size 2209 broken into 917 1292 
-## Done cluster 917 
-## Done cluster 1292 
-## Done cluster 2209 
-## Done cluster 2713 
-## Cluster size 6905 broken into 3197 3708 
-## Cluster size 3197 broken into 1244 1953 
-## Done cluster 1244 
-## Cluster size 1953 broken into 931 1022 
-## Done cluster 931 
-## Done cluster 1022 
-## Done cluster 1953 
-## Done cluster 3197 
-## Cluster size 3708 broken into 1223 2485 
-## Done cluster 1223 
-## Cluster size 2485 broken into 984 1501 
-## Done cluster 984 
-## Cluster size 1501 broken into 659 842 
-## Done cluster 659 
-## Done cluster 842 
-## Done cluster 1501 
-## Done cluster 2485 
-## Done cluster 3708 
-## Done cluster 6905 
-## Done cluster 9618 
-## Done cluster 210 
-## Done cluster 9828 
-## Done cluster 18139 
-## Cluster size 61011 broken into 34123 26888 
-## Cluster size 34123 broken into 34043 80 
-## Cluster size 34043 broken into 12020 22023 
-## Cluster size 12020 broken into 5749 6271 
-## Cluster size 5749 broken into 2201 3548 
-## Cluster size 2201 broken into 926 1275 
-## Done cluster 926 
-## Done cluster 1275 
-## Done cluster 2201 
-## Cluster size 3548 broken into 1623 1925 
-## Cluster size 1623 broken into 1063 560 
-## Done cluster 1063 
-## Done cluster 560 
-## Done cluster 1623 
-## Cluster size 1925 broken into 1262 663 
-## Done cluster 1262 
-## Done cluster 663 
-## Done cluster 1925 
-## Done cluster 3548 
-## Done cluster 5749 
-## Cluster size 6271 broken into 3736 2535 
-## Cluster size 3736 broken into 306 3430 
-## Done cluster 306 
-## Cluster size 3430 broken into 3154 276 
-## Cluster size 3154 broken into 1811 1343 
-## Cluster size 1811 broken into 21 1790 
-## Done cluster 21 
-## Cluster size 1790 broken into 893 897 
-## Done cluster 893 
-## Done cluster 897 
-## Done cluster 1790 
-## Done cluster 1811 
-## Done cluster 1343 
-## Done cluster 3154 
-## Done cluster 276 
-## Done cluster 3430 
-## Done cluster 3736 
-## Cluster size 2535 broken into 4 2531 
-## Done cluster 4 
-## Cluster size 2531 broken into 9 2522 
-## Done cluster 9 
-## Cluster size 2522 broken into 1870 652 
-## Cluster size 1870 broken into 592 1278 
-## Done cluster 592 
-## Done cluster 1278 
-## Done cluster 1870 
-## Done cluster 652 
-## Done cluster 2522 
-## Done cluster 2531 
-## Done cluster 2535 
-## Done cluster 6271 
-## Done cluster 12020 
-## Cluster size 22023 broken into 10169 11854 
-## Cluster size 10169 broken into 6422 3747 
-## Cluster size 6422 broken into 227 6195 
-## Done cluster 227 
-## Cluster size 6195 broken into 2540 3655 
-## Cluster size 2540 broken into 45 2495 
-## Done cluster 45 
-## Cluster size 2495 broken into 1160 1335 
-## Done cluster 1160 
-## Done cluster 1335 
-## Done cluster 2495 
-## Done cluster 2540 
-## Cluster size 3655 broken into 2314 1341 
-## Cluster size 2314 broken into 333 1981 
-## Done cluster 333 
-## Cluster size 1981 broken into 152 1829 
-## Done cluster 152 
-## Cluster size 1829 broken into 1113 716 
-## Done cluster 1113 
-## Done cluster 716 
-## Done cluster 1829 
-## Done cluster 1981 
-## Done cluster 2314 
-## Done cluster 1341 
-## Done cluster 3655 
-## Done cluster 6195 
-## Done cluster 6422 
-## Cluster size 3747 broken into 1871 1876 
-## Cluster size 1871 broken into 1294 577 
-## Done cluster 1294 
-## Done cluster 577 
-## Done cluster 1871 
-## Cluster size 1876 broken into 4 1872 
-## Done cluster 4 
-## Cluster size 1872 broken into 344 1528 
-## Done cluster 344 
-## Cluster size 1528 broken into 619 909 
-## Done cluster 619 
-## Done cluster 909 
-## Done cluster 1528 
-## Done cluster 1872 
-## Done cluster 1876 
-## Done cluster 3747 
-## Done cluster 10169 
-## Cluster size 11854 broken into 7652 4202 
-## Cluster size 7652 broken into 3000 4652 
-## Cluster size 3000 broken into 481 2519 
-## Done cluster 481 
-## Cluster size 2519 broken into 1197 1322 
-## Done cluster 1197 
-## Done cluster 1322 
-## Done cluster 2519 
-## Done cluster 3000 
-## Cluster size 4652 broken into 4635 17 
-## Cluster size 4635 broken into 393 4242 
-## Done cluster 393 
-## Cluster size 4242 broken into 2430 1812 
-## Cluster size 2430 broken into 2 2428 
-## Done cluster 2 
-## Cluster size 2428 broken into 153 2275 
-## Done cluster 153 
-## Cluster size 2275 broken into 1302 973 
-## Done cluster 1302 
-## Done cluster 973 
-## Done cluster 2275 
-## Done cluster 2428 
-## Done cluster 2430 
-## Cluster size 1812 broken into 1786 26 
-## Cluster size 1786 broken into 1085 701 
-## Done cluster 1085 
-## Done cluster 701 
-## Done cluster 1786 
-## Done cluster 26 
-## Done cluster 1812 
-## Done cluster 4242 
-## Done cluster 4635 
-## Done cluster 17 
-## Done cluster 4652 
-## Done cluster 7652 
-## Cluster size 4202 broken into 67 4135 
-## Done cluster 67 
-## Cluster size 4135 broken into 257 3878 
-## Done cluster 257 
-## Cluster size 3878 broken into 3859 19 
-## Cluster size 3859 broken into 3846 13 
-## Cluster size 3846 broken into 3207 639 
-## Cluster size 3207 broken into 1168 2039 
-## Done cluster 1168 
-## Cluster size 2039 broken into 1445 594 
-## Done cluster 1445 
-## Done cluster 594 
-## Done cluster 2039 
-## Done cluster 3207 
-## Done cluster 639 
-## Done cluster 3846 
-## Done cluster 13 
-## Done cluster 3859 
-## Done cluster 19 
-## Done cluster 3878 
-## Done cluster 4135 
-## Done cluster 4202 
-## Done cluster 11854 
-## Done cluster 22023 
-## Done cluster 34043 
-## Done cluster 80 
-## Done cluster 34123 
-## Cluster size 26888 broken into 16829 10059 
-## Cluster size 16829 broken into 7813 9016 
-## Cluster size 7813 broken into 4291 3522 
-## Cluster size 4291 broken into 2602 1689 
-## Cluster size 2602 broken into 2376 226 
-## Cluster size 2376 broken into 1569 807 
-## Cluster size 1569 broken into 646 923 
-## Done cluster 646 
-## Done cluster 923 
-## Done cluster 1569 
-## Done cluster 807 
-## Done cluster 2376 
-## Done cluster 226 
-## Done cluster 2602 
-## Cluster size 1689 broken into 1625 64 
-## Cluster size 1625 broken into 1538 87 
-## Cluster size 1538 broken into 1141 397 
-## Done cluster 1141 
-## Done cluster 397 
-## Done cluster 1538 
-## Done cluster 87 
-## Done cluster 1625 
-## Done cluster 64 
-## Done cluster 1689 
-## Done cluster 4291 
-## Cluster size 3522 broken into 1830 1692 
-## Cluster size 1830 broken into 1024 806 
-## Done cluster 1024 
-## Done cluster 806 
-## Done cluster 1830 
-## Cluster size 1692 broken into 1596 96 
-## Cluster size 1596 broken into 25 1571 
-## Done cluster 25 
-## Cluster size 1571 broken into 35 1536 
-## Done cluster 35 
-## Cluster size 1536 broken into 719 817 
-## Done cluster 719 
-## Done cluster 817 
-## Done cluster 1536 
-## Done cluster 1571 
-## Done cluster 1596 
-## Done cluster 96 
-## Done cluster 1692 
-## Done cluster 3522 
-## Done cluster 7813 
-## Cluster size 9016 broken into 8997 19 
-## Cluster size 8997 broken into 2829 6168 
-## Cluster size 2829 broken into 2 2827 
-## Done cluster 2 
-## Cluster size 2827 broken into 1536 1291 
-## Cluster size 1536 broken into 871 665 
-## Done cluster 871 
-## Done cluster 665 
-## Done cluster 1536 
-## Done cluster 1291 
-## Done cluster 2827 
-## Done cluster 2829 
-## Cluster size 6168 broken into 3210 2958 
-## Cluster size 3210 broken into 1417 1793 
-## Done cluster 1417 
-## Cluster size 1793 broken into 431 1362 
-## Done cluster 431 
-## Done cluster 1362 
-## Done cluster 1793 
-## Done cluster 3210 
-## Cluster size 2958 broken into 32 2926 
-## Done cluster 32 
-## Cluster size 2926 broken into 1575 1351 
-## Cluster size 1575 broken into 939 636 
-## Done cluster 939 
-## Done cluster 636 
-## Done cluster 1575 
-## Done cluster 1351 
-## Done cluster 2926 
-## Done cluster 2958 
-## Done cluster 6168 
-## Done cluster 8997 
-## Done cluster 19 
-## Done cluster 9016 
-## Done cluster 16829 
-## Cluster size 10059 broken into 4269 5790 
-## Cluster size 4269 broken into 3217 1052 
-## Cluster size 3217 broken into 3204 13 
-## Cluster size 3204 broken into 983 2221 
-## Done cluster 983 
-## Cluster size 2221 broken into 1060 1161 
-## Done cluster 1060 
-## Done cluster 1161 
-## Done cluster 2221 
-## Done cluster 3204 
-## Done cluster 13 
-## Done cluster 3217 
-## Done cluster 1052 
-## Done cluster 4269 
-## Cluster size 5790 broken into 2554 3236 
-## Cluster size 2554 broken into 985 1569 
-## Done cluster 985 
-## Cluster size 1569 broken into 25 1544 
-## Done cluster 25 
-## Cluster size 1544 broken into 1539 5 
-## Cluster size 1539 broken into 26 1513 
-## Done cluster 26 
-## Cluster size 1513 broken into 5 1508 
-## Done cluster 5 
-## Cluster size 1508 broken into 774 734 
-## Done cluster 774 
-## Done cluster 734 
-## Done cluster 1508 
-## Done cluster 1513 
-## Done cluster 1539 
-## Done cluster 5 
-## Done cluster 1544 
-## Done cluster 1569 
-## Done cluster 2554 
-## Cluster size 3236 broken into 1922 1314 
-## Cluster size 1922 broken into 1122 800 
-## Done cluster 1122 
-## Done cluster 800 
-## Done cluster 1922 
-## Done cluster 1314 
-## Done cluster 3236 
-## Done cluster 5790 
-## Done cluster 10059 
-## Done cluster 26888 
-## Done cluster 61011 
-## Done cluster 79150 
-## Cluster size 56174 broken into 42241 13933 
-## Cluster size 42241 broken into 20741 21500 
-## Cluster size 20741 broken into 10094 10647 
-## Cluster size 10094 broken into 5377 4717 
-## Cluster size 5377 broken into 5371 6 
-## Cluster size 5371 broken into 2674 2697 
-## Cluster size 2674 broken into 22 2652 
-## Done cluster 22 
-## Cluster size 2652 broken into 3 2649 
-## Done cluster 3 
-## Cluster size 2649 broken into 1352 1297 
-## Done cluster 1352 
-## Done cluster 1297 
-## Done cluster 2649 
-## Done cluster 2652 
-## Done cluster 2674 
-## Cluster size 2697 broken into 2696 1 
-## Cluster size 2696 broken into 119 2577 
-## Done cluster 119 
-## Cluster size 2577 broken into 2566 11 
-## Cluster size 2566 broken into 1104 1462 
-## Done cluster 1104 
-## Done cluster 1462 
-## Done cluster 2566 
-## Done cluster 11 
-## Done cluster 2577 
-## Done cluster 2696 
-## Done cluster 1 
-## Done cluster 2697 
-## Done cluster 5371 
-## Done cluster 6 
-## Done cluster 5377 
-## Cluster size 4717 broken into 2345 2372 
-## Cluster size 2345 broken into 1153 1192 
-## Done cluster 1153 
-## Done cluster 1192 
-## Done cluster 2345 
-## Cluster size 2372 broken into 919 1453 
-## Done cluster 919 
-## Done cluster 1453 
-## Done cluster 2372 
-## Done cluster 4717 
-## Done cluster 10094 
-## Cluster size 10647 broken into 5560 5087 
-## Cluster size 5560 broken into 2511 3049 
-## Cluster size 2511 broken into 1 2510 
-## Done cluster 1 
-## Cluster size 2510 broken into 978 1532 
-## Done cluster 978 
-## Cluster size 1532 broken into 868 664 
-## Done cluster 868 
-## Done cluster 664 
-## Done cluster 1532 
-## Done cluster 2510 
-## Done cluster 2511 
-## Cluster size 3049 broken into 1444 1605 
-## Done cluster 1444 
-## Cluster size 1605 broken into 741 864 
-## Done cluster 741 
-## Done cluster 864 
-## Done cluster 1605 
-## Done cluster 3049 
-## Done cluster 5560 
-## Cluster size 5087 broken into 2968 2119 
-## Cluster size 2968 broken into 2326 642 
-## Cluster size 2326 broken into 1557 769 
-## Cluster size 1557 broken into 679 878 
-## Done cluster 679 
-## Done cluster 878 
-## Done cluster 1557 
-## Done cluster 769 
-## Done cluster 2326 
-## Done cluster 642 
-## Done cluster 2968 
-## Cluster size 2119 broken into 1039 1080 
-## Done cluster 1039 
-## Done cluster 1080 
-## Done cluster 2119 
-## Done cluster 5087 
-## Done cluster 10647 
-## Done cluster 20741 
-## Cluster size 21500 broken into 10489 11011 
-## Cluster size 10489 broken into 5223 5266 
-## Cluster size 5223 broken into 293 4930 
-## Done cluster 293 
-## Cluster size 4930 broken into 13 4917 
-## Done cluster 13 
-## Cluster size 4917 broken into 2409 2508 
-## Cluster size 2409 broken into 2401 8 
-## Cluster size 2401 broken into 1475 926 
-## Done cluster 1475 
-## Done cluster 926 
-## Done cluster 2401 
-## Done cluster 8 
-## Done cluster 2409 
-## Cluster size 2508 broken into 1726 782 
-## Cluster size 1726 broken into 701 1025 
-## Done cluster 701 
-## Done cluster 1025 
-## Done cluster 1726 
-## Done cluster 782 
-## Done cluster 2508 
-## Done cluster 4917 
-## Done cluster 4930 
-## Done cluster 5223 
-## Cluster size 5266 broken into 2809 2457 
-## Cluster size 2809 broken into 2808 1 
-## Cluster size 2808 broken into 2414 394 
-## Cluster size 2414 broken into 1676 738 
-## Cluster size 1676 broken into 5 1671 
-## Done cluster 5 
-## Cluster size 1671 broken into 1099 572 
-## Done cluster 1099 
-## Done cluster 572 
-## Done cluster 1671 
-## Done cluster 1676 
-## Done cluster 738 
-## Done cluster 2414 
-## Done cluster 394 
-## Done cluster 2808 
-## Done cluster 1 
-## Done cluster 2809 
-## Cluster size 2457 broken into 1835 622 
-## Cluster size 1835 broken into 594 1241 
-## Done cluster 594 
-## Done cluster 1241 
-## Done cluster 1835 
-## Done cluster 622 
-## Done cluster 2457 
-## Done cluster 5266 
-## Done cluster 10489 
-## Cluster size 11011 broken into 6468 4543 
-## Cluster size 6468 broken into 6341 127 
-## Cluster size 6341 broken into 3027 3314 
-## Cluster size 3027 broken into 2619 408 
-## Cluster size 2619 broken into 1022 1597 
-## Done cluster 1022 
-## Cluster size 1597 broken into 1069 528 
-## Done cluster 1069 
-## Done cluster 528 
-## Done cluster 1597 
-## Done cluster 2619 
-## Done cluster 408 
-## Done cluster 3027 
-## Cluster size 3314 broken into 1010 2304 
-## Done cluster 1010 
-## Cluster size 2304 broken into 327 1977 
-## Done cluster 327 
-## Cluster size 1977 broken into 1164 813 
-## Done cluster 1164 
-## Done cluster 813 
-## Done cluster 1977 
-## Done cluster 2304 
-## Done cluster 3314 
-## Done cluster 6341 
-## Done cluster 127 
-## Done cluster 6468 
-## Cluster size 4543 broken into 2196 2347 
-## Cluster size 2196 broken into 2124 72 
-## Cluster size 2124 broken into 3 2121 
-## Done cluster 3 
-## Cluster size 2121 broken into 574 1547 
-## Done cluster 574 
-## Cluster size 1547 broken into 884 663 
-## Done cluster 884 
-## Done cluster 663 
-## Done cluster 1547 
-## Done cluster 2121 
-## Done cluster 2124 
-## Done cluster 72 
-## Done cluster 2196 
-## Cluster size 2347 broken into 1568 779 
-## Cluster size 1568 broken into 795 773 
-## Done cluster 795 
-## Done cluster 773 
-## Done cluster 1568 
-## Done cluster 779 
-## Done cluster 2347 
-## Done cluster 4543 
-## Done cluster 11011 
-## Done cluster 21500 
-## Done cluster 42241 
-## Cluster size 13933 broken into 2 13931 
-## Done cluster 2 
-## Cluster size 13931 broken into 4877 9054 
-## Cluster size 4877 broken into 3047 1830 
-## Cluster size 3047 broken into 1557 1490 
-## Cluster size 1557 broken into 847 710 
-## Done cluster 847 
-## Done cluster 710 
-## Done cluster 1557 
-## Done cluster 1490 
-## Done cluster 3047 
-## Cluster size 1830 broken into 1165 665 
-## Done cluster 1165 
-## Done cluster 665 
-## Done cluster 1830 
-## Done cluster 4877 
-## Cluster size 9054 broken into 3789 5265 
-## Cluster size 3789 broken into 2581 1208 
-## Cluster size 2581 broken into 1766 815 
-## Cluster size 1766 broken into 968 798 
-## Done cluster 968 
-## Done cluster 798 
-## Done cluster 1766 
-## Done cluster 815 
-## Done cluster 2581 
-## Done cluster 1208 
-## Done cluster 3789 
-## Cluster size 5265 broken into 2322 2943 
-## Cluster size 2322 broken into 1241 1081 
-## Done cluster 1241 
-## Done cluster 1081 
-## Done cluster 2322 
-## Cluster size 2943 broken into 940 2003 
-## Done cluster 940 
-## Cluster size 2003 broken into 1269 734 
-## Done cluster 1269 
-## Done cluster 734 
-## Done cluster 2003 
-## Done cluster 2943 
-## Done cluster 5265 
-## Done cluster 9054 
-## Done cluster 13931 
-## Done cluster 13933 
-## Done cluster 56174 
-## Done cluster 135324 
-## Done cluster 482950</code></pre>
-<div class="sourceCode" id="cb19"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" tabindex="-1"></a>betas_imputed <span class="ot">&lt;-</span> betas_imputed<span class="sc">$</span>data</span>
-<span id="cb19-2"><a href="#cb19-2" tabindex="-1"></a></span>
-<span id="cb19-3"><a href="#cb19-3" tabindex="-1"></a>n.sv <span class="ot">=</span> <span class="fu">num.sv</span>(betas_imputed,mod,<span class="at">method=</span><span class="st">&quot;leek&quot;</span>)</span>
-<span id="cb19-4"><a href="#cb19-4" tabindex="-1"></a>n.sv</span></code></pre></div>
-<pre><code>## [1] 0</code></pre>
-<div class="sourceCode" id="cb21"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" tabindex="-1"></a><span class="co">#svobj = sva(betas_imputed,mod,mod0,n.sv=n.sv)</span></span></code></pre></div>
+<div id="motivation" class="section level2">
+<h2>Motivation</h2>
+<p>The <code>sva</code> package contains functions for removing batch
+effects and other unwanted variation in high-throughput experiments.
+Specifically, the sva package contains functions for the identifying and
+building surrogate variables for high-dimensional data sets. Surrogate
+variables are covariates constructed directly from high-dimensional data
+(like DNAm data) that can be used in subsequent analyses to adjust for
+unknown, unmodeled, or latent sources of noise.</p>
+<p>The sva package can be used to remove artifacts in three ways:</p>
+<ul>
+<li>identifying and estimating surrogate variables for unknown sources
+of variation in high-throughput experiments<sup>23</sup></li>
+<li>directly removing known batch effects using ComBat<sup>24</sup>,
+and</li>
+<li>removing batch effects with known control probes<sup>25</sup></li>
+</ul>
+<p>Removing batch effects and using surrogate variables in differential
+expression analysis have been shown to reduce dependence, stabilize
+error rate estimates, and improve reproducibility<sup>23,26</sup></p>
 <hr />
 </div>
-<div id="limma" class="section level1">
-<h1>Limma</h1>
-<p><a
-href="https://bioconductor.org/packages/release/bioc/html/limma.html"><strong>Limma</strong></a>
-is a package with excellent documentation that can be useful for smaller
-samples, due to the optional empirical Bayes step. Running <a
-href="https://bioconductor.org/packages/release/bioc/html/limma.html"><strong>limma</strong></a>
-is similar to running <a
-href="https://cran.r-project.org/web/packages/cate/index.html"><strong>cate</strong></a>,
-except that the beta matrix does not need transposing and test
-statistics and p-values need to be manually derived. Formula</p>
-<div class="sourceCode" id="cb22"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1" tabindex="-1"></a>formula <span class="ot">&lt;-</span> <span class="er">~</span>log_total_pbb <span class="sc">+</span> age <span class="sc">+</span> plate</span></code></pre></div>
-<p>Design</p>
-<div class="sourceCode" id="cb23"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1" tabindex="-1"></a>design <span class="ot">&lt;-</span> <span class="fu">model.matrix</span>(formula, </span>
-<span id="cb23-2"><a href="#cb23-2" tabindex="-1"></a>                       <span class="at">data=</span>targets)</span>
-<span id="cb23-3"><a href="#cb23-3" tabindex="-1"></a><span class="fu">head</span>(design)</span></code></pre></div>
-<pre><code>##                                (Intercept) log_total_pbb   age plate200550980010 plate200550980025 plate200550980034 plate200550980035
-## GSM3228563_200550980002_R02C01           1    -2.7535707 31.46                 0                 0                 0                 0
-## GSM3228564_200550980002_R03C01           1    -0.3714986 46.72                 0                 0                 0                 0
-## GSM3228565_200550980002_R04C01           1     0.1151128 46.36                 0                 0                 0                 0
-## GSM3228566_200550980002_R05C01           1    -1.5478726 53.56                 0                 0                 0                 0
-## GSM3228567_200550980002_R06C01           1    -0.9896682 56.36                 0                 0                 0                 0
-## GSM3228568_200550980002_R07C01           1    -1.7620065 59.00                 0                 0                 0                 0
-##                                plate200590490002 plate200590490017 plate200590490021 plate200590490052
-## GSM3228563_200550980002_R02C01                 0                 0                 0                 0
-## GSM3228564_200550980002_R03C01                 0                 0                 0                 0
-## GSM3228565_200550980002_R04C01                 0                 0                 0                 0
-## GSM3228566_200550980002_R05C01                 0                 0                 0                 0
-## GSM3228567_200550980002_R06C01                 0                 0                 0                 0
-## GSM3228568_200550980002_R07C01                 0                 0                 0                 0</code></pre>
-<p>Discuss random effects Fit models</p>
-<div class="sourceCode" id="cb25"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb25-1"><a href="#cb25-1" tabindex="-1"></a>fit <span class="ot">&lt;-</span> <span class="fu">lmFit</span>(betas, design)</span></code></pre></div>
-<pre><code>## Warning: Partial NA coefficients for 5 probe(s)</code></pre>
-<p>Save</p>
-<div class="sourceCode" id="cb27"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb27-1"><a href="#cb27-1" tabindex="-1"></a>coef <span class="ot">&lt;-</span> fit<span class="sc">$</span>coefficients[, <span class="dv">2</span>]</span>
-<span id="cb27-2"><a href="#cb27-2" tabindex="-1"></a>se <span class="ot">&lt;-</span> fit<span class="sc">$</span>stdev.unscaled[, <span class="dv">2</span>] <span class="sc">*</span> fit<span class="sc">$</span>sigma</span>
-<span id="cb27-3"><a href="#cb27-3" tabindex="-1"></a>tstat <span class="ot">&lt;-</span> coef <span class="sc">/</span> se</span>
-<span id="cb27-4"><a href="#cb27-4" tabindex="-1"></a>pval <span class="ot">&lt;-</span> <span class="dv">2</span> <span class="sc">*</span> <span class="fu">pt</span>(<span class="sc">-</span><span class="fu">abs</span>(tstat), fit<span class="sc">$</span>df.residual)</span>
-<span id="cb27-5"><a href="#cb27-5" tabindex="-1"></a>n <span class="ot">&lt;-</span> <span class="fu">ncol</span>(design) <span class="sc">+</span> fit<span class="sc">$</span>df.residual</span></code></pre></div>
-<p>As shown, results from <a
-href="https://bioconductor.org/packages/release/bioc/html/limma.html"><strong>limma</strong></a>
-are comparable with those from <a
-href="https://cran.r-project.org/web/packages/cate/index.html"><strong>cate</strong></a>.
-Here, the same number of DMPs are identified and top hits are identical,
-albeit with slightly differing p-values. Despite this, for the reasons
-specified above, we still advise using <a
-href="https://cran.r-project.org/web/packages/cate/index.html"><strong>cate</strong></a>
-unless your sample size is small enough to require the
-<code>eBayes</code> option.</p>
-<p>Linear mixed models and linear models can both work well for
-performing EWAS and, when looking solely at top hits, are unlikely to
-differ greatly from results obtained using <a
-href="https://cran.r-project.org/web/packages/cate/index.html"><strong>cate</strong></a>
-or <a
-href="https://bioconductor.org/packages/release/bioc/html/limma.html"><strong>limma</strong></a>.</p>
+<div id="specification" class="section level2">
+<h2>Specification</h2>
+<p>The full model and null model are specified with and without the
+variable of interest respectively. In this case, we adjust for
+<code>sex</code>, <code>age</code>, <code>plate</code>,
+<code>row</code>, <code>CD4Tnv</code>, <code>Baso</code>,
+<code>CD4Tmem</code>, <code>Bmem</code>, <code>Bnv</code>,
+<code>Treg</code>, <code>CD8Tmem</code>, <code>CD8Tnv</code>,
+<code>Eos</code>, <code>NK</code>, and <code>Mono</code>. Neutrophils
+are excluded to avoid collinearity as all predicted cell counts sum to
+1.</p>
+<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" tabindex="-1"></a>mod <span class="ot">=</span> <span class="fu">model.matrix</span>(<span class="sc">~</span>log_total_pbb <span class="sc">+</span> age <span class="sc">+</span> sex <span class="sc">+</span> plate <span class="sc">+</span> row <span class="sc">+</span> CD4Tnv <span class="sc">+</span> Baso <span class="sc">+</span> CD4Tmem <span class="sc">+</span> Bmem <span class="sc">+</span> Bnv <span class="sc">+</span> Treg <span class="sc">+</span> CD8Tmem <span class="sc">+</span> CD8Tnv <span class="sc">+</span> Eos <span class="sc">+</span> NK <span class="sc">+</span> Mono, <span class="at">data=</span>targets)</span>
+<span id="cb6-2"><a href="#cb6-2" tabindex="-1"></a>mod0 <span class="ot">=</span> <span class="fu">model.matrix</span>(<span class="sc">~</span>age <span class="sc">+</span> sex <span class="sc">+</span> plate <span class="sc">+</span> row <span class="sc">+</span> CD4Tnv <span class="sc">+</span> Baso <span class="sc">+</span> CD4Tmem <span class="sc">+</span> Bmem <span class="sc">+</span> Bnv <span class="sc">+</span> Treg <span class="sc">+</span> CD8Tmem <span class="sc">+</span> CD8Tnv <span class="sc">+</span> Eos <span class="sc">+</span> NK <span class="sc">+</span> Mono,<span class="at">data=</span>targets)</span></code></pre></div>
 <hr />
+</div>
+<div id="imputation" class="section level2">
+<h2>Imputation</h2>
+<p>Since SVA can only be run on complete data, we use <a
+href="https://bioconductor.org/packages/release/bioc/html/methyLImp2.html"><strong>methyLImp2</strong></a><sup>20</sup>
+to create a complete matrix of beta values. The main function
+<code>methyLImp2</code> can take a SummarizedExperiment or beta matrix
+as input, and requires the array <code>type</code> to be specified (as
+450k or EPIC). By default it will overwrite your SummarizedExperiment
+object.</p>
+<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" tabindex="-1"></a>methData_imputed <span class="ot">&lt;-</span> <span class="fu">methyLImp2</span>(</span>
+<span id="cb7-2"><a href="#cb7-2" tabindex="-1"></a>  <span class="at">input =</span> methData, </span>
+<span id="cb7-3"><a href="#cb7-3" tabindex="-1"></a>  <span class="at">type =</span> <span class="st">&quot;EPIC&quot;</span>, </span>
+<span id="cb7-4"><a href="#cb7-4" tabindex="-1"></a>  <span class="at">BPPARAM =</span> <span class="fu">SnowParam</span>(<span class="at">exportglobals =</span> <span class="cn">FALSE</span>),</span>
+<span id="cb7-5"><a href="#cb7-5" tabindex="-1"></a>  <span class="at">minibatch_frac =</span> <span class="fl">0.5</span>)</span>
+<span id="cb7-6"><a href="#cb7-6" tabindex="-1"></a></span>
+<span id="cb7-7"><a href="#cb7-7" tabindex="-1"></a>methData_imputed</span></code></pre></div>
+<pre><code>## class: SummarizedExperiment 
+## dim: 745368 57 
+## metadata(0):
+## assays(1): beta
+## rownames(745368): cg09499020 cg16535257 ... cg08423507
+##   cg24129471
+## rowData names(8): cpg chr ... MASK_general probeType
+## colnames(57): GSM3228563_200550980002_R02C01
+##   GSM3228564_200550980002_R03C01 ...
+##   GSM3228620_200590490021_R07C01
+##   GSM3228621_200590490021_R08C01
+## colData names(25): sample_ID geo_accession ... Neu Mono</code></pre>
+<hr />
+</div>
+<div id="latent-factor-calculation" class="section level2">
+<h2>Latent factor calculation</h2>
+<p>This can then be used to estimate the appropriate number of latent
+factors to calculate.</p>
+<div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" tabindex="-1"></a>n.sv <span class="ot">=</span> <span class="fu">num.sv</span>(<span class="fu">assay</span>(methData_imputed),</span>
+<span id="cb9-2"><a href="#cb9-2" tabindex="-1"></a>              mod,</span>
+<span id="cb9-3"><a href="#cb9-3" tabindex="-1"></a>              <span class="at">method=</span><span class="st">&quot;leek&quot;</span>)</span></code></pre></div>
+<p>The latent factors can then be calculated with the <code>sva</code>
+function:</p>
+<div class="sourceCode" id="cb10"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" tabindex="-1"></a>svobj <span class="ot">=</span> <span class="fu">sva</span>(<span class="fu">assay</span>(methData_imputed),</span>
+<span id="cb10-2"><a href="#cb10-2" tabindex="-1"></a>            mod,</span>
+<span id="cb10-3"><a href="#cb10-3" tabindex="-1"></a>            mod0,</span>
+<span id="cb10-4"><a href="#cb10-4" tabindex="-1"></a>            <span class="at">n.sv=</span><span class="dv">4</span>)</span></code></pre></div>
+<pre><code>## Number of significant surrogate variables is:  4 
+## Iteration (out of 5 ):1  2  3  4  5</code></pre>
+<p>These can then be added to <code>targets</code> to include in the
+EWAS model.</p>
+<div class="sourceCode" id="cb12"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" tabindex="-1"></a>sv_df <span class="ot">&lt;-</span> <span class="fu">as.data.frame</span>(svobj<span class="sc">$</span>sv)</span>
+<span id="cb12-2"><a href="#cb12-2" tabindex="-1"></a><span class="fu">colnames</span>(sv_df) <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">&#39;SV1&#39;</span>, <span class="st">&#39;SV2&#39;</span>, <span class="st">&#39;SV3&#39;</span>, <span class="st">&#39;SV4&#39;</span>)</span>
+<span id="cb12-3"><a href="#cb12-3" tabindex="-1"></a>targets <span class="ot">&lt;-</span> <span class="fu">cbind</span>(targets, sv_df)</span></code></pre></div>
+<hr />
+</div>
+</div>
+<div id="ewas" class="section level1">
+<h1>EWAS</h1>
+<div id="packages" class="section level2">
+<h2>Packages</h2>
+<p><a
+href="https://bioconductor.org/packages/release/bioc/html/limma.html"><strong>Limma</strong></a><sup>27</sup>
+is a package with excellent documentation that can be useful for smaller
+samples, due to the optional empirical Bayes step. Other packages that
+may be of interest for running EWAS include [<strong>gee</strong>] and
+<a
+href="https://cran.r-project.org/web/packages/cate/index.html"><strong>cate</strong></a>.</p>
+<hr />
+</div>
+<div id="formula" class="section level2">
+<h2>Formula</h2>
+<p>In order to run an EWAS a formula needs to be specified based on the
+above exploratory analyses and SVA.</p>
+<div class="sourceCode" id="cb13"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" tabindex="-1"></a>formula <span class="ot">&lt;-</span> <span class="er">~</span>log_total_pbb <span class="sc">+</span> age <span class="sc">+</span> sex <span class="sc">+</span> plate <span class="sc">+</span> row <span class="sc">+</span> CD4Tnv <span class="sc">+</span> Baso <span class="sc">+</span> CD4Tmem <span class="sc">+</span> Bmem <span class="sc">+</span> Bnv <span class="sc">+</span> Treg <span class="sc">+</span> CD8Tmem <span class="sc">+</span> CD8Tnv <span class="sc">+</span> Eos <span class="sc">+</span> NK <span class="sc">+</span> Mono <span class="sc">+</span> SV1 <span class="sc">+</span> SV2 <span class="sc">+</span> SV3 <span class="sc">+</span> SV4</span></code></pre></div>
+<p>You can then use this formula to create a design matrix.</p>
+<div class="sourceCode" id="cb14"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" tabindex="-1"></a>design <span class="ot">&lt;-</span> <span class="fu">model.matrix</span>(formula, </span>
+<span id="cb14-2"><a href="#cb14-2" tabindex="-1"></a>                       <span class="at">data=</span>targets)</span>
+<span id="cb14-3"><a href="#cb14-3" tabindex="-1"></a><span class="fu">head</span>(design)</span></code></pre></div>
+<pre><code>##                                (Intercept) log_total_pbb   age
+## GSM3228563_200550980002_R02C01           1    -2.7535707 31.46
+## GSM3228564_200550980002_R03C01           1    -0.3714986 46.72
+## GSM3228565_200550980002_R04C01           1     0.1151128 46.36
+## GSM3228566_200550980002_R05C01           1    -1.5478726 53.56
+## GSM3228567_200550980002_R06C01           1    -0.9896682 56.36
+## GSM3228568_200550980002_R07C01           1    -1.7620065 59.00
+##                                sexMale plate200550980010
+## GSM3228563_200550980002_R02C01       0                 0
+## GSM3228564_200550980002_R03C01       1                 0
+## GSM3228565_200550980002_R04C01       1                 0
+## GSM3228566_200550980002_R05C01       0                 0
+## GSM3228567_200550980002_R06C01       0                 0
+## GSM3228568_200550980002_R07C01       0                 0
+##                                plate200550980025
+## GSM3228563_200550980002_R02C01                 0
+## GSM3228564_200550980002_R03C01                 0
+## GSM3228565_200550980002_R04C01                 0
+## GSM3228566_200550980002_R05C01                 0
+## GSM3228567_200550980002_R06C01                 0
+## GSM3228568_200550980002_R07C01                 0
+##                                plate200550980034
+## GSM3228563_200550980002_R02C01                 0
+## GSM3228564_200550980002_R03C01                 0
+## GSM3228565_200550980002_R04C01                 0
+## GSM3228566_200550980002_R05C01                 0
+## GSM3228567_200550980002_R06C01                 0
+## GSM3228568_200550980002_R07C01                 0
+##                                plate200550980035
+## GSM3228563_200550980002_R02C01                 0
+## GSM3228564_200550980002_R03C01                 0
+## GSM3228565_200550980002_R04C01                 0
+## GSM3228566_200550980002_R05C01                 0
+## GSM3228567_200550980002_R06C01                 0
+## GSM3228568_200550980002_R07C01                 0
+##                                plate200590490002
+## GSM3228563_200550980002_R02C01                 0
+## GSM3228564_200550980002_R03C01                 0
+## GSM3228565_200550980002_R04C01                 0
+## GSM3228566_200550980002_R05C01                 0
+## GSM3228567_200550980002_R06C01                 0
+## GSM3228568_200550980002_R07C01                 0
+##                                plate200590490017
+## GSM3228563_200550980002_R02C01                 0
+## GSM3228564_200550980002_R03C01                 0
+## GSM3228565_200550980002_R04C01                 0
+## GSM3228566_200550980002_R05C01                 0
+## GSM3228567_200550980002_R06C01                 0
+## GSM3228568_200550980002_R07C01                 0
+##                                plate200590490021 row     CD4Tnv
+## GSM3228563_200550980002_R02C01                 0   2 0.11902209
+## GSM3228564_200550980002_R03C01                 0   3 0.05644615
+## GSM3228565_200550980002_R04C01                 0   4 0.06291340
+## GSM3228566_200550980002_R05C01                 0   5 0.05244307
+## GSM3228567_200550980002_R06C01                 0   6 0.02793638
+## GSM3228568_200550980002_R07C01                 0   7 0.13030900
+##                                       Baso    CD4Tmem       Bmem
+## GSM3228563_200550980002_R02C01 0.000000000 0.06856902 0.04338180
+## GSM3228564_200550980002_R03C01 0.003842171 0.06457686 0.03217819
+## GSM3228565_200550980002_R04C01 0.000000000 0.09916235 0.03492393
+## GSM3228566_200550980002_R05C01 0.000000000 0.08978173 0.02768882
+## GSM3228567_200550980002_R06C01 0.000000000 0.10858777 0.04420792
+## GSM3228568_200550980002_R07C01 0.004389993 0.10208036 0.02889159
+##                                         Bnv       Treg    CD8Tmem
+## GSM3228563_200550980002_R02C01 0.000000e+00 0.02987670 0.05170485
+## GSM3228564_200550980002_R03C01 3.568496e-02 0.03253447 0.02588011
+## GSM3228565_200550980002_R04C01 3.422224e-02 0.02091392 0.01348294
+## GSM3228566_200550980002_R05C01 6.798882e-02 0.02574876 0.02891707
+## GSM3228567_200550980002_R06C01 1.356557e-02 0.02396820 0.06586532
+## GSM3228568_200550980002_R07C01 3.214358e-05 0.04655381 0.01622896
+##                                     CD8Tnv         Eos         NK
+## GSM3228563_200550980002_R02C01 0.064097832 0.001164834 0.03424776
+## GSM3228564_200550980002_R03C01 0.000000000 0.012923973 0.06050254
+## GSM3228565_200550980002_R04C01 0.000000000 0.002714143 0.02687347
+## GSM3228566_200550980002_R05C01 0.005514883 0.013811095 0.11331037
+## GSM3228567_200550980002_R06C01 0.000000000 0.007773618 0.02981967
+## GSM3228568_200550980002_R07C01 0.003487802 0.000000000 0.03244102
+##                                      Mono         SV1        SV2
+## GSM3228563_200550980002_R02C01 0.07986611 -0.08479861 0.11245914
+## GSM3228564_200550980002_R03C01 0.17395649 -0.10011645 0.04659800
+## GSM3228565_200550980002_R04C01 0.09667953 -0.08706279 0.02731426
+## GSM3228566_200550980002_R05C01 0.14498329 -0.07343356 0.17980275
+## GSM3228567_200550980002_R06C01 0.07181471 -0.06994447 0.04691520
+## GSM3228568_200550980002_R07C01 0.06782257 -0.08167816 0.04962268
+##                                         SV3         SV4
+## GSM3228563_200550980002_R02C01 -0.056605299  0.11744960
+## GSM3228564_200550980002_R03C01  0.131833700 -0.05640994
+## GSM3228565_200550980002_R04C01  0.124087644 -0.01504261
+## GSM3228566_200550980002_R05C01  0.065412848  0.03247044
+## GSM3228567_200550980002_R06C01  0.004589795  0.18848793
+## GSM3228568_200550980002_R07C01  0.109370701 -0.34703374</code></pre>
+<hr />
+</div>
+<div id="random-effects" class="section level2">
+<h2>Random effects</h2>
+<p>Random effects can be included using
+<code>duplicateCorrelation</code> and specifying the <code>block</code>
+argument. This is useful for paired experiments, not used in this
+example, but with example code shown here.</p>
+<div class="sourceCode" id="cb16"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" tabindex="-1"></a>dupcor <span class="ot">&lt;-</span> <span class="fu">duplicateCorrelation</span>(<span class="fu">assay</span>(methData),</span>
+<span id="cb16-2"><a href="#cb16-2" tabindex="-1"></a>                               design,</span>
+<span id="cb16-3"><a href="#cb16-3" tabindex="-1"></a>                               <span class="at">block =</span> <span class="fu">colData</span>(methData)<span class="sc">$</span>ID)</span></code></pre></div>
+<hr />
+</div>
+<div id="fitting-models" class="section level2">
+<h2>Fitting models</h2>
+<p>Models are fit using <code>lmFit</code>.</p>
+<div class="sourceCode" id="cb17"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" tabindex="-1"></a>fit <span class="ot">&lt;-</span> <span class="fu">lmFit</span>(betas, design)</span></code></pre></div>
+<pre><code>## Warning: Partial NA coefficients for 5 probe(s)</code></pre>
+<p>Models can also be fit for random effects using the
+<code>dupcor</code> object created above.</p>
+<div class="sourceCode" id="cb19"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" tabindex="-1"></a>fit <span class="ot">&lt;-</span> <span class="fu">lmFit</span>(betas, design,</span>
+<span id="cb19-2"><a href="#cb19-2" tabindex="-1"></a>             <span class="at">block =</span> <span class="fu">colData</span>(methData)<span class="sc">$</span>ID,</span>
+<span id="cb19-3"><a href="#cb19-3" tabindex="-1"></a>             <span class="at">correlation =</span> dupcor<span class="sc">$</span>consensus.correlation)</span></code></pre></div>
+<hr />
+</div>
+<div id="extracting-results" class="section level2">
+<h2>Extracting results</h2>
+<p>Results can then be extracted from the <code>fit</code> object,
+including the:</p>
+<ul>
+<li>coefficients <code>coef</code></li>
+<li>standard errors <code>se</code></li>
+<li>t-statistics <code>tstat</code></li>
+<li>p-values <code>pval</code>, and</li>
+<li>number of observations <code>n</code></li>
+</ul>
+<div class="sourceCode" id="cb20"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" tabindex="-1"></a>coef <span class="ot">&lt;-</span> fit<span class="sc">$</span>coefficients[, <span class="dv">2</span>]</span>
+<span id="cb20-2"><a href="#cb20-2" tabindex="-1"></a>se <span class="ot">&lt;-</span> fit<span class="sc">$</span>stdev.unscaled[, <span class="dv">2</span>] <span class="sc">*</span> fit<span class="sc">$</span>sigma</span>
+<span id="cb20-3"><a href="#cb20-3" tabindex="-1"></a>tstat <span class="ot">&lt;-</span> coef <span class="sc">/</span> se</span>
+<span id="cb20-4"><a href="#cb20-4" tabindex="-1"></a>pval <span class="ot">&lt;-</span> <span class="dv">2</span> <span class="sc">*</span> <span class="fu">pt</span>(<span class="sc">-</span><span class="fu">abs</span>(tstat), fit<span class="sc">$</span>df.residual)</span>
+<span id="cb20-5"><a href="#cb20-5" tabindex="-1"></a>n <span class="ot">&lt;-</span> <span class="fu">ncol</span>(design) <span class="sc">+</span> fit<span class="sc">$</span>df.residual</span></code></pre></div>
+<hr />
+</div>
 </div>
 <div id="bacon" class="section level1">
 <h1><code>bacon</code></h1>
+<div id="motivation-1" class="section level2">
+<h2>Motivation</h2>
 <p>We developed a package called <a
-href="http://bioconductor.org/packages/bacon"><strong>bacon</strong></a>
-<span class="citation">[@VanIterson2017]</span> to estimate and correct
-for bias and inflation of test statistics in EWAS. This maximizes power
-while properly controlling the false positive rate, by estimating the
-empirical null distribution using Bayesian statistics. The utility of
-the tool was illustrated through the application of meta-analysis by
-performing epigenome- and transcriptome-wide association studies
-(EWASs/TWASs) on age and smoking which highlighted an overlap in
-differential methylation and expression of associated genes. It can be
-used to remove inflation and bias often observed in EWAS.</p>
-<div class="sourceCode" id="cb28"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb28-1"><a href="#cb28-1" tabindex="-1"></a><span class="fu">library</span>(bacon)</span></code></pre></div>
-<pre><code>## Loading required package: ellipse</code></pre>
-<pre><code>## 
-## Attaching package: &#39;ellipse&#39;</code></pre>
-<pre><code>## The following object is masked from &#39;package:graphics&#39;:
-## 
-##     pairs</code></pre>
-<pre><code>## 
-## Attaching package: &#39;bacon&#39;</code></pre>
-<pre><code>## The following object is masked from &#39;package:limma&#39;:
-## 
-##     topTable</code></pre>
-<div class="sourceCode" id="cb34"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb34-1"><a href="#cb34-1" tabindex="-1"></a>bc <span class="ot">&lt;-</span> bacon<span class="sc">::</span><span class="fu">bacon</span>(<span class="at">teststatistics =</span> tstat,</span>
-<span id="cb34-2"><a href="#cb34-2" tabindex="-1"></a>                   <span class="at">effectsizes =</span> coef,</span>
-<span id="cb34-3"><a href="#cb34-3" tabindex="-1"></a>                   <span class="at">standarderrors =</span> se,</span>
-<span id="cb34-4"><a href="#cb34-4" tabindex="-1"></a>                   <span class="at">verbose =</span> <span class="cn">TRUE</span>)</span></code></pre></div>
+href="http://bioconductor.org/packages/bacon"><strong>bacon</strong></a><sup>11</sup>
+to estimate and correct for bias and inflation of test statistics in
+EWAS. This maximizes power while properly controlling the false positive
+rate, by estimating the empirical null distribution using Bayesian
+statistics. The utility of the tool was illustrated through the
+application of meta-analysis by performing epigenome- and
+transcriptome-wide association studies (EWASs/TWAS) on age and smoking
+which highlighted an overlap in differential methylation and expression
+of associated genes.</p>
+<hr />
+</div>
+<div id="adjusting-for-bias-and-inflation" class="section level2">
+<h2>Adjusting for bias and inflation</h2>
+<p>We advise using <code>bacon</code> to estimate inflation and bias
+often observed in EWAS. This object can then be printed to report the
+estimated bias and inflation.</p>
+<div class="sourceCode" id="cb21"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" tabindex="-1"></a>bc <span class="ot">&lt;-</span> <span class="fu">bacon</span>(<span class="at">teststatistics =</span> tstat,</span>
+<span id="cb21-2"><a href="#cb21-2" tabindex="-1"></a>            <span class="at">effectsizes =</span> coef,</span>
+<span id="cb21-3"><a href="#cb21-3" tabindex="-1"></a>            <span class="at">standarderrors =</span> se,</span>
+<span id="cb21-4"><a href="#cb21-4" tabindex="-1"></a>            <span class="at">verbose =</span> <span class="cn">TRUE</span>)</span></code></pre></div>
 <pre><code>## Use multinomial weighted sampling...</code></pre>
 <pre><code>## threshold = -5.3985
 ## Starting values:
 ## p0 = 1.0000, p1 = 0.0000, p2 = 0.0000
-## mu0 = 0.0145, mu1 = 5.7165, mu2 = -5.6874
-## sigma0 = 1.0562, sigma1 = 1.0562, sigma2 = 1.0562</code></pre>
-<div class="sourceCode" id="cb37"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb37-1"><a href="#cb37-1" tabindex="-1"></a>bc</span></code></pre></div>
+## mu0 = 0.0040, mu1 = 5.5135, mu2 = -5.5055
+## sigma0 = 1.0206, sigma1 = 1.0206, sigma2 = 1.0206</code></pre>
+<div class="sourceCode" id="cb24"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb24-1"><a href="#cb24-1" tabindex="-1"></a>bc</span></code></pre></div>
 <pre><code>## Bacon-object containing 1 set(s) of 745368 test-statistics.
-## ...estimated bias: 0.0046.
+## ...estimated bias: 0.0047.
 ## ...estimated inflation: 1.
 ## 
 ## Empirical null estimates are based on 5000 iterations with a burnin-period of 2000.</code></pre>
-<div class="sourceCode" id="cb39"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb39-1"><a href="#cb39-1" tabindex="-1"></a>bacon<span class="sc">::</span><span class="fu">inflation</span>(bc)</span></code></pre></div>
-<pre><code>##  sigma.0 
-## 1.040688</code></pre>
-<div class="sourceCode" id="cb41"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb41-1"><a href="#cb41-1" tabindex="-1"></a>bacon<span class="sc">::</span><span class="fu">bias</span>(bc)</span></code></pre></div>
-<pre><code>##        mu.0 
-## 0.004553109</code></pre>
-<div class="sourceCode" id="cb43"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb43-1"><a href="#cb43-1" tabindex="-1"></a>pval <span class="ot">&lt;-</span> bacon<span class="sc">::</span><span class="fu">pval</span>(bc)</span>
-<span id="cb43-2"><a href="#cb43-2" tabindex="-1"></a>tstat <span class="ot">&lt;-</span> bacon<span class="sc">::</span><span class="fu">tstat</span>(bc)</span>
-<span id="cb43-3"><a href="#cb43-3" tabindex="-1"></a></span>
-<span id="cb43-4"><a href="#cb43-4" tabindex="-1"></a><span class="fu">print</span>(<span class="fu">plot</span>(bc, <span class="at">type=</span><span class="st">&quot;hist&quot;</span>))</span></code></pre></div>
-<pre><code>## Warning: The dot-dot notation (`..density..`) was deprecated in ggplot2 3.4.0.
-## ℹ Please use `after_stat(density)` instead.
-## ℹ The deprecated feature was likely used in the bacon package.
-##   Please report the issue to the authors.
-## [90mThis warning is displayed once every 8 hours.[39m
-## [90mCall `lifecycle::last_lifecycle_warnings()` to see where this warning was generated.[39m</code></pre>
+<p>P-values and t-statistics can then be adjusted</p>
+<div class="sourceCode" id="cb26"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb26-1"><a href="#cb26-1" tabindex="-1"></a>pval <span class="ot">&lt;-</span> bacon<span class="sc">::</span><span class="fu">pval</span>(bc)</span>
+<span id="cb26-2"><a href="#cb26-2" tabindex="-1"></a>tstat <span class="ot">&lt;-</span> bacon<span class="sc">::</span><span class="fu">tstat</span>(bc)</span></code></pre></div>
+<hr />
+</div>
+<div id="plots" class="section level2">
+<h2>Plots</h2>
+<p>Bacon also provides some visualizations of its performance, which can
+come in handy.</p>
+<div class="sourceCode" id="cb27"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb27-1"><a href="#cb27-1" tabindex="-1"></a><span class="fu">print</span>(<span class="fu">plot</span>(bc, <span class="at">type=</span><span class="st">&quot;hist&quot;</span>))</span></code></pre></div>
 <pre><code>## `stat_bin()` using `bins = 30`. Pick better value with `binwidth`.</code></pre>
-<p><img src="06_EWAS_files/figure-html/709bacon-1.png" width="672" /></p>
-<div class="sourceCode" id="cb46"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb46-1"><a href="#cb46-1" tabindex="-1"></a><span class="fu">print</span>(<span class="fu">plot</span>(bc, <span class="at">type=</span><span class="st">&quot;qq&quot;</span>))</span></code></pre></div>
-<p><img src="06_EWAS_files/figure-html/709bacon-2.png" width="672" /></p>
-<div class="sourceCode" id="cb47"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb47-1"><a href="#cb47-1" tabindex="-1"></a>bc <span class="ot">&lt;-</span> bacon<span class="sc">::</span><span class="fu">bacon</span>(<span class="at">teststatistics =</span> tstat,</span>
-<span id="cb47-2"><a href="#cb47-2" tabindex="-1"></a>                   <span class="at">effectsizes =</span> coef,</span>
-<span id="cb47-3"><a href="#cb47-3" tabindex="-1"></a>                   <span class="at">standarderrors =</span> se,</span>
-<span id="cb47-4"><a href="#cb47-4" tabindex="-1"></a>                   <span class="at">verbose =</span> <span class="cn">TRUE</span>)</span></code></pre></div>
+<p><img src="06_EWAS_files/figure-html/617plot-1.png" width="672" /></p>
+<div class="sourceCode" id="cb29"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb29-1"><a href="#cb29-1" tabindex="-1"></a><span class="fu">print</span>(<span class="fu">plot</span>(bc, <span class="at">type=</span><span class="st">&quot;qq&quot;</span>))</span></code></pre></div>
+<p><img src="06_EWAS_files/figure-html/617plot-2.png" width="672" /></p>
+<p>Additionally, rerunning bacon can provide an estimate of any residual
+bias or inflation.</p>
+<div class="sourceCode" id="cb30"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb30-1"><a href="#cb30-1" tabindex="-1"></a>bc <span class="ot">&lt;-</span> bacon<span class="sc">::</span><span class="fu">bacon</span>(<span class="at">teststatistics =</span> tstat,</span>
+<span id="cb30-2"><a href="#cb30-2" tabindex="-1"></a>                   <span class="at">effectsizes =</span> coef,</span>
+<span id="cb30-3"><a href="#cb30-3" tabindex="-1"></a>                   <span class="at">standarderrors =</span> se,</span>
+<span id="cb30-4"><a href="#cb30-4" tabindex="-1"></a>                   <span class="at">verbose =</span> <span class="cn">TRUE</span>)</span></code></pre></div>
 <pre><code>## Use multinomial weighted sampling...</code></pre>
 <pre><code>## threshold = -5.3985
 ## Starting values:
 ## p0 = 1.0000, p1 = 0.0000, p2 = 0.0000
-## mu0 = 0.0096, mu1 = 5.4886, mu2 = -5.4695
-## sigma0 = 1.0149, sigma1 = 1.0149, sigma2 = 1.0149</code></pre>
-<div class="sourceCode" id="cb50"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb50-1"><a href="#cb50-1" tabindex="-1"></a>bc</span></code></pre></div>
+## mu0 = -0.0007, mu1 = 5.4171, mu2 = -5.4185
+## sigma0 = 1.0036, sigma1 = 1.0036, sigma2 = 1.0036</code></pre>
+<div class="sourceCode" id="cb33"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb33-1"><a href="#cb33-1" tabindex="-1"></a>bc</span></code></pre></div>
 <pre><code>## Bacon-object containing 1 set(s) of 745368 test-statistics.
-## ...estimated bias: -0.00044.
+## ...estimated bias: 0.00018.
 ## ...estimated inflation: 1.
 ## 
 ## Empirical null estimates are based on 5000 iterations with a burnin-period of 2000.</code></pre>
-<div class="sourceCode" id="cb52"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb52-1"><a href="#cb52-1" tabindex="-1"></a>bacon<span class="sc">::</span><span class="fu">inflation</span>(bc)</span></code></pre></div>
-<pre><code>##  sigma.0 
-## 1.000622</code></pre>
-<div class="sourceCode" id="cb54"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb54-1"><a href="#cb54-1" tabindex="-1"></a>bacon<span class="sc">::</span><span class="fu">bias</span>(bc)</span></code></pre></div>
-<pre><code>##          mu.0 
-## -0.0004397955</code></pre>
-<p>Plots can be used to compare adjustment using <a
-href="https://cran.r-project.org/web/packages/cate/index.html"><strong>cate</strong></a>
-with that using <a
-href="http://bioconductor.org/packages/bacon"><strong>bacon</strong></a>,
-and bacon-adjusted <a
-href="https://bioconductor.org/packages/release/bioc/html/limma.html"><strong>limma</strong></a>
-and <a
-href="https://cran.r-project.org/web/packages/cate/index.html"><strong>cate</strong></a>
-values can be compared side by side.</p>
-<p>After looking at these plots, strong bias is observed, and running <a
-href="http://bioconductor.org/packages/bacon"><strong>bacon</strong></a>
-should be seriously considered.</p>
+<hr />
+</div>
+</div>
+<div id="saving-results" class="section level1">
+<h1>Saving results</h1>
+<p>Bacon-adjusted results can then be saved, for use in downstream
+analysis.</p>
+<div class="sourceCode" id="cb35"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb35-1"><a href="#cb35-1" tabindex="-1"></a>limma_base <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(<span class="at">cpg =</span> <span class="fu">rownames</span>(fit<span class="sc">$</span>coefficients), </span>
+<span id="cb35-2"><a href="#cb35-2" tabindex="-1"></a>                         <span class="at">beta =</span> coef, <span class="at">SE =</span> se, </span>
+<span id="cb35-3"><a href="#cb35-3" tabindex="-1"></a>                         <span class="at">p =</span> pval, </span>
+<span id="cb35-4"><a href="#cb35-4" tabindex="-1"></a>                         <span class="at">t =</span> tstat, <span class="at">N =</span> n)</span></code></pre></div>
 <hr />
 </div>
 

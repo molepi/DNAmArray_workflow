@@ -55,7 +55,7 @@
 </style>
 <style type="text/css" data-origin="pandoc">
 pre > code.sourceCode { white-space: pre; position: relative; }
-pre > code.sourceCode > span { line-height: 1.25; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
 pre > code.sourceCode > span:empty { height: 1.2em; }
 .sourceCode { overflow: visible; }
 code.sourceCode > span { color: inherit; text-decoration: inherit; }
@@ -416,22 +416,22 @@ div.tocify {
   <a href="01_GettingStarted.html">Getting Started</a>
 </li>
 <li>
-  <a href="02_SampleQualityControl.html">Sample-level QC</a>
+  <a href="02_SampleQualityControl.html">Sample QC</a>
 </li>
 <li>
-  <a href="03_Normalization.html">Normalization</a>
+  <a href="03_Normalization.html">Normalize</a>
 </li>
 <li>
-  <a href="04_ProbeFiltering.html">Probe-level QC</a>
+  <a href="04_Predict.html">Predict</a>
 </li>
 <li>
-  <a href="05_Predict.html">Predictors</a>
+  <a href="05_ProbeQC.html">Probe QC</a>
 </li>
 <li>
-  <a href="06_Masking.html">Underperforming Probes</a>
+  <a href="06_EWAS.html">Analyse</a>
 </li>
 <li>
-  <a href="07_EWAS.html">Analysis</a>
+  <a href="07_Interpret.html">Interpret</a>
 </li>
       </ul>
       <ul class="nav navbar-nav navbar-right">
@@ -452,102 +452,222 @@ div.tocify {
 
 
 <hr />
-<div id="interpretation" class="section level1">
-<h1>Interpretation</h1>
-<p>Significant CpGs</p>
-<p>Multiple testing correction - FDR and Bonf</p>
-<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" tabindex="-1"></a>padj_fdr <span class="ot">&lt;-</span> <span class="fu">p.adjust</span>(pval, <span class="at">method=</span><span class="st">&quot;fdr&quot;</span>)</span>
-<span id="cb1-2"><a href="#cb1-2" tabindex="-1"></a></span>
-<span id="cb1-3"><a href="#cb1-3" tabindex="-1"></a>limma_base <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(<span class="at">cpg =</span> <span class="fu">rownames</span>(fit<span class="sc">$</span>coefficients), </span>
-<span id="cb1-4"><a href="#cb1-4" tabindex="-1"></a>                         <span class="at">beta =</span> coef, <span class="at">SE =</span> se, </span>
-<span id="cb1-5"><a href="#cb1-5" tabindex="-1"></a>                         <span class="at">p =</span> pval, <span class="at">padj_fdr =</span> padj_fdr, </span>
-<span id="cb1-6"><a href="#cb1-6" tabindex="-1"></a>                         <span class="at">t =</span> tstat, <span class="at">N =</span> n)</span></code></pre></div>
-<p>Look at top CpGs</p>
+<div id="top-cpgs" class="section level1">
+<h1>Top CpGs</h1>
+<div id="adjusting-for-multiple-testing" class="section level2">
+<h2>Adjusting for multiple testing</h2>
+<p>It is important to adjust p-values for multiple testing before
+performing any downstream analysis. The <code>p.adjust</code> method can
+be set to either:</p>
+<ul>
+<li><code>fdr</code> - less strict, often used for correlated measures
+like metabolites or</li>
+<li><code>bonferroni</code> - more strict, adjusts for all CpGs
+indepednently</li>
+</ul>
+<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" tabindex="-1"></a>limma_base <span class="ot">&lt;-</span> limma_base <span class="sc">%&gt;%</span> </span>
+<span id="cb1-2"><a href="#cb1-2" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">padj =</span> <span class="fu">p.adjust</span>(pval, <span class="at">method=</span><span class="st">&quot;fdr&quot;</span>))</span></code></pre></div>
+</div>
+<div id="fetching-top-hits" class="section level2">
+<h2>Fetching top hits</h2>
+<p>After adjusting for multiple CpGs, top hits can be extracted and
+inspected.</p>
 <div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" tabindex="-1"></a>top_cpgs <span class="ot">&lt;-</span> limma_base <span class="sc">%&gt;%</span> </span>
-<span id="cb2-2"><a href="#cb2-2" tabindex="-1"></a>  <span class="fu">filter</span>(padj_fdr <span class="sc">&lt;=</span> <span class="fl">0.05</span>) <span class="sc">%&gt;%</span> </span>
-<span id="cb2-3"><a href="#cb2-3" tabindex="-1"></a>  <span class="fu">arrange</span>(padj_fdr)</span>
+<span id="cb2-2"><a href="#cb2-2" tabindex="-1"></a>  <span class="fu">filter</span>(padj <span class="sc">&lt;=</span> <span class="fl">0.05</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb2-3"><a href="#cb2-3" tabindex="-1"></a>  <span class="fu">arrange</span>(padj)</span>
 <span id="cb2-4"><a href="#cb2-4" tabindex="-1"></a></span>
 <span id="cb2-5"><a href="#cb2-5" tabindex="-1"></a><span class="fu">print</span>(<span class="fu">paste0</span>(<span class="st">&quot;There are &quot;</span>, </span>
 <span id="cb2-6"><a href="#cb2-6" tabindex="-1"></a>             <span class="fu">nrow</span>(top_cpgs), <span class="st">&quot; significant CpGs&quot;</span>))</span></code></pre></div>
-<pre><code>## [1] &quot;There are 48 significant CpGs&quot;</code></pre>
+<pre><code>## [1] &quot;There are 106 significant CpGs&quot;</code></pre>
 <div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" tabindex="-1"></a><span class="fu">print</span>(<span class="fu">paste0</span>(<span class="fu">nrow</span>(top_cpgs <span class="sc">%&gt;%</span> <span class="fu">filter</span>(beta<span class="sc">&lt;</span><span class="dv">0</span>)), </span>
 <span id="cb4-2"><a href="#cb4-2" tabindex="-1"></a>             <span class="st">&quot; of these are hypomethylated, and &quot;</span>, </span>
 <span id="cb4-3"><a href="#cb4-3" tabindex="-1"></a>             <span class="fu">nrow</span>(top_cpgs <span class="sc">%&gt;%</span> <span class="fu">filter</span>(beta<span class="sc">&gt;</span><span class="dv">0</span>)), </span>
 <span id="cb4-4"><a href="#cb4-4" tabindex="-1"></a>             <span class="st">&quot; are hypermethylated.&quot;</span>))</span></code></pre></div>
-<pre><code>## [1] &quot;37 of these are hypomethylated, and 11 are hypermethylated.&quot;</code></pre>
+<pre><code>## [1] &quot;50 of these are hypomethylated, and 56 are hypermethylated.&quot;</code></pre>
 <hr />
 </div>
-<div id="plots" class="section level1">
-<h1>Plots</h1>
-<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" tabindex="-1"></a>sig_df <span class="ot">&lt;-</span> top_cpgs</span>
-<span id="cb6-2"><a href="#cb6-2" tabindex="-1"></a></span>
-<span id="cb6-3"><a href="#cb6-3" tabindex="-1"></a><span class="cf">if</span>(<span class="fu">nrow</span>(sig_df) <span class="sc">&gt;=</span> <span class="dv">1</span>){</span>
-<span id="cb6-4"><a href="#cb6-4" tabindex="-1"></a>   sig_limit <span class="ot">&lt;-</span> <span class="fu">max</span>(sig_df<span class="sc">$</span>p)</span>
-<span id="cb6-5"><a href="#cb6-5" tabindex="-1"></a>  } <span class="cf">else</span> {</span>
-<span id="cb6-6"><a href="#cb6-6" tabindex="-1"></a>  sig_limit <span class="ot">&lt;-</span> <span class="fl">10E-07</span></span>
-<span id="cb6-7"><a href="#cb6-7" tabindex="-1"></a>  }</span>
-<span id="cb6-8"><a href="#cb6-8" tabindex="-1"></a></span>
-<span id="cb6-9"><a href="#cb6-9" tabindex="-1"></a>min <span class="ot">&lt;-</span> <span class="fu">as.numeric</span>(<span class="fu">min</span>(</span>
-<span id="cb6-10"><a href="#cb6-10" tabindex="-1"></a>  <span class="fu">abs</span>(limma_base<span class="sc">$</span>beta),</span>
-<span id="cb6-11"><a href="#cb6-11" tabindex="-1"></a>  <span class="at">na.rm=</span><span class="cn">TRUE</span>))</span>
-<span id="cb6-12"><a href="#cb6-12" tabindex="-1"></a></span>
-<span id="cb6-13"><a href="#cb6-13" tabindex="-1"></a>max <span class="ot">&lt;-</span> <span class="fu">as.numeric</span>(<span class="fu">max</span>(</span>
-<span id="cb6-14"><a href="#cb6-14" tabindex="-1"></a>  <span class="fu">abs</span>(limma_base<span class="sc">$</span>beta),</span>
-<span id="cb6-15"><a href="#cb6-15" tabindex="-1"></a>  <span class="at">na.rm=</span><span class="cn">TRUE</span>)) </span>
-<span id="cb6-16"><a href="#cb6-16" tabindex="-1"></a></span>
-<span id="cb6-17"><a href="#cb6-17" tabindex="-1"></a>p_max <span class="ot">&lt;-</span> <span class="fu">as.numeric</span>(<span class="sc">-</span><span class="fu">log10</span>(<span class="fu">min</span>(limma_base<span class="sc">$</span>p, <span class="at">na.rm=</span><span class="cn">TRUE</span>))) <span class="sc">+</span> <span class="dv">2</span></span>
-<span id="cb6-18"><a href="#cb6-18" tabindex="-1"></a></span>
-<span id="cb6-19"><a href="#cb6-19" tabindex="-1"></a>min</span></code></pre></div>
-<pre><code>## [1] 3.971036e-10</code></pre>
-<div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" tabindex="-1"></a>max</span></code></pre></div>
-<pre><code>## [1] 0.06476397</code></pre>
-<div class="sourceCode" id="cb10"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" tabindex="-1"></a>p_max</span></code></pre></div>
-<pre><code>## [1] 11.48091</code></pre>
-<div class="sourceCode" id="cb12"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" tabindex="-1"></a>plot <span class="ot">&lt;-</span> limma_base <span class="sc">%&gt;%</span> </span>
-<span id="cb12-2"><a href="#cb12-2" tabindex="-1"></a>           <span class="fu">ggplot</span>(<span class="fu">aes</span>(</span>
-<span id="cb12-3"><a href="#cb12-3" tabindex="-1"></a>             <span class="at">x =</span> beta,</span>
-<span id="cb12-4"><a href="#cb12-4" tabindex="-1"></a>             <span class="at">y =</span> <span class="sc">-</span><span class="fu">log10</span>(p)</span>
-<span id="cb12-5"><a href="#cb12-5" tabindex="-1"></a>           )) <span class="sc">+</span></span>
-<span id="cb12-6"><a href="#cb12-6" tabindex="-1"></a>           <span class="fu">geom_hline</span>(</span>
-<span id="cb12-7"><a href="#cb12-7" tabindex="-1"></a>             <span class="at">yintercept =</span> <span class="sc">-</span><span class="fu">log10</span>(sig_limit),</span>
-<span id="cb12-8"><a href="#cb12-8" tabindex="-1"></a>             <span class="at">linetype =</span> <span class="st">&quot;dashed&quot;</span>,</span>
-<span id="cb12-9"><a href="#cb12-9" tabindex="-1"></a>             <span class="at">linewidth =</span> <span class="dv">1</span>,</span>
-<span id="cb12-10"><a href="#cb12-10" tabindex="-1"></a>             <span class="at">color =</span> <span class="st">&quot;#BBBBBB&quot;</span></span>
-<span id="cb12-11"><a href="#cb12-11" tabindex="-1"></a>           ) <span class="sc">+</span></span>
-<span id="cb12-12"><a href="#cb12-12" tabindex="-1"></a>        <span class="fu">xlim</span>(<span class="sc">-</span><span class="fl">0.13</span>, <span class="fl">0.13</span>) <span class="sc">+</span></span>
-<span id="cb12-13"><a href="#cb12-13" tabindex="-1"></a>        <span class="fu">ylim</span>(<span class="dv">0</span>,<span class="dv">13</span>) <span class="sc">+</span></span>
-<span id="cb12-14"><a href="#cb12-14" tabindex="-1"></a>         <span class="fu">geom_point</span>(</span>
-<span id="cb12-15"><a href="#cb12-15" tabindex="-1"></a>           <span class="at">color =</span> <span class="fu">ifelse</span>(limma_base<span class="sc">$</span>p <span class="sc">&gt;</span> sig_limit, </span>
-<span id="cb12-16"><a href="#cb12-16" tabindex="-1"></a>                          <span class="st">&quot;#BBBBBB&quot;</span>, <span class="fu">ifelse</span>(</span>
-<span id="cb12-17"><a href="#cb12-17" tabindex="-1"></a>                            <span class="fu">abs</span>(limma_base<span class="sc">$</span>beta) <span class="sc">&gt;=</span> <span class="fl">0.05</span>, <span class="st">&quot;#4477AA&quot;</span>, <span class="st">&#39;#4477AA&#39;</span>)),</span>
-<span id="cb12-18"><a href="#cb12-18" tabindex="-1"></a>           <span class="at">size =</span> <span class="fu">ifelse</span>(limma_base<span class="sc">$</span>p <span class="sc">&gt;</span> sig_limit, </span>
-<span id="cb12-19"><a href="#cb12-19" tabindex="-1"></a>                          <span class="dv">2</span>, <span class="fu">ifelse</span>(</span>
-<span id="cb12-20"><a href="#cb12-20" tabindex="-1"></a>                            <span class="fu">abs</span>(limma_base<span class="sc">$</span>beta) <span class="sc">&gt;=</span> <span class="fl">0.05</span>, <span class="dv">2</span>, <span class="dv">2</span>)), </span>
-<span id="cb12-21"><a href="#cb12-21" tabindex="-1"></a>         ) <span class="sc">+</span></span>
-<span id="cb12-22"><a href="#cb12-22" tabindex="-1"></a>           <span class="fu">ggtitle</span>(<span class="st">&quot;&quot;</span>) <span class="sc">+</span></span>
-<span id="cb12-23"><a href="#cb12-23" tabindex="-1"></a>           <span class="fu">ylab</span>(<span class="fu">bquote</span>(<span class="sc">-</span>log[<span class="dv">10</span>]<span class="sc">~</span><span class="st">&quot;p&quot;</span>)) <span class="sc">+</span></span>
-<span id="cb12-24"><a href="#cb12-24" tabindex="-1"></a>           <span class="fu">xlab</span>(<span class="st">&quot;Effect Size&quot;</span>) <span class="sc">+</span></span>
-<span id="cb12-25"><a href="#cb12-25" tabindex="-1"></a>  <span class="fu">theme</span>(</span>
-<span id="cb12-26"><a href="#cb12-26" tabindex="-1"></a>    <span class="at">axis.text =</span> <span class="fu">element_text</span>(</span>
-<span id="cb12-27"><a href="#cb12-27" tabindex="-1"></a>       <span class="at">size=</span><span class="dv">14</span>, </span>
-<span id="cb12-28"><a href="#cb12-28" tabindex="-1"></a>       <span class="at">color=</span><span class="st">&quot;#1B2021&quot;</span>),</span>
-<span id="cb12-29"><a href="#cb12-29" tabindex="-1"></a>    <span class="at">axis.title =</span> <span class="fu">element_text</span>(</span>
-<span id="cb12-30"><a href="#cb12-30" tabindex="-1"></a>      <span class="at">size=</span><span class="dv">16</span>, </span>
-<span id="cb12-31"><a href="#cb12-31" tabindex="-1"></a>      <span class="at">hjust=</span><span class="fl">0.5</span>, </span>
-<span id="cb12-32"><a href="#cb12-32" tabindex="-1"></a>      <span class="at">color=</span><span class="st">&quot;#1B2021&quot;</span>),</span>
-<span id="cb12-33"><a href="#cb12-33" tabindex="-1"></a>    <span class="at">panel.background =</span> <span class="fu">element_rect</span>(</span>
-<span id="cb12-34"><a href="#cb12-34" tabindex="-1"></a>      <span class="at">fill=</span><span class="st">&quot;white&quot;</span>),</span>
-<span id="cb12-35"><a href="#cb12-35" tabindex="-1"></a>    <span class="at">panel.border =</span> <span class="fu">element_rect</span>(</span>
-<span id="cb12-36"><a href="#cb12-36" tabindex="-1"></a>      <span class="at">color=</span><span class="st">&quot;#1B2021&quot;</span>,</span>
-<span id="cb12-37"><a href="#cb12-37" tabindex="-1"></a>      <span class="at">fill=</span><span class="cn">NA</span>),</span>
-<span id="cb12-38"><a href="#cb12-38" tabindex="-1"></a>    <span class="at">panel.grid.major =</span> <span class="fu">element_line</span>(</span>
-<span id="cb12-39"><a href="#cb12-39" tabindex="-1"></a>      <span class="at">color=</span><span class="st">&quot;grey95&quot;</span>),</span>
-<span id="cb12-40"><a href="#cb12-40" tabindex="-1"></a>    <span class="at">panel.grid.minor =</span> <span class="fu">element_line</span>(</span>
-<span id="cb12-41"><a href="#cb12-41" tabindex="-1"></a>      <span class="at">color=</span><span class="st">&quot;grey95&quot;</span>),</span>
-<span id="cb12-42"><a href="#cb12-42" tabindex="-1"></a>    <span class="at">plot.background =</span> <span class="fu">element_rect</span>(</span>
-<span id="cb12-43"><a href="#cb12-43" tabindex="-1"></a>      <span class="at">fill=</span><span class="st">&quot;white&quot;</span>))</span>
-<span id="cb12-44"><a href="#cb12-44" tabindex="-1"></a><span class="fu">print</span>(plot)</span></code></pre></div>
-<p><img src="07_Interpret_files/figure-html/unnamed-chunk-3-1.png" width="672" /></p>
+<div id="volcano-plot" class="section level2">
+<h2>Volcano plot</h2>
+<p>Significant CpGs can be visualized using a volcano plot. First limits
+for the plot are extracted.</p>
+<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" tabindex="-1"></a><span class="cf">if</span>(<span class="fu">nrow</span>(top_cpgs) <span class="sc">&gt;=</span> <span class="dv">1</span>){</span>
+<span id="cb6-2"><a href="#cb6-2" tabindex="-1"></a>   sig_limit <span class="ot">&lt;-</span> <span class="fu">max</span>(top_cpgs<span class="sc">$</span>p)</span>
+<span id="cb6-3"><a href="#cb6-3" tabindex="-1"></a>  } <span class="cf">else</span> {</span>
+<span id="cb6-4"><a href="#cb6-4" tabindex="-1"></a>  sig_limit <span class="ot">&lt;-</span> <span class="fl">10E-07</span></span>
+<span id="cb6-5"><a href="#cb6-5" tabindex="-1"></a>  }</span>
+<span id="cb6-6"><a href="#cb6-6" tabindex="-1"></a></span>
+<span id="cb6-7"><a href="#cb6-7" tabindex="-1"></a>min <span class="ot">&lt;-</span> <span class="fu">as.numeric</span>(<span class="fu">min</span>(</span>
+<span id="cb6-8"><a href="#cb6-8" tabindex="-1"></a>  <span class="fu">abs</span>(limma_base<span class="sc">$</span>beta),</span>
+<span id="cb6-9"><a href="#cb6-9" tabindex="-1"></a>  <span class="at">na.rm=</span><span class="cn">TRUE</span>))</span>
+<span id="cb6-10"><a href="#cb6-10" tabindex="-1"></a></span>
+<span id="cb6-11"><a href="#cb6-11" tabindex="-1"></a>max <span class="ot">&lt;-</span> <span class="fu">as.numeric</span>(<span class="fu">max</span>(</span>
+<span id="cb6-12"><a href="#cb6-12" tabindex="-1"></a>  <span class="fu">abs</span>(limma_base<span class="sc">$</span>beta),</span>
+<span id="cb6-13"><a href="#cb6-13" tabindex="-1"></a>  <span class="at">na.rm=</span><span class="cn">TRUE</span>)) </span>
+<span id="cb6-14"><a href="#cb6-14" tabindex="-1"></a></span>
+<span id="cb6-15"><a href="#cb6-15" tabindex="-1"></a>p_max <span class="ot">&lt;-</span> <span class="fu">as.numeric</span>(<span class="sc">-</span><span class="fu">log10</span>(<span class="fu">min</span>(limma_base<span class="sc">$</span>p, <span class="at">na.rm=</span><span class="cn">TRUE</span>))) <span class="sc">+</span> <span class="dv">2</span></span></code></pre></div>
+<p>Then the results can be visualized.</p>
+<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" tabindex="-1"></a>plot <span class="ot">&lt;-</span> limma_base <span class="sc">%&gt;%</span> </span>
+<span id="cb7-2"><a href="#cb7-2" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> beta, <span class="at">y =</span> <span class="sc">-</span><span class="fu">log10</span>(p))) <span class="sc">+</span></span>
+<span id="cb7-3"><a href="#cb7-3" tabindex="-1"></a>  <span class="fu">geom_hline</span>(<span class="at">yintercept =</span> <span class="sc">-</span><span class="fu">log10</span>(sig_limit),</span>
+<span id="cb7-4"><a href="#cb7-4" tabindex="-1"></a>             <span class="at">linetype =</span> <span class="st">&quot;dashed&quot;</span>) <span class="sc">+</span></span>
+<span id="cb7-5"><a href="#cb7-5" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">color =</span> <span class="fu">ifelse</span>(limma_base<span class="sc">$</span>p <span class="sc">&gt;</span> sig_limit, </span>
+<span id="cb7-6"><a href="#cb7-6" tabindex="-1"></a>                          <span class="st">&quot;#BBBBBB&quot;</span>,<span class="st">&quot;#4477AA&quot;</span>)) <span class="sc">+</span></span>
+<span id="cb7-7"><a href="#cb7-7" tabindex="-1"></a>  <span class="fu">ylab</span>(<span class="fu">bquote</span>(<span class="sc">-</span>log[<span class="dv">10</span>]<span class="sc">~</span><span class="st">&quot;p&quot;</span>)) <span class="sc">+</span></span>
+<span id="cb7-8"><a href="#cb7-8" tabindex="-1"></a>  <span class="fu">xlab</span>(<span class="st">&quot;Effect Size&quot;</span>) <span class="sc">+</span></span>
+<span id="cb7-9"><a href="#cb7-9" tabindex="-1"></a>  <span class="fu">theme_bw</span>()</span>
+<span id="cb7-10"><a href="#cb7-10" tabindex="-1"></a><span class="fu">print</span>(plot)</span></code></pre></div>
+<p><img src="07_Interpret_files/figure-html/704plot-1.png" width="672" /></p>
+<hr />
+</div>
+</div>
+<div id="enrichment-analyses" class="section level1">
+<h1>Enrichment analyses</h1>
+<div id="motivation" class="section level2">
+<h2>Motivation</h2>
+<p>A simple list of CpGs gives little information about their relevance.
+Enrichment analyses can shine light on how best to interpret EWAS
+results and what may be driving the methylation signal.</p>
+<p>Here we give an example for chromatin state enrichment, but a similar
+principle can be applied to investigate enrichment for trait
+associations using previous EWAS results or CpG islands, for
+example.</p>
+<p>This is also only one type of follow-up analysis. Some other ideas
+include:</p>
+<ul>
+<li>Performing bidirectional two-sample Mendelian randomization between
+DNAm at identified CpGs and the trait to infer causal directions.</li>
+<li>Transcription factor binding site enrichment analysis using
+HOMER</li>
+<li>Improving CpG-gene annotations with integrative analyses (e.g. using
+BIOS data) or genetic colocalization (e.g. using
+<code>coloc</code>)</li>
+</ul>
+<hr />
+</div>
+<div id="annotations" class="section level2">
+<h2>Annotations</h2>
+<p>The <a href="https://zwdzwd.github.io/InfiniumAnnotation">Zhou lab
+GitHub page</a><sup>15</sup> also provides Roadmap annotations for CpGs,
+on the basis of the original Roadmap reference epigenomes<sup>28</sup>.
+These annotations can be imported to annotate measured CpGs to chromatin
+states.</p>
+<p>First, we import the location annotations from before.</p>
+<div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" tabindex="-1"></a>manifest_hg19 <span class="ot">&lt;-</span> <span class="fu">read_tsv</span>(</span>
+<span id="cb8-2"><a href="#cb8-2" tabindex="-1"></a>  <span class="st">&quot;./data/EPIC.hg19.manifest.tsv.gz&quot;</span>)</span></code></pre></div>
+<pre><code>## Rows: 865918 Columns: 57
+## ── Column specification ───────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+## Delimiter: &quot;\t&quot;
+## chr (21): CpG_chrm, probe_strand, probeID, channel, designType, nextBase, nextBaseRef, probeType, orientation, ProbeSeq_A, ProbeSeq_B, ...
+## dbl (24): CpG_beg, CpG_end, address_A, address_B, probeCpGcnt, context35, probeBeg, probeEnd, beg_A, flag_A, mapQ_A, NM_A, beg_B, flag_...
+## lgl (12): posMatch, MASK_mapping, MASK_typeINextBaseSwitch, MASK_rmsk15, MASK_sub40_copy, MASK_sub35_copy, MASK_sub30_copy, MASK_sub25_...
+## 
+## ℹ Use `spec()` to retrieve the full column specification for this data.
+## ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.</code></pre>
+<div class="sourceCode" id="cb10"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" tabindex="-1"></a>anno <span class="ot">&lt;-</span> manifest_hg19 <span class="sc">%&gt;%</span> </span>
+<span id="cb10-2"><a href="#cb10-2" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">select</span>(</span>
+<span id="cb10-3"><a href="#cb10-3" tabindex="-1"></a>    <span class="at">cpg =</span> probeID,</span>
+<span id="cb10-4"><a href="#cb10-4" tabindex="-1"></a>    <span class="at">cpg_chr =</span> CpG_chrm,</span>
+<span id="cb10-5"><a href="#cb10-5" tabindex="-1"></a>    <span class="at">cpg_start =</span> CpG_beg,</span>
+<span id="cb10-6"><a href="#cb10-6" tabindex="-1"></a>    <span class="at">cpg_end =</span> CpG_end,</span>
+<span id="cb10-7"><a href="#cb10-7" tabindex="-1"></a>    <span class="at">cpg_strand =</span> probe_strand,</span>
+<span id="cb10-8"><a href="#cb10-8" tabindex="-1"></a>    gene_HGNC</span>
+<span id="cb10-9"><a href="#cb10-9" tabindex="-1"></a>  ) <span class="sc">%&gt;%</span> </span>
+<span id="cb10-10"><a href="#cb10-10" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
+<span id="cb10-11"><a href="#cb10-11" tabindex="-1"></a>    <span class="at">cpg_chr =</span> <span class="fu">substr</span>(cpg_chr,<span class="dv">4</span>,<span class="dv">5</span>)</span>
+<span id="cb10-12"><a href="#cb10-12" tabindex="-1"></a>  )</span>
+<span id="cb10-13"><a href="#cb10-13" tabindex="-1"></a></span>
+<span id="cb10-14"><a href="#cb10-14" tabindex="-1"></a>anno <span class="ot">&lt;-</span> anno <span class="sc">%&gt;%</span> </span>
+<span id="cb10-15"><a href="#cb10-15" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">filter</span>(cpg <span class="sc">%in%</span> limma_base<span class="sc">$</span>cpg)</span></code></pre></div>
+<p>Next, we import the chromatin state annotations. In this instance we
+use the PBMC (E062) reference epigenome, but there are reference
+epigenomes for many distinct cell types and tissues
+available<sup>28</sup>. This is bound to the results data frame.</p>
+<div class="sourceCode" id="cb11"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" tabindex="-1"></a>manifest_chrom <span class="ot">&lt;-</span> <span class="fu">read_tsv</span>(<span class="st">&quot;./data/EPIC.hg19.REMC.chromHMM.tsv.gz&quot;</span>)</span></code></pre></div>
+<pre><code>## Rows: 865918 Columns: 131
+## ── Column specification ───────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+## Delimiter: &quot;\t&quot;
+## chr (129): CpG_chrm, probeID, E001, E002, E003, E004, E005, E006, E007, E008, E009, E010, E011, E012, E013, E014, E015, E016, E017, E01...
+## dbl   (2): CpG_beg, CpG_end
+## 
+## ℹ Use `spec()` to retrieve the full column specification for this data.
+## ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.</code></pre>
+<div class="sourceCode" id="cb13"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" tabindex="-1"></a>manifest_chrom <span class="ot">&lt;-</span> manifest_chrom <span class="sc">%&gt;%</span> </span>
+<span id="cb13-2"><a href="#cb13-2" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">select</span>(<span class="at">cpg =</span> probeID, E062)</span>
+<span id="cb13-3"><a href="#cb13-3" tabindex="-1"></a></span>
+<span id="cb13-4"><a href="#cb13-4" tabindex="-1"></a>anno <span class="ot">&lt;-</span> <span class="fu">left_join</span>(anno, manifest_chrom, <span class="at">by=</span><span class="st">&quot;cpg&quot;</span>)</span>
+<span id="cb13-5"><a href="#cb13-5" tabindex="-1"></a></span>
+<span id="cb13-6"><a href="#cb13-6" tabindex="-1"></a>limma_base <span class="ot">&lt;-</span> <span class="fu">left_join</span>(limma_base, anno, <span class="at">by=</span><span class="st">&quot;cpg&quot;</span>)</span></code></pre></div>
+<hr />
+</div>
+<div id="running-enrichment" class="section level2">
+<h2>Running enrichment</h2>
+<p>Available states are stored as a vector.</p>
+<div class="sourceCode" id="cb14"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" tabindex="-1"></a>states <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">&quot;15_Quies&quot;</span>, <span class="st">&quot;14_ReprPCWk&quot;</span>, <span class="st">&quot;13_ReprPC&quot;</span>, </span>
+<span id="cb14-2"><a href="#cb14-2" tabindex="-1"></a>            <span class="st">&quot;12_EnhBiv&quot;</span>, <span class="st">&quot;11_BivFlnk&quot;</span>, <span class="st">&quot;10_TssBiv&quot;</span>, </span>
+<span id="cb14-3"><a href="#cb14-3" tabindex="-1"></a>            <span class="st">&quot;9_Het&quot;</span>, <span class="st">&quot;8_ZNF/Rpts&quot;</span>, <span class="st">&quot;7_Enh&quot;</span>, </span>
+<span id="cb14-4"><a href="#cb14-4" tabindex="-1"></a>            <span class="st">&quot;6_EnhG&quot;</span>, <span class="st">&quot;5_TxWk&quot;</span>, <span class="st">&quot;4_Tx&quot;</span>,  </span>
+<span id="cb14-5"><a href="#cb14-5" tabindex="-1"></a>            <span class="st">&quot;3_TxFlnk&quot;</span>, <span class="st">&quot;2_TssAFlnk&quot;</span>, <span class="st">&quot;1_TssA&quot;</span>)</span></code></pre></div>
+<p>Then, we can run the enrichment analysis using logistic
+regression.</p>
+<div class="sourceCode" id="cb15"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" tabindex="-1"></a><span class="cf">for</span>(i <span class="cf">in</span> states){</span>
+<span id="cb15-2"><a href="#cb15-2" tabindex="-1"></a>  res_road <span class="ot">&lt;-</span> limma_base <span class="sc">%&gt;%</span> </span>
+<span id="cb15-3"><a href="#cb15-3" tabindex="-1"></a>    <span class="fu">mutate</span>(</span>
+<span id="cb15-4"><a href="#cb15-4" tabindex="-1"></a>      <span class="at">sig =</span> <span class="fu">ifelse</span>(limma_base<span class="sc">$</span>cpg <span class="sc">%in%</span> top_cpgs<span class="sc">$</span>cpg, <span class="dv">1</span>, <span class="dv">0</span>),</span>
+<span id="cb15-5"><a href="#cb15-5" tabindex="-1"></a>      <span class="at">chrom =</span> <span class="fu">ifelse</span>(<span class="fu">grepl</span>(i, E062), <span class="dv">1</span>, <span class="dv">0</span>)</span>
+<span id="cb15-6"><a href="#cb15-6" tabindex="-1"></a>    )</span>
+<span id="cb15-7"><a href="#cb15-7" tabindex="-1"></a>  </span>
+<span id="cb15-8"><a href="#cb15-8" tabindex="-1"></a>  x <span class="ot">&lt;-</span> <span class="fu">glm</span>(chrom <span class="sc">~</span> sig, <span class="at">family=</span>binomial, <span class="at">data=</span>res_road)</span>
+<span id="cb15-9"><a href="#cb15-9" tabindex="-1"></a>  out <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="fu">coef</span>(<span class="fu">summary</span>(x))[<span class="dv">2</span>,],</span>
+<span id="cb15-10"><a href="#cb15-10" tabindex="-1"></a>           <span class="fu">exp</span>(<span class="fu">cbind</span>(<span class="fu">coef</span>(x), <span class="fu">confint.default</span>(x)))[<span class="dv">2</span>,])</span>
+<span id="cb15-11"><a href="#cb15-11" tabindex="-1"></a>  <span class="fu">names</span>(out) <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">&#39;logOR&#39;</span>, <span class="st">&#39;SE&#39;</span>, <span class="st">&#39;z&#39;</span>, <span class="st">&#39;p&#39;</span>, <span class="st">&#39;OR&#39;</span>, <span class="st">&#39;low_CI&#39;</span>, <span class="st">&#39;upp_CI&#39;</span>)</span>
+<span id="cb15-12"><a href="#cb15-12" tabindex="-1"></a>  out <span class="ot">&lt;-</span> <span class="fu">as.data.frame</span>(<span class="fu">t</span>(out))</span>
+<span id="cb15-13"><a href="#cb15-13" tabindex="-1"></a>  out<span class="sc">$</span>Trait <span class="ot">=</span> i</span>
+<span id="cb15-14"><a href="#cb15-14" tabindex="-1"></a>  out <span class="ot">&lt;-</span> out <span class="sc">%&gt;%</span> dplyr<span class="sc">::</span><span class="fu">select</span>(Trait, OR, logOR, </span>
+<span id="cb15-15"><a href="#cb15-15" tabindex="-1"></a>                               low_CI, upp_CI, z, p) </span>
+<span id="cb15-16"><a href="#cb15-16" tabindex="-1"></a>  </span>
+<span id="cb15-17"><a href="#cb15-17" tabindex="-1"></a>  <span class="cf">if</span>(i <span class="sc">==</span> states[<span class="dv">1</span>]){</span>
+<span id="cb15-18"><a href="#cb15-18" tabindex="-1"></a>    res <span class="ot">&lt;-</span> out</span>
+<span id="cb15-19"><a href="#cb15-19" tabindex="-1"></a>  } <span class="cf">else</span> {</span>
+<span id="cb15-20"><a href="#cb15-20" tabindex="-1"></a>    res <span class="ot">&lt;-</span> <span class="fu">rbind</span>(res, out)</span>
+<span id="cb15-21"><a href="#cb15-21" tabindex="-1"></a>  }</span>
+<span id="cb15-22"><a href="#cb15-22" tabindex="-1"></a>}</span></code></pre></div>
+<p>P-values again need to be adjusted for multiple testing.</p>
+<div class="sourceCode" id="cb16"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" tabindex="-1"></a>res<span class="sc">$</span>padj <span class="ot">&lt;-</span> <span class="fu">p.adjust</span>(res<span class="sc">$</span>p, <span class="at">method=</span><span class="st">&#39;fdr&#39;</span>)</span></code></pre></div>
+<hr />
+</div>
+<div id="visualization" class="section level2">
+<h2>Visualization</h2>
+<p>These results can be visualized using a forest plot.</p>
+<div class="sourceCode" id="cb17"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" tabindex="-1"></a>chrom <span class="ot">&lt;-</span> res <span class="sc">%&gt;%</span> </span>
+<span id="cb17-2"><a href="#cb17-2" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
+<span id="cb17-3"><a href="#cb17-3" tabindex="-1"></a>    <span class="at">loglowCI =</span> <span class="fu">log</span>(low_CI),</span>
+<span id="cb17-4"><a href="#cb17-4" tabindex="-1"></a>    <span class="at">loguppCI =</span> <span class="fu">log</span>(upp_CI),</span>
+<span id="cb17-5"><a href="#cb17-5" tabindex="-1"></a>    <span class="at">padj =</span> <span class="fu">p.adjust</span>(p, <span class="at">method=</span><span class="st">&#39;fdr&#39;</span>)</span>
+<span id="cb17-6"><a href="#cb17-6" tabindex="-1"></a>  ) <span class="sc">%&gt;%</span> </span>
+<span id="cb17-7"><a href="#cb17-7" tabindex="-1"></a>  <span class="fu">filter</span>(OR <span class="sc">&lt;</span> <span class="dv">200</span>)</span>
+<span id="cb17-8"><a href="#cb17-8" tabindex="-1"></a></span>
+<span id="cb17-9"><a href="#cb17-9" tabindex="-1"></a>chrom <span class="sc">%&gt;%</span> <span class="fu">filter</span>(padj <span class="sc">&lt;</span> <span class="fl">0.05</span>)</span></code></pre></div>
+<pre><code>##        Trait       OR    logOR  low_CI   upp_CI        z            p         padj loglowCI loguppCI
+## 1 8_ZNF/Rpts 23.79925 3.169654 8.75016 64.73074 6.208794 5.339283e-10 8.008925e-09 2.169072 4.170236</code></pre>
+<div class="sourceCode" id="cb19"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" tabindex="-1"></a>plot <span class="ot">&lt;-</span> chrom <span class="sc">%&gt;%</span> </span>
+<span id="cb19-2"><a href="#cb19-2" tabindex="-1"></a>  <span class="fu">filter</span>(loglowCI <span class="sc">&gt;</span> <span class="sc">-</span><span class="dv">4</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb19-3"><a href="#cb19-3" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> logOR, </span>
+<span id="cb19-4"><a href="#cb19-4" tabindex="-1"></a>             <span class="at">y =</span> <span class="fu">reorder</span>(Trait,logOR),</span>
+<span id="cb19-5"><a href="#cb19-5" tabindex="-1"></a>             <span class="at">xmin =</span> loglowCI,</span>
+<span id="cb19-6"><a href="#cb19-6" tabindex="-1"></a>             <span class="at">xmax =</span> loguppCI)) <span class="sc">+</span></span>
+<span id="cb19-7"><a href="#cb19-7" tabindex="-1"></a>  <span class="fu">geom_vline</span>(<span class="at">xintercept=</span><span class="dv">0</span>, <span class="at">linetype=</span><span class="st">&#39;dashed&#39;</span>) <span class="sc">+</span></span>
+<span id="cb19-8"><a href="#cb19-8" tabindex="-1"></a>  <span class="fu">geom_errorbar</span>(<span class="at">width=</span><span class="fl">0.5</span>,</span>
+<span id="cb19-9"><a href="#cb19-9" tabindex="-1"></a>                <span class="at">position=</span><span class="fu">position_dodge</span>(<span class="at">width=</span><span class="fl">0.9</span>)) <span class="sc">+</span></span>
+<span id="cb19-10"><a href="#cb19-10" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="fu">aes</span>(<span class="at">fill=</span>padj),</span>
+<span id="cb19-11"><a href="#cb19-11" tabindex="-1"></a>             <span class="at">size=</span><span class="dv">3</span>,</span>
+<span id="cb19-12"><a href="#cb19-12" tabindex="-1"></a>             <span class="at">shape=</span><span class="dv">21</span>,</span>
+<span id="cb19-13"><a href="#cb19-13" tabindex="-1"></a>             <span class="at">position=</span><span class="fu">position_dodge</span>(<span class="at">width=</span><span class="fl">0.9</span>)) <span class="sc">+</span></span>
+<span id="cb19-14"><a href="#cb19-14" tabindex="-1"></a>  <span class="fu">xlab</span>(<span class="st">&#39;log(OR)&#39;</span>) <span class="sc">+</span> <span class="fu">ylab</span>(<span class="st">&#39;&#39;</span>) <span class="sc">+</span> <span class="fu">xlim</span>(<span class="fu">c</span>(<span class="sc">-</span><span class="dv">4</span>,<span class="dv">5</span>)) <span class="sc">+</span></span>
+<span id="cb19-15"><a href="#cb19-15" tabindex="-1"></a>  <span class="fu">theme_bw</span>()</span>
+<span id="cb19-16"><a href="#cb19-16" tabindex="-1"></a><span class="fu">print</span>(plot)</span></code></pre></div>
+<p><img src="07_Interpret_files/figure-html/711plot-1.png" width="672" /></p>
+<hr />
+</div>
 </div>
 
 

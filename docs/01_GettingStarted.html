@@ -55,7 +55,7 @@
 </style>
 <style type="text/css" data-origin="pandoc">
 pre > code.sourceCode { white-space: pre; position: relative; }
-pre > code.sourceCode > span { line-height: 1.25; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
 pre > code.sourceCode > span:empty { height: 1.2em; }
 .sourceCode { overflow: visible; }
 code.sourceCode > span { color: inherit; text-decoration: inherit; }
@@ -416,22 +416,22 @@ div.tocify {
   <a href="01_GettingStarted.html">Getting Started</a>
 </li>
 <li>
-  <a href="02_SampleQualityControl.html">Sample-level QC</a>
+  <a href="02_SampleQualityControl.html">Sample QC</a>
 </li>
 <li>
-  <a href="03_Normalization.html">Normalization</a>
+  <a href="03_Normalization.html">Normalize</a>
 </li>
 <li>
-  <a href="04_ProbeFiltering.html">Probe-level QC</a>
+  <a href="04_Predict.html">Predict</a>
 </li>
 <li>
-  <a href="05_Predict.html">Predictors</a>
+  <a href="05_ProbeQC.html">Probe QC</a>
 </li>
 <li>
-  <a href="06_Masking.html">Underperforming Probes</a>
+  <a href="06_EWAS.html">Analyse</a>
 </li>
 <li>
-  <a href="07_EWAS.html">Analysis</a>
+  <a href="07_Interpret.html">Interpret</a>
 </li>
       </ul>
       <ul class="nav navbar-nav navbar-right">
@@ -455,84 +455,126 @@ div.tocify {
 <div id="installation" class="section level1">
 <h1>Installation</h1>
 <p>The <a
-href="https://github.com/molepi/DNAmArray"><strong>DNAmArray</strong></a>-package
-can be installed in several ways, and has been successfully for &gt;=
-R-4.4.1 on various Linux-builds and for &gt;= R-4.4.1 on Windows.</p>
-<div id="install-using-the-devtools-package" class="section level3">
-<h3>Install using the <strong>devtools</strong>-package</h3>
-<p>First install the package <a
+href="https://github.com/molepi/DNAmArray"><strong>DNAmArray</strong></a>
+package can be installed in several ways, and has been tested for &gt;=
+R-4.4.3 on various Linux-builds and Windows.</p>
+<hr />
+<div id="install-using-devtools" class="section level3">
+<h3>Install using <strong>devtools</strong></h3>
+<p>First, install <a
 href="https://github.com/hadley/devtools"><strong>devtools</strong></a>,
-then use the <code>install_github()</code> function to fetch the <a
+and then use the <code>install_github()</code> function to fetch the <a
 href="https://github.com/molepi/DNAmArray"><strong>DNAmArray</strong></a>
 package.</p>
 <div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" tabindex="-1"></a><span class="fu">library</span>(devtools)</span>
 <span id="cb1-2"><a href="#cb1-2" tabindex="-1"></a><span class="fu">install_github</span>(<span class="st">&quot;molepi/DNAmArray&quot;</span>)</span></code></pre></div>
+<hr />
 </div>
 <div id="install-from-source-using-gitr" class="section level3">
 <h3>Install from source using <code>git/R</code></h3>
 <p>Using <a href="https://git-scm.com/">git</a>, you can
 <code>git clone</code> our repository and then install the package,
-changing <code>_x.y.z.</code> to the version you cloned.</p>
+changing <code>_x.y.z.</code> to the relevant version.</p>
 <div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" tabindex="-1"></a>git clone git<span class="sc">@</span>github.com<span class="sc">/</span>molepi<span class="sc">/</span>DNAmArray.git</span>
 <span id="cb2-2"><a href="#cb2-2" tabindex="-1"></a>R CMD build DNAmArray</span>
 <span id="cb2-3"><a href="#cb2-3" tabindex="-1"></a>R CMD INSTALL DNAmArray_x.y.z.tar.gz</span></code></pre></div>
 <hr />
 </div>
 </div>
+<div id="loading-packages" class="section level1">
+<h1>Loading packages</h1>
+<p>First, load the packages that are required for this workflow:</p>
+<ul>
+<li><a
+href="https://github.com/molepi/DNAmArray"><strong>DNAmArray</strong></a>
+- the main package, containing in-house build functions for the
+preprocessing of DNAm data</li>
+<li><a
+href="https://www.bioconductor.org/packages/release/bioc/html/MethylAid.html"><strong>MethylAid</strong></a><sup>10</sup>
+- for sample-level quality control</li>
+<li><a
+href="https://bioconductor.org/packages/release/bioc/html/omicsPrint.html"><strong>omicsPrint</strong></a><sup>12</sup>
+- in-house tool use to detect sample linkage errors and resolve
+them</li>
+<li><a
+href="http://bioconductor.org/packages/bacon"><strong>bacon</strong></a><sup>11</sup>
+- in-house tool for reducing bias and inflation in EWAS test
+statistics</li>
+<li><a
+href="https://bioconductor.org/packages/release/bioc/html/GEOquery.html"><strong>GEOquery</strong></a><sup>14</sup>
+- bridges the gap between <a
+href="https://www.bioconductor.org">BioConductor</a> tools and <a
+href="https://www.ncbi.nlm.nih.gov/geo/">GEO</a></li>
+<li><a href="https://www.tidyverse.org/"><strong>tidyverse</strong></a>
+- for data wrangling</li>
+<li>[<strong>reshape2</strong>] - for data wrangling</li>
+<li>[<strong>ggrepel</strong>] - for data visualization</li>
+<li>[<strong>ComplexHeatmap</strong>] - for creating heatmaps</li>
+<li>[<strong>circlize</strong>] - designed to allow circular plots, but
+also used to create custom colour palettes</li>
+<li><a
+href="https://www.bioconductor.org/packages/release/bioc/html/BiocParallel.html"><strong>BiocParallel</strong></a>
+- to parallelize processing of genomic data</li>
+<li><a
+href="https://www.bioconductor.org/packages/release/data/annotation/html/IlluminaHumanMethylationEPICmanifest.html">**IlluminaHumanMethylationEPICmanifest</a>
+- containing EPIC probe annotation for the example data (other packages
+are available for 450k or EPICv2)</li>
+<li>[<strong>qs</strong>] - useful for saving large objects quickly with
+<code>qsave</code></li>
+<li><a
+href="https://www.bioconductor.org/packages/release/bioc/html/limma.html"><strong>limma</strong></a><sup>27</sup>
+- for EWAS analysis</li>
+<li><a
+href="https://www.bioconductor.org/packages/release/bioc/html/EpiDISH.html"><strong>EpiDISH</strong></a><sup>21</sup>
+- for cell count predictions</li>
+<li><a
+href="https://bioconductor.org/packages/release/bioc/html/sva.html"><strong>sva</strong></a><sup>23-25</sup>
+- for estimating latent factors</li>
+<li><a
+href="https://bioconductor.org/packages/release/bioc/html/methyLImp2.html"><strong>methyLImp2</strong></a><sup>20</sup></li>
+<li><a
+href="https://bioconductor.org/packages/release/bioc/html/SummarizedExperiment.html"><strong>SummarizedExperiment</strong></a></li>
+</ul>
+<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" tabindex="-1"></a><span class="fu">library</span>(DNAmArray)</span>
+<span id="cb3-2"><a href="#cb3-2" tabindex="-1"></a><span class="fu">library</span>(MethylAid)</span>
+<span id="cb3-3"><a href="#cb3-3" tabindex="-1"></a><span class="fu">library</span>(omicsPrint)</span>
+<span id="cb3-4"><a href="#cb3-4" tabindex="-1"></a><span class="fu">library</span>(bacon)</span>
+<span id="cb3-5"><a href="#cb3-5" tabindex="-1"></a></span>
+<span id="cb3-6"><a href="#cb3-6" tabindex="-1"></a><span class="fu">library</span>(GEOquery)</span>
+<span id="cb3-7"><a href="#cb3-7" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span>
+<span id="cb3-8"><a href="#cb3-8" tabindex="-1"></a><span class="fu">library</span>(ggrepel)</span>
+<span id="cb3-9"><a href="#cb3-9" tabindex="-1"></a><span class="fu">library</span>(reshape2)</span>
+<span id="cb3-10"><a href="#cb3-10" tabindex="-1"></a><span class="fu">library</span>(ComplexHeatmap)</span>
+<span id="cb3-11"><a href="#cb3-11" tabindex="-1"></a><span class="fu">library</span>(circlize)</span>
+<span id="cb3-12"><a href="#cb3-12" tabindex="-1"></a><span class="fu">library</span>(BiocParallel)</span>
+<span id="cb3-13"><a href="#cb3-13" tabindex="-1"></a><span class="fu">library</span>(IlluminaHumanMethylationEPICmanifest)</span>
+<span id="cb3-14"><a href="#cb3-14" tabindex="-1"></a><span class="fu">library</span>(qs)</span>
+<span id="cb3-15"><a href="#cb3-15" tabindex="-1"></a></span>
+<span id="cb3-16"><a href="#cb3-16" tabindex="-1"></a><span class="fu">library</span>(limma)</span>
+<span id="cb3-17"><a href="#cb3-17" tabindex="-1"></a><span class="fu">library</span>(EpiDISH)</span>
+<span id="cb3-18"><a href="#cb3-18" tabindex="-1"></a><span class="fu">library</span>(sva)</span>
+<span id="cb3-19"><a href="#cb3-19" tabindex="-1"></a><span class="fu">library</span>(methyLImp2)</span>
+<span id="cb3-20"><a href="#cb3-20" tabindex="-1"></a><span class="fu">library</span>(SummarizedExperiment)</span></code></pre></div>
+<hr />
+</div>
 <div id="importing-idats" class="section level1">
 <h1>Importing IDATs</h1>
-<p>The first step of any analysis of microarray data involves importing
-the raw intensity files into your software program. In this example, we
-show how to import raw IDAT files from GEO into R, but similar
-strategies can be employed for all Illumina methylation array files when
-using R.</p>
-<p>Using <a
-href="http://bioconductor.org/packages/release/bioc/html/GEOquery.html"><strong>GEOquery</strong></a>
-<span class="citation">[@Davis2007]</span>, you can download the <a
-href="https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE113018">example
-data</a> <span class="citation">[@Cobben2019]</span>. This package
-contains functions that bridge the gap between between <a
-href="https://www.bioconductor.org">BioConductor</a> tools and <a
-href="https://www.ncbi.nlm.nih.gov/geo/">GEO</a>, which is a public
-repository of microarray data.</p>
-<p>Initially, we use <code>getGEOSuppFiles()</code> to download the
-supplementary data to the current working directory. These consist of an
-archive containing the raw IDATs alongside some documentation. We
-extract these and store them in our chosen directory, ready for
-decompression.</p>
-<p>Here we choose to use example data from: Curtis SW, Cobb DO, Kilaru
-V, Terrell ML et al. Exposure to polybrominated biphenyl (PBB)
-associates with genome-wide DNA methylation differences in peripheral
-blood. Epigenetics 2019 Jan;14(1):52-66. PMID: 30676242.</p>
-<p>Polybrominated biphenyl (PBB) is an endocrine-disrupting compound
-which was accidently added to the food supply in Michigan in the 1970’s.
-Highly exposed individuals and their children have numerous health
-problems, though the underlying mechanism behind these health problems
-remains unknown. Other endocrine-disrupting compounds have been linked
-to epigenetic differences, but no epigenetic studies have been done for
-PBB. In this study, DNA from the blood of individuals with PBB exposure
-from the Michigan PBB Registry was interrogated with the MethylationEPIC
-BeadChip (N = 659). Associations between each of the ~850,000 CpG sites
-and current, serum PBB levels were tested with a linear regression that
-controlled for age, sex, and cell type proportions. We show that
-exposure to PBB is associated with differences in epigenetic marks that
-suggest that it is acting similarly to estrogen and is associated with
-dysregulated immune system pathways. DNA methylation was assessed in
-peripheral blood from people exposed to polybrominated biphenyl (PBB).
-Peripheral blood DNA was extracted, bisulfite converted and genome-wide
-DNA methylation was interrogated using the HumanMethylationEPIC BeadChip
-(Illumina).</p>
-<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" tabindex="-1"></a><span class="fu">library</span>(GEOquery)</span></code></pre></div>
+<p>The first step in analysing microarray data is importing raw
+intensity files into your software program. In this example, we show how
+to import raw IDAT files from GEO into R, but similar strategies can be
+employed for all Illumina DNAm array files when using R.</p>
+<p>Using the <code>getGEOSuppFiles()</code> function, supplementary data
+is downloaded to the current working directory. These consist of the raw
+IDAT files alongside relevant documentation.</p>
 <div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" tabindex="-1"></a><span class="fu">getGEOSuppFiles</span>(<span class="st">&quot;GSE116339&quot;</span>)</span>
 <span id="cb4-2"><a href="#cb4-2" tabindex="-1"></a><span class="fu">untar</span>(<span class="at">tarfile=</span><span class="st">&quot;../GSE116339/GSE116339_RAW.tar&quot;</span>, <span class="at">exdir=</span><span class="st">&quot;../GSE116339/IDATs&quot;</span>)</span></code></pre></div>
-<p>After creating a list of files, we utilise the <code>gunzip()</code>
-function to efficiently unpack the data.</p>
+<p>The data can then be efficiently unpacked using the
+<code>gunzip()</code> function.</p>
 <div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" tabindex="-1"></a><span class="fu">setwd</span>(<span class="st">&quot;../GSE116339/IDATs&quot;</span>)</span>
 <span id="cb5-2"><a href="#cb5-2" tabindex="-1"></a><span class="fu">sapply</span>(<span class="fu">list.files</span>(), gunzip)</span></code></pre></div>
-<p>We then use <code>getGEO()</code> to import SOFT format microarray
-data into R as a large GSE-class list. This contains a multitude of
-information, but we extract the phenotypic and meta-data of
-interest.</p>
+<p><code>getGEO()</code> can then be used to import SOFT format
+microarray data into R as a large GSE-class list, and extract the
+metadata of interest.</p>
 <div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" tabindex="-1"></a>GSE116339 <span class="ot">&lt;-</span> <span class="fu">getGEO</span>(<span class="at">filename=</span><span class="st">&#39;./data/GSE116339_series_matrix.txt.gz&#39;</span>, <span class="at">getGPL =</span> <span class="cn">FALSE</span>)</span>
 <span id="cb6-2"><a href="#cb6-2" tabindex="-1"></a>targets <span class="ot">&lt;-</span> <span class="fu">phenoData</span>(GSE116339)<span class="sc">@</span>data</span>
 <span id="cb6-3"><a href="#cb6-3" tabindex="-1"></a><span class="fu">rm</span>(GSE116339)</span></code></pre></div>
@@ -540,34 +582,29 @@ interest.</p>
 </div>
 <div id="preparing-targets" class="section level1">
 <h1>Preparing <code>targets</code></h1>
-<p>Before progressing further, it can help to take some time to get
-familiar with the <code>targets</code> data frame, removing duplicate
-information and converting variables to relevant classes.</p>
-<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span>
-<span id="cb7-2"><a href="#cb7-2" tabindex="-1"></a></span>
-<span id="cb7-3"><a href="#cb7-3" tabindex="-1"></a>targets <span class="ot">&lt;-</span> targets <span class="sc">%&gt;%</span> dplyr<span class="sc">::</span><span class="fu">select</span>(<span class="at">sample_ID =</span> <span class="st">`</span><span class="at">sample_id:ch1</span><span class="st">`</span>,</span>
-<span id="cb7-4"><a href="#cb7-4" tabindex="-1"></a>                              geo_accession,</span>
-<span id="cb7-5"><a href="#cb7-5" tabindex="-1"></a>                              <span class="at">sex =</span> <span class="st">`</span><span class="at">gender:ch1</span><span class="st">`</span>,</span>
-<span id="cb7-6"><a href="#cb7-6" tabindex="-1"></a>                              <span class="at">age =</span> <span class="st">`</span><span class="at">age:ch1</span><span class="st">`</span>,</span>
-<span id="cb7-7"><a href="#cb7-7" tabindex="-1"></a>                              <span class="at">log_total_pbb =</span> <span class="st">`</span><span class="at">ln(totalpbb):ch1</span><span class="st">`</span>,</span>
-<span id="cb7-8"><a href="#cb7-8" tabindex="-1"></a>                              <span class="at">pbb_153 =</span> <span class="st">`</span><span class="at">pbb-153:ch1</span><span class="st">`</span>,</span>
-<span id="cb7-9"><a href="#cb7-9" tabindex="-1"></a>                              <span class="at">pbb_77 =</span> <span class="st">`</span><span class="at">pbb-77:ch1</span><span class="st">`</span>,</span>
-<span id="cb7-10"><a href="#cb7-10" tabindex="-1"></a>                              <span class="at">pbb_101 =</span> <span class="st">`</span><span class="at">pbb-101:ch1</span><span class="st">`</span>,</span>
-<span id="cb7-11"><a href="#cb7-11" tabindex="-1"></a>                              <span class="at">pbb_180 =</span> <span class="st">`</span><span class="at">pbb-180:ch1</span><span class="st">`</span>,</span>
-<span id="cb7-12"><a href="#cb7-12" tabindex="-1"></a>                              supplementary_file) <span class="sc">%&gt;%</span> </span>
-<span id="cb7-13"><a href="#cb7-13" tabindex="-1"></a>  <span class="fu">separate</span>(supplementary_file, <span class="at">sep=</span><span class="st">&quot;_&quot;</span>, <span class="at">remove=</span>F, <span class="at">into=</span><span class="fu">c</span>(<span class="cn">NA</span>, <span class="st">&quot;plate&quot;</span>, <span class="st">&quot;row&quot;</span>, <span class="cn">NA</span>)) <span class="sc">%&gt;%</span> </span>
-<span id="cb7-14"><a href="#cb7-14" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">age =</span> <span class="fu">as.numeric</span>(age),</span>
-<span id="cb7-15"><a href="#cb7-15" tabindex="-1"></a>         <span class="at">log_total_pbb =</span> <span class="fu">as.numeric</span>(log_total_pbb),</span>
-<span id="cb7-16"><a href="#cb7-16" tabindex="-1"></a>         <span class="at">pbb_153 =</span> <span class="fu">as.numeric</span>(pbb_153),</span>
-<span id="cb7-17"><a href="#cb7-17" tabindex="-1"></a>         <span class="at">pbb_77 =</span> <span class="fu">as.numeric</span>(pbb_77),</span>
-<span id="cb7-18"><a href="#cb7-18" tabindex="-1"></a>         <span class="at">pbb_101 =</span> <span class="fu">as.numeric</span>(pbb_101),</span>
-<span id="cb7-19"><a href="#cb7-19" tabindex="-1"></a>         <span class="at">pbb_180 =</span> <span class="fu">as.numeric</span>(pbb_180),</span>
-<span id="cb7-20"><a href="#cb7-20" tabindex="-1"></a>         <span class="at">row =</span> <span class="fu">as.numeric</span>(<span class="fu">substr</span>(row, <span class="dv">3</span>, <span class="dv">3</span>)))</span></code></pre></div>
-<pre><code>## Warning: There was 1 warning in `mutate()`.
-## ℹ In argument: `log_total_pbb = as.numeric(log_total_pbb)`.
-## Caused by warning:
-## ! NAs introduced by coercion</code></pre>
-<div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" tabindex="-1"></a><span class="fu">str</span>(targets)</span></code></pre></div>
+<p>Before progressing further, take some time to get familiar with the
+<code>targets</code> data frame, removing duplicate information and
+converting variables to relevant classes.</p>
+<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" tabindex="-1"></a>targets <span class="ot">&lt;-</span> targets <span class="sc">%&gt;%</span> dplyr<span class="sc">::</span><span class="fu">select</span>(<span class="at">sample_ID =</span> <span class="st">`</span><span class="at">sample_id:ch1</span><span class="st">`</span>,</span>
+<span id="cb7-2"><a href="#cb7-2" tabindex="-1"></a>                              geo_accession,</span>
+<span id="cb7-3"><a href="#cb7-3" tabindex="-1"></a>                              <span class="at">sex =</span> <span class="st">`</span><span class="at">gender:ch1</span><span class="st">`</span>,</span>
+<span id="cb7-4"><a href="#cb7-4" tabindex="-1"></a>                              <span class="at">age =</span> <span class="st">`</span><span class="at">age:ch1</span><span class="st">`</span>,</span>
+<span id="cb7-5"><a href="#cb7-5" tabindex="-1"></a>                              <span class="at">log_total_pbb =</span> <span class="st">`</span><span class="at">ln(totalpbb):ch1</span><span class="st">`</span>,</span>
+<span id="cb7-6"><a href="#cb7-6" tabindex="-1"></a>                              <span class="at">pbb_153 =</span> <span class="st">`</span><span class="at">pbb-153:ch1</span><span class="st">`</span>,</span>
+<span id="cb7-7"><a href="#cb7-7" tabindex="-1"></a>                              <span class="at">pbb_77 =</span> <span class="st">`</span><span class="at">pbb-77:ch1</span><span class="st">`</span>,</span>
+<span id="cb7-8"><a href="#cb7-8" tabindex="-1"></a>                              <span class="at">pbb_101 =</span> <span class="st">`</span><span class="at">pbb-101:ch1</span><span class="st">`</span>,</span>
+<span id="cb7-9"><a href="#cb7-9" tabindex="-1"></a>                              <span class="at">pbb_180 =</span> <span class="st">`</span><span class="at">pbb-180:ch1</span><span class="st">`</span>,</span>
+<span id="cb7-10"><a href="#cb7-10" tabindex="-1"></a>                              supplementary_file) <span class="sc">%&gt;%</span> </span>
+<span id="cb7-11"><a href="#cb7-11" tabindex="-1"></a>  <span class="fu">separate</span>(supplementary_file, <span class="at">sep=</span><span class="st">&quot;_&quot;</span>, <span class="at">remove=</span>F, <span class="at">into=</span><span class="fu">c</span>(<span class="cn">NA</span>, <span class="st">&quot;plate&quot;</span>, <span class="st">&quot;row&quot;</span>, <span class="cn">NA</span>)) <span class="sc">%&gt;%</span> </span>
+<span id="cb7-12"><a href="#cb7-12" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">age =</span> <span class="fu">as.numeric</span>(age),</span>
+<span id="cb7-13"><a href="#cb7-13" tabindex="-1"></a>         <span class="at">log_total_pbb =</span> <span class="fu">as.numeric</span>(log_total_pbb),</span>
+<span id="cb7-14"><a href="#cb7-14" tabindex="-1"></a>         <span class="at">pbb_153 =</span> <span class="fu">as.numeric</span>(pbb_153),</span>
+<span id="cb7-15"><a href="#cb7-15" tabindex="-1"></a>         <span class="at">pbb_77 =</span> <span class="fu">as.numeric</span>(pbb_77),</span>
+<span id="cb7-16"><a href="#cb7-16" tabindex="-1"></a>         <span class="at">pbb_101 =</span> <span class="fu">as.numeric</span>(pbb_101),</span>
+<span id="cb7-17"><a href="#cb7-17" tabindex="-1"></a>         <span class="at">pbb_180 =</span> <span class="fu">as.numeric</span>(pbb_180),</span>
+<span id="cb7-18"><a href="#cb7-18" tabindex="-1"></a>         <span class="at">row =</span> <span class="fu">as.numeric</span>(<span class="fu">substr</span>(row, <span class="dv">3</span>, <span class="dv">3</span>)))</span>
+<span id="cb7-19"><a href="#cb7-19" tabindex="-1"></a></span>
+<span id="cb7-20"><a href="#cb7-20" tabindex="-1"></a><span class="fu">str</span>(targets)</span></code></pre></div>
 <pre><code>## &#39;data.frame&#39;:    679 obs. of  12 variables:
 ##  $ sample_ID         : chr  &quot;3141584&quot; &quot;10120245&quot; &quot;99990005&quot; &quot;12130802&quot; ...
 ##  $ geo_accession     : chr  &quot;GSM3228562&quot; &quot;GSM3228563&quot; &quot;GSM3228564&quot; &quot;GSM3228565&quot; ...
@@ -601,8 +638,9 @@ exposure levels</li>
 </div>
 <div id="subset" class="section level1">
 <h1>Subset</h1>
-<p>For this workflow example we use only 64 of the 679 samples</p>
-<div class="sourceCode" id="cb11"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" tabindex="-1"></a>targets <span class="ot">&lt;-</span> targets[<span class="dv">1</span><span class="sc">:</span><span class="dv">64</span>,]</span></code></pre></div>
+<p>For this example workflow, we subset the <code>targets</code>
+data</p>
+<div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" tabindex="-1"></a>targets <span class="ot">&lt;-</span> targets[<span class="dv">1</span><span class="sc">:</span><span class="dv">60</span>, ]</span></code></pre></div>
 <hr />
 </div>
 

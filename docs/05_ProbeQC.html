@@ -1,0 +1,817 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+<meta charset="utf-8" />
+<meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+
+
+
+
+<title>05_ProbeQC.knit</title>
+
+<script src="site_libs/header-attrs-2.29/header-attrs.js"></script>
+<script src="site_libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="site_libs/bootstrap-3.3.5/css/lumen.min.css" rel="stylesheet" />
+<script src="site_libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/respond.min.js"></script>
+<style>h1 {font-size: 34px;}
+       h1.title {font-size: 38px;}
+       h2 {font-size: 30px;}
+       h3 {font-size: 24px;}
+       h4 {font-size: 18px;}
+       h5 {font-size: 16px;}
+       h6 {font-size: 12px;}
+       code {color: inherit; background-color: rgba(0, 0, 0, 0.04);}
+       pre:not([class]) { background-color: white }</style>
+<script src="site_libs/jqueryui-1.13.2/jquery-ui.min.js"></script>
+<link href="site_libs/tocify-1.9.1/jquery.tocify.css" rel="stylesheet" />
+<script src="site_libs/tocify-1.9.1/jquery.tocify.js"></script>
+<script src="site_libs/navigation-1.1/tabsets.js"></script>
+
+<style type="text/css">
+  code{white-space: pre-wrap;}
+  span.smallcaps{font-variant: small-caps;}
+  span.underline{text-decoration: underline;}
+  div.column{display: inline-block; vertical-align: top; width: 50%;}
+  div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+  ul.task-list{list-style: none;}
+    </style>
+
+
+
+<style type="text/css">
+  code {
+    white-space: pre;
+  }
+  .sourceCode {
+    overflow: visible;
+  }
+</style>
+<style type="text/css" data-origin="pandoc">
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    background-color: #ffffff;
+    color: #a0a0a0;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #a0a0a0;  padding-left: 4px; }
+div.sourceCode
+  { color: #1f1c1b; background-color: #ffffff; }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span { color: #1f1c1b; } /* Normal */
+code span.al { color: #bf0303; background-color: #f7e6e6; font-weight: bold; } /* Alert */
+code span.an { color: #ca60ca; } /* Annotation */
+code span.at { color: #0057ae; } /* Attribute */
+code span.bn { color: #b08000; } /* BaseN */
+code span.bu { color: #644a9b; font-weight: bold; } /* BuiltIn */
+code span.cf { color: #1f1c1b; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #924c9d; } /* Char */
+code span.cn { color: #aa5500; } /* Constant */
+code span.co { color: #898887; } /* Comment */
+code span.cv { color: #0095ff; } /* CommentVar */
+code span.do { color: #607880; } /* Documentation */
+code span.dt { color: #0057ae; } /* DataType */
+code span.dv { color: #b08000; } /* DecVal */
+code span.er { color: #bf0303; text-decoration: underline; } /* Error */
+code span.ex { color: #0095ff; font-weight: bold; } /* Extension */
+code span.fl { color: #b08000; } /* Float */
+code span.fu { color: #644a9b; } /* Function */
+code span.im { color: #ff5500; } /* Import */
+code span.in { color: #b08000; } /* Information */
+code span.kw { color: #1f1c1b; font-weight: bold; } /* Keyword */
+code span.op { color: #1f1c1b; } /* Operator */
+code span.ot { color: #006e28; } /* Other */
+code span.pp { color: #006e28; } /* Preprocessor */
+code span.re { color: #0057ae; background-color: #e0e9f8; } /* RegionMarker */
+code span.sc { color: #3daee9; } /* SpecialChar */
+code span.ss { color: #ff5500; } /* SpecialString */
+code span.st { color: #bf0303; } /* String */
+code span.va { color: #0057ae; } /* Variable */
+code span.vs { color: #bf0303; } /* VerbatimString */
+code span.wa { color: #bf0303; } /* Warning */
+
+</style>
+<script>
+// apply pandoc div.sourceCode style to pre.sourceCode instead
+(function() {
+  var sheets = document.styleSheets;
+  for (var i = 0; i < sheets.length; i++) {
+    if (sheets[i].ownerNode.dataset["origin"] !== "pandoc") continue;
+    try { var rules = sheets[i].cssRules; } catch (e) { continue; }
+    var j = 0;
+    while (j < rules.length) {
+      var rule = rules[j];
+      // check if there is a div.sourceCode rule
+      if (rule.type !== rule.STYLE_RULE || rule.selectorText !== "div.sourceCode") {
+        j++;
+        continue;
+      }
+      var style = rule.style.cssText;
+      // check if color or background-color is set
+      if (rule.style.color === '' && rule.style.backgroundColor === '') {
+        j++;
+        continue;
+      }
+      // replace div.sourceCode by a pre.sourceCode rule
+      sheets[i].deleteRule(j);
+      sheets[i].insertRule('pre.sourceCode{' + style + '}', j);
+    }
+  }
+})();
+</script>
+
+
+
+
+<link rel="stylesheet" href="style.css" type="text/css" />
+
+
+
+<style type = "text/css">
+.main-container {
+  max-width: 940px;
+  margin-left: auto;
+  margin-right: auto;
+}
+img {
+  max-width:100%;
+}
+.tabbed-pane {
+  padding-top: 12px;
+}
+.html-widget {
+  margin-bottom: 20px;
+}
+button.code-folding-btn:focus {
+  outline: none;
+}
+summary {
+  display: list-item;
+}
+details > summary > p:only-child {
+  display: inline;
+}
+pre code {
+  padding: 0;
+}
+</style>
+
+
+<style type="text/css">
+.dropdown-submenu {
+  position: relative;
+}
+.dropdown-submenu>.dropdown-menu {
+  top: 0;
+  left: 100%;
+  margin-top: -6px;
+  margin-left: -1px;
+  border-radius: 0 6px 6px 6px;
+}
+.dropdown-submenu:hover>.dropdown-menu {
+  display: block;
+}
+.dropdown-submenu>a:after {
+  display: block;
+  content: " ";
+  float: right;
+  width: 0;
+  height: 0;
+  border-color: transparent;
+  border-style: solid;
+  border-width: 5px 0 5px 5px;
+  border-left-color: #cccccc;
+  margin-top: 5px;
+  margin-right: -10px;
+}
+.dropdown-submenu:hover>a:after {
+  border-left-color: #adb5bd;
+}
+.dropdown-submenu.pull-left {
+  float: none;
+}
+.dropdown-submenu.pull-left>.dropdown-menu {
+  left: -100%;
+  margin-left: 10px;
+  border-radius: 6px 0 6px 6px;
+}
+</style>
+
+<script type="text/javascript">
+// manage active state of menu based on current page
+$(document).ready(function () {
+  // active menu anchor
+  href = window.location.pathname
+  href = href.substr(href.lastIndexOf('/') + 1)
+  if (href === "")
+    href = "index.html";
+  var menuAnchor = $('a[href="' + href + '"]');
+
+  // mark the anchor link active (and if it's in a dropdown, also mark that active)
+  var dropdown = menuAnchor.closest('li.dropdown');
+  if (window.bootstrap) { // Bootstrap 4+
+    menuAnchor.addClass('active');
+    dropdown.find('> .dropdown-toggle').addClass('active');
+  } else { // Bootstrap 3
+    menuAnchor.parent().addClass('active');
+    dropdown.addClass('active');
+  }
+
+  // Navbar adjustments
+  var navHeight = $(".navbar").first().height() + 15;
+  var style = document.createElement('style');
+  var pt = "padding-top: " + navHeight + "px; ";
+  var mt = "margin-top: -" + navHeight + "px; ";
+  var css = "";
+  // offset scroll position for anchor links (for fixed navbar)
+  for (var i = 1; i <= 6; i++) {
+    css += ".section h" + i + "{ " + pt + mt + "}\n";
+  }
+  style.innerHTML = "body {" + pt + "padding-bottom: 40px; }\n" + css;
+  document.head.appendChild(style);
+});
+</script>
+
+<!-- tabsets -->
+
+<style type="text/css">
+.tabset-dropdown > .nav-tabs {
+  display: inline-table;
+  max-height: 500px;
+  min-height: 44px;
+  overflow-y: auto;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs > li.active:before, .tabset-dropdown > .nav-tabs.nav-tabs-open:before {
+  content: "\e259";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li.active:before {
+  content: "\e258";
+  font-family: 'Glyphicons Halflings';
+  border: none;
+}
+
+.tabset-dropdown > .nav-tabs > li.active {
+  display: block;
+}
+
+.tabset-dropdown > .nav-tabs > li > a,
+.tabset-dropdown > .nav-tabs > li > a:focus,
+.tabset-dropdown > .nav-tabs > li > a:hover {
+  border: none;
+  display: inline-block;
+  border-radius: 4px;
+  background-color: transparent;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li {
+  display: block;
+  float: none;
+}
+
+.tabset-dropdown > .nav-tabs > li {
+  display: none;
+}
+</style>
+
+<!-- code folding -->
+
+
+
+<style type="text/css">
+
+#TOC {
+  margin: 25px 0px 20px 0px;
+}
+@media (max-width: 768px) {
+#TOC {
+  position: relative;
+  width: 100%;
+}
+}
+
+@media print {
+.toc-content {
+  /* see https://github.com/w3c/csswg-drafts/issues/4434 */
+  float: right;
+}
+}
+
+.toc-content {
+  padding-left: 30px;
+  padding-right: 40px;
+}
+
+div.main-container {
+  max-width: 1200px;
+}
+
+div.tocify {
+  width: 20%;
+  max-width: 260px;
+  max-height: 85%;
+}
+
+@media (min-width: 768px) and (max-width: 991px) {
+  div.tocify {
+    width: 25%;
+  }
+}
+
+@media (max-width: 767px) {
+  div.tocify {
+    width: 100%;
+    max-width: none;
+  }
+}
+
+.tocify ul, .tocify li {
+  line-height: 20px;
+}
+
+.tocify-subheader .tocify-item {
+  font-size: 0.90em;
+}
+
+.tocify .list-group-item {
+  border-radius: 0px;
+}
+
+
+</style>
+
+
+
+</head>
+
+<body>
+
+
+<div class="container-fluid main-container">
+
+
+<!-- setup 3col/9col grid for toc_float and main content  -->
+<div class="row">
+<div class="col-xs-12 col-sm-4 col-md-3">
+<div id="TOC" class="tocify">
+</div>
+</div>
+
+<div class="toc-content col-xs-12 col-sm-8 col-md-9">
+
+
+
+
+<div class="navbar navbar-default  navbar-fixed-top" role="navigation">
+  <div class="container">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-bs-toggle="collapse" data-target="#navbar" data-bs-target="#navbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="index.html">DNAmArray</a>
+    </div>
+    <div id="navbar" class="navbar-collapse collapse">
+      <ul class="nav navbar-nav">
+        <li>
+  <a href="01_GettingStarted.html">Getting Started</a>
+</li>
+<li>
+  <a href="02_SampleQualityControl.html">Sample QC</a>
+</li>
+<li>
+  <a href="03_Normalization.html">Normalize</a>
+</li>
+<li>
+  <a href="04_Predict.html">Predict</a>
+</li>
+<li>
+  <a href="05_ProbeQC.html">Probe QC</a>
+</li>
+<li>
+  <a href="06_EWAS.html">Analyse</a>
+</li>
+<li>
+  <a href="07_Interpret.html">Interpret</a>
+</li>
+      </ul>
+      <ul class="nav navbar-nav navbar-right">
+        <li>
+  <a href="about.html">About</a>
+</li>
+      </ul>
+    </div><!--/.nav-collapse -->
+  </div><!--/.container -->
+</div><!--/.navbar -->
+
+<div id="header">
+
+
+
+
+</div>
+
+
+<hr />
+<div id="annotation" class="section level1">
+<h1>Annotation</h1>
+<p>Probe annotations can be downloaded from the <a
+href="https://zwdzwd.github.io/InfiniumAnnotation">Zhou lab GitHub
+page</a><sup>15</sup> for all commonly used arrays and reference
+genomes. For the example data, we use the EPIC annotation (hg19).</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" tabindex="-1"></a>anno <span class="ot">&lt;-</span> <span class="fu">read_tsv</span>(<span class="st">&quot;./data/EPIC.hg19.manifest.tsv.gz&quot;</span>)</span></code></pre></div>
+<pre><code>## Rows: 865918 Columns: 57
+## ── Column specification ───────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+## Delimiter: &quot;\t&quot;
+## chr (21): CpG_chrm, probe_strand, probeID, channel, designType, nextBase, nextBaseRef, probeType, orientation, ProbeSeq_A, ProbeSeq_B, ...
+## dbl (24): CpG_beg, CpG_end, address_A, address_B, probeCpGcnt, context35, probeBeg, probeEnd, beg_A, flag_A, mapQ_A, NM_A, beg_B, flag_...
+## lgl (12): posMatch, MASK_mapping, MASK_typeINextBaseSwitch, MASK_rmsk15, MASK_sub40_copy, MASK_sub35_copy, MASK_sub30_copy, MASK_sub25_...
+## 
+## ℹ Use `spec()` to retrieve the full column specification for this data.
+## ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.</code></pre>
+<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" tabindex="-1"></a>anno <span class="ot">&lt;-</span> anno <span class="sc">%&gt;%</span> </span>
+<span id="cb3-2"><a href="#cb3-2" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">select</span>(</span>
+<span id="cb3-3"><a href="#cb3-3" tabindex="-1"></a>    <span class="at">cpg =</span> probeID,</span>
+<span id="cb3-4"><a href="#cb3-4" tabindex="-1"></a>    <span class="at">chr =</span> CpG_chrm,</span>
+<span id="cb3-5"><a href="#cb3-5" tabindex="-1"></a>    <span class="at">start =</span> CpG_beg,</span>
+<span id="cb3-6"><a href="#cb3-6" tabindex="-1"></a>    <span class="at">end =</span> CpG_end,</span>
+<span id="cb3-7"><a href="#cb3-7" tabindex="-1"></a>    <span class="at">strand =</span> probe_strand,</span>
+<span id="cb3-8"><a href="#cb3-8" tabindex="-1"></a>    gene_HGNC,</span>
+<span id="cb3-9"><a href="#cb3-9" tabindex="-1"></a>    MASK_general,</span>
+<span id="cb3-10"><a href="#cb3-10" tabindex="-1"></a>    probeType</span>
+<span id="cb3-11"><a href="#cb3-11" tabindex="-1"></a>  ) <span class="sc">%&gt;%</span> </span>
+<span id="cb3-12"><a href="#cb3-12" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
+<span id="cb3-13"><a href="#cb3-13" tabindex="-1"></a>    <span class="at">chr =</span> <span class="fu">substr</span>(chr,<span class="dv">4</span>,<span class="dv">5</span>)</span>
+<span id="cb3-14"><a href="#cb3-14" tabindex="-1"></a>  )</span>
+<span id="cb3-15"><a href="#cb3-15" tabindex="-1"></a></span>
+<span id="cb3-16"><a href="#cb3-16" tabindex="-1"></a><span class="fu">str</span>(anno)</span></code></pre></div>
+<pre><code>## tibble [865,918 × 8] (S3: tbl_df/tbl/data.frame)
+##  $ cpg         : chr [1:865918] &quot;cg14817997&quot; &quot;cg26928153&quot; &quot;cg16269199&quot; &quot;cg13869341&quot; ...
+##  $ chr         : chr [1:865918] &quot;1&quot; &quot;1&quot; &quot;1&quot; &quot;1&quot; ...
+##  $ start       : num [1:865918] 10524 10847 10849 15864 18826 ...
+##  $ end         : num [1:865918] 10526 10849 10851 15866 18828 ...
+##  $ strand      : chr [1:865918] &quot;-&quot; &quot;+&quot; &quot;+&quot; &quot;-&quot; ...
+##  $ gene_HGNC   : chr [1:865918] NA &quot;DDX11L1&quot; &quot;DDX11L1&quot; &quot;WASH7P&quot; ...
+##  $ MASK_general: logi [1:865918] TRUE TRUE TRUE TRUE TRUE TRUE ...
+##  $ probeType   : chr [1:865918] &quot;cg&quot; &quot;cg&quot; &quot;cg&quot; &quot;cg&quot; ...</code></pre>
+<hr />
+</div>
+<div id="filtering-on-intensities" class="section level1">
+<h1>Filtering on Intensities</h1>
+<p>We recommend performing probe-filtering by setting unreliably
+measured probes to NA.</p>
+<p>Some observations need to be removed from the dataset since they
+provide little to no information that could skew analyses. Probes which
+have zero intensity or are based on very few (default: &lt;3) beads are
+removed, based on a specified cut off.</p>
+<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" tabindex="-1"></a>RGset <span class="ot">&lt;-</span> <span class="fu">probeFiltering</span>(RGset)</span></code></pre></div>
+<pre><code>## Filtering on number of beads... 
+## On average 0.12 % of the probes ( 1052641 ) have number of beads below 3 
+## Filtering on zero intensities... 
+## On average 0.019 % of the Type II probes ( 724574 ) have Red and/or Green intensity below 1 
+## On average 0.016 % of the Type I probes ( 99964 ), measured in Green channel, have intensity below 1 
+## On average 0.016 % of the Type I probes ( 184560 ), measured in Red channel, have intensity below 1 
+## Set filtered probes in Red and/or Green channels to NA...</code></pre>
+<p>There are differences between probe types that are used in
+<code>probeFiltering()</code>. Information on these can be extracted and
+stored using functions from <a
+href="https://bioconductor.org/packages/release/bioc/html/minfi.html"><strong>minfi</strong></a>
+(Feinberg, 2014).</p>
+<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" tabindex="-1"></a>locusNames <span class="ot">&lt;-</span> <span class="fu">getManifestInfo</span>(RGset, <span class="st">&quot;locusNames&quot;</span>)</span>
+<span id="cb7-2"><a href="#cb7-2" tabindex="-1"></a>typeII <span class="ot">&lt;-</span> <span class="fu">getProbeInfo</span>(RGset, <span class="at">type=</span><span class="st">&quot;II&quot;</span>)</span>
+<span id="cb7-3"><a href="#cb7-3" tabindex="-1"></a>typeI <span class="ot">&lt;-</span> <span class="fu">getProbeInfo</span>(RGset, <span class="at">type=</span><span class="st">&quot;I&quot;</span>)</span>
+<span id="cb7-4"><a href="#cb7-4" tabindex="-1"></a></span>
+<span id="cb7-5"><a href="#cb7-5" tabindex="-1"></a>RGset</span></code></pre></div>
+<pre><code>## class: RGChannelSet 
+## dim: 1052641 57 
+## metadata(0):
+## assays(2): Green Red
+## rownames(1052641): 1600101 1600111 ... 99810990 99810992
+## rowData names(0):
+## colnames(57): GSM3228563_200550980002_R02C01 GSM3228564_200550980002_R03C01 ... GSM3228620_200590490021_R07C01
+##   GSM3228621_200590490021_R08C01
+## colData names(25): sample_ID geo_accession ... Neu Mono
+## Annotation
+##   array: IlluminaHumanMethylationEPIC
+##   annotation: ilm10b4.hg19</code></pre>
+<div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" tabindex="-1"></a>betas <span class="ot">&lt;-</span> <span class="fu">getBeta</span>(RGset, <span class="at">type=</span><span class="st">&quot;Illumina&quot;</span>)</span></code></pre></div>
+<hr />
+</div>
+<div id="encode-blacklist" class="section level1">
+<h1>ENCODE Blacklist</h1>
+<p>CpGs in the ENCODE Blacklist<sup>22</sup> are provided in the package
+and can be loaded in:</p>
+<ul>
+<li><code>450k</code> - “./data/ENCODEBlacklist-CpGomit-450K.RData”</li>
+<li><code>EPIC</code> - “./data/ENCODEBlacklist-CpGomit-EPIC.RData”</li>
+<li><code>EPICv2</code> -
+“./data/ENCODEBlacklist-CpGomit-EPICv2.RData”</li>
+</ul>
+<p>These were generated using the Blacklist <code>.bed</code> file found
+<a href="https://github.com/Boyle-Lab/Blacklist">here</a>, which was
+converted to a GRanges object and overlapped with the manifest for each
+DNAm array. In total, this removes 7313 probes from EPICv2, 9035 from
+EPIC, and 6508 from the 450k array.</p>
+<div class="sourceCode" id="cb10"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" tabindex="-1"></a><span class="fu">load</span>(<span class="st">&quot;./data/ENCODEBlacklist_CpGomit-EPIC.RData&quot;</span>)</span>
+<span id="cb10-2"><a href="#cb10-2" tabindex="-1"></a>betas <span class="ot">&lt;-</span> betas[<span class="sc">!</span><span class="fu">rownames</span>(betas) <span class="sc">%in%</span> cpg_blacklist,]</span>
+<span id="cb10-3"><a href="#cb10-3" tabindex="-1"></a><span class="fu">dim</span>(betas)</span></code></pre></div>
+<pre><code>## [1] 857749     57</code></pre>
+<hr />
+</div>
+<div id="zhou-probes" class="section level1">
+<h1>Zhou probes</h1>
+<p>Several studies<sup>15</sup> have characterized cross-reactive and
+polymorphic probes on methylation arrays and made suggestions for
+removal. The proposed sets are actively maintained and supports all
+current array sizes. Additionally, different sets are specified
+depending on the reference genome used.</p>
+<p>Probes are removed for a variety of reasons, from ambiguous mapping
+and cross-reactivity to polymorphisms that interfere with extension. In
+general, around 60,000 probes are suggested for removal in 450k arrays,
+and 100,000 for EPIC. We developed the <code>probeMasking()</code>
+function, which removes specified probes from either beta- or M- value
+matrices.</p>
+<div class="sourceCode" id="cb12"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" tabindex="-1"></a>maskProbes <span class="ot">&lt;-</span> anno[anno<span class="sc">$</span>MASK_general <span class="sc">==</span> <span class="cn">TRUE</span>,]<span class="sc">$</span>cpg</span>
+<span id="cb12-2"><a href="#cb12-2" tabindex="-1"></a><span class="fu">length</span>(maskProbes)</span></code></pre></div>
+<pre><code>## [1] 99360</code></pre>
+<div class="sourceCode" id="cb14"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" tabindex="-1"></a>betas <span class="ot">&lt;-</span> betas[<span class="sc">!</span><span class="fu">rownames</span>(betas) <span class="sc">%in%</span> maskProbes,]</span>
+<span id="cb14-2"><a href="#cb14-2" tabindex="-1"></a><span class="fu">dim</span>(betas)</span></code></pre></div>
+<pre><code>## [1] 763466     57</code></pre>
+<hr />
+</div>
+<div id="sex-chromosomes" class="section level1">
+<h1>Sex chromosomes</h1>
+<p>For most EWAS, CpGs on sex chromosomes are filtered out. To perform
+analyses on sex-chromosomal probes, a stratified approach is
+required.</p>
+<div class="sourceCode" id="cb16"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" tabindex="-1"></a>xy_cpgs <span class="ot">&lt;-</span> (anno <span class="sc">%&gt;%</span> </span>
+<span id="cb16-2"><a href="#cb16-2" tabindex="-1"></a>              dplyr<span class="sc">::</span><span class="fu">filter</span>(chr <span class="sc">%in%</span> <span class="fu">c</span>(<span class="st">&quot;X&quot;</span>, <span class="st">&quot;Y&quot;</span>)))<span class="sc">$</span>cpg</span>
+<span id="cb16-3"><a href="#cb16-3" tabindex="-1"></a>betas <span class="ot">&lt;-</span> betas[<span class="sc">!</span><span class="fu">rownames</span>(betas) <span class="sc">%in%</span> xy_cpgs,]</span>
+<span id="cb16-4"><a href="#cb16-4" tabindex="-1"></a><span class="fu">dim</span>(betas)</span></code></pre></div>
+<pre><code>## [1] 746345     57</code></pre>
+<hr />
+</div>
+<div id="outlier-removal" class="section level1">
+<h1>Outlier removal</h1>
+<p>In many analyses, it is advisable to remove outlying DNAm values.
+This can be based on:</p>
+<ul>
+<li>beta values - more biologically interpretable, but suffer from
+heteroskedasticity, or</li>
+<li>M values - less heteroskedasticity</li>
+</ul>
+<p>Outliers can be based on the IQR or RIN values. Based on your
+specification, you can then filter outlying values. Here, we present
+removing beta values more than 3 IQR from the nearest quartile.</p>
+<div class="sourceCode" id="cb18"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" tabindex="-1"></a><span class="fu">xtabs</span>(<span class="sc">~</span><span class="fu">is.na</span>(betas))</span></code></pre></div>
+<pre><code>## is.na(betas)
+##    FALSE     TRUE 
+## 42487888    53777</code></pre>
+<div class="sourceCode" id="cb20"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" tabindex="-1"></a>iqr_dnam <span class="ot">&lt;-</span> <span class="fu">apply</span>(betas, <span class="dv">1</span>, <span class="cf">function</span>(x){</span>
+<span id="cb20-2"><a href="#cb20-2" tabindex="-1"></a>  iqr <span class="ot">&lt;-</span> <span class="fu">IQR</span>(x, <span class="at">na.rm =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb20-3"><a href="#cb20-3" tabindex="-1"></a>  q1 <span class="ot">&lt;-</span> <span class="fu">quantile</span>(x, <span class="at">na.rm=</span><span class="cn">TRUE</span>)[[<span class="dv">2</span>]]</span>
+<span id="cb20-4"><a href="#cb20-4" tabindex="-1"></a>  q3 <span class="ot">&lt;-</span> <span class="fu">quantile</span>(x, <span class="at">na.rm=</span><span class="cn">TRUE</span>)[[<span class="dv">4</span>]]</span>
+<span id="cb20-5"><a href="#cb20-5" tabindex="-1"></a>  x <span class="ot">&lt;-</span> <span class="fu">ifelse</span>((x <span class="sc">&lt;=</span> q1 <span class="sc">-</span> (<span class="dv">3</span><span class="sc">*</span>iqr) <span class="sc">|</span> x <span class="sc">&gt;=</span> q3 <span class="sc">+</span> (<span class="dv">3</span><span class="sc">*</span>iqr)), <span class="cn">NA</span>, x)</span>
+<span id="cb20-6"><a href="#cb20-6" tabindex="-1"></a>})</span>
+<span id="cb20-7"><a href="#cb20-7" tabindex="-1"></a></span>
+<span id="cb20-8"><a href="#cb20-8" tabindex="-1"></a><span class="fu">xtabs</span>(<span class="sc">~</span><span class="fu">is.na</span>(iqr_dnam))</span></code></pre></div>
+<pre><code>## is.na(iqr_dnam)
+##    FALSE     TRUE 
+## 42421845   119820</code></pre>
+<div class="sourceCode" id="cb22"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1" tabindex="-1"></a><span class="fu">dim</span>(iqr_dnam)</span></code></pre></div>
+<pre><code>## [1]     57 746345</code></pre>
+<div class="sourceCode" id="cb24"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb24-1"><a href="#cb24-1" tabindex="-1"></a>betas <span class="ot">&lt;-</span> <span class="fu">t</span>(iqr_dnam)</span></code></pre></div>
+<hr />
+</div>
+<div id="missingness" class="section level1">
+<h1>Missingness</h1>
+<p>We advise keeping only the CpGs where less than 5% of sample values
+are missing.</p>
+<div class="sourceCode" id="cb25"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb25-1"><a href="#cb25-1" tabindex="-1"></a>perc_na <span class="ot">&lt;-</span> <span class="fu">rowSums</span>(<span class="fu">is.na</span>(iqr_dnam))<span class="sc">*</span><span class="dv">100</span><span class="sc">/</span><span class="fu">ncol</span>(iqr_dnam)</span>
+<span id="cb25-2"><a href="#cb25-2" tabindex="-1"></a><span class="fu">summary</span>(perc_na)</span></code></pre></div>
+<pre><code>##    Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
+##  0.1144  0.1561  0.1905  0.2817  0.2640  1.4570</code></pre>
+<div class="sourceCode" id="cb27"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb27-1"><a href="#cb27-1" tabindex="-1"></a>betas <span class="ot">&lt;-</span> betas[,perc_na <span class="sc">&lt;=</span> <span class="dv">95</span>]</span>
+<span id="cb27-2"><a href="#cb27-2" tabindex="-1"></a><span class="fu">dim</span>(betas)</span></code></pre></div>
+<pre><code>## [1] 746345     57</code></pre>
+<p>On the sample level, we keep only the samples where less than 5% of
+CpGs are missing.</p>
+<div class="sourceCode" id="cb29"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb29-1"><a href="#cb29-1" tabindex="-1"></a>perc_na <span class="ot">&lt;-</span> <span class="fu">colSums</span>(<span class="fu">is.na</span>(iqr_dnam))<span class="sc">*</span><span class="dv">100</span><span class="sc">/</span><span class="fu">nrow</span>(iqr_dnam)</span>
+<span id="cb29-2"><a href="#cb29-2" tabindex="-1"></a><span class="fu">summary</span>(perc_na)</span></code></pre></div>
+<pre><code>##    Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
+##  0.0000  0.0000  0.0000  0.2817  0.0000 47.3684</code></pre>
+<div class="sourceCode" id="cb31"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb31-1"><a href="#cb31-1" tabindex="-1"></a>betas <span class="ot">&lt;-</span> betas[perc_na <span class="sc">&lt;=</span> <span class="dv">95</span>,]</span>
+<span id="cb31-2"><a href="#cb31-2" tabindex="-1"></a><span class="fu">dim</span>(betas)</span></code></pre></div>
+<pre><code>## [1] 746345     57</code></pre>
+<hr />
+</div>
+<div id="summarizedexperiment" class="section level1">
+<h1>SummarizedExperiment</h1>
+<p>Now that we have our annotations, we can combine them with our data
+using the <a
+href="https://bioconductor.org/packages/release/bioc/html/SummarizedExperiment.html"><strong>SummarizedExperiment</strong></a>
+package. After ensuring that any column subsetting is accounted for, we
+extract the <code>colData()</code> from our <code>RGset</code>. Finally,
+the beta values, probe annotations, and sample information are combined
+into a <code>RangedSummarizedExperiment</code> object using the
+<code>SummarizedExperiment()</code> function.</p>
+<p>Annotation data</p>
+<div class="sourceCode" id="cb33"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb33-1"><a href="#cb33-1" tabindex="-1"></a>anno <span class="ot">&lt;-</span> anno <span class="sc">%&gt;%</span> </span>
+<span id="cb33-2"><a href="#cb33-2" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">filter</span>(cpg <span class="sc">%in%</span> <span class="fu">rownames</span>(betas))</span>
+<span id="cb33-3"><a href="#cb33-3" tabindex="-1"></a></span>
+<span id="cb33-4"><a href="#cb33-4" tabindex="-1"></a><span class="fu">dim</span>(anno)</span></code></pre></div>
+<pre><code>## [1] 745368      8</code></pre>
+<p>Keep annotated probes</p>
+<div class="sourceCode" id="cb35"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb35-1"><a href="#cb35-1" tabindex="-1"></a>betas <span class="ot">&lt;-</span> betas[anno<span class="sc">$</span>cpg, ]</span></code></pre></div>
+<p>Sample information</p>
+<div class="sourceCode" id="cb36"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb36-1"><a href="#cb36-1" tabindex="-1"></a>targets <span class="ot">&lt;-</span> targets[<span class="fu">colnames</span>(betas), ]</span>
+<span id="cb36-2"><a href="#cb36-2" tabindex="-1"></a></span>
+<span id="cb36-3"><a href="#cb36-3" tabindex="-1"></a><span class="fu">dim</span>(targets)</span></code></pre></div>
+<pre><code>## [1] 57 25</code></pre>
+<div class="sourceCode" id="cb38"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb38-1"><a href="#cb38-1" tabindex="-1"></a><span class="fu">dim</span>(betas)</span></code></pre></div>
+<pre><code>## [1] 745368     57</code></pre>
+<p>Make summarized experiment object</p>
+<div class="sourceCode" id="cb40"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb40-1"><a href="#cb40-1" tabindex="-1"></a>methData <span class="ot">&lt;-</span> <span class="fu">SummarizedExperiment</span>(</span>
+<span id="cb40-2"><a href="#cb40-2" tabindex="-1"></a>  <span class="at">assays=</span><span class="fu">SimpleList</span>(<span class="at">beta=</span>betas), </span>
+<span id="cb40-3"><a href="#cb40-3" tabindex="-1"></a>  <span class="at">rowData=</span>anno, </span>
+<span id="cb40-4"><a href="#cb40-4" tabindex="-1"></a>  <span class="at">colData=</span>targets)</span>
+<span id="cb40-5"><a href="#cb40-5" tabindex="-1"></a></span>
+<span id="cb40-6"><a href="#cb40-6" tabindex="-1"></a>methData</span></code></pre></div>
+<pre><code>## class: SummarizedExperiment 
+## dim: 745368 57 
+## metadata(0):
+## assays(1): beta
+## rownames(745368): cg09499020 cg16535257 ... cg08423507 cg24129471
+## rowData names(8): cpg chr ... MASK_general probeType
+## colnames(57): GSM3228563_200550980002_R02C01 GSM3228564_200550980002_R03C01 ... GSM3228620_200590490021_R07C01
+##   GSM3228621_200590490021_R08C01
+## colData names(25): sample_ID geo_accession ... Neu Mono</code></pre>
+You can read more about <a
+href="http://bioconductor.org/packages/SummarizedExperiment"><strong>SummarizedExperiment</strong></a>
+from the following resources:
+<ul>
+<li>
+<a
+href="http://bioconductor.org/packages/release/bioc/vignettes/SummarizedExperiment/inst/doc/SummarizedExperiment.html">Package
+vignette</a>
+</li>
+<li>
+<a
+href="http://bioconductor.org/help/course-materials/2012/BiocEurope2012/SummarizedExperiment.pdf">Course
+material</a>
+</li>
+<li>
+<a
+href="http://www.nature.com/nmeth/journal/v12/n2/full/nmeth.3252.html">BioConductor
+nature paper</a>
+</li>
+</ul>
+<hr />
+</div>
+<div id="save" class="section level1">
+<h1>Save</h1>
+<p>Save RGset</p>
+<div class="sourceCode" id="cb42"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb42-1"><a href="#cb42-1" tabindex="-1"></a>RGset <span class="ot">&lt;-</span> RGset[, <span class="fu">colnames</span>(RGset) <span class="sc">%in%</span> <span class="fu">colnames</span>(methData)]</span>
+<span id="cb42-2"><a href="#cb42-2" tabindex="-1"></a>RGset</span></code></pre></div>
+<pre><code>## class: RGChannelSet 
+## dim: 1052641 57 
+## metadata(0):
+## assays(2): Green Red
+## rownames(1052641): 1600101 1600111 ... 99810990 99810992
+## rowData names(0):
+## colnames(57): GSM3228563_200550980002_R02C01 GSM3228564_200550980002_R03C01 ... GSM3228620_200590490021_R07C01
+##   GSM3228621_200590490021_R08C01
+## colData names(25): sample_ID geo_accession ... Neu Mono
+## Annotation
+##   array: IlluminaHumanMethylationEPIC
+##   annotation: ilm10b4.hg19</code></pre>
+<p>Save clean data</p>
+<div class="sourceCode" id="cb44"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb44-1"><a href="#cb44-1" tabindex="-1"></a><span class="fu">save</span>(targets, <span class="at">file =</span> <span class="st">&quot;./data/targets.Rdata&quot;</span>)</span>
+<span id="cb44-2"><a href="#cb44-2" tabindex="-1"></a><span class="fu">save</span>(methData, <span class="at">file=</span><span class="st">&quot;./data/methData.Rdata&quot;</span>)</span>
+<span id="cb44-3"><a href="#cb44-3" tabindex="-1"></a><span class="fu">save</span>(RGset, <span class="at">file=</span><span class="st">&quot;./data/RGset.Rdata&quot;</span>)</span></code></pre></div>
+<hr />
+</div>
+<div id="saving" class="section level1">
+<h1>Saving</h1>
+<p>We want to save our data as a <code>SummarizedExperiment</code>
+object for the rest of the pipeline.</p>
+<hr />
+</div>
+
+
+
+</div>
+</div>
+
+</div>
+
+<script>
+
+// add bootstrap table styles to pandoc tables
+function bootstrapStylePandocTables() {
+  $('tr.odd').parent('tbody').parent('table').addClass('table table-condensed');
+}
+$(document).ready(function () {
+  bootstrapStylePandocTables();
+});
+
+
+</script>
+
+<!-- tabsets -->
+
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+
+$(document).ready(function () {
+  $('.tabset-dropdown > .nav-tabs > li').click(function () {
+    $(this).parent().toggleClass('nav-tabs-open');
+  });
+});
+</script>
+
+<!-- code folding -->
+
+<script>
+$(document).ready(function ()  {
+
+    // temporarily add toc-ignore selector to headers for the consistency with Pandoc
+    $('.unlisted.unnumbered').addClass('toc-ignore')
+
+    // move toc-ignore selectors from section div to header
+    $('div.section.toc-ignore')
+        .removeClass('toc-ignore')
+        .children('h1,h2,h3,h4,h5').addClass('toc-ignore');
+
+    // establish options
+    var options = {
+      selectors: "h1,h2",
+      theme: "bootstrap3",
+      context: '.toc-content',
+      hashGenerator: function (text) {
+        return text.replace(/[.\\/?&!#<>]/g, '').replace(/\s/g, '_');
+      },
+      ignoreSelector: ".toc-ignore",
+      scrollTo: 0
+    };
+    options.showAndHide = true;
+    options.smoothScroll = true;
+
+    // tocify
+    var toc = $("#TOC").tocify(options).data("toc-tocify");
+});
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>

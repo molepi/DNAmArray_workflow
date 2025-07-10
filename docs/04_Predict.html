@@ -11,7 +11,7 @@
 
 
 
-<title>03_Normalization.knit</title>
+<title>04_Predict.knit</title>
 
 <script src="site_libs/header-attrs-2.29/header-attrs.js"></script>
 <script src="site_libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
@@ -452,69 +452,115 @@ div.tocify {
 
 
 <hr />
-<div id="functional-normalization" class="section level1">
-<h1>Functional normalization</h1>
-<div id="motivation" class="section level2">
-<h2>Motivation</h2>
-<p>Our workflow uses the functional normalization approach<sup>16</sup>,
-which exploits internal control probes designed to detect technical
-variations without assaying biological differences.</p>
-<p>It has been shown to perform favourably when compared to other
-approaches<sup>17</sup>. Using the internal control probes avoids the
-problems associated with global normalization methods, where biological
-variation can be mistaken for a technical effect and removed. This is
-especially important in studies where groups are expected to have
-differential methylation signatures, such as multiple tissue
-studies<sup>18</sup>.</p>
-<p>Conversations on the best approaches for normalization in DNAm data
-pipelines are ongoing<sup>19</sup>.</p>
+<div id="phenotype-prediction" class="section level1">
+<h1>Phenotype Prediction</h1>
+<div id="imputation" class="section level2">
+<h2>Imputation</h2>
+<p>It can be useful to predict phenotypes in your data, either for
+comparison to assumed categories or to help impute missing values.</p>
+<p>It is important to carry out predictions prior to probe masking, as
+many probes masked for analysis (e.g. those on sex chromosomes) are
+still useful for predicting phenotypes. Additionally, if you have
+missing values packages such as <a
+href="https://www.bioconductor.org/packages/release/bioc/html/methyLImp2.html"><strong>MethyLImp2</strong></a><sup>20</sup>
+can be used to impute them. We advise imputing missing values before
+phenotype prediction, since many predictors use only a subset of
+available probes and missing data can seriously impact accuracy.</p>
+<p>Of note, EPICv2 CpGs have technical suffixes for CpG names, which
+predictors may not be updated for. Additionally, CpGs have up to 10
+replicates. We advise selecting one of these at random to use in
+prediction, or selecting the one with the best performing detection
+p-value, which can be inspected using <code>detectionP()</code> from
+<code>minfi</code>.</p>
+<hr />
+</div>
+<div id="cell-counts" class="section level2">
+<h2>Cell counts</h2>
+<p>The <code>EPIDish</code> package can be used to predict blood cell
+types. It is a R package that infers the proportions of a priori known
+cell-types present in a sample representing a mixture of such
+cell-types. Right now, the package can be used on DNAm data of
+blood-tissue of any age, from birth to old-age, generic epithelial
+tissue and breast tissue. The package also provides a function that
+allows the identification of differentially methylated cell-types and
+their directionality of change in Epigenome-Wide Association
+Studies.</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" tabindex="-1"></a><span class="fu">data</span>(cent12CT.m)</span>
+<span id="cb1-2"><a href="#cb1-2" tabindex="-1"></a></span>
+<span id="cb1-3"><a href="#cb1-3" tabindex="-1"></a>BloodFrac.m <span class="ot">&lt;-</span> <span class="fu">epidish</span>(<span class="at">beta.m =</span> betas, </span>
+<span id="cb1-4"><a href="#cb1-4" tabindex="-1"></a>                       <span class="at">ref.m =</span> cent12CT.m, </span>
+<span id="cb1-5"><a href="#cb1-5" tabindex="-1"></a>                       <span class="at">method =</span> <span class="st">&quot;RPC&quot;</span>)<span class="sc">$</span>estF</span></code></pre></div>
+<p>After proportions of cell types have been estimated, they can be
+plotted and inspected.</p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" tabindex="-1"></a>BloodFrac.m_long <span class="ot">&lt;-</span> <span class="fu">pivot_longer</span>(<span class="fu">as.data.frame</span>(BloodFrac.m), <span class="at">cols =</span> <span class="fu">colnames</span>(BloodFrac.m))</span>
+<span id="cb2-2"><a href="#cb2-2" tabindex="-1"></a></span>
+<span id="cb2-3"><a href="#cb2-3" tabindex="-1"></a>BloodFrac.m_long <span class="sc">%&gt;%</span> </span>
+<span id="cb2-4"><a href="#cb2-4" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">y=</span>name, <span class="at">x=</span>value)) <span class="sc">+</span></span>
+<span id="cb2-5"><a href="#cb2-5" tabindex="-1"></a>  <span class="fu">geom_boxplot</span>() <span class="sc">+</span></span>
+<span id="cb2-6"><a href="#cb2-6" tabindex="-1"></a>  <span class="fu">theme_bw</span>() <span class="sc">+</span> <span class="fu">ylab</span>(<span class="st">&#39;&#39;</span>)</span></code></pre></div>
+<p><img src="04_Predict_files/figure-html/402plot-1.png" width="672" /></p>
+<p>Cell counts can be added to <code>targets</code> for use later when
+building EWAS models.</p>
+<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" tabindex="-1"></a><span class="fu">table</span>(<span class="fu">rownames</span>(<span class="fu">as.data.frame</span>(BloodFrac.m)) <span class="sc">==</span> <span class="fu">rownames</span>(targets))</span></code></pre></div>
+<pre><code>## 
+## TRUE 
+##   57</code></pre>
+<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" tabindex="-1"></a>targets <span class="ot">&lt;-</span> <span class="fu">cbind</span>(targets, BloodFrac.m)</span>
+<span id="cb5-2"><a href="#cb5-2" tabindex="-1"></a><span class="fu">colData</span>(RGset) <span class="ot">&lt;-</span> <span class="fu">DataFrame</span>(targets)</span></code></pre></div>
 <hr />
 </div>
 </div>
-<div id="principal-components" class="section level1">
-<h1>Principal Components</h1>
-<p>The default of selecting only two principal components is often too
-low for this type of data. Often you will see a drop-off in proportion
-of variance explained after a certain number of principal components,
-and this can indicate an efficient selection.</p>
-<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" tabindex="-1"></a>var_explained <span class="sc">%&gt;%</span> <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x=</span>PC, <span class="at">y=</span>var_explained)) <span class="sc">+</span></span>
-<span id="cb1-2"><a href="#cb1-2" tabindex="-1"></a>  <span class="fu">geom_line</span>() <span class="sc">+</span></span>
-<span id="cb1-3"><a href="#cb1-3" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">color=</span><span class="st">&#39;grey5&#39;</span>, <span class="at">fill=</span><span class="st">&#39;#6DACBC&#39;</span>, <span class="at">shape=</span><span class="dv">21</span>, <span class="at">size=</span><span class="dv">3</span>) <span class="sc">+</span> </span>
-<span id="cb1-4"><a href="#cb1-4" tabindex="-1"></a>  <span class="fu">scale_x_continuous</span>(<span class="at">breaks=</span><span class="dv">1</span><span class="sc">:</span><span class="fu">ncol</span>(pca<span class="sc">$</span>x)) <span class="sc">+</span></span>
-<span id="cb1-5"><a href="#cb1-5" tabindex="-1"></a>  <span class="fu">xlab</span>(<span class="st">&quot;Principal Component&quot;</span>) <span class="sc">+</span> </span>
-<span id="cb1-6"><a href="#cb1-6" tabindex="-1"></a>  <span class="fu">ylab</span>(<span class="st">&quot;Proportion of variance explained&quot;</span>) <span class="sc">+</span></span>
-<span id="cb1-7"><a href="#cb1-7" tabindex="-1"></a>  <span class="fu">theme_bw</span>()</span></code></pre></div>
-<p><img src="03_Normalization_files/figure-html/301scree-1.png" width="672" /></p>
-<hr />
-</div>
-<div id="running-normalization" class="section level1">
-<h1>Running Normalization</h1>
-<p>In order to run normalization the annotation of the
-<code>RGset</code> must be updated for EPIC arrays.</p>
-<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" tabindex="-1"></a>RGset<span class="sc">@</span>annotation <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="at">array =</span> <span class="st">&quot;IlluminaHumanMethylationEPIC&quot;</span>, <span class="at">annotation =</span> <span class="st">&quot;ilm10b4.hg19&quot;</span>)</span></code></pre></div>
-<p>By default, functional normalization returns normalized copy number
-data making the returned <code>GenomicRatioSet</code> twice the size
-necessary when only beta-values or M-values are required. Therefore, we
-developed <code>preprocessFunnorm.DNAmArray()</code>, which adds an
-option not to return these to the <code>preprocessFunnorm()</code>
-function from <a
-href="https://bioconductor.org/packages/release/bioc/html/minfi.html"><strong>minfi</strong></a>.</p>
-<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" tabindex="-1"></a>RGset <span class="ot">&lt;-</span> <span class="fu">preprocessFunnorm.DNAmArray</span>(</span>
-<span id="cb3-2"><a href="#cb3-2" tabindex="-1"></a>  <span class="at">rgSet =</span> RGset,</span>
-<span id="cb3-3"><a href="#cb3-3" tabindex="-1"></a>  <span class="at">nPCs =</span> <span class="dv">4</span>,</span>
-<span id="cb3-4"><a href="#cb3-4" tabindex="-1"></a>  <span class="at">keepCN =</span> <span class="cn">FALSE</span>,</span>
-<span id="cb3-5"><a href="#cb3-5" tabindex="-1"></a>  <span class="at">verbose =</span> <span class="cn">TRUE</span></span>
-<span id="cb3-6"><a href="#cb3-6" tabindex="-1"></a>)</span></code></pre></div>
-<p>You can now extract the normalized beta values from this object. It
-can also be advisable to round the beta values to 4 significant figures,
-which both reduces the data size and provides a realistic measure of the
-available precision.</p>
-<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" tabindex="-1"></a>betas <span class="ot">&lt;-</span> <span class="fu">getBeta</span>(RGset, <span class="at">type=</span><span class="st">&quot;Illumina&quot;</span>)</span>
-<span id="cb4-2"><a href="#cb4-2" tabindex="-1"></a>betas <span class="ot">&lt;-</span> <span class="fu">round</span>(betas, <span class="dv">4</span>)</span></code></pre></div>
-<p>If required, these can be transformed to M-values using <a
-href="https://bioconductor.org/packages/release/bioc/html/minfi.html"><strong>minfi</strong></a>’s
-<code>getM()</code> which applies a logit2-transformation to the
-beta-values.</p>
+<div id="predict-sex" class="section level1">
+<h1>Predict Sex</h1>
+<p>Sex can also be predicted from CpGs on the X-chromosome. These can be
+subset using the annotations described earlier.</p>
+<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" tabindex="-1"></a>anno <span class="ot">&lt;-</span> <span class="fu">read_tsv</span>(<span class="st">&quot;./data/EPIC.hg19.manifest.tsv.gz&quot;</span>)</span></code></pre></div>
+<pre><code>## Rows: 865918 Columns: 57
+## ── Column specification ───────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+## Delimiter: &quot;\t&quot;
+## chr (21): CpG_chrm, probe_strand, probeID, channel, designType, nextBase, nextBaseRef, probeType, orientation, ProbeSeq_A, ProbeSeq_B, ...
+## dbl (24): CpG_beg, CpG_end, address_A, address_B, probeCpGcnt, context35, probeBeg, probeEnd, beg_A, flag_A, mapQ_A, NM_A, beg_B, flag_...
+## lgl (12): posMatch, MASK_mapping, MASK_typeINextBaseSwitch, MASK_rmsk15, MASK_sub40_copy, MASK_sub35_copy, MASK_sub30_copy, MASK_sub25_...
+## 
+## ℹ Use `spec()` to retrieve the full column specification for this data.
+## ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.</code></pre>
+<div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" tabindex="-1"></a>anno <span class="ot">&lt;-</span> anno <span class="sc">%&gt;%</span> </span>
+<span id="cb8-2"><a href="#cb8-2" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">select</span>(</span>
+<span id="cb8-3"><a href="#cb8-3" tabindex="-1"></a>    <span class="at">cpg =</span> probeID,</span>
+<span id="cb8-4"><a href="#cb8-4" tabindex="-1"></a>    <span class="at">chr =</span> CpG_chrm,</span>
+<span id="cb8-5"><a href="#cb8-5" tabindex="-1"></a>    <span class="at">start =</span> CpG_beg,</span>
+<span id="cb8-6"><a href="#cb8-6" tabindex="-1"></a>    <span class="at">end =</span> CpG_end,</span>
+<span id="cb8-7"><a href="#cb8-7" tabindex="-1"></a>    <span class="at">strand =</span> probe_strand,</span>
+<span id="cb8-8"><a href="#cb8-8" tabindex="-1"></a>    gene_HGNC,</span>
+<span id="cb8-9"><a href="#cb8-9" tabindex="-1"></a>    MASK_general,</span>
+<span id="cb8-10"><a href="#cb8-10" tabindex="-1"></a>    probeType</span>
+<span id="cb8-11"><a href="#cb8-11" tabindex="-1"></a>  ) <span class="sc">%&gt;%</span> </span>
+<span id="cb8-12"><a href="#cb8-12" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
+<span id="cb8-13"><a href="#cb8-13" tabindex="-1"></a>    <span class="at">chr =</span> <span class="fu">substr</span>(chr,<span class="dv">4</span>,<span class="dv">5</span>)</span>
+<span id="cb8-14"><a href="#cb8-14" tabindex="-1"></a>  )</span>
+<span id="cb8-15"><a href="#cb8-15" tabindex="-1"></a></span>
+<span id="cb8-16"><a href="#cb8-16" tabindex="-1"></a>chrX <span class="ot">&lt;-</span> (anno <span class="sc">%&gt;%</span> <span class="fu">filter</span>(chr <span class="sc">==</span> <span class="st">&quot;X&quot;</span> <span class="sc">&amp;</span> probeType <span class="sc">==</span> <span class="st">&quot;cg&quot;</span>))<span class="sc">$</span>cpg</span>
+<span id="cb8-17"><a href="#cb8-17" tabindex="-1"></a><span class="fu">head</span>(chrX)</span></code></pre></div>
+<pre><code>## [1] &quot;cg17641041&quot; &quot;cg11917035&quot; &quot;cg01855098&quot; &quot;cg07761179&quot; &quot;cg25296477&quot; &quot;cg01003813&quot;</code></pre>
+<p>The number of CpGs used in the prediction can be shown in a table,
+and subset from the beta values.</p>
+<div class="sourceCode" id="cb10"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" tabindex="-1"></a><span class="fu">table</span>(<span class="fu">rownames</span>(betas) <span class="sc">%in%</span> chrX)</span></code></pre></div>
+<pre><code>## 
+##  FALSE   TRUE 
+## 847841  18995</code></pre>
+<div class="sourceCode" id="cb12"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" tabindex="-1"></a>betaX <span class="ot">&lt;-</span> betas[<span class="fu">rownames</span>(betas) <span class="sc">%in%</span> chrX, ]</span></code></pre></div>
+<p>Then a measure can be calculated, determining the sex of each sample
+and tabulated against recorded sex.</p>
+<div class="sourceCode" id="cb13"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" tabindex="-1"></a>nopoX <span class="ot">&lt;-</span> <span class="fu">colSums</span>(betaX <span class="sc">&gt;=</span> <span class="fl">0.2</span> <span class="sc">&amp;</span> betaX <span class="sc">&lt;=</span> <span class="fl">0.6</span>, <span class="at">na.rm=</span>T)</span>
+<span id="cb13-2"><a href="#cb13-2" tabindex="-1"></a>nopoX <span class="ot">&lt;-</span> <span class="fu">ifelse</span>(nopoX <span class="sc">&lt;=</span> <span class="dv">8000</span>, <span class="st">&quot;Male&quot;</span>, <span class="st">&quot;Female&quot;</span>)</span>
+<span id="cb13-3"><a href="#cb13-3" tabindex="-1"></a><span class="fu">table</span>(nopoX, targets<span class="sc">$</span>sex)</span></code></pre></div>
+<pre><code>##         
+## nopoX    Female Male
+##   Female     33    0
+##   Male        0   24</code></pre>
+<p>As you can see, this is complete data, but the predicted and assumed
+sexes are identical. This means that we can feel increased confidence
+that no incorrect labelling or mix-ups are present.</p>
 <hr />
 </div>
 

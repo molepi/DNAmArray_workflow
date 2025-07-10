@@ -311,22 +311,22 @@ div.tocify {
   <a href="01_GettingStarted.html">Getting Started</a>
 </li>
 <li>
-  <a href="02_SampleQualityControl.html">Sample-level QC</a>
+  <a href="02_SampleQualityControl.html">Sample QC</a>
 </li>
 <li>
-  <a href="03_Normalization.html">Normalization</a>
+  <a href="03_Normalization.html">Normalize</a>
 </li>
 <li>
-  <a href="04_ProbeFiltering.html">Probe-level QC</a>
+  <a href="04_Predict.html">Predict</a>
 </li>
 <li>
-  <a href="05_Predict.html">Predictors</a>
+  <a href="05_ProbeQC.html">Probe QC</a>
 </li>
 <li>
-  <a href="06_Masking.html">Underperforming Probes</a>
+  <a href="06_EWAS.html">Analyse</a>
 </li>
 <li>
-  <a href="07_EWAS.html">Analysis</a>
+  <a href="07_Interpret.html">Interpret</a>
 </li>
       </ul>
       <ul class="nav navbar-nav navbar-right">
@@ -349,24 +349,25 @@ div.tocify {
 <hr />
 <div id="acknowledgements" class="section level1">
 <h1>Acknowledgements</h1>
-<p>Contributors to the development of the package and workflow are:</p>
-<p><em>Lucy Sinke, Tom Kuipers, Jazmin Taubert, Yunfeng Liu, Elmar W.
-Tobi, Roderick Slieker, Wouter den Hollander, Rene Luijk, Koen F.
-Dekkers and Bas Heijmans (PI) from Molecular Epidemiology, Department of
-Biomedical Data Sciences, Leiden University Medical Center, Leiden, The
-Netherlands</em></p>
+<p>Contributors to the development of the package and workflow
+include:</p>
+<p><em>Lucy Sinke, Tom Kuipers, Jazmin Taubert, Yunfeng Liu, Manhoor
+Sulaiman, Thomas Jonkman, Elmar W. Tobi, Roderick Slieker, Wouter den
+Hollander, Rene Luijk, Koen F. Dekkers, and Bas Heijmans (PI) from
+Molecular Epidemiology, Department of Biomedical Data Sciences, Leiden
+University Medical Center, Leiden, The Netherlands</em></p>
 <p>Development of the workflow and generation of previously used example
 data in LLS was funded by BBMRI-NL, a research infrastructure financed
 by the Dutch government (NWO 184.021.007).</p>
-<p>Maarten van Iterson is the main author of the package and associated
-workflow. Lucy Sinke is the current author and maintainer and should be
-contacted with any questions: <a
+<p>Lucy Sinke and Maarten van Iterson are the main authors of the
+package and associated workflow. Lucy Sinke is the current author and
+maintainer and should be contacted with any questions: <a
 href="mailto:l.j.sinke@lacdr.leidenuniv.nl"
 class="email">l.j.sinke@lacdr.leidenuniv.nl</a></p>
-<p>Paul Hop and Jenny van Dongen were involved in testing and improving
-the pipeline.</p>
+<p>We are grateful to Paul Hop, Jenny van Dongen, and Helena Rasche for
+testing and improving the pipeline.</p>
 <p>Please cite van <em>Sinke, L., van Iterson, M., Cats, D., BIOS
-Consortium, Slieker, R., &amp; Heijmans, B. (2019) ‘DNAmArray:
+Consortium, Kuipers, T. &amp; Heijmans, B. (2019) ‘DNAmArray:
 Streamlined workflow for the quality control, normalization, and
 analysis of Illumina methylation array data’ <a
 href="http://doi.org/10.5281/zenodo.3355292"
@@ -376,8 +377,7 @@ href="https://github.com/molepi/DNAmArray"><strong>DNAmArray</strong></a>
 package or workflow.</p>
 <p>This web-site is generated with <a
 href="http://rmarkdown.rstudio.com/index.html"><strong>R
-Markdown</strong></a> on 07 April, 2025 using R-version and
-packages:</p>
+Markdown</strong></a> on 10 July, 2025 using R-version and packages:</p>
 <pre><code>## R version 4.4.3 (2025-02-28)
 ## Platform: x86_64-pc-linux-gnu
 ## Running under: Ubuntu 20.04.6 LTS
@@ -476,9 +476,134 @@ packages:</p>
 ## [161] beanplot_1.3.1              aplot_0.2.5                 DelayedArray_0.30.1         tidyselect_1.2.1            htmlTable_2.4.3            
 ## [166] ggforce_0.4.2               xml2_1.3.8                  car_3.1-3                   munsell_0.5.0               KernSmooth_2.23-26         
 ## [171] nor1mix_1.3-3               htmlwidgets_1.6.4           fgsea_1.30.0                rlang_1.1.5</code></pre>
+<hr />
 </div>
 <div id="references" class="section level1">
 <h1>References</h1>
+<p><sup>1</sup> Dekkers, K.F., van Iterson, M., Slieker, R.C., <i>et
+al</i>. <a href="https://doi.org/10.1186/s13059-016-1000-6">Blood lipids
+influence DNA methylation in circulating cells</a>. <i>Genome Biol.</i>
+<b>17</b>, 138 (2016).</p>
+<p><sup>2</sup> Slieker, R.C., van Iterson, M., Luijk, R. <i>et al</i>.
+<a href="https://doi.org/10.1186/s13059-016-1053-6">Age-related accrual
+of methylomic variability is linked to fundamental ageing
+mechanisms</a>. <i> Genome Biol.</i> <b>17</b>, 191 (2016).</p>
+<p><sup>3</sup> Bonder, M., Luijk, R., Zhernakova, D. <i>et al</i>. <a
+href="https://doi.org/10.1038/ng.3721">Disease variants alter
+transcription factor levels and methylation of their binding sites</a>.
+<i>Nat Genet.</i> <b>49</b>, 131-138 (2017).</p>
+<p><sup>4</sup> Luijk, R., Wu, H., Ward-Caviness, C.K. <i>et al</i>. <a
+href="https://doi.org/10.1038/s41467-018-05714-3">Autosomal genetic
+variation is associated with DNA methylation in regions variably
+escaping X-chromosome inactivation</a>. <i> Nat Commun.</i> <b>9</b>,
+3738 (2018).</p>
+<p><sup>5</sup> van Rooij, J., Mandaviya, P.R., Claringbould, A., <i>et
+al</i>. <a href="https://doi.org/10.1186/s13059-019-1878-x">Evaluation
+of commonly used analysis strategies for epigenome- and
+transcriptome-wide association studies through replication of
+large-scale population studies</a>. <i>Genome Biol.</i> <b>20</b>, 1:235
+(2019).</p>
+<p><sup>6</sup> Hop, P.J., Luijk, R., Daxinger, L., <i>et al</i>. <a
+href="https://doi.org/10.1186/s13059-020-02114-z">Genome-wide
+identification of genes regulating DNA methylation using genetic anchors
+for causal inference</a>. <i>Genome Biol.</i> <b>21</b>, 220 (2020).</p>
+<p><sup>7</sup> Dekkers, K.F., Slieker, R.C., Ioan-Facsinay, A. <i>et
+al</i>. <a
+href="https://doi.org/10.1038/s41467-022-35663-x">Lipid-induced
+transcriptomic changes in blood link to lipid metabolism and allergic
+response</a>. <i>Nat Commun.</i> <b>14</b>, 544 (2023).</p>
+<p><sup>8</sup> Lui, Y., Sinke, L., Jonkman, T.H., <i>et al</i>. <a
+href="https://doi.org/10.1186/s13148-023-01549-y">The inactive X
+chromosome accumulates widespread epigenetic variability with age</a>.
+<i>Clin Epigenetics.</i> <b>15</b>, 135 (2023).</p>
+<p><sup>9</sup> Aryee, M.J., Jaffe, A.E., Corrada-Bravo, H. <i>et
+al</i>. <a href="https://doi.org/10.1093/bioinformatics/btu049">Minfi: a
+flexible and comprehensive Bioconductor package for the analysis of
+Infinium DNA methylation microarrays</a>. <i>Bioinformatics.</i>
+<b>30</b>, 10 (2014).</p>
+<p><sup>10</sup> van Iterson, M., Tobi, E.W., Slieker, R.C., <i>et
+al</i>. <a
+href="https://doi.org/10.1093/bioinformatics/btu566">MethylAid: visual
+and interactive quality control of large Illumina 450k datasets</a>.
+<i>Bioinformatics</i> <b>30</b>, 23 (2014).</p>
+<p><sup>11</sup> van Iterson, M., van Zwet, E.W., BIOS consortium, <i>et
+al</i>. <a href="https://doi.org/10.1186/s13059-016-1131-9">Controlling
+bias and inflation in epigenome- and transcriptome-wide association
+studies using the empirical null distribution</a>. <i>Genome Biol.</i>
+<b>18</b>, 19 (2017).</p>
+<p><sup>12</sup> van Iterson, M., Cats, D., Hop, P. <i>et al</i>. <a
+href="https://doi.org/10.1093/bioinformatics/bty062">omicsPrint:
+detection of data linkage errors in multiple omics studies</a>.
+<i>Bioinformatics.</i> <b>34</b>, 12 (2018).</p>
+<p><sup>13</sup> Curtis, S.W., Cobb, D.O., Kilaru, V. <i>et al</i>. <a
+href="https://doi.org/10.1080/15592294.2019.1565590">Exposure to
+polybrominated biphenyl (PBB) associates with genome-wide DNA
+methylation differences in peripheral blood</a>. <i>Epigenetics.</i>
+<b>14</b>, 1:52-66 (2019).</p>
+<p><sup>14</sup> Davis, S. and Meltzer, P.S. <a
+href="https://doi.org/10.1093/bioinformatics/btm254">GEOquery: a bridge
+between the Gene Expression Omnibus (GEO) and BioConductor</a>.
+<i>Bioinformatics.</i> <b>23</b>, 14 (2007).</p>
+<p><sup>15</sup> Zhou, W., Laird, P.W., and Shen, H. <a
+href="https://doi.org/10.1093/nar/gkw967">Comprehensive
+characterization, annotation, and innovative use of Infinium DNA
+methylation BeadChip probes</a>. <i>Nucleic Acids Res.</i> <b>45</b>,
+4:e22 (2017).</p>
+<p><sup>16</sup> Fortin, J-P., Labbe, A., Lemire, M. <i>et al</i>. <a
+href="https://doi.org/10.1186/s13059-014-0503-2">Functional
+normalization of 450k methylation array data improves replication in
+large cancer studies</a>. <i>Genome Biol.</i> <b>15</b>, 12:503
+(2014).</p>
+<p><sup>17</sup> Heiss, J.A. and Brenner, H. <a
+href="https://doi.org/10.3389/fgene.2015.00092">Between-array
+normalization for 450k data</a>. <i>Front Genet.</i> <b>6</b>
+(2015).</p>
+<p><sup>18</sup> Min, J.L., Hemani, G., Davey-Smith, G., <i>et al</i>.
+<a href="https://doi.org/10.1093/bioinformatics/bty476">Meffil:
+efficient normalization and analysis of very large DNA methylation
+datasets</a>. <i>Bioinformatics.</i> <b>34</b>, 23:3983-3989 (2018).</p>
+<p><sup>19</sup> Ori, A.P.S., Lu, A.T., Horvath, S., <i>et al</i>. <a
+href="https://doi.org/10.1186/s13059-022-02793-w">Significant variation
+in the performance of DNA methylation predictors across data
+preprocessing and normalization strategies</a>. <i>Genome Biol.</i>
+<b>23</b>, 225 (2022).</p>
+<p><sup>20</sup> Plasienko, A., Di Lena, P., Nardini, C., <i>et al</i>.
+<a href="https://doi.org/10.1093/bioinformatics/btae001">methyLImp2:
+faster missing value estimation for DNA methylation data</a>.
+<i>Bioinformatics.</i> <b>40</b>, 1 (2024).</p>
+<p><sup>21</sup> Zheng, S.C., Breeze, C.E., Beck, S., <i>et al</i>. <a
+href="https://doi.org/10.1038/s41592-018-0213-x">Identification of
+differentially methylated cell-types in Epigenome-Wide Association
+Studies</a>. <i>Nat Methods.</i> <b>15</b>, 1059-1066 (2018).</p>
+<p><sup>22</sup> Amemiya, H.M., Kundaje, A., and Boyle, A.P. <a
+href="https://doi.org/10.1038/s41598-019-45839-z">The ENCODE Blacklist:
+Identification of Problematic Regions of the Genome</a>. <i>Sci Rep.</i>
+<b>9</b>, 9354 (2019).</p>
+<p><sup>23</sup> Leek, J.T. and Storey, J.D. <a
+href="https://doi.org/10.1371/journal.pgen.0030161">Capturing
+heterogeneity in gene expression studies by surrogate variable
+analysis</a>. <i>PLoS Genet.</i> <b>9</b>, 1724-35 (2007).</p>
+<p><sup>24</sup> Johnson, W.E., Li, C., and Rabinovic, A. <a
+href="https://doi.org/10.1093/biostatistics/kxj037">Adjusting batch
+effects in microarray expression data using empirical Bayes methods</a>.
+<i>Biostatistics.</i> <b>8</b>, 1:118-27 (2006).</p>
+<p><sup>25</sup> Leek, J.T. <a
+href="https://doi.org.10.1093/nar/gku864">svaseq: removing batch effects
+and other unwanted noise from sequencing data</a>. <i>Nucleic Acids
+Res.</i> <b>42</b>, 21:e161 (2014).</p>
+<p><sup>26</sup> Leek, J.T., Scharpf, R.B., Bravo, H.C. <i>et al</i>. <a
+href="https://doi.org/10.1038/nrg2825">Tackling the widespread and
+critical impact of batch effects in high-throughput data</a>. <i>Nat Rev
+Genet.</i> <b>11</b>, 10:733-9 (2010).</p>
+<p><sup>27</sup> Ritchie, M.E., Phipson, B., Wu, D., <i>et al</i>. <a
+href="https://doi.org/10.1093/nar/gkv007">limma powers differential
+expression analyses for RNA-sequencing and microarray studies</a>.
+<i>Nucleic Acids Res.</i> <b>43</b>, 7 (2015).</p>
+<p><sup>28</sup> Roadmap Epigenomics Consortium, Kundaje, A., Meuleman,
+W. <i>et al</i>. <a
+href="https://doi.org/10.1038/nature14248">Integrative analysis of 111
+reference human epigenomes</a>. <i>Nature.</i> <b>518</b>, 7539:317-30
+(2015).</p>
 </div>
 
 

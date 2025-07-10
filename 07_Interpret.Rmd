@@ -1,27 +1,30 @@
+```{r, child="_setup.Rmd"}
+```
 
 ***
 
-# Interpretation #
+# Top CpGs #
 
-Significant CpGs
+## Adjusting for multiple testing ##
 
-Multiple testing correction - FDR and Bonf
+It is important to adjust p-values for multiple testing before performing any downstream analysis. The `p.adjust` method can be set to either:
 
-```{r}
-padj_fdr <- p.adjust(pval, method="fdr")
+* `fdr` - less strict, often used for correlated measures like metabolites or 
+* `bonferroni` - more strict, adjusts for all CpGs indepednently
 
-limma_base <- data.frame(cpg = rownames(fit$coefficients), 
-                         beta = coef, SE = se, 
-                         p = pval, padj_fdr = padj_fdr, 
-                         t = tstat, N = n)
+```{r 701padj}
+limma_base <- limma_base %>% 
+  mutate(padj = p.adjust(pval, method="fdr"))
 ```
 
-Look at top CpGs
+## Fetching top hits ##
 
-```{r}
+After adjusting for multiple CpGs, top hits can be extracted and inspected.
+
+```{r 702top}
 top_cpgs <- limma_base %>% 
-  filter(padj_fdr <= 0.05) %>% 
-  arrange(padj_fdr)
+  filter(padj <= 0.05) %>% 
+  arrange(padj)
 
 print(paste0("There are ", 
              nrow(top_cpgs), " significant CpGs"))
@@ -33,13 +36,13 @@ print(paste0(nrow(top_cpgs %>% filter(beta<0)),
 ```
 ***
 
-# Plots
+## Volcano plot ##
 
-```{r}
-sig_df <- top_cpgs
+Significant CpGs can be visualized using a volcano plot. First limits for the plot are extracted.
 
-if(nrow(sig_df) >= 1){
-   sig_limit <- max(sig_df$p)
+```{r 703volcano}
+if(nrow(top_cpgs) >= 1){
+   sig_limit <- max(top_cpgs$p)
   } else {
   sig_limit <- 10E-07
   }
@@ -53,64 +56,165 @@ max <- as.numeric(max(
   na.rm=TRUE)) 
 
 p_max <- as.numeric(-log10(min(limma_base$p, na.rm=TRUE))) + 2
+```
 
-min
-max
-p_max
+Then the results can be visualized.
 
+```{r 704plot}
 plot <- limma_base %>% 
-           ggplot(aes(
-             x = beta,
-             y = -log10(p)
-           )) +
-           geom_hline(
-             yintercept = -log10(sig_limit),
-             linetype = "dashed",
-             linewidth = 1,
-             color = "#BBBBBB"
-           ) +
-        xlim(-0.13, 0.13) +
-        ylim(0,13) +
-         geom_point(
-           color = ifelse(limma_base$p > sig_limit, 
-                          "#BBBBBB", ifelse(
-                            abs(limma_base$beta) >= 0.05, "#4477AA", '#4477AA')),
-           size = ifelse(limma_base$p > sig_limit, 
-                          2, ifelse(
-                            abs(limma_base$beta) >= 0.05, 2, 2)), 
-         ) +
-           ggtitle("") +
-           ylab(bquote(-log[10]~"p")) +
-           xlab("Effect Size") +
-  theme(
-    axis.text = element_text(
-       size=14, 
-       color="#1B2021"),
-    axis.title = element_text(
-      size=16, 
-      hjust=0.5, 
-      color="#1B2021"),
-    panel.background = element_rect(
-      fill="white"),
-    panel.border = element_rect(
-      color="#1B2021",
-      fill=NA),
-    panel.grid.major = element_line(
-      color="grey95"),
-    panel.grid.minor = element_line(
-      color="grey95"),
-    plot.background = element_rect(
-      fill="white"))
+  ggplot(aes(x = beta, y = -log10(p))) +
+  geom_hline(yintercept = -log10(sig_limit),
+             linetype = "dashed") +
+  geom_point(color = ifelse(limma_base$p > sig_limit, 
+                          "#BBBBBB","#4477AA")) +
+  ylab(bquote(-log[10]~"p")) +
+  xlab("Effect Size") +
+  theme_bw()
 print(plot)
 ```
 
 ***
 
-# Enrichment #
+# Enrichment analyses #
 
-HOMER
-Chromatin states
-CpG islands
-EWAS
+## Motivation ##
 
-Not SMR
+A simple list of CpGs gives little information about their relevance. Enrichment analyses can shine light on how best to interpret EWAS results and what may be driving the methylation signal.
+
+Here we give an example for chromatin state enrichment, but a similar principle can be applied to investigate enrichment for trait associations using previous EWAS results or CpG islands, for example.
+
+This is also only one type of follow-up analysis. Some other ideas include:
+
+* Performing bidirectional two-sample Mendelian randomization between DNAm at identified CpGs and the trait to infer causal directions.
+* Transcription factor binding site enrichment analysis using HOMER
+* Improving CpG-gene annotations with integrative analyses (e.g. using BIOS data) or genetic colocalization (e.g. using `coloc`)
+
+***
+
+## Annotations ##
+
+The [Zhou lab GitHub page](https://zwdzwd.github.io/InfiniumAnnotation)<sup>15</sup> also provides Roadmap annotations for CpGs, on the basis of the original Roadmap reference epigenomes<sup>28</sup>. These annotations can be imported to annotate measured CpGs to chromatin states.
+
+First, we import the location annotations from before.
+
+```{r 706anno}
+manifest_hg19 <- read_tsv(
+  "./data/EPIC.hg19.manifest.tsv.gz")
+
+anno <- manifest_hg19 %>% 
+  dplyr::select(
+    cpg = probeID,
+    cpg_chr = CpG_chrm,
+    cpg_start = CpG_beg,
+    cpg_end = CpG_end,
+    cpg_strand = probe_strand,
+    gene_HGNC
+  ) %>% 
+  mutate(
+    cpg_chr = substr(cpg_chr,4,5)
+  )
+
+anno <- anno %>% 
+  dplyr::filter(cpg %in% limma_base$cpg)
+```
+
+Next, we import the chromatin state annotations. In this instance we use the PBMC (E062) reference epigenome, but there are reference epigenomes for many distinct cell types and tissues available<sup>28</sup>. This is bound to the results data frame.
+
+```{r 707annochrom}
+manifest_chrom <- read_tsv("./data/EPIC.hg19.REMC.chromHMM.tsv.gz")
+
+manifest_chrom <- manifest_chrom %>% 
+  dplyr::select(cpg = probeID, E062)
+
+anno <- left_join(anno, manifest_chrom, by="cpg")
+
+limma_base <- left_join(limma_base, anno, by="cpg")
+```
+
+***
+
+## Running enrichment ##
+
+Available states are stored as a vector.
+
+```{r 708states}
+states <- c("15_Quies", "14_ReprPCWk", "13_ReprPC", 
+            "12_EnhBiv", "11_BivFlnk", "10_TssBiv", 
+            "9_Het", "8_ZNF/Rpts", "7_Enh", 
+            "6_EnhG", "5_TxWk", "4_Tx",  
+            "3_TxFlnk", "2_TssAFlnk", "1_TssA")
+```
+
+Then, we can run the enrichment analysis using logistic regression.
+
+```{r 709enrich}
+for(i in states){
+  res_road <- limma_base %>% 
+    mutate(
+      sig = ifelse(limma_base$cpg %in% top_cpgs$cpg, 1, 0),
+      chrom = ifelse(grepl(i, E062), 1, 0)
+    )
+  
+  x <- glm(chrom ~ sig, family=binomial, data=res_road)
+  out <- c(coef(summary(x))[2,],
+           exp(cbind(coef(x), confint.default(x)))[2,])
+  names(out) <- c('logOR', 'SE', 'z', 'p', 'OR', 'low_CI', 'upp_CI')
+  out <- as.data.frame(t(out))
+  out$Trait = i
+  out <- out %>% dplyr::select(Trait, OR, logOR, 
+                               low_CI, upp_CI, z, p) 
+  
+  if(i == states[1]){
+    res <- out
+  } else {
+    res <- rbind(res, out)
+  }
+}
+```
+
+P-values again need to be adjusted for multiple testing.
+
+```{r 710padj}
+res$padj <- p.adjust(res$p, method='fdr')
+```
+
+***
+
+## Visualization ##
+
+These results can be visualized using a forest plot.
+
+```{r 711plot}
+chrom <- res %>% 
+  mutate(
+    loglowCI = log(low_CI),
+    loguppCI = log(upp_CI),
+    padj = p.adjust(p, method='fdr')
+  ) %>% 
+  filter(OR < 200)
+
+chrom %>% filter(padj < 0.05)
+
+plot <- chrom %>% 
+  filter(loglowCI > -4) %>% 
+  ggplot(aes(x = logOR, 
+             y = reorder(Trait,logOR),
+             xmin = loglowCI,
+             xmax = loguppCI)) +
+  geom_vline(xintercept=0, linetype='dashed') +
+  geom_errorbar(width=0.5,
+                position=position_dodge(width=0.9)) +
+  geom_point(aes(fill=padj),
+             size=3,
+             shape=21,
+             position=position_dodge(width=0.9)) +
+  xlab('log(OR)') + ylab('') + xlim(c(-4,5)) +
+  theme_bw()
+print(plot)
+```
+
+***
+
+
+
+

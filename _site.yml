@@ -5,18 +5,18 @@ navbar:
   left:
     - text: "Getting Started"
       href: 01_GettingStarted.html
-    - text: "Sample-level QC"      
+    - text: "Sample QC"      
       href: 02_SampleQualityControl.html
-    - text: "Normalization"      
+    - text: "Normalize"      
       href: 03_Normalization.html
-    - text: "Probe-level QC"      
-      href: 04_ProbeFiltering.html
-    - text: "Predictors"
-      href: 05_Predict.html
-    - text: "Underperforming Probes"
-      href: 06_Masking.html
-    - text: "Analysis"
-      href: 07_EWAS.html
+    - text: "Predict"      
+      href: 04_Predict.html
+    - text: "Probe QC"
+      href: 05_ProbeQC.html
+    - text: "Analyse"
+      href: 06_EWAS.html
+    - text: "Interpret"
+      href: 07_Interpret.html
   right:
     - text: "About"
       href: about.html

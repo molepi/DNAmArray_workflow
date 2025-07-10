@@ -1,0 +1,233 @@
+```{r, child="_setup.Rmd"}
+```
+
+***
+
+# Annotation #
+
+Probe annotations can be downloaded from the [Zhou lab GitHub page](https://zwdzwd.github.io/InfiniumAnnotation)<sup>15</sup> for all commonly used arrays and reference genomes. For the example data, we use the EPIC annotation (hg19).
+
+```{r 501anno}
+anno <- read_tsv("./data/EPIC.hg19.manifest.tsv.gz")
+
+anno <- anno %>% 
+  dplyr::select(
+    cpg = probeID,
+    chr = CpG_chrm,
+    start = CpG_beg,
+    end = CpG_end,
+    strand = probe_strand,
+    gene_HGNC,
+    MASK_general,
+    probeType
+  ) %>% 
+  mutate(
+    chr = substr(chr,4,5)
+  )
+
+str(anno)
+```
+
+***
+
+# Filtering on Intensities #
+
+We recommend performing probe-filtering by setting unreliably measured probes to NA. 
+
+Some observations need to be removed from the dataset since they provide little to no information that could skew analyses. Probes which have zero intensity or are based on very few (default: <3) beads are removed, based on a specified cut off. 
+
+```{r 502filter}
+RGset <- probeFiltering(RGset)
+```
+
+There are differences between probe types that are used in `probeFiltering()`. Information on these can be extracted and stored using functions from [**minfi**](https://bioconductor.org/packages/release/bioc/html/minfi.html) (Feinberg, 2014).
+
+```{r 503probeinfo}
+locusNames <- getManifestInfo(RGset, "locusNames")
+typeII <- getProbeInfo(RGset, type="II")
+typeI <- getProbeInfo(RGset, type="I")
+
+RGset
+betas <- getBeta(RGset, type="Illumina")
+```
+
+```{r echo=F, warning=F, message=F}
+betas <- normalizeQuantiles(betas)
+```
+
+***
+
+# ENCODE Blacklist #
+
+CpGs in the ENCODE Blacklist<sup>22</sup> are provided in the package and can be loaded in:
+
+* `450k` - "./data/ENCODEBlacklist-CpGomit-450K.RData"
+* `EPIC` - "./data/ENCODEBlacklist-CpGomit-EPIC.RData"
+* `EPICv2` - "./data/ENCODEBlacklist-CpGomit-EPICv2.RData"
+
+These were generated using the Blacklist `.bed` file found [here](https://github.com/Boyle-Lab/Blacklist), which was converted to a GRanges object and overlapped with the manifest for each DNAm array. In total, this removes 7313 probes from EPICv2, 9035 from EPIC, and 6508 from the 450k array.
+
+```{r 504encode}
+load("./data/ENCODEBlacklist_CpGomit-EPIC.RData")
+betas <- betas[!rownames(betas) %in% cpg_blacklist,]
+dim(betas)
+```
+
+***
+
+# Zhou probes #
+
+Several studies<sup>15</sup> have characterized cross-reactive and polymorphic probes on methylation arrays and made suggestions for removal. The proposed sets are actively maintained and supports all current array sizes. Additionally, different sets are specified depending on the reference genome used.
+
+Probes are removed for a variety of reasons, from ambiguous mapping and cross-reactivity to polymorphisms that interfere with extension. In general, around 60,000 probes are suggested for removal in 450k arrays, and 100,000 for EPIC. We developed the `probeMasking()` function, which removes specified probes from either beta- or M- value matrices.
+
+```{r 505zhou}
+maskProbes <- anno[anno$MASK_general == TRUE,]$cpg
+length(maskProbes)
+betas <- betas[!rownames(betas) %in% maskProbes,]
+dim(betas)
+```
+
+***
+
+# Sex chromosomes #
+
+For most EWAS, CpGs on sex chromosomes are filtered out. To perform analyses on sex-chromosomal probes, a stratified approach is required.
+
+```{r 506sex}
+xy_cpgs <- (anno %>% 
+              dplyr::filter(chr %in% c("X", "Y")))$cpg
+betas <- betas[!rownames(betas) %in% xy_cpgs,]
+dim(betas)
+```
+
+***
+
+# Outlier removal #
+
+In many analyses, it is advisable to remove outlying DNAm values. This can be based on:
+
+* beta values - more biologically interpretable, but suffer from heteroskedasticity, or
+* M values - less heteroskedasticity
+
+Outliers can be based on the IQR or RIN values. Based on your specification, you can then filter outlying values. Here, we present removing beta values more than 3 IQR from the nearest quartile.
+
+```{r 507outlier}
+xtabs(~is.na(betas))
+
+iqr_dnam <- apply(betas, 1, function(x){
+  iqr <- IQR(x, na.rm = TRUE)
+  q1 <- quantile(x, na.rm=TRUE)[[2]]
+  q3 <- quantile(x, na.rm=TRUE)[[4]]
+  x <- ifelse((x <= q1 - (3*iqr) | x >= q3 + (3*iqr)), NA, x)
+})
+
+xtabs(~is.na(iqr_dnam))
+
+dim(iqr_dnam)
+
+betas <- t(iqr_dnam)
+```
+
+***
+
+# Missingness #
+
+We advise keeping only the CpGs where less than 5% of sample values are missing.
+
+```{r 508missing}
+perc_na <- rowSums(is.na(iqr_dnam))*100/ncol(iqr_dnam)
+summary(perc_na)
+
+betas <- betas[,perc_na <= 95]
+dim(betas)
+```
+
+On the sample level, we keep only the samples where less than 5% of CpGs are missing.
+
+```{r 509sample}
+perc_na <- colSums(is.na(iqr_dnam))*100/nrow(iqr_dnam)
+summary(perc_na)
+betas <- betas[perc_na <= 95,]
+dim(betas)
+```
+
+***
+
+# SummarizedExperiment #
+
+Now that we have our annotations, we can combine them with our data using the [**SummarizedExperiment**](https://bioconductor.org/packages/release/bioc/html/SummarizedExperiment.html) package. After ensuring that any column subsetting is accounted for, we extract the `colData()` from our `RGset`. Finally, the beta values, probe annotations, and sample information are combined into a `RangedSummarizedExperiment` object using the `SummarizedExperiment()` function.
+
+Annotation data
+
+```{r 510anno}
+anno <- anno %>% 
+  dplyr::filter(cpg %in% rownames(betas))
+
+dim(anno)
+```
+
+Keep annotated probes
+
+```{r 511betas}
+betas <- betas[anno$cpg, ]
+```
+
+Sample information
+
+```{r 512targets}
+targets <- targets[colnames(betas), ]
+
+dim(targets)
+dim(betas)
+```
+
+Make summarized experiment object
+
+```{r 513meth}
+methData <- SummarizedExperiment(
+  assays=SimpleList(beta=betas), 
+  rowData=anno, 
+  colData=targets)
+
+methData
+```
+
+You can read more about [**SummarizedExperiment**](http://bioconductor.org/packages/SummarizedExperiment) from the following resources:
+<ul>
+<li>[Package vignette](http://bioconductor.org/packages/release/bioc/vignettes/SummarizedExperiment/inst/doc/SummarizedExperiment.html)</li>
+<li>[Course material](http://bioconductor.org/help/course-materials/2012/BiocEurope2012/SummarizedExperiment.pdf)</li>
+<li>[BioConductor nature paper](http://www.nature.com/nmeth/journal/v12/n2/full/nmeth.3252.html)</li>
+</ul>
+
+***
+
+# Save #
+
+Save RGset
+
+```{r 514rg}
+RGset <- RGset[, colnames(RGset) %in% colnames(methData)]
+RGset
+```
+
+Save clean data
+
+```{r 515save}
+save(targets, file = "./data/targets.Rdata")
+save(methData, file="./data/methData.Rdata")
+save(RGset, file="./data/RGset.Rdata")
+```
+
+***
+
+# Saving #
+
+We want to save our data as a `SummarizedExperiment` object for the rest of the pipeline.
+
+***
+
+
+
+
+
