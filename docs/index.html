@@ -13,7 +13,6 @@
 
 <title>index.knit</title>
 
-<script src="site_libs/header-attrs-2.29/header-attrs.js"></script>
 <script src="site_libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <link href="site_libs/bootstrap-3.3.5/css/lumen.min.css" rel="stylesheet" />
@@ -314,10 +313,10 @@ div.tocify {
   <a href="02_SampleQualityControl.html">Sample QC</a>
 </li>
 <li>
-  <a href="03_Normalization.html">Normalize</a>
+  <a href="03_Predict.html">Predict</a>
 </li>
 <li>
-  <a href="04_Predict.html">Predict</a>
+  <a href="04_Normalization.html">Normalize</a>
 </li>
 <li>
   <a href="05_ProbeQC.html">Probe QC</a>
@@ -342,83 +341,35 @@ div.tocify {
 
 
 
-<h1 class="title toc-ignore"><div class="line-block">Streamlined
-workflow for the quality control, normalization, and analysis of
-Illumina methylation array data<br />
+<h1 class="title toc-ignore"><div class="line-block">Streamlined workflow for the quality control, normalization, and analysis of Illumina methylation array data<br />
 </div></h1>
-<h4 class="author"><div class="line-block">Lucy Sinke, Maarten van
-Iterson, Davy Cats, BIOS Consortium, Tom Kuipers, and Bas Heijmans<br />
-<font size=2 color=#6b6b6b>Molecular Epidemiology, Department of
-Biomedical Data Sciences, Leiden University Medical Center, Leiden, The
-Netherlands</font></div></h4>
+<h4 class="author"><div class="line-block">Lucy Sinke, Maarten van Iterson, Davy Cats, BIOS Consortium, Tom Kuipers, and Bas Heijmans<br />
+<font size=2 color=#6b6b6b>Molecular Epidemiology, Department of Biomedical Data Sciences, Leiden University Medical Center, Leiden, The Netherlands</font></div></h4>
 
 </div>
 
 
 <div class="DOI">
-<p><a href="http://doi.org/10.5281/zenodo.3355292"><img
-src="data/images/zenodo.3355292.svg" alt="DOI" /></a></p>
+<p><a href="http://doi.org/10.5281/zenodo.3355292"><img src="data/images/zenodo.3355292.svg" alt="DOI" /></a></p>
 </div>
 <hr />
 <div id="introduction" class="section level1">
 <h1>Introduction</h1>
-<p><code>DNAmArray</code> is a comprehensive and modular workflow for
-the pre-processing, quality control, and analysis of DNA methylation
-(DNAm) array data, tailored for large-scale epigenome-wide association
-studies (EWAS). It integrates best practices in the field with in-house
-developed tools, and has been informed by almost a decade of research
-using the <a
-href="https://www.bbmri.nl/samples-images-data">Biobank-based
-Integrative Omics Study (BIOS) consortium</a> data. The BIOS dataset
-combines blood-based DNAm and gene expression from across six Dutch
-biobanks and around 4,000 individuals, and has been used to extensively
-advance our understanding of epigenetic regulation and
-health<sup>1-8</sup>.</p>
-<p>The workflow combines a series of convenient <a
-href="https://github.com/molepi/DNAmArray"><strong>DNAmArray</strong></a>
-functions with <a href="https://www.bioconductor.org">BioConductor</a>
-packages, including:</p>
+<p><code>DNAmArray</code> is a comprehensive and modular workflow for the pre-processing, quality control, and analysis of DNA methylation (DNAm) array data, tailored for large-scale epigenome-wide association studies (EWAS). It integrates best practices in the field with in-house developed tools, and has been informed by almost a decade of research using the <a href="https://www.bbmri.nl/samples-images-data">Biobank-based Integrative Omics Study (BIOS) consortium</a> data. The BIOS dataset combines blood-based DNAm and gene expression from across six Dutch biobanks and around 4,000 individuals, and has been used to extensively advance our understanding of epigenetic regulation and health<sup>1-8</sup>.</p>
+<p>The workflow combines a series of convenient <a href="https://github.com/molepi/DNAmArray"><strong>DNAmArray</strong></a> functions with <a href="https://www.bioconductor.org">BioConductor</a> packages, including:</p>
 <ul>
-<li><a
-href="https://bioconductor.org/packages/release/bioc/html/minfi.html"><strong>minfi</strong></a>
-for reading in IDAT files and normalization<sup>9</sup>,</li>
-<li><a
-href="https://www.bioconductor.org/packages/release/bioc/html/MethylAid.html"><strong>MethylAid</strong></a>
-for sample-level quality control<sup>10</sup>,</li>
-<li><a
-href="https://bioconductor.org/packages/release/bioc/html/bacon.html"><strong>bacon</strong></a>
-for controlling bias and inflation in EWAS test statistics<sup>11</sup>,
-and</li>
-<li><a
-href="https://bioconductor.org/packages/release/bioc/html/omicsPrint.html"><strong>omicsPrint</strong></a>
-for identifying and resolving sample mismatches<sup>12</sup>.</li>
+<li><a href="https://bioconductor.org/packages/release/bioc/html/minfi.html"><strong>minfi</strong></a> for reading in IDAT files and normalization<sup>9</sup>,</li>
+<li><a href="https://www.bioconductor.org/packages/release/bioc/html/MethylAid.html"><strong>MethylAid</strong></a> for sample-level quality control<sup>10</sup>,</li>
+<li><a href="https://bioconductor.org/packages/release/bioc/html/bacon.html"><strong>bacon</strong></a> for controlling bias and inflation in EWAS test statistics<sup>11</sup>, and</li>
+<li><a href="https://bioconductor.org/packages/release/bioc/html/omicsPrint.html"><strong>omicsPrint</strong></a> for identifying and resolving sample mismatches<sup>12</sup>.</li>
 </ul>
-<p>While thoroughly validated on DNAm data profiled using the Illumina
-Infinium HumanMethylation450 and EPIC arrays, notes within this
-documentation also outline any changes needed to apply
-<code>DNAmArray</code> to Infinium MethylationEPIC v2.0 BeadChip data.
-In addition, any dependencies should be installed automatically, but
-otherwise please refer to the relevant package’s documentation (and let
-us know by opening a GitHub <a
-href="https://github.com/molepi/DNAmArray/issues">issue</a>!)</p>
-<p>In conclusion, <code>DNAmArray</code> provides a scalable,
-reproducible, and EWAS-ready framework for DNA methylation data
-analysis, compatible with evolving technologies and suitable for
-integration with downstream follow-up analyses.</p>
+<p>While thoroughly validated on DNAm data profiled using the Illumina Infinium HumanMethylation450 and EPIC arrays, notes within this documentation also outline any changes needed to apply <code>DNAmArray</code> to Infinium MethylationEPIC v2.0 BeadChip data. In addition, any dependencies should be installed automatically, but otherwise please refer to the relevant package’s documentation (and let us know by opening a GitHub <a href="https://github.com/molepi/DNAmArray/issues">issue</a>!)</p>
+<p>In conclusion, <code>DNAmArray</code> provides a scalable, reproducible, and EWAS-ready framework for DNA methylation data analysis, compatible with evolving technologies and suitable for integration with downstream follow-up analyses.</p>
 <hr />
 </div>
 <div id="example-data" class="section level1">
 <h1>Example Data</h1>
-<p>The <a
-href="https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE116339">example
-data</a><sup>13</sup> used in this workflow is available from the <a
-href="https://www.ncbi.nlm.nih.gov/geo/">NCBI Gene Expression
-Omnibus</a> (GEO), a public repository of microarray data. It contains
-genome-wide DNA methylation data from whole blood obtained using the
-Illumina Infinium MethylationEPIC BeadChip microarray. The participants
-consist of 679 children exposed to polybrominated biphenyl (PBB), an
-endocrine-disrupting compound, which was accidentally added to the food
-supply in Michigan in the 1970s.</p>
+<p>The <a href="https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE116339">example data</a><sup>13</sup> used in this workflow is available from the <a href="https://www.ncbi.nlm.nih.gov/geo/">NCBI Gene Expression Omnibus</a> (GEO), a public repository of microarray data. It contains genome-wide DNA methylation data from whole blood obtained using the Illumina Infinium MethylationEPIC BeadChip microarray. The participants consist of 679 children exposed to polybrominated biphenyl (PBB), an endocrine-disrupting compound, which was accidentally added to the food supply in Michigan in the 1970s.</p>
 <hr />
 </div>
 

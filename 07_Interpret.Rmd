@@ -5,6 +5,10 @@
 
 # Top CpGs #
 
+```{r echo=F, warning=F, message=F}
+library(tidyverse)
+```
+
 ## Adjusting for multiple testing ##
 
 It is important to adjust p-values for multiple testing before performing any downstream analysis. The `p.adjust` method can be set to either:
@@ -16,6 +20,8 @@ It is important to adjust p-values for multiple testing before performing any do
 limma_base <- limma_base %>% 
   mutate(padj = p.adjust(pval, method="fdr"))
 ```
+
+***
 
 ## Fetching top hits ##
 
@@ -86,7 +92,7 @@ Here we give an example for chromatin state enrichment, but a similar principle 
 This is also only one type of follow-up analysis. Some other ideas include:
 
 * Performing bidirectional two-sample Mendelian randomization between DNAm at identified CpGs and the trait to infer causal directions.
-* Transcription factor binding site enrichment analysis using HOMER
+* Transcription factor binding site enrichment analysis using [**HOMER**](http://homer.ucsd.edu/homer/motif/)<sup>32</sup>
 * Improving CpG-gene annotations with integrative analyses (e.g. using BIOS data) or genetic colocalization (e.g. using `coloc`)
 
 ***
@@ -97,7 +103,7 @@ The [Zhou lab GitHub page](https://zwdzwd.github.io/InfiniumAnnotation)<sup>15</
 
 First, we import the location annotations from before.
 
-```{r 706anno}
+```{r 705anno}
 manifest_hg19 <- read_tsv(
   "./data/EPIC.hg19.manifest.tsv.gz")
 
@@ -120,7 +126,7 @@ anno <- anno %>%
 
 Next, we import the chromatin state annotations. In this instance we use the PBMC (E062) reference epigenome, but there are reference epigenomes for many distinct cell types and tissues available<sup>28</sup>. This is bound to the results data frame.
 
-```{r 707annochrom}
+```{r 706annochrom}
 manifest_chrom <- read_tsv("./data/EPIC.hg19.REMC.chromHMM.tsv.gz")
 
 manifest_chrom <- manifest_chrom %>% 
@@ -137,7 +143,7 @@ limma_base <- left_join(limma_base, anno, by="cpg")
 
 Available states are stored as a vector.
 
-```{r 708states}
+```{r 707states}
 states <- c("15_Quies", "14_ReprPCWk", "13_ReprPC", 
             "12_EnhBiv", "11_BivFlnk", "10_TssBiv", 
             "9_Het", "8_ZNF/Rpts", "7_Enh", 
@@ -147,7 +153,7 @@ states <- c("15_Quies", "14_ReprPCWk", "13_ReprPC",
 
 Then, we can run the enrichment analysis using logistic regression.
 
-```{r 709enrich}
+```{r 708enrich}
 for(i in states){
   res_road <- limma_base %>% 
     mutate(
@@ -174,7 +180,7 @@ for(i in states){
 
 P-values again need to be adjusted for multiple testing.
 
-```{r 710padj}
+```{r 709padj}
 res$padj <- p.adjust(res$p, method='fdr')
 ```
 
@@ -184,7 +190,7 @@ res$padj <- p.adjust(res$p, method='fdr')
 
 These results can be visualized using a forest plot.
 
-```{r 711plot}
+```{r 710plot}
 chrom <- res %>% 
   mutate(
     loglowCI = log(low_CI),

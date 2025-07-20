@@ -7,10 +7,10 @@ navbar:
       href: 01_GettingStarted.html
     - text: "Sample QC"      
       href: 02_SampleQualityControl.html
-    - text: "Normalize"      
-      href: 03_Normalization.html
     - text: "Predict"      
-      href: 04_Predict.html
+      href: 03_Predict.html
+    - text: "Normalize"      
+      href: 04_Normalization.html
     - text: "Probe QC"
       href: 05_ProbeQC.html
     - text: "Analyse"

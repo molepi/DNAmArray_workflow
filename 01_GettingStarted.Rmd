@@ -42,13 +42,15 @@ First, load the packages that are required for this workflow:
 * [**bacon**](http://bioconductor.org/packages/bacon)<sup>11</sup> - in-house tool for reducing bias and inflation in EWAS test statistics
 * [**GEOquery**](https://bioconductor.org/packages/release/bioc/html/GEOquery.html)<sup>14</sup> - bridges the gap between [BioConductor](https://www.bioconductor.org) tools and [GEO](https://www.ncbi.nlm.nih.gov/geo/)
 * [**tidyverse**](https://www.tidyverse.org/) - for data wrangling
-* [**reshape2**] - for data wrangling
-* [**ggrepel**] - for data visualization
-* [**ComplexHeatmap**] - for creating heatmaps
-* [**circlize**] - designed to allow circular plots, but also used to create custom colour palettes
+* [**reshape2**](https://cran.r-project.org/web/packages/reshape2/index.html) - for data wrangling
+* [**ggrepel**](https://ggrepel.slowkow.com/) - for data visualization
+* [**ComplexHeatmap**](https://www.bioconductor.org/packages/release/bioc/html/ComplexHeatmap.html) - for creating heatmaps
+* [**circlize**](https://cran.r-project.org/web/packages/circlize/index.html) - designed to allow circular plots, but also used to create custom colour palettes
 * [**BiocParallel**](https://www.bioconductor.org/packages/release/bioc/html/BiocParallel.html) - to parallelize processing of genomic data
-* [**IlluminaHumanMethylationEPICmanifest](https://www.bioconductor.org/packages/release/data/annotation/html/IlluminaHumanMethylationEPICmanifest.html) - containing EPIC probe annotation for the example data (other packages are available for 450k or EPICv2)
-* [**qs**] - useful for saving large objects quickly with `qsave` 
+* [**IlluminaHumanMethylationEPICmanifest**](https://www.bioconductor.org/packages/release/data/annotation/html/IlluminaHumanMethylationEPICmanifest.html) - containing EPIC probe annotation for the example data (other packages are available for 450k or EPICv2)
+* [**minfi**](https://bioconductor.org/packages/release/bioc/html/minfi.html)<sup>9</sup> - functions to preprocess DNAm data
+* [**wateRmelon**](https://www.bioconductor.org/packages/devel/bioc/html/wateRmelon.html)<sup>30</sup> - functions to preprocess DNAm data
+* [**snow**](https://cran.r-project.org/web/packages/snow/index.html) - required by MethyLImp2 for parallelization
 * [**limma**](https://www.bioconductor.org/packages/release/bioc/html/limma.html)<sup>27</sup> - for EWAS analysis
 * [**EpiDISH**](https://www.bioconductor.org/packages/release/bioc/html/EpiDISH.html)<sup>21</sup> - for cell count predictions
 * [**sva**](https://bioconductor.org/packages/release/bioc/html/sva.html)<sup>23-25</sup> - for estimating latent factors
@@ -69,7 +71,9 @@ library(ComplexHeatmap)
 library(circlize)
 library(BiocParallel)
 library(IlluminaHumanMethylationEPICmanifest)
-library(qs)
+library(minfi)
+library(wateRmelon)
+library(snow)
 
 library(limma)
 library(EpiDISH)
@@ -146,16 +150,6 @@ This data frame consists of 679 observations and phenotypic information for 51 v
 * `supplementary_file` - location of IDAT file
 * `plate` - EPIC array number
 * `row` - row number on the array (continuous)
-
-***
-
-# Subset #
-
-For this example workflow, we subset the `targets` data
-
-```{r 108subset}
-targets <- targets[1:60, ]
-```
 
 ***
 

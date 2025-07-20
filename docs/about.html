@@ -13,7 +13,6 @@
 
 <title>about.knit</title>
 
-<script src="site_libs/header-attrs-2.29/header-attrs.js"></script>
 <script src="site_libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <link href="site_libs/bootstrap-3.3.5/css/lumen.min.css" rel="stylesheet" />
@@ -314,10 +313,10 @@ div.tocify {
   <a href="02_SampleQualityControl.html">Sample QC</a>
 </li>
 <li>
-  <a href="03_Normalization.html">Normalize</a>
+  <a href="03_Predict.html">Predict</a>
 </li>
 <li>
-  <a href="04_Predict.html">Predict</a>
+  <a href="04_Normalization.html">Normalize</a>
 </li>
 <li>
   <a href="05_ProbeQC.html">Probe QC</a>
@@ -349,261 +348,180 @@ div.tocify {
 <hr />
 <div id="acknowledgements" class="section level1">
 <h1>Acknowledgements</h1>
-<p>Contributors to the development of the package and workflow
-include:</p>
-<p><em>Lucy Sinke, Tom Kuipers, Jazmin Taubert, Yunfeng Liu, Manhoor
-Sulaiman, Thomas Jonkman, Elmar W. Tobi, Roderick Slieker, Wouter den
-Hollander, Rene Luijk, Koen F. Dekkers, and Bas Heijmans (PI) from
-Molecular Epidemiology, Department of Biomedical Data Sciences, Leiden
-University Medical Center, Leiden, The Netherlands</em></p>
-<p>Development of the workflow and generation of previously used example
-data in LLS was funded by BBMRI-NL, a research infrastructure financed
-by the Dutch government (NWO 184.021.007).</p>
-<p>Lucy Sinke and Maarten van Iterson are the main authors of the
-package and associated workflow. Lucy Sinke is the current author and
-maintainer and should be contacted with any questions: <a
-href="mailto:l.j.sinke@lacdr.leidenuniv.nl"
-class="email">l.j.sinke@lacdr.leidenuniv.nl</a></p>
-<p>We are grateful to Paul Hop, Jenny van Dongen, and Helena Rasche for
-testing and improving the pipeline.</p>
-<p>Please cite van <em>Sinke, L., van Iterson, M., Cats, D., BIOS
-Consortium, Kuipers, T. &amp; Heijmans, B. (2019) ‘DNAmArray:
-Streamlined workflow for the quality control, normalization, and
-analysis of Illumina methylation array data’ <a
-href="http://doi.org/10.5281/zenodo.3355292"
-class="uri">http://doi.org/10.5281/zenodo.3355292</a></em> when using
-the <a
-href="https://github.com/molepi/DNAmArray"><strong>DNAmArray</strong></a>
-package or workflow.</p>
-<p>This web-site is generated with <a
-href="http://rmarkdown.rstudio.com/index.html"><strong>R
-Markdown</strong></a> on 10 July, 2025 using R-version and packages:</p>
+<p>Contributors to the development of the package and workflow include:</p>
+<p><em>Lucy Sinke, Tom Kuipers, Jazmin Taubert, Yunfeng Liu, Manhoor Sulaiman, Thomas Jonkman, Elmar W. Tobi, Roderick Slieker, Wouter den Hollander, Rene Luijk, Koen F. Dekkers, and Bas Heijmans (PI) from Molecular Epidemiology, Department of Biomedical Data Sciences, Leiden University Medical Center, Leiden, The Netherlands</em></p>
+<p>Development of the workflow and generation of previously used example data in LLS was funded by BBMRI-NL, a research infrastructure financed by the Dutch government (NWO 184.021.007).</p>
+<p>Lucy Sinke and Maarten van Iterson are the main authors of the package and associated workflow. Lucy Sinke is the current author and maintainer and should be contacted with any questions: <a href="mailto:l.j.sinke@lacdr.leidenuniv.nl">l.j.sinke@lacdr.leidenuniv.nl</a></p>
+<p>We are grateful to Paul Hop, Jenny van Dongen, and Helena Rasche for testing and improving the pipeline.</p>
+<p>Please cite van *Sinke, L., van Iterson, M., Cats, D., BIOS Consortium, Kuipers, T. &amp; Heijmans, B. (2019) ‘DNAmArray: Streamlined workflow for the quality control, normalization, and analysis of Illumina methylation array data’ <a href="http://doi.org/10.5281/zenodo.3355292*" class="uri">http://doi.org/10.5281/zenodo.3355292*</a> when using the <a href="https://github.com/molepi/DNAmArray"><strong>DNAmArray</strong></a> package or workflow.</p>
+<p>This web-site is generated with <a href="http://rmarkdown.rstudio.com/index.html"><strong>R Markdown</strong></a> on 20 July, 2025 using R-version and packages:</p>
 <pre><code>## R version 4.4.3 (2025-02-28)
 ## Platform: x86_64-pc-linux-gnu
-## Running under: Ubuntu 20.04.6 LTS
+## Running under: Rocky Linux 8.10 (Green Obsidian)
 ## 
 ## Matrix products: default
-## BLAS:   /usr/lib/x86_64-linux-gnu/openblas-pthread/libblas.so.3 
-## LAPACK: /usr/lib/x86_64-linux-gnu/openblas-pthread/liblapack.so.3;  LAPACK version 3.9.0
+## BLAS/LAPACK: /usr/lib64/libopenblas-r0.3.15.so;  LAPACK version 3.9.0
 ## 
 ## locale:
-##  [1] LC_CTYPE=en_US.UTF-8       LC_NUMERIC=C               LC_TIME=en_US.UTF-8        LC_COLLATE=en_US.UTF-8     LC_MONETARY=en_US.UTF-8   
-##  [6] LC_MESSAGES=en_US.UTF-8    LC_PAPER=en_US.UTF-8       LC_NAME=C                  LC_ADDRESS=C               LC_TELEPHONE=C            
+##  [1] LC_CTYPE=en_US.UTF-8       LC_NUMERIC=C              
+##  [3] LC_TIME=en_US.UTF-8        LC_COLLATE=en_US.UTF-8    
+##  [5] LC_MONETARY=en_US.UTF-8    LC_MESSAGES=en_US.UTF-8   
+##  [7] LC_PAPER=en_US.UTF-8       LC_NAME=C                 
+##  [9] LC_ADDRESS=C               LC_TELEPHONE=C            
 ## [11] LC_MEASUREMENT=en_US.UTF-8 LC_IDENTIFICATION=C       
 ## 
 ## time zone: Europe/Amsterdam
 ## tzcode source: system (glibc)
 ## 
 ## attached base packages:
-##  [1] parallel  grid      stats4    stats     graphics  grDevices utils     datasets  methods   base     
+##  [1] grid      parallel  stats4    stats     graphics  grDevices utils    
+##  [8] datasets  methods   base     
 ## 
 ## other attached packages:
-##  [1] bacon_1.32.0                                        ellipse_0.5.0                                      
-##  [3] sva_3.52.0                                          genefilter_1.86.0                                  
-##  [5] mgcv_1.9-1                                          nlme_3.1-168                                       
-##  [7] EpiDISH_2.20.1                                      impute_1.78.0                                      
-##  [9] knitr_1.49                                          BiocManager_1.30.25                                
-## [11] IlluminaHumanMethylationEPICanno.ilm10b4.hg19_0.6.0 omicsPrint_1.24.0                                  
-## [13] MASS_7.3-65                                         qs_0.27.3                                          
-## [15] DNAmArray_2.0.0                                     pls_2.8-5                                          
-## [17] FDb.InfiniumMethylation.hg19_2.2.0                  org.Hs.eg.db_3.19.1                                
-## [19] TxDb.Hsapiens.UCSC.hg19.knownGene_3.2.2             GenomicFeatures_1.56.0                             
-## [21] AnnotationDbi_1.66.0                                IlluminaHumanMethylationEPICmanifest_0.3.0         
-## [23] minfi_1.50.0                                        bumphunter_1.46.0                                  
-## [25] locfit_1.5-9.12                                     iterators_1.0.12                                   
-## [27] foreach_1.5.0                                       Biostrings_2.72.1                                  
-## [29] XVector_0.44.0                                      BiocParallel_1.38.0                                
-## [31] MethylAid_1.38.0                                    GEOquery_2.72.0                                    
-## [33] edgeR_4.2.2                                         limma_3.60.6                                       
-## [35] haven_2.5.4                                         R.utils_2.13.0                                     
-## [37] R.oo_1.27.0                                         R.methodsS3_1.8.2                                  
-## [39] paletteer_1.6.0                                     viper_1.38.0                                       
-## [41] decoupleR_2.10.0                                    flashClust_1.01-2                                  
-## [43] WGCNA_1.73                                          fastcluster_1.2.6                                  
-## [45] dynamicTreeCut_1.63-1                               data.table_1.16.4                                  
-## [47] glue_1.8.0                                          RSQLite_2.3.9                                      
-## [49] DBI_1.2.3                                           ggdendro_0.2.0                                     
-## [51] enrichR_3.4                                         readxl_1.3.1                                       
-## [53] Rcpp_1.0.14                                         gridtext_0.1.5                                     
-## [55] randomForest_4.7-1.2                                gridExtra_2.3                                      
-## [57] circlize_0.4.16                                     clusterProfiler_4.12.6                             
-## [59] ggpubr_0.6.0                                        ggrepel_0.9.6                                      
-## [61] ComplexHeatmap_2.20.0                               DESeq2_1.44.0                                      
-## [63] SummarizedExperiment_1.34.0                         Biobase_2.64.0                                     
-## [65] GenomicRanges_1.56.2                                GenomeInfoDb_1.40.1                                
-## [67] IRanges_2.38.1                                      S4Vectors_0.42.1                                   
-## [69] BiocGenerics_0.50.0                                 MatrixGenerics_1.16.0                              
-## [71] matrixStats_1.5.0                                   RColorBrewer_1.1-2                                 
-## [73] lubridate_1.9.4                                     forcats_1.0.0                                      
-## [75] stringr_1.5.1                                       dplyr_1.1.4                                        
-## [77] purrr_1.0.4                                         readr_1.3.1                                        
-## [79] tidyr_1.3.1                                         tibble_3.2.1                                       
-## [81] ggplot2_3.5.1                                       tidyverse_2.0.0                                    
+##  [1] bacon_1.34.0                           
+##  [2] ellipse_0.5.0                          
+##  [3] limma_3.62.2                           
+##  [4] sva_3.54.0                             
+##  [5] genefilter_1.88.0                      
+##  [6] mgcv_1.9-3                             
+##  [7] nlme_3.1-168                           
+##  [8] methyLImp2_1.2.0                       
+##  [9] ChAMPdata_2.38.0                       
+## [10] ComplexHeatmap_2.22.0                  
+## [11] circlize_0.4.16                        
+## [12] reshape2_1.4.4                         
+## [13] lubridate_1.9.4                        
+## [14] forcats_1.0.0                          
+## [15] stringr_1.5.1                          
+## [16] dplyr_1.1.4                            
+## [17] purrr_1.1.0                            
+## [18] readr_2.1.5                            
+## [19] tidyr_1.3.1                            
+## [20] tibble_3.3.0                           
+## [21] ggplot2_3.5.2                          
+## [22] tidyverse_2.0.0                        
+## [23] knitr_1.50                             
+## [24] BiocParallel_1.40.2                    
+## [25] DNAmArray_2.0.0                        
+## [26] FDb.InfiniumMethylation.hg19_2.2.0     
+## [27] org.Hs.eg.db_3.20.0                    
+## [28] TxDb.Hsapiens.UCSC.hg19.knownGene_3.2.2
+## [29] GenomicFeatures_1.58.0                 
+## [30] AnnotationDbi_1.68.0                   
+## [31] minfi_1.52.1                           
+## [32] bumphunter_1.48.0                      
+## [33] locfit_1.5-9.12                        
+## [34] iterators_1.0.14                       
+## [35] foreach_1.5.2                          
+## [36] Biostrings_2.74.1                      
+## [37] XVector_0.46.0                         
+## [38] SummarizedExperiment_1.36.0            
+## [39] Biobase_2.66.0                         
+## [40] MatrixGenerics_1.18.1                  
+## [41] matrixStats_1.5.0                      
+## [42] GenomicRanges_1.58.0                   
+## [43] GenomeInfoDb_1.42.3                    
+## [44] IRanges_2.40.1                         
+## [45] S4Vectors_0.44.0                       
+## [46] BiocGenerics_0.52.0                    
+## [47] BiocManager_1.30.26                    
+## [48] rmarkdown_2.29                         
 ## 
 ## loaded via a namespace (and not attached):
-##   [1] locfdr_1.1-8                nnet_7.3-20                 HDF5Array_1.32.1            vctrs_0.6.5                 RApiSerialize_0.1.4        
-##   [6] digest_0.6.37               png_0.1-8                   shape_1.4.6.1               proxy_0.4-27                parallelly_1.43.0          
-##  [11] reshape_0.8.9               reshape2_1.4.4              httpuv_1.6.15               qvalue_2.36.0               withr_3.0.2                
-##  [16] xfun_0.50                   ggfun_0.1.8                 survival_3.8-3              doRNG_1.8.6.2               memoise_2.0.1              
-##  [21] hexbin_1.28.5               gson_0.1.0                  mixtools_2.0.0.1            tidytree_0.4.6              GlobalOptions_0.1.2        
-##  [26] Formula_1.2-5               promises_1.3.2              rematch2_2.1.2              KEGGREST_1.44.1             httr_1.4.7                 
-##  [31] rstatix_0.7.2               restfulr_0.0.15             rhdf5filters_1.16.0         stringfish_0.16.0           rhdf5_2.48.0               
-##  [36] rstudioapi_0.17.1           UCSC.utils_1.0.0            generics_0.0.2              DOSE_3.30.5                 base64enc_0.1-3            
-##  [41] curl_6.2.0                  zlibbioc_1.50.0             ggraph_2.2.1                polyclip_1.10-7             GenomeInfoDbData_1.2.12    
-##  [46] quadprog_1.5-8              SparseArray_1.4.8           xtable_1.8-4                doParallel_1.0.15           evaluate_1.0.3             
-##  [51] S4Arrays_1.4.1              preprocessCore_1.66.0       hms_1.1.3                   colorspace_1.4-1            magrittr_2.0.3             
-##  [56] later_1.4.1                 viridis_0.6.5               ggtree_3.12.0               lattice_0.22-5              XML_3.99-0.18              
-##  [61] shadowtext_0.1.4            cowplot_1.1.3               class_7.3-23                Hmisc_5.2-3                 pillar_1.10.2              
-##  [66] gridBase_0.4-7              compiler_4.4.3              stringi_1.8.7               GenomicAlignments_1.40.0    plyr_1.8.6                 
-##  [71] crayon_1.3.4                abind_1.4-8                 BiocIO_1.14.0               gridGraphics_0.5-1          graphlayouts_1.2.2         
-##  [76] bit_4.5.0.1                 fastmatch_1.1-6             codetools_0.2-19            openssl_2.3.2               bslib_0.9.0                
-##  [81] e1071_1.7-16                GetoptLong_1.0.5            plotly_4.10.4               RaggedExperiment_1.28.1     MultiAssayExperiment_1.30.3
-##  [86] mime_0.9                    multtest_2.60.0             splines_4.4.3               dbplyr_2.5.0                sparseMatrixStats_1.16.0   
-##  [91] cellranger_1.1.0            blob_1.2.4                  clue_0.3-66                 WriteXLS_6.7.0              fs_1.6.5                   
-##  [96] checkmate_2.3.2             DelayedMatrixStats_1.26.0   ggsignif_0.6.4              ggplotify_0.1.2             Matrix_1.7-3               
-## [101] statmod_1.5.0               tweenr_2.0.3                pkgconfig_2.0.3             tools_4.4.3                 cachem_1.1.0               
-## [106] viridisLite_0.4.2           fastmap_1.2.0               rmarkdown_2.29              scales_1.3.0                Rsamtools_2.20.0           
-## [111] sass_0.4.9                  broom_1.0.8                 patchwork_1.3.0             carData_3.0-5               scrime_1.3.5               
-## [116] rpart_4.1.24                farver_2.0.3                tidygraph_1.3.1             scatterpie_0.2.4            yaml_2.2.1                 
-## [121] foreign_0.8-90              rtracklayer_1.64.0          illuminaio_0.46.0           cli_3.6.4                   siggenes_1.78.0            
-## [126] lifecycle_1.0.4             askpass_1.1                 kernlab_0.9-33              backports_1.1.6             annotate_1.82.0            
-## [131] timechange_0.3.0            gtable_0.3.0                rjson_0.2.23                ape_5.8-1                   jsonlite_1.8.9             
-## [136] bitops_1.0-9                bit64_4.6.0-1               yulab.utils_0.2.0           base64_2.0.2                RcppParallel_5.1.10        
-## [141] jquerylib_0.1.4             GOSemSim_2.30.2             segmented_2.1-4             lazyeval_0.2.2              shiny_1.10.0               
-## [146] htmltools_0.5.8.1           enrichplot_1.24.4           GO.db_3.19.1                rappdirs_0.3.3              htm2txt_2.2.2              
-## [151] httr2_1.1.2                 RCurl_1.98-1.17             treeio_1.28.0               mclust_6.1.1                igraph_2.1.4               
-## [156] R6_2.6.1                    labeling_0.3                cluster_2.1.8.1             rngtools_1.5.2              Rhdf5lib_1.26.0            
-## [161] beanplot_1.3.1              aplot_0.2.5                 DelayedArray_0.30.1         tidyselect_1.2.1            htmlTable_2.4.3            
-## [166] ggforce_0.4.2               xml2_1.3.8                  car_3.1-3                   munsell_0.5.0               KernSmooth_2.23-26         
-## [171] nor1mix_1.3-3               htmlwidgets_1.6.4           fgsea_1.30.0                rlang_1.1.5</code></pre>
+##   [1] splines_4.4.3             BiocIO_1.16.0            
+##   [3] bitops_1.0-9              preprocessCore_1.68.0    
+##   [5] methylumi_2.52.0          XML_3.99-0.18            
+##   [7] lifecycle_1.0.4           edgeR_4.4.2              
+##   [9] doParallel_1.0.17         vroom_1.6.5              
+##  [11] lattice_0.22-7            MASS_7.3-65              
+##  [13] base64_2.0.2              scrime_1.3.5             
+##  [15] magrittr_2.0.3            sass_0.4.10              
+##  [17] jquerylib_0.1.4           yaml_2.3.10              
+##  [19] doRNG_1.8.6.2             askpass_1.2.1            
+##  [21] DBI_1.2.3                 RColorBrewer_1.1-3       
+##  [23] lumi_2.58.0               abind_1.4-8              
+##  [25] zlibbioc_1.52.0           quadprog_1.5-8           
+##  [27] RCurl_1.98-1.17           GenomeInfoDbData_1.2.13  
+##  [29] ggrepel_0.9.6             rentrez_1.2.4            
+##  [31] annotate_1.84.0           DelayedMatrixStats_1.28.1
+##  [33] codetools_0.2-20          DelayedArray_0.32.0      
+##  [35] xml2_1.3.8                tidyselect_1.2.1         
+##  [37] shape_1.4.6.1             UCSC.utils_1.2.0         
+##  [39] farver_2.1.2              beanplot_1.3.1           
+##  [41] illuminaio_0.48.0         GenomicAlignments_1.42.0 
+##  [43] jsonlite_2.0.0            GetoptLong_1.0.5         
+##  [45] multtest_2.62.0           survival_3.8-3           
+##  [47] tools_4.4.3               Rcpp_1.1.0               
+##  [49] glue_1.8.0                SparseArray_1.6.2        
+##  [51] xfun_0.52                 HDF5Array_1.34.0         
+##  [53] withr_3.0.2               fastmap_1.2.0            
+##  [55] rhdf5filters_1.18.1       openssl_2.3.3            
+##  [57] digest_0.6.37             timechange_0.3.0         
+##  [59] R6_2.6.1                  colorspace_2.1-1         
+##  [61] RSQLite_2.4.1             generics_0.1.4           
+##  [63] corpcor_1.6.10            pls_2.8-5                
+##  [65] data.table_1.17.8         rtracklayer_1.66.0       
+##  [67] httr_1.4.7                S4Arrays_1.6.0           
+##  [69] pkgconfig_2.0.3           gtable_0.3.6             
+##  [71] blob_1.2.4                siggenes_1.80.0          
+##  [73] htmltools_0.5.8.1         clue_0.3-66              
+##  [75] scales_1.4.0              png_0.1-8                
+##  [77] tzdb_0.5.0                rjson_0.2.23             
+##  [79] curl_6.4.0                cachem_1.1.0             
+##  [81] rhdf5_2.50.2              GlobalOptions_0.1.2      
+##  [83] KernSmooth_2.23-26        restfulr_0.0.16          
+##  [85] GEOquery_2.74.0           pillar_1.11.0            
+##  [87] reshape_0.8.10            vctrs_0.6.5              
+##  [89] cluster_2.1.8             xtable_1.8-4             
+##  [91] evaluate_1.0.4            cli_3.6.5                
+##  [93] compiler_4.4.3            Rsamtools_2.22.0         
+##  [95] rlang_1.1.6               crayon_1.5.3             
+##  [97] rngtools_1.5.2            labeling_0.4.3           
+##  [99] nor1mix_1.3-3             mclust_6.1.1             
+## [101] affy_1.84.0               plyr_1.8.9               
+## [103] stringi_1.8.7             nleqslv_3.3.5            
+## [105] htm2txt_2.2.2             Matrix_1.7-3             
+## [107] hms_1.1.3                 sparseMatrixStats_1.18.0 
+## [109] bit64_4.6.0-1             Rhdf5lib_1.28.0          
+## [111] KEGGREST_1.46.0           statmod_1.5.0            
+## [113] memoise_2.0.1             affyio_1.76.0            
+## [115] bslib_0.9.0               bit_4.6.0</code></pre>
 <hr />
 </div>
 <div id="references" class="section level1">
 <h1>References</h1>
-<p><sup>1</sup> Dekkers, K.F., van Iterson, M., Slieker, R.C., <i>et
-al</i>. <a href="https://doi.org/10.1186/s13059-016-1000-6">Blood lipids
-influence DNA methylation in circulating cells</a>. <i>Genome Biol.</i>
-<b>17</b>, 138 (2016).</p>
-<p><sup>2</sup> Slieker, R.C., van Iterson, M., Luijk, R. <i>et al</i>.
-<a href="https://doi.org/10.1186/s13059-016-1053-6">Age-related accrual
-of methylomic variability is linked to fundamental ageing
-mechanisms</a>. <i> Genome Biol.</i> <b>17</b>, 191 (2016).</p>
-<p><sup>3</sup> Bonder, M., Luijk, R., Zhernakova, D. <i>et al</i>. <a
-href="https://doi.org/10.1038/ng.3721">Disease variants alter
-transcription factor levels and methylation of their binding sites</a>.
-<i>Nat Genet.</i> <b>49</b>, 131-138 (2017).</p>
-<p><sup>4</sup> Luijk, R., Wu, H., Ward-Caviness, C.K. <i>et al</i>. <a
-href="https://doi.org/10.1038/s41467-018-05714-3">Autosomal genetic
-variation is associated with DNA methylation in regions variably
-escaping X-chromosome inactivation</a>. <i> Nat Commun.</i> <b>9</b>,
-3738 (2018).</p>
-<p><sup>5</sup> van Rooij, J., Mandaviya, P.R., Claringbould, A., <i>et
-al</i>. <a href="https://doi.org/10.1186/s13059-019-1878-x">Evaluation
-of commonly used analysis strategies for epigenome- and
-transcriptome-wide association studies through replication of
-large-scale population studies</a>. <i>Genome Biol.</i> <b>20</b>, 1:235
-(2019).</p>
-<p><sup>6</sup> Hop, P.J., Luijk, R., Daxinger, L., <i>et al</i>. <a
-href="https://doi.org/10.1186/s13059-020-02114-z">Genome-wide
-identification of genes regulating DNA methylation using genetic anchors
-for causal inference</a>. <i>Genome Biol.</i> <b>21</b>, 220 (2020).</p>
-<p><sup>7</sup> Dekkers, K.F., Slieker, R.C., Ioan-Facsinay, A. <i>et
-al</i>. <a
-href="https://doi.org/10.1038/s41467-022-35663-x">Lipid-induced
-transcriptomic changes in blood link to lipid metabolism and allergic
-response</a>. <i>Nat Commun.</i> <b>14</b>, 544 (2023).</p>
-<p><sup>8</sup> Lui, Y., Sinke, L., Jonkman, T.H., <i>et al</i>. <a
-href="https://doi.org/10.1186/s13148-023-01549-y">The inactive X
-chromosome accumulates widespread epigenetic variability with age</a>.
-<i>Clin Epigenetics.</i> <b>15</b>, 135 (2023).</p>
-<p><sup>9</sup> Aryee, M.J., Jaffe, A.E., Corrada-Bravo, H. <i>et
-al</i>. <a href="https://doi.org/10.1093/bioinformatics/btu049">Minfi: a
-flexible and comprehensive Bioconductor package for the analysis of
-Infinium DNA methylation microarrays</a>. <i>Bioinformatics.</i>
-<b>30</b>, 10 (2014).</p>
-<p><sup>10</sup> van Iterson, M., Tobi, E.W., Slieker, R.C., <i>et
-al</i>. <a
-href="https://doi.org/10.1093/bioinformatics/btu566">MethylAid: visual
-and interactive quality control of large Illumina 450k datasets</a>.
-<i>Bioinformatics</i> <b>30</b>, 23 (2014).</p>
-<p><sup>11</sup> van Iterson, M., van Zwet, E.W., BIOS consortium, <i>et
-al</i>. <a href="https://doi.org/10.1186/s13059-016-1131-9">Controlling
-bias and inflation in epigenome- and transcriptome-wide association
-studies using the empirical null distribution</a>. <i>Genome Biol.</i>
-<b>18</b>, 19 (2017).</p>
-<p><sup>12</sup> van Iterson, M., Cats, D., Hop, P. <i>et al</i>. <a
-href="https://doi.org/10.1093/bioinformatics/bty062">omicsPrint:
-detection of data linkage errors in multiple omics studies</a>.
-<i>Bioinformatics.</i> <b>34</b>, 12 (2018).</p>
-<p><sup>13</sup> Curtis, S.W., Cobb, D.O., Kilaru, V. <i>et al</i>. <a
-href="https://doi.org/10.1080/15592294.2019.1565590">Exposure to
-polybrominated biphenyl (PBB) associates with genome-wide DNA
-methylation differences in peripheral blood</a>. <i>Epigenetics.</i>
-<b>14</b>, 1:52-66 (2019).</p>
-<p><sup>14</sup> Davis, S. and Meltzer, P.S. <a
-href="https://doi.org/10.1093/bioinformatics/btm254">GEOquery: a bridge
-between the Gene Expression Omnibus (GEO) and BioConductor</a>.
-<i>Bioinformatics.</i> <b>23</b>, 14 (2007).</p>
-<p><sup>15</sup> Zhou, W., Laird, P.W., and Shen, H. <a
-href="https://doi.org/10.1093/nar/gkw967">Comprehensive
-characterization, annotation, and innovative use of Infinium DNA
-methylation BeadChip probes</a>. <i>Nucleic Acids Res.</i> <b>45</b>,
-4:e22 (2017).</p>
-<p><sup>16</sup> Fortin, J-P., Labbe, A., Lemire, M. <i>et al</i>. <a
-href="https://doi.org/10.1186/s13059-014-0503-2">Functional
-normalization of 450k methylation array data improves replication in
-large cancer studies</a>. <i>Genome Biol.</i> <b>15</b>, 12:503
-(2014).</p>
-<p><sup>17</sup> Heiss, J.A. and Brenner, H. <a
-href="https://doi.org/10.3389/fgene.2015.00092">Between-array
-normalization for 450k data</a>. <i>Front Genet.</i> <b>6</b>
-(2015).</p>
-<p><sup>18</sup> Min, J.L., Hemani, G., Davey-Smith, G., <i>et al</i>.
-<a href="https://doi.org/10.1093/bioinformatics/bty476">Meffil:
-efficient normalization and analysis of very large DNA methylation
-datasets</a>. <i>Bioinformatics.</i> <b>34</b>, 23:3983-3989 (2018).</p>
-<p><sup>19</sup> Ori, A.P.S., Lu, A.T., Horvath, S., <i>et al</i>. <a
-href="https://doi.org/10.1186/s13059-022-02793-w">Significant variation
-in the performance of DNA methylation predictors across data
-preprocessing and normalization strategies</a>. <i>Genome Biol.</i>
-<b>23</b>, 225 (2022).</p>
-<p><sup>20</sup> Plasienko, A., Di Lena, P., Nardini, C., <i>et al</i>.
-<a href="https://doi.org/10.1093/bioinformatics/btae001">methyLImp2:
-faster missing value estimation for DNA methylation data</a>.
-<i>Bioinformatics.</i> <b>40</b>, 1 (2024).</p>
-<p><sup>21</sup> Zheng, S.C., Breeze, C.E., Beck, S., <i>et al</i>. <a
-href="https://doi.org/10.1038/s41592-018-0213-x">Identification of
-differentially methylated cell-types in Epigenome-Wide Association
-Studies</a>. <i>Nat Methods.</i> <b>15</b>, 1059-1066 (2018).</p>
-<p><sup>22</sup> Amemiya, H.M., Kundaje, A., and Boyle, A.P. <a
-href="https://doi.org/10.1038/s41598-019-45839-z">The ENCODE Blacklist:
-Identification of Problematic Regions of the Genome</a>. <i>Sci Rep.</i>
-<b>9</b>, 9354 (2019).</p>
-<p><sup>23</sup> Leek, J.T. and Storey, J.D. <a
-href="https://doi.org/10.1371/journal.pgen.0030161">Capturing
-heterogeneity in gene expression studies by surrogate variable
-analysis</a>. <i>PLoS Genet.</i> <b>9</b>, 1724-35 (2007).</p>
-<p><sup>24</sup> Johnson, W.E., Li, C., and Rabinovic, A. <a
-href="https://doi.org/10.1093/biostatistics/kxj037">Adjusting batch
-effects in microarray expression data using empirical Bayes methods</a>.
-<i>Biostatistics.</i> <b>8</b>, 1:118-27 (2006).</p>
-<p><sup>25</sup> Leek, J.T. <a
-href="https://doi.org.10.1093/nar/gku864">svaseq: removing batch effects
-and other unwanted noise from sequencing data</a>. <i>Nucleic Acids
-Res.</i> <b>42</b>, 21:e161 (2014).</p>
-<p><sup>26</sup> Leek, J.T., Scharpf, R.B., Bravo, H.C. <i>et al</i>. <a
-href="https://doi.org/10.1038/nrg2825">Tackling the widespread and
-critical impact of batch effects in high-throughput data</a>. <i>Nat Rev
-Genet.</i> <b>11</b>, 10:733-9 (2010).</p>
-<p><sup>27</sup> Ritchie, M.E., Phipson, B., Wu, D., <i>et al</i>. <a
-href="https://doi.org/10.1093/nar/gkv007">limma powers differential
-expression analyses for RNA-sequencing and microarray studies</a>.
-<i>Nucleic Acids Res.</i> <b>43</b>, 7 (2015).</p>
-<p><sup>28</sup> Roadmap Epigenomics Consortium, Kundaje, A., Meuleman,
-W. <i>et al</i>. <a
-href="https://doi.org/10.1038/nature14248">Integrative analysis of 111
-reference human epigenomes</a>. <i>Nature.</i> <b>518</b>, 7539:317-30
-(2015).</p>
+<p><sup>1</sup> Dekkers, K.F., van Iterson, M., Slieker, R.C., <i>et al</i>. <a href="https://doi.org/10.1186/s13059-016-1000-6">Blood lipids influence DNA methylation in circulating cells</a>. <i>Genome Biol.</i> <b>17</b>, 138 (2016).</p>
+<p><sup>2</sup> Slieker, R.C., van Iterson, M., Luijk, R. <i>et al</i>. <a href="https://doi.org/10.1186/s13059-016-1053-6">Age-related accrual of methylomic variability is linked to fundamental ageing mechanisms</a>. <i> Genome Biol.</i> <b>17</b>, 191 (2016).</p>
+<p><sup>3</sup> Bonder, M., Luijk, R., Zhernakova, D. <i>et al</i>. <a href="https://doi.org/10.1038/ng.3721">Disease variants alter transcription factor levels and methylation of their binding sites</a>. <i>Nat Genet.</i> <b>49</b>, 131-138 (2017).</p>
+<p><sup>4</sup> Luijk, R., Wu, H., Ward-Caviness, C.K. <i>et al</i>. <a href="https://doi.org/10.1038/s41467-018-05714-3">Autosomal genetic variation is associated with DNA methylation in regions variably escaping X-chromosome inactivation</a>. <i> Nat Commun.</i> <b>9</b>, 3738 (2018).</p>
+<p><sup>5</sup> van Rooij, J., Mandaviya, P.R., Claringbould, A., <i>et al</i>. <a href="https://doi.org/10.1186/s13059-019-1878-x">Evaluation of commonly used analysis strategies for epigenome- and transcriptome-wide association studies through replication of large-scale population studies</a>. <i>Genome Biol.</i> <b>20</b>, 1:235 (2019).</p>
+<p><sup>6</sup> Hop, P.J., Luijk, R., Daxinger, L., <i>et al</i>. <a href="https://doi.org/10.1186/s13059-020-02114-z">Genome-wide identification of genes regulating DNA methylation using genetic anchors for causal inference</a>. <i>Genome Biol.</i> <b>21</b>, 220 (2020).</p>
+<p><sup>7</sup> Dekkers, K.F., Slieker, R.C., Ioan-Facsinay, A. <i>et al</i>. <a href="https://doi.org/10.1038/s41467-022-35663-x">Lipid-induced transcriptomic changes in blood link to lipid metabolism and allergic response</a>. <i>Nat Commun.</i> <b>14</b>, 544 (2023).</p>
+<p><sup>8</sup> Lui, Y., Sinke, L., Jonkman, T.H., <i>et al</i>. <a href="https://doi.org/10.1186/s13148-023-01549-y">The inactive X chromosome accumulates widespread epigenetic variability with age</a>. <i>Clin Epigenetics.</i> <b>15</b>, 135 (2023).</p>
+<p><sup>9</sup> Aryee, M.J., Jaffe, A.E., Corrada-Bravo, H. <i>et al</i>. <a href="https://doi.org/10.1093/bioinformatics/btu049">Minfi: a flexible and comprehensive Bioconductor package for the analysis of Infinium DNA methylation microarrays</a>. <i>Bioinformatics.</i> <b>30</b>, 10 (2014).</p>
+<p><sup>10</sup> van Iterson, M., Tobi, E.W., Slieker, R.C., <i>et al</i>. <a href="https://doi.org/10.1093/bioinformatics/btu566">MethylAid: visual and interactive quality control of large Illumina 450k datasets</a>. <i>Bioinformatics</i> <b>30</b>, 23 (2014).</p>
+<p><sup>11</sup> van Iterson, M., van Zwet, E.W., BIOS consortium, <i>et al</i>. <a href="https://doi.org/10.1186/s13059-016-1131-9">Controlling bias and inflation in epigenome- and transcriptome-wide association studies using the empirical null distribution</a>. <i>Genome Biol.</i> <b>18</b>, 19 (2017).</p>
+<p><sup>12</sup> van Iterson, M., Cats, D., Hop, P. <i>et al</i>. <a href="https://doi.org/10.1093/bioinformatics/bty062">omicsPrint: detection of data linkage errors in multiple omics studies</a>. <i>Bioinformatics.</i> <b>34</b>, 12 (2018).</p>
+<p><sup>13</sup> Curtis, S.W., Cobb, D.O., Kilaru, V. <i>et al</i>. <a href="https://doi.org/10.1080/15592294.2019.1565590">Exposure to polybrominated biphenyl (PBB) associates with genome-wide DNA methylation differences in peripheral blood</a>. <i>Epigenetics.</i> <b>14</b>, 1:52-66 (2019).</p>
+<p><sup>14</sup> Davis, S. and Meltzer, P.S. <a href="https://doi.org/10.1093/bioinformatics/btm254">GEOquery: a bridge between the Gene Expression Omnibus (GEO) and BioConductor</a>. <i>Bioinformatics.</i> <b>23</b>, 14 (2007).</p>
+<p><sup>15</sup> Zhou, W., Laird, P.W., and Shen, H. <a href="https://doi.org/10.1093/nar/gkw967">Comprehensive characterization, annotation, and innovative use of Infinium DNA methylation BeadChip probes</a>. <i>Nucleic Acids Res.</i> <b>45</b>, 4:e22 (2017).</p>
+<p><sup>16</sup> Fortin, J-P., Labbe, A., Lemire, M. <i>et al</i>. <a href="https://doi.org/10.1186/s13059-014-0503-2">Functional normalization of 450k methylation array data improves replication in large cancer studies</a>. <i>Genome Biol.</i> <b>15</b>, 12:503 (2014).</p>
+<p><sup>17</sup> Heiss, J.A. and Brenner, H. <a href="https://doi.org/10.3389/fgene.2015.00092">Between-array normalization for 450k data</a>. <i>Front Genet.</i> <b>6</b> (2015).</p>
+<p><sup>18</sup> Min, J.L., Hemani, G., Davey-Smith, G., <i>et al</i>. <a href="https://doi.org/10.1093/bioinformatics/bty476">Meffil: efficient normalization and analysis of very large DNA methylation datasets</a>. <i>Bioinformatics.</i> <b>34</b>, 23:3983-3989 (2018).</p>
+<p><sup>19</sup> Ori, A.P.S., Lu, A.T., Horvath, S., <i>et al</i>. <a href="https://doi.org/10.1186/s13059-022-02793-w">Significant variation in the performance of DNA methylation predictors across data preprocessing and normalization strategies</a>. <i>Genome Biol.</i> <b>23</b>, 225 (2022).</p>
+<p><sup>20</sup> Plasienko, A., Di Lena, P., Nardini, C., <i>et al</i>. <a href="https://doi.org/10.1093/bioinformatics/btae001">methyLImp2: faster missing value estimation for DNA methylation data</a>. <i>Bioinformatics.</i> <b>40</b>, 1 (2024).</p>
+<p><sup>21</sup> Zheng, S.C., Breeze, C.E., Beck, S., <i>et al</i>. <a href="https://doi.org/10.1038/s41592-018-0213-x">Identification of differentially methylated cell-types in Epigenome-Wide Association Studies</a>. <i>Nat Methods.</i> <b>15</b>, 1059-1066 (2018).</p>
+<p><sup>22</sup> Amemiya, H.M., Kundaje, A., and Boyle, A.P. <a href="https://doi.org/10.1038/s41598-019-45839-z">The ENCODE Blacklist: Identification of Problematic Regions of the Genome</a>. <i>Sci Rep.</i> <b>9</b>, 9354 (2019).</p>
+<p><sup>23</sup> Leek, J.T. and Storey, J.D. <a href="https://doi.org/10.1371/journal.pgen.0030161">Capturing heterogeneity in gene expression studies by surrogate variable analysis</a>. <i>PLoS Genet.</i> <b>9</b>, 1724-35 (2007).</p>
+<p><sup>24</sup> Johnson, W.E., Li, C., and Rabinovic, A. <a href="https://doi.org/10.1093/biostatistics/kxj037">Adjusting batch effects in microarray expression data using empirical Bayes methods</a>. <i>Biostatistics.</i> <b>8</b>, 1:118-27 (2006).</p>
+<p><sup>25</sup> Leek, J.T. <a href="https://doi.org.10.1093/nar/gku864">svaseq: removing batch effects and other unwanted noise from sequencing data</a>. <i>Nucleic Acids Res.</i> <b>42</b>, 21:e161 (2014).</p>
+<p><sup>26</sup> Leek, J.T., Scharpf, R.B., Bravo, H.C. <i>et al</i>. <a href="https://doi.org/10.1038/nrg2825">Tackling the widespread and critical impact of batch effects in high-throughput data</a>. <i>Nat Rev Genet.</i> <b>11</b>, 10:733-9 (2010).</p>
+<p><sup>27</sup> Ritchie, M.E., Phipson, B., Wu, D., <i>et al</i>. <a href="https://doi.org/10.1093/nar/gkv007">limma powers differential expression analyses for RNA-sequencing and microarray studies</a>. <i>Nucleic Acids Res.</i> <b>43</b>, 7 (2015).</p>
+<p><sup>28</sup> Roadmap Epigenomics Consortium, Kundaje, A., Meuleman, W. <i>et al</i>. <a href="https://doi.org/10.1038/nature14248">Integrative analysis of 111 reference human epigenomes</a>. <i>Nature.</i> <b>518</b>, 7539:317-30 (2015).</p>
+<p><sup>29</sup> Guo, X., Sulaiman, M., Neumann, A., <i>et al.</i> <a href="https://doi.org/10.1186/s13073-025-01489-7">Unified high-resolution immune cell fraction estimation in blood tissue from birth to old age</a>. <i>Genome Med.</i> <b>17</b>, 63 (2025).</p>
+<p><sup>30</sup> Pidsley, R., Wong, C.C.Y., Volta, M., <i>et al.</i> <a href="https://doi.org/10.1186/1471-2164-14-293">A data-driven approach to preprocessing Illumina 450K methylation array data</a>. <i>BMC Genomics.</i> <b>14</b>, 293 (2013).</p>
+<p><sup>31</sup> Wang, Y., Hannon, E., Grant, O.A., <i>et al.</i> <a href="https://doi.org/10.1186/s12864-021-07675-2">DNA methylation-based sex classifier to predict sex and identify sex chromosome aneuploidy</a>. <i>BMC Genomics.</i> <b>22</b>, 484 (2021).</p>
+<p><sup>32</sup> Heinz, S., <i>et al.</i> <a href="https://doi.org/10.1016/j.molcel.2010.05.004">Simple combinations of lineage-determining transcription factors prime cis-regulatory elements required for macrophage and B cell identities</a>. <i>Mol Cell.</i> <b>38</b>, 4:576-89 (2010).</p>
 </div>
 
 

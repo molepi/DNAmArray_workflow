@@ -13,7 +13,6 @@
 
 <title>01_GettingStarted.knit</title>
 
-<script src="site_libs/header-attrs-2.29/header-attrs.js"></script>
 <script src="site_libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <link href="site_libs/bootstrap-3.3.5/css/lumen.min.css" rel="stylesheet" />
@@ -54,28 +53,28 @@
   }
 </style>
 <style type="text/css" data-origin="pandoc">
-pre > code.sourceCode { white-space: pre; position: relative; }
-pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
-pre > code.sourceCode > span:empty { height: 1.2em; }
+a.sourceLine { display: inline-block; line-height: 1.25; }
+a.sourceLine { pointer-events: none; color: inherit; text-decoration: inherit; }
+a.sourceLine:empty { height: 1.2em; position: absolute; }
 .sourceCode { overflow: visible; }
-code.sourceCode > span { color: inherit; text-decoration: inherit; }
+code.sourceCode { white-space: pre; position: relative; }
 div.sourceCode { margin: 1em 0; }
 pre.sourceCode { margin: 0; }
 @media screen {
 div.sourceCode { overflow: auto; }
 }
 @media print {
-pre > code.sourceCode { white-space: pre-wrap; }
-pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+code.sourceCode { white-space: pre-wrap; }
+a.sourceLine { text-indent: -1em; padding-left: 1em; }
 }
-pre.numberSource code
-  { counter-reset: source-line 0; }
-pre.numberSource code > span
-  { position: relative; left: -4em; counter-increment: source-line; }
-pre.numberSource code > span > a:first-child::before
-  { content: counter(source-line);
-    position: relative; left: -1em; text-align: right; vertical-align: baseline;
-    border: none; display: inline-block;
+pre.numberSource a.sourceLine
+  { position: relative; }
+pre.numberSource a.sourceLine:empty
+  { position: absolute; }
+pre.numberSource a.sourceLine::before
+  { content: attr(data-line-number);
+    position: absolute; left: -5em; text-align: right; vertical-align: baseline;
+    border: none; pointer-events: all;
     -webkit-touch-callout: none; -webkit-user-select: none;
     -khtml-user-select: none; -moz-user-select: none;
     -ms-user-select: none; user-select: none;
@@ -87,9 +86,9 @@ pre.numberSource { margin-left: 3em; border-left: 1px solid #a0a0a0;  padding-le
 div.sourceCode
   { color: #1f1c1b; background-color: #ffffff; }
 @media screen {
-pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+a.sourceLine::before { text-decoration: underline; }
 }
-code span { color: #1f1c1b; } /* Normal */
+code span. { color: #1f1c1b; } /* Normal */
 code span.al { color: #bf0303; background-color: #f7e6e6; font-weight: bold; } /* Alert */
 code span.an { color: #ca60ca; } /* Annotation */
 code span.at { color: #0057ae; } /* Attribute */
@@ -419,10 +418,10 @@ div.tocify {
   <a href="02_SampleQualityControl.html">Sample QC</a>
 </li>
 <li>
-  <a href="03_Normalization.html">Normalize</a>
+  <a href="03_Predict.html">Predict</a>
 </li>
 <li>
-  <a href="04_Predict.html">Predict</a>
+  <a href="04_Normalization.html">Normalize</a>
 </li>
 <li>
   <a href="05_ProbeQC.html">Probe QC</a>
@@ -454,30 +453,21 @@ div.tocify {
 <hr />
 <div id="installation" class="section level1">
 <h1>Installation</h1>
-<p>The <a
-href="https://github.com/molepi/DNAmArray"><strong>DNAmArray</strong></a>
-package can be installed in several ways, and has been tested for &gt;=
-R-4.4.3 on various Linux-builds and Windows.</p>
+<p>The <a href="https://github.com/molepi/DNAmArray"><strong>DNAmArray</strong></a> package can be installed in several ways, and has been tested for &gt;= R-4.4.3 on various Linux-builds and Windows.</p>
 <hr />
 <div id="install-using-devtools" class="section level3">
 <h3>Install using <strong>devtools</strong></h3>
-<p>First, install <a
-href="https://github.com/hadley/devtools"><strong>devtools</strong></a>,
-and then use the <code>install_github()</code> function to fetch the <a
-href="https://github.com/molepi/DNAmArray"><strong>DNAmArray</strong></a>
-package.</p>
-<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" tabindex="-1"></a><span class="fu">library</span>(devtools)</span>
-<span id="cb1-2"><a href="#cb1-2" tabindex="-1"></a><span class="fu">install_github</span>(<span class="st">&quot;molepi/DNAmArray&quot;</span>)</span></code></pre></div>
+<p>First, install <a href="https://github.com/hadley/devtools"><strong>devtools</strong></a>, and then use the <code>install_github()</code> function to fetch the <a href="https://github.com/molepi/DNAmArray"><strong>DNAmArray</strong></a> package.</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb1-1" data-line-number="1"><span class="kw">library</span>(devtools)</a>
+<a class="sourceLine" id="cb1-2" data-line-number="2"><span class="kw">install_github</span>(<span class="st">&quot;molepi/DNAmArray&quot;</span>)</a></code></pre></div>
 <hr />
 </div>
 <div id="install-from-source-using-gitr" class="section level3">
 <h3>Install from source using <code>git/R</code></h3>
-<p>Using <a href="https://git-scm.com/">git</a>, you can
-<code>git clone</code> our repository and then install the package,
-changing <code>_x.y.z.</code> to the relevant version.</p>
-<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" tabindex="-1"></a>git clone git<span class="sc">@</span>github.com<span class="sc">/</span>molepi<span class="sc">/</span>DNAmArray.git</span>
-<span id="cb2-2"><a href="#cb2-2" tabindex="-1"></a>R CMD build DNAmArray</span>
-<span id="cb2-3"><a href="#cb2-3" tabindex="-1"></a>R CMD INSTALL DNAmArray_x.y.z.tar.gz</span></code></pre></div>
+<p>Using <a href="https://git-scm.com/">git</a>, you can <code>git clone</code> our repository and then install the package, changing <code>_x.y.z.</code> to the relevant version.</p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb2-1" data-line-number="1">git clone git<span class="op">@</span>github.com<span class="op">/</span>molepi<span class="op">/</span>DNAmArray.git</a>
+<a class="sourceLine" id="cb2-2" data-line-number="2">R CMD build DNAmArray</a>
+<a class="sourceLine" id="cb2-3" data-line-number="3">R CMD INSTALL DNAmArray_x.y.z.tar.gz</a></code></pre></div>
 <hr />
 </div>
 </div>
@@ -485,126 +475,89 @@ changing <code>_x.y.z.</code> to the relevant version.</p>
 <h1>Loading packages</h1>
 <p>First, load the packages that are required for this workflow:</p>
 <ul>
-<li><a
-href="https://github.com/molepi/DNAmArray"><strong>DNAmArray</strong></a>
-- the main package, containing in-house build functions for the
-preprocessing of DNAm data</li>
-<li><a
-href="https://www.bioconductor.org/packages/release/bioc/html/MethylAid.html"><strong>MethylAid</strong></a><sup>10</sup>
-- for sample-level quality control</li>
-<li><a
-href="https://bioconductor.org/packages/release/bioc/html/omicsPrint.html"><strong>omicsPrint</strong></a><sup>12</sup>
-- in-house tool use to detect sample linkage errors and resolve
-them</li>
-<li><a
-href="http://bioconductor.org/packages/bacon"><strong>bacon</strong></a><sup>11</sup>
-- in-house tool for reducing bias and inflation in EWAS test
-statistics</li>
-<li><a
-href="https://bioconductor.org/packages/release/bioc/html/GEOquery.html"><strong>GEOquery</strong></a><sup>14</sup>
-- bridges the gap between <a
-href="https://www.bioconductor.org">BioConductor</a> tools and <a
-href="https://www.ncbi.nlm.nih.gov/geo/">GEO</a></li>
-<li><a href="https://www.tidyverse.org/"><strong>tidyverse</strong></a>
-- for data wrangling</li>
-<li>[<strong>reshape2</strong>] - for data wrangling</li>
-<li>[<strong>ggrepel</strong>] - for data visualization</li>
-<li>[<strong>ComplexHeatmap</strong>] - for creating heatmaps</li>
-<li>[<strong>circlize</strong>] - designed to allow circular plots, but
-also used to create custom colour palettes</li>
-<li><a
-href="https://www.bioconductor.org/packages/release/bioc/html/BiocParallel.html"><strong>BiocParallel</strong></a>
-- to parallelize processing of genomic data</li>
-<li><a
-href="https://www.bioconductor.org/packages/release/data/annotation/html/IlluminaHumanMethylationEPICmanifest.html">**IlluminaHumanMethylationEPICmanifest</a>
-- containing EPIC probe annotation for the example data (other packages
-are available for 450k or EPICv2)</li>
-<li>[<strong>qs</strong>] - useful for saving large objects quickly with
-<code>qsave</code></li>
-<li><a
-href="https://www.bioconductor.org/packages/release/bioc/html/limma.html"><strong>limma</strong></a><sup>27</sup>
-- for EWAS analysis</li>
-<li><a
-href="https://www.bioconductor.org/packages/release/bioc/html/EpiDISH.html"><strong>EpiDISH</strong></a><sup>21</sup>
-- for cell count predictions</li>
-<li><a
-href="https://bioconductor.org/packages/release/bioc/html/sva.html"><strong>sva</strong></a><sup>23-25</sup>
-- for estimating latent factors</li>
-<li><a
-href="https://bioconductor.org/packages/release/bioc/html/methyLImp2.html"><strong>methyLImp2</strong></a><sup>20</sup></li>
-<li><a
-href="https://bioconductor.org/packages/release/bioc/html/SummarizedExperiment.html"><strong>SummarizedExperiment</strong></a></li>
+<li><a href="https://github.com/molepi/DNAmArray"><strong>DNAmArray</strong></a> - the main package, containing in-house build functions for the preprocessing of DNAm data</li>
+<li><a href="https://www.bioconductor.org/packages/release/bioc/html/MethylAid.html"><strong>MethylAid</strong></a><sup>10</sup> - for sample-level quality control</li>
+<li><a href="https://bioconductor.org/packages/release/bioc/html/omicsPrint.html"><strong>omicsPrint</strong></a><sup>12</sup> - in-house tool use to detect sample linkage errors and resolve them</li>
+<li><a href="http://bioconductor.org/packages/bacon"><strong>bacon</strong></a><sup>11</sup> - in-house tool for reducing bias and inflation in EWAS test statistics</li>
+<li><a href="https://bioconductor.org/packages/release/bioc/html/GEOquery.html"><strong>GEOquery</strong></a><sup>14</sup> - bridges the gap between <a href="https://www.bioconductor.org">BioConductor</a> tools and <a href="https://www.ncbi.nlm.nih.gov/geo/">GEO</a></li>
+<li><a href="https://www.tidyverse.org/"><strong>tidyverse</strong></a> - for data wrangling</li>
+<li><a href="https://cran.r-project.org/web/packages/reshape2/index.html"><strong>reshape2</strong></a> - for data wrangling</li>
+<li><a href="https://ggrepel.slowkow.com/"><strong>ggrepel</strong></a> - for data visualization</li>
+<li><a href="https://www.bioconductor.org/packages/release/bioc/html/ComplexHeatmap.html"><strong>ComplexHeatmap</strong></a> - for creating heatmaps</li>
+<li><a href="https://cran.r-project.org/web/packages/circlize/index.html"><strong>circlize</strong></a> - designed to allow circular plots, but also used to create custom colour palettes</li>
+<li><a href="https://www.bioconductor.org/packages/release/bioc/html/BiocParallel.html"><strong>BiocParallel</strong></a> - to parallelize processing of genomic data</li>
+<li><a href="https://www.bioconductor.org/packages/release/data/annotation/html/IlluminaHumanMethylationEPICmanifest.html"><strong>IlluminaHumanMethylationEPICmanifest</strong></a> - containing EPIC probe annotation for the example data (other packages are available for 450k or EPICv2)</li>
+<li><a href="https://bioconductor.org/packages/release/bioc/html/minfi.html"><strong>minfi</strong></a><sup>9</sup> - functions to preprocess DNAm data</li>
+<li><a href="https://www.bioconductor.org/packages/devel/bioc/html/wateRmelon.html"><strong>wateRmelon</strong></a><sup>30</sup> - functions to preprocess DNAm data</li>
+<li><a href="https://cran.r-project.org/web/packages/snow/index.html"><strong>snow</strong></a> - required by MethyLImp2 for parallelization</li>
+<li><a href="https://www.bioconductor.org/packages/release/bioc/html/limma.html"><strong>limma</strong></a><sup>27</sup> - for EWAS analysis</li>
+<li><a href="https://www.bioconductor.org/packages/release/bioc/html/EpiDISH.html"><strong>EpiDISH</strong></a><sup>21</sup> - for cell count predictions</li>
+<li><a href="https://bioconductor.org/packages/release/bioc/html/sva.html"><strong>sva</strong></a><sup>23-25</sup> - for estimating latent factors</li>
+<li><a href="https://bioconductor.org/packages/release/bioc/html/methyLImp2.html"><strong>methyLImp2</strong></a><sup>20</sup></li>
+<li><a href="https://bioconductor.org/packages/release/bioc/html/SummarizedExperiment.html"><strong>SummarizedExperiment</strong></a></li>
 </ul>
-<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" tabindex="-1"></a><span class="fu">library</span>(DNAmArray)</span>
-<span id="cb3-2"><a href="#cb3-2" tabindex="-1"></a><span class="fu">library</span>(MethylAid)</span>
-<span id="cb3-3"><a href="#cb3-3" tabindex="-1"></a><span class="fu">library</span>(omicsPrint)</span>
-<span id="cb3-4"><a href="#cb3-4" tabindex="-1"></a><span class="fu">library</span>(bacon)</span>
-<span id="cb3-5"><a href="#cb3-5" tabindex="-1"></a></span>
-<span id="cb3-6"><a href="#cb3-6" tabindex="-1"></a><span class="fu">library</span>(GEOquery)</span>
-<span id="cb3-7"><a href="#cb3-7" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span>
-<span id="cb3-8"><a href="#cb3-8" tabindex="-1"></a><span class="fu">library</span>(ggrepel)</span>
-<span id="cb3-9"><a href="#cb3-9" tabindex="-1"></a><span class="fu">library</span>(reshape2)</span>
-<span id="cb3-10"><a href="#cb3-10" tabindex="-1"></a><span class="fu">library</span>(ComplexHeatmap)</span>
-<span id="cb3-11"><a href="#cb3-11" tabindex="-1"></a><span class="fu">library</span>(circlize)</span>
-<span id="cb3-12"><a href="#cb3-12" tabindex="-1"></a><span class="fu">library</span>(BiocParallel)</span>
-<span id="cb3-13"><a href="#cb3-13" tabindex="-1"></a><span class="fu">library</span>(IlluminaHumanMethylationEPICmanifest)</span>
-<span id="cb3-14"><a href="#cb3-14" tabindex="-1"></a><span class="fu">library</span>(qs)</span>
-<span id="cb3-15"><a href="#cb3-15" tabindex="-1"></a></span>
-<span id="cb3-16"><a href="#cb3-16" tabindex="-1"></a><span class="fu">library</span>(limma)</span>
-<span id="cb3-17"><a href="#cb3-17" tabindex="-1"></a><span class="fu">library</span>(EpiDISH)</span>
-<span id="cb3-18"><a href="#cb3-18" tabindex="-1"></a><span class="fu">library</span>(sva)</span>
-<span id="cb3-19"><a href="#cb3-19" tabindex="-1"></a><span class="fu">library</span>(methyLImp2)</span>
-<span id="cb3-20"><a href="#cb3-20" tabindex="-1"></a><span class="fu">library</span>(SummarizedExperiment)</span></code></pre></div>
+<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb3-1" data-line-number="1"><span class="kw">library</span>(DNAmArray)</a>
+<a class="sourceLine" id="cb3-2" data-line-number="2"><span class="kw">library</span>(MethylAid)</a>
+<a class="sourceLine" id="cb3-3" data-line-number="3"><span class="kw">library</span>(omicsPrint)</a>
+<a class="sourceLine" id="cb3-4" data-line-number="4"><span class="kw">library</span>(bacon)</a>
+<a class="sourceLine" id="cb3-5" data-line-number="5"></a>
+<a class="sourceLine" id="cb3-6" data-line-number="6"><span class="kw">library</span>(GEOquery)</a>
+<a class="sourceLine" id="cb3-7" data-line-number="7"><span class="kw">library</span>(tidyverse)</a>
+<a class="sourceLine" id="cb3-8" data-line-number="8"><span class="kw">library</span>(ggrepel)</a>
+<a class="sourceLine" id="cb3-9" data-line-number="9"><span class="kw">library</span>(reshape2)</a>
+<a class="sourceLine" id="cb3-10" data-line-number="10"><span class="kw">library</span>(ComplexHeatmap)</a>
+<a class="sourceLine" id="cb3-11" data-line-number="11"><span class="kw">library</span>(circlize)</a>
+<a class="sourceLine" id="cb3-12" data-line-number="12"><span class="kw">library</span>(BiocParallel)</a>
+<a class="sourceLine" id="cb3-13" data-line-number="13"><span class="kw">library</span>(IlluminaHumanMethylationEPICmanifest)</a>
+<a class="sourceLine" id="cb3-14" data-line-number="14"><span class="kw">library</span>(minfi)</a>
+<a class="sourceLine" id="cb3-15" data-line-number="15"><span class="kw">library</span>(wateRmelon)</a>
+<a class="sourceLine" id="cb3-16" data-line-number="16"><span class="kw">library</span>(snow)</a>
+<a class="sourceLine" id="cb3-17" data-line-number="17"></a>
+<a class="sourceLine" id="cb3-18" data-line-number="18"><span class="kw">library</span>(limma)</a>
+<a class="sourceLine" id="cb3-19" data-line-number="19"><span class="kw">library</span>(EpiDISH)</a>
+<a class="sourceLine" id="cb3-20" data-line-number="20"><span class="kw">library</span>(sva)</a>
+<a class="sourceLine" id="cb3-21" data-line-number="21"><span class="kw">library</span>(methyLImp2)</a>
+<a class="sourceLine" id="cb3-22" data-line-number="22"><span class="kw">library</span>(SummarizedExperiment)</a></code></pre></div>
 <hr />
 </div>
 <div id="importing-idats" class="section level1">
 <h1>Importing IDATs</h1>
-<p>The first step in analysing microarray data is importing raw
-intensity files into your software program. In this example, we show how
-to import raw IDAT files from GEO into R, but similar strategies can be
-employed for all Illumina DNAm array files when using R.</p>
-<p>Using the <code>getGEOSuppFiles()</code> function, supplementary data
-is downloaded to the current working directory. These consist of the raw
-IDAT files alongside relevant documentation.</p>
-<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" tabindex="-1"></a><span class="fu">getGEOSuppFiles</span>(<span class="st">&quot;GSE116339&quot;</span>)</span>
-<span id="cb4-2"><a href="#cb4-2" tabindex="-1"></a><span class="fu">untar</span>(<span class="at">tarfile=</span><span class="st">&quot;../GSE116339/GSE116339_RAW.tar&quot;</span>, <span class="at">exdir=</span><span class="st">&quot;../GSE116339/IDATs&quot;</span>)</span></code></pre></div>
-<p>The data can then be efficiently unpacked using the
-<code>gunzip()</code> function.</p>
-<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" tabindex="-1"></a><span class="fu">setwd</span>(<span class="st">&quot;../GSE116339/IDATs&quot;</span>)</span>
-<span id="cb5-2"><a href="#cb5-2" tabindex="-1"></a><span class="fu">sapply</span>(<span class="fu">list.files</span>(), gunzip)</span></code></pre></div>
-<p><code>getGEO()</code> can then be used to import SOFT format
-microarray data into R as a large GSE-class list, and extract the
-metadata of interest.</p>
-<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" tabindex="-1"></a>GSE116339 <span class="ot">&lt;-</span> <span class="fu">getGEO</span>(<span class="at">filename=</span><span class="st">&#39;./data/GSE116339_series_matrix.txt.gz&#39;</span>, <span class="at">getGPL =</span> <span class="cn">FALSE</span>)</span>
-<span id="cb6-2"><a href="#cb6-2" tabindex="-1"></a>targets <span class="ot">&lt;-</span> <span class="fu">phenoData</span>(GSE116339)<span class="sc">@</span>data</span>
-<span id="cb6-3"><a href="#cb6-3" tabindex="-1"></a><span class="fu">rm</span>(GSE116339)</span></code></pre></div>
+<p>The first step in analysing microarray data is importing raw intensity files into your software program. In this example, we show how to import raw IDAT files from GEO into R, but similar strategies can be employed for all Illumina DNAm array files when using R.</p>
+<p>Using the <code>getGEOSuppFiles()</code> function, supplementary data is downloaded to the current working directory. These consist of the raw IDAT files alongside relevant documentation.</p>
+<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb4-1" data-line-number="1"><span class="kw">getGEOSuppFiles</span>(<span class="st">&quot;GSE116339&quot;</span>)</a>
+<a class="sourceLine" id="cb4-2" data-line-number="2"><span class="kw">untar</span>(<span class="dt">tarfile=</span><span class="st">&quot;../GSE116339/GSE116339_RAW.tar&quot;</span>, <span class="dt">exdir=</span><span class="st">&quot;../GSE116339/IDATs&quot;</span>)</a></code></pre></div>
+<p>The data can then be efficiently unpacked using the <code>gunzip()</code> function.</p>
+<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb5-1" data-line-number="1"><span class="kw">setwd</span>(<span class="st">&quot;../GSE116339/IDATs&quot;</span>)</a>
+<a class="sourceLine" id="cb5-2" data-line-number="2"><span class="kw">sapply</span>(<span class="kw">list.files</span>(), gunzip)</a></code></pre></div>
+<p><code>getGEO()</code> can then be used to import SOFT format microarray data into R as a large GSE-class list, and extract the metadata of interest.</p>
+<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb6-1" data-line-number="1">GSE116339 &lt;-<span class="st"> </span><span class="kw">getGEO</span>(<span class="dt">filename=</span><span class="st">&#39;./data/GSE116339_series_matrix.txt.gz&#39;</span>, <span class="dt">getGPL =</span> <span class="ot">FALSE</span>)</a>
+<a class="sourceLine" id="cb6-2" data-line-number="2">targets &lt;-<span class="st"> </span><span class="kw">phenoData</span>(GSE116339)<span class="op">@</span>data</a>
+<a class="sourceLine" id="cb6-3" data-line-number="3"><span class="kw">rm</span>(GSE116339)</a></code></pre></div>
 <hr />
 </div>
 <div id="preparing-targets" class="section level1">
 <h1>Preparing <code>targets</code></h1>
-<p>Before progressing further, take some time to get familiar with the
-<code>targets</code> data frame, removing duplicate information and
-converting variables to relevant classes.</p>
-<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" tabindex="-1"></a>targets <span class="ot">&lt;-</span> targets <span class="sc">%&gt;%</span> dplyr<span class="sc">::</span><span class="fu">select</span>(<span class="at">sample_ID =</span> <span class="st">`</span><span class="at">sample_id:ch1</span><span class="st">`</span>,</span>
-<span id="cb7-2"><a href="#cb7-2" tabindex="-1"></a>                              geo_accession,</span>
-<span id="cb7-3"><a href="#cb7-3" tabindex="-1"></a>                              <span class="at">sex =</span> <span class="st">`</span><span class="at">gender:ch1</span><span class="st">`</span>,</span>
-<span id="cb7-4"><a href="#cb7-4" tabindex="-1"></a>                              <span class="at">age =</span> <span class="st">`</span><span class="at">age:ch1</span><span class="st">`</span>,</span>
-<span id="cb7-5"><a href="#cb7-5" tabindex="-1"></a>                              <span class="at">log_total_pbb =</span> <span class="st">`</span><span class="at">ln(totalpbb):ch1</span><span class="st">`</span>,</span>
-<span id="cb7-6"><a href="#cb7-6" tabindex="-1"></a>                              <span class="at">pbb_153 =</span> <span class="st">`</span><span class="at">pbb-153:ch1</span><span class="st">`</span>,</span>
-<span id="cb7-7"><a href="#cb7-7" tabindex="-1"></a>                              <span class="at">pbb_77 =</span> <span class="st">`</span><span class="at">pbb-77:ch1</span><span class="st">`</span>,</span>
-<span id="cb7-8"><a href="#cb7-8" tabindex="-1"></a>                              <span class="at">pbb_101 =</span> <span class="st">`</span><span class="at">pbb-101:ch1</span><span class="st">`</span>,</span>
-<span id="cb7-9"><a href="#cb7-9" tabindex="-1"></a>                              <span class="at">pbb_180 =</span> <span class="st">`</span><span class="at">pbb-180:ch1</span><span class="st">`</span>,</span>
-<span id="cb7-10"><a href="#cb7-10" tabindex="-1"></a>                              supplementary_file) <span class="sc">%&gt;%</span> </span>
-<span id="cb7-11"><a href="#cb7-11" tabindex="-1"></a>  <span class="fu">separate</span>(supplementary_file, <span class="at">sep=</span><span class="st">&quot;_&quot;</span>, <span class="at">remove=</span>F, <span class="at">into=</span><span class="fu">c</span>(<span class="cn">NA</span>, <span class="st">&quot;plate&quot;</span>, <span class="st">&quot;row&quot;</span>, <span class="cn">NA</span>)) <span class="sc">%&gt;%</span> </span>
-<span id="cb7-12"><a href="#cb7-12" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">age =</span> <span class="fu">as.numeric</span>(age),</span>
-<span id="cb7-13"><a href="#cb7-13" tabindex="-1"></a>         <span class="at">log_total_pbb =</span> <span class="fu">as.numeric</span>(log_total_pbb),</span>
-<span id="cb7-14"><a href="#cb7-14" tabindex="-1"></a>         <span class="at">pbb_153 =</span> <span class="fu">as.numeric</span>(pbb_153),</span>
-<span id="cb7-15"><a href="#cb7-15" tabindex="-1"></a>         <span class="at">pbb_77 =</span> <span class="fu">as.numeric</span>(pbb_77),</span>
-<span id="cb7-16"><a href="#cb7-16" tabindex="-1"></a>         <span class="at">pbb_101 =</span> <span class="fu">as.numeric</span>(pbb_101),</span>
-<span id="cb7-17"><a href="#cb7-17" tabindex="-1"></a>         <span class="at">pbb_180 =</span> <span class="fu">as.numeric</span>(pbb_180),</span>
-<span id="cb7-18"><a href="#cb7-18" tabindex="-1"></a>         <span class="at">row =</span> <span class="fu">as.numeric</span>(<span class="fu">substr</span>(row, <span class="dv">3</span>, <span class="dv">3</span>)))</span>
-<span id="cb7-19"><a href="#cb7-19" tabindex="-1"></a></span>
-<span id="cb7-20"><a href="#cb7-20" tabindex="-1"></a><span class="fu">str</span>(targets)</span></code></pre></div>
+<p>Before progressing further, take some time to get familiar with the <code>targets</code> data frame, removing duplicate information and converting variables to relevant classes.</p>
+<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb7-1" data-line-number="1">targets &lt;-<span class="st"> </span>targets <span class="op">%&gt;%</span><span class="st"> </span>dplyr<span class="op">::</span><span class="kw">select</span>(<span class="dt">sample_ID =</span> <span class="st">`</span><span class="dt">sample_id:ch1</span><span class="st">`</span>,</a>
+<a class="sourceLine" id="cb7-2" data-line-number="2">                              geo_accession,</a>
+<a class="sourceLine" id="cb7-3" data-line-number="3">                              <span class="dt">sex =</span> <span class="st">`</span><span class="dt">gender:ch1</span><span class="st">`</span>,</a>
+<a class="sourceLine" id="cb7-4" data-line-number="4">                              <span class="dt">age =</span> <span class="st">`</span><span class="dt">age:ch1</span><span class="st">`</span>,</a>
+<a class="sourceLine" id="cb7-5" data-line-number="5">                              <span class="dt">log_total_pbb =</span> <span class="st">`</span><span class="dt">ln(totalpbb):ch1</span><span class="st">`</span>,</a>
+<a class="sourceLine" id="cb7-6" data-line-number="6">                              <span class="dt">pbb_153 =</span> <span class="st">`</span><span class="dt">pbb-153:ch1</span><span class="st">`</span>,</a>
+<a class="sourceLine" id="cb7-7" data-line-number="7">                              <span class="dt">pbb_77 =</span> <span class="st">`</span><span class="dt">pbb-77:ch1</span><span class="st">`</span>,</a>
+<a class="sourceLine" id="cb7-8" data-line-number="8">                              <span class="dt">pbb_101 =</span> <span class="st">`</span><span class="dt">pbb-101:ch1</span><span class="st">`</span>,</a>
+<a class="sourceLine" id="cb7-9" data-line-number="9">                              <span class="dt">pbb_180 =</span> <span class="st">`</span><span class="dt">pbb-180:ch1</span><span class="st">`</span>,</a>
+<a class="sourceLine" id="cb7-10" data-line-number="10">                              supplementary_file) <span class="op">%&gt;%</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb7-11" data-line-number="11"><span class="st">  </span><span class="kw">separate</span>(supplementary_file, <span class="dt">sep=</span><span class="st">&quot;_&quot;</span>, <span class="dt">remove=</span>F, <span class="dt">into=</span><span class="kw">c</span>(<span class="ot">NA</span>, <span class="st">&quot;plate&quot;</span>, <span class="st">&quot;row&quot;</span>, <span class="ot">NA</span>)) <span class="op">%&gt;%</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb7-12" data-line-number="12"><span class="st">  </span><span class="kw">mutate</span>(<span class="dt">age =</span> <span class="kw">as.numeric</span>(age),</a>
+<a class="sourceLine" id="cb7-13" data-line-number="13">         <span class="dt">log_total_pbb =</span> <span class="kw">as.numeric</span>(log_total_pbb),</a>
+<a class="sourceLine" id="cb7-14" data-line-number="14">         <span class="dt">pbb_153 =</span> <span class="kw">as.numeric</span>(pbb_<span class="dv">153</span>),</a>
+<a class="sourceLine" id="cb7-15" data-line-number="15">         <span class="dt">pbb_77 =</span> <span class="kw">as.numeric</span>(pbb_<span class="dv">77</span>),</a>
+<a class="sourceLine" id="cb7-16" data-line-number="16">         <span class="dt">pbb_101 =</span> <span class="kw">as.numeric</span>(pbb_<span class="dv">101</span>),</a>
+<a class="sourceLine" id="cb7-17" data-line-number="17">         <span class="dt">pbb_180 =</span> <span class="kw">as.numeric</span>(pbb_<span class="dv">180</span>),</a>
+<a class="sourceLine" id="cb7-18" data-line-number="18">         <span class="dt">row =</span> <span class="kw">as.numeric</span>(<span class="kw">substr</span>(row, <span class="dv">3</span>, <span class="dv">3</span>)))</a>
+<a class="sourceLine" id="cb7-19" data-line-number="19"></a>
+<a class="sourceLine" id="cb7-20" data-line-number="20"><span class="kw">str</span>(targets)</a></code></pre></div>
 <pre><code>## &#39;data.frame&#39;:    679 obs. of  12 variables:
 ##  $ sample_ID         : chr  &quot;3141584&quot; &quot;10120245&quot; &quot;99990005&quot; &quot;12130802&quot; ...
 ##  $ geo_accession     : chr  &quot;GSM3228562&quot; &quot;GSM3228563&quot; &quot;GSM3228564&quot; &quot;GSM3228565&quot; ...
@@ -618,29 +571,17 @@ converting variables to relevant classes.</p>
 ##  $ supplementary_file: chr  &quot;ftp://ftp.ncbi.nlm.nih.gov/geo/samples/GSM3228nnn/GSM3228562/suppl/GSM3228562_200550980002_R01C01_Grn.idat.gz&quot; &quot;ftp://ftp.ncbi.nlm.nih.gov/geo/samples/GSM3228nnn/GSM3228563/suppl/GSM3228563_200550980002_R02C01_Grn.idat.gz&quot; &quot;ftp://ftp.ncbi.nlm.nih.gov/geo/samples/GSM3228nnn/GSM3228564/suppl/GSM3228564_200550980002_R03C01_Grn.idat.gz&quot; &quot;ftp://ftp.ncbi.nlm.nih.gov/geo/samples/GSM3228nnn/GSM3228565/suppl/GSM3228565_200550980002_R04C01_Grn.idat.gz&quot; ...
 ##  $ plate             : chr  &quot;200550980002&quot; &quot;200550980002&quot; &quot;200550980002&quot; &quot;200550980002&quot; ...
 ##  $ row               : num  1 2 3 4 5 6 7 8 1 3 ...</code></pre>
-<p>This data frame consists of 679 observations and phenotypic
-information for 51 variables is stored after cleaning. This
-includes:</p>
+<p>This data frame consists of 679 observations and phenotypic information for 51 variables is stored after cleaning. This includes:</p>
 <ul>
 <li><code>sample_ID</code> - the ID of the sample</li>
-<li><code>geo_accession</code> - the GEO accession number of the
-sample</li>
+<li><code>geo_accession</code> - the GEO accession number of the sample</li>
 <li><code>sex</code> - male or female</li>
 <li><code>age</code> - age of the individual</li>
-<li><code>log_total_pbb</code>, <code>pbb_153</code>,
-<code>pbb_77</code>, <code>pb_101</code>, <code>pbb_180</code> -
-exposure levels</li>
+<li><code>log_total_pbb</code>, <code>pbb_153</code>, <code>pbb_77</code>, <code>pb_101</code>, <code>pbb_180</code> - exposure levels</li>
 <li><code>supplementary_file</code> - location of IDAT file</li>
 <li><code>plate</code> - EPIC array number</li>
 <li><code>row</code> - row number on the array (continuous)</li>
 </ul>
-<hr />
-</div>
-<div id="subset" class="section level1">
-<h1>Subset</h1>
-<p>For this example workflow, we subset the <code>targets</code>
-data</p>
-<div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" tabindex="-1"></a>targets <span class="ot">&lt;-</span> targets[<span class="dv">1</span><span class="sc">:</span><span class="dv">60</span>, ]</span></code></pre></div>
 <hr />
 </div>
 

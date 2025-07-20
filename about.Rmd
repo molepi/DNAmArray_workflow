@@ -80,3 +80,11 @@ Please cite van *Sinke, L., van Iterson, M., Cats, D., BIOS Consortium, Kuipers,
 <sup>27</sup> Ritchie, M.E., Phipson, B., Wu, D., <i>et al</i>. [limma powers differential expression analyses for RNA-sequencing and microarray studies](https://doi.org/10.1093/nar/gkv007). <i>Nucleic Acids Res.</i> <b>43</b>, 7 (2015).
 
 <sup>28</sup> Roadmap Epigenomics Consortium, Kundaje, A., Meuleman, W. <i>et al</i>. [Integrative analysis of 111 reference human epigenomes](https://doi.org/10.1038/nature14248). <i>Nature.</i> <b>518</b>, 7539:317-30 (2015).
+
+<sup>29</sup> Guo, X., Sulaiman, M., Neumann, A., <i>et al.</i> [Unified high-resolution immune cell fraction estimation in blood tissue from birth to old age](https://doi.org/10.1186/s13073-025-01489-7). <i>Genome Med.</i> <b>17</b>, 63 (2025).
+
+<sup>30</sup> Pidsley, R., Wong, C.C.Y., Volta, M., <i>et al.</i> [A data-driven approach to preprocessing Illumina 450K methylation array data](https://doi.org/10.1186/1471-2164-14-293). <i>BMC Genomics.</i> <b>14</b>, 293 (2013).
+
+<sup>31</sup> Wang, Y., Hannon, E., Grant, O.A., <i>et al.</i> [DNA methylation-based sex classifier to predict sex and identify sex chromosome aneuploidy](https://doi.org/10.1186/s12864-021-07675-2). <i>BMC Genomics.</i> <b>22</b>, 484 (2021).
+
+<sup>32</sup> Heinz, S., <i>et al.</i> [Simple combinations of lineage-determining transcription factors prime cis-regulatory elements required for macrophage and B cell identities](https://doi.org/10.1016/j.molcel.2010.05.004). <i>Mol Cell.</i> <b>38</b>, 4:576-89 (2010).

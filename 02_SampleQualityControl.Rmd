@@ -126,11 +126,45 @@ qcProbes = list(
 
 They also rely on array specific thresholds, which we advise to set on the basis of the following table:
 
-| Array     | MU   | OP   | BS   | HC   | DP   |
-|----------|------|------|------|------|------|
-| 450k     | 10.5 | 11.75| 12.75| 13.25| 0.95 |
-| EPIC     | 10   | 12   | 11.75| 12.75| 0.95 |
-| EPIC v2  | 10.5 | 12.5 | 12.75| 13.25| 0.95 |
+<table style="border-collapse: collapse; width: 100%; text-align: center;">
+  <thead>
+    <tr>
+      <th style="padding: 8px; border-bottom: 2px solid #ddd;">Array</th>
+      <th style="padding: 8px; border-bottom: 2px solid #ddd;">MU</th>
+      <th style="padding: 8px; border-bottom: 2px solid #ddd;">OP</th>
+      <th style="padding: 8px; border-bottom: 2px solid #ddd;">BS</th>
+      <th style="padding: 8px; border-bottom: 2px solid #ddd;">HC</th>
+      <th style="padding: 8px; border-bottom: 2px solid #ddd;">DP</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td style="padding: 8px;">450k</td>
+      <td style="padding: 8px;">10.5</td>
+      <td style="padding: 8px;">11.75</td>
+      <td style="padding: 8px;">12.75</td>
+      <td style="padding: 8px;">13.25</td>
+      <td style="padding: 8px;">0.95</td>
+    </tr>
+    <tr>
+      <td style="padding: 8px;">EPIC</td>
+      <td style="padding: 8px;">10</td>
+      <td style="padding: 8px;">12</td>
+      <td style="padding: 8px;">11.75</td>
+      <td style="padding: 8px;">12.75</td>
+      <td style="padding: 8px;">0.95</td>
+    </tr>
+    <tr>
+      <td style="padding: 8px;">EPIC v2</td>
+      <td style="padding: 8px;">10.5</td>
+      <td style="padding: 8px;">12.5</td>
+      <td style="padding: 8px;">12.75</td>
+      <td style="padding: 8px;">13.25</td>
+      <td style="padding: 8px;">0.95</td>
+    </tr>
+  </tbody>
+</table>
+
 
 The example data uses the EPIC array and the following thresholds
 
@@ -218,7 +252,7 @@ Using `densityPlot()` from [**minfi**](https://bioconductor.org/packages/release
 Centre peaks can be identified using a `beta_outlier` object, which flags any samples with high beta values in the central part of the distribution. Alternatively, a named boolean vector of the samples can be used to flag a specific sample.
 
 ```{r 219betaoutlier}
-beta_outlier <- ifelse(colSums(betas > 0.3 & betas < 0.5) > 120000, T, F)
+beta_outlier <- ifelse(colSums(betas > 0.2 & betas < 0.5) > 100000, T, F)
 RGset$beta_outlier <- beta_outlier
 
 beta_outlier[1:5]
@@ -349,21 +383,9 @@ pc_df <- cbind(targets, pca$x)
 
 PCs can then be plotted against each other, coloured by flagged variables.
 
-Strong batch effects can be seen, coloured by array number.
+The second PC is strongly linked to sex differences.
 
-```{r 229pcplot1}
-pc_df %>% 
-    ggplot(aes(x = PC1, y = PC2, color = plate)) +
-    geom_point(size = 1.5) +
-    labs(x = paste0("PC1 (", round(100*var_explained[1,2], 2), "%)"), 
-         y = paste0("PC2 (", round(100*var_explained[2,2], 2), "%)"), 
-         color = "Array") +
-    theme_bw()
-```
-
-The second PC is mostly linked to sex differences.
-
-```{r 230pcplot2}
+```{r 229pcplot2}
 pc_df %>% 
     ggplot(aes(x = PC1, y = PC2, color = sex)) +
     geom_point(size = 1.5) +
@@ -383,7 +405,7 @@ pc_df %>%
 
 Manifests can be downloaded from the [Zhou lab GitHub page](https://zwdzwd.github.io/InfiniumAnnotation)<sup>15</sup> for all commonly used arrays and reference genomes. For this example, we use SNP annotations downloaded for the EPIC array and the hg19 genome. 
 
-```{r 231snpcpgs}
+```{r 230snpcpgs}
 snp_cpgs <- read_tsv(
   "./data/EPIC.hg19.manifest.pop.tsv.gz")
 ```
@@ -395,7 +417,7 @@ Columns of interest include:
 * start - Start position of the CpG
 * end - End position of the CpG
 
-```{r 232subset}
+```{r 231subset}
 snp_cpgs <- snp_cpgs %>% 
   dplyr::select(
     cpg = probeID,
@@ -417,7 +439,7 @@ print(paste0("There are ", length(snp_cpgs),
 
 Betas can then be subset to include only these CpG probes of interest.
 
-```{r 233table}
+```{r 232table}
 betas_snps <- betas[snp_cpgs, ]
 dim(betas_snps)
 
@@ -430,7 +452,7 @@ table(rownames(targets) == colnames(betas_snps))
 
 Create a data frame of all pairwise sample comparisons.
 
-```{r 234grid}
+```{r 233grid}
 relations <- expand.grid(
   idx = colnames(betas_snps), 
   idy = colnames(betas_snps))
@@ -439,14 +461,14 @@ head(relations)
 
 Sample names are saved, as a reference for which pairs exist.
 
-```{r 235names}
+```{r 234names}
 relations$sample_name_x <- targets[relations$idx, "sample_ID"] 
 relations$sample_name_y <- targets[relations$idy, "sample_ID"]
 ```
 
 A relation_type variable is then set as `identical` if the samples come from the same individual and `unrelated` otherwise. We see that the 59 pairs comparing the same sample are set as `identical`.
 
-```{r 236relations}
+```{r 235relations}
 relations$relation_type <- "unrelated"
 relations$relation_type[relations$sample_name_x == relations$sample_name_y] <- "identical"
 
@@ -466,7 +488,7 @@ The function `beta2genotype` from `omicsPrint` genotypes the observations by mea
 * `centers` - centers of clusters
 * `assayName` - the name of the assay to be used
 
-```{r 237beta2genotype}
+```{r 236beta2genotype}
 genotype <- beta2genotype(betas_snps, 
                           na.rm=TRUE,
                           minSep = 0.25,
@@ -478,21 +500,37 @@ str(genotype)
 
 `alleleSharing` can then assess the relationships between different individuals, which can be unrelated, twins, or identical. This uses identity by state (IBS), a genetic similarity measure that compares at a single locus the genotypes between two individuals and counts the number of alleles shared (0, 1 or 2).Essentially, if a sample is the same then the mean IBS should be 2 (alleles) and the variance of this should be low (close to 0). 
 
-```{r 238alleleSharing}
+```{r 237alleleSharing}
 out <- alleleSharing(genotype, relations = relations)
 head(out)
 ```
+
+***
 
 ### Identify mismatches
 
 The mean and variance of IBS can then be visualised using the `inferRelations()` function. Genetically similar sample comparisons will be plotted closer to the bottom, right of the graph, and those that are genetically dissimilar are in the top, left. A table of mismatches gives an overview of any identified. 
 
-```{r 239plot}
+```{r 238plot}
 mismatches <- inferRelations(out, verbose=TRUE)
 
 table(mismatches$relation, mismatches$predicted)
 ```
 
-Since there are no twins or relatives in our data, all observations are shown as unrelated. In data with sample relationships, this would be shown in the above graph as green or black clusters<sup>12</sup>. It is important to carry out this type of visualization before probe-filtering as otherwise the genotyping will be based on very few SNPs. 
+There are 18 pairs of samples (n=36) that should be unrelated but are genetically identical on the basis of these beta-derived genotypes. To remove them from further analysis you can use the `mismatches` object:
+
+```{r 239mismatched}
+removed_ids <- unique(c(mismatches$colnames.x, mismatches$colnames.y))
+removed_ids
+
+targets <- targets[!rownames(targets) %in% removed_ids, ]
+
+RGset <- RGset[,colnames(RGset) %in% rownames(targets)]
+betas <- betas[,colnames(betas) %in% rownames(targets)]
+
+RGset
+```
+
+In data with sample relationships, this would be shown in the above graph as green or black clusters<sup>12</sup>. It is important to carry out this type of visualization before probe-filtering as otherwise the genotyping will be based on very few SNPs. 
 
 ***
