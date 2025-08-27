@@ -487,7 +487,6 @@ div.tocify {
 <a class="sourceLine" id="cb3-6" data-line-number="6">  <span class="dt">verbose =</span> T</a>
 <a class="sourceLine" id="cb3-7" data-line-number="7">)</a></code></pre></div>
 <pre><code>## [adjustedFunnorm] Background and dye bias correction with noob</code></pre>
-<<<<<<< HEAD
 <pre><code>## Loading required package: IlluminaHumanMethylationEPICanno.ilm10b4.hg19</code></pre>
 <pre><code>## 
 ## Attaching package: &#39;IlluminaHumanMethylationEPICanno.ilm10b4.hg19&#39;</code></pre>
@@ -503,25 +502,12 @@ div.tocify {
 <div class="sourceCode" id="cb11"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb11-1" data-line-number="1">GRset</a></code></pre></div>
 <pre><code>## class: GenomicRatioSet 
 ## dim: 865859 598 
-=======
-<pre><code>## [adjustedFunnorm] Mapping to genome</code></pre>
-<pre><code>## [adjustedFunnorm] Quantile extraction</code></pre>
-<pre><code>## [adjustedFunnorm] Normalization</code></pre>
-<div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb8-1" data-line-number="1">GRset</a></code></pre></div>
-<pre><code>## class: GenomicRatioSet 
-## dim: 865859 496 
->>>>>>> a881b47ac32537db4f8636228d059d1464fdc2ea
 ## metadata(0):
 ## assays(1): Beta
 ## rownames(865859): cg14817997 cg26928153 ... cg07587934 cg16855331
 ## rowData names(0):
-<<<<<<< HEAD
 ## colnames(598): GSM3228563_200550980002_R02C01
 ##   GSM3228564_200550980002_R03C01 ... GSM3229238_200598360007_R07C01
-=======
-## colnames(496): GSM3228585_200550980034_R01C01
-##   GSM3228586_200550980034_R02C01 ... GSM3229237_200598350015_R06C01
->>>>>>> a881b47ac32537db4f8636228d059d1464fdc2ea
 ##   GSM3229239_200598350080_R03C01
 ## colData names(25): sample_ID geo_accession ... Neu Mono
 ## Annotation
@@ -532,17 +518,10 @@ div.tocify {
 ##   minfi version: NA
 ##   Manifest version: NA</code></pre>
 <p>It is also possible to use <code>adjustedDasen</code> to apply dasen normalization to normalize autosomal CpGs and infer the sex chromosome linked CpGs by linear interpolation on corrected autosomal CpGs. Instead of outputting a <code>GRset</code>, this function outputs the normalized beta values. Therefore, using this normalization removes the need for the DNAmArray <code>reduce</code> function in the next steps.</p>
-<<<<<<< HEAD
 <div class="sourceCode" id="cb13"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb13-1" data-line-number="1">betas &lt;-<span class="st"> </span><span class="kw">adjustedDasen</span>(<span class="dt">mns =</span> <span class="kw">methylated</span>(RGset),</a>
 <a class="sourceLine" id="cb13-2" data-line-number="2">                       <span class="dt">uns =</span> <span class="kw">unmethylated</span>(RGset),</a>
 <a class="sourceLine" id="cb13-3" data-line-number="3">                       <span class="dt">onetwo =</span> <span class="kw">fData</span>(RGset)[,<span class="kw">fot</span>(RGset)], </a>
 <a class="sourceLine" id="cb13-4" data-line-number="4">                       <span class="dt">chr =</span> <span class="kw">fData</span>(RGset)<span class="op">$</span>CHR)</a></code></pre></div>
-=======
-<div class="sourceCode" id="cb10"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb10-1" data-line-number="1">betas &lt;-<span class="st"> </span><span class="kw">adjustedDasen</span>(<span class="dt">mns =</span> <span class="kw">methylated</span>(RGset),</a>
-<a class="sourceLine" id="cb10-2" data-line-number="2">                       <span class="dt">uns =</span> <span class="kw">unmethylated</span>(RGset),</a>
-<a class="sourceLine" id="cb10-3" data-line-number="3">                       <span class="dt">onetwo =</span> <span class="kw">fData</span>(RGset)[,<span class="kw">fot</span>(RGset)], </a>
-<a class="sourceLine" id="cb10-4" data-line-number="4">                       <span class="dt">chr =</span> <span class="kw">fData</span>(RGset)<span class="op">$</span>CHR)</a></code></pre></div>
->>>>>>> a881b47ac32537db4f8636228d059d1464fdc2ea
 <hr />
 </div>
 

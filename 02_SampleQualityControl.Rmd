@@ -252,11 +252,7 @@ Using `densityPlot()` from [**minfi**](https://bioconductor.org/packages/release
 Centre peaks can be identified using a `beta_outlier` object, which flags any samples with high beta values in the central part of the distribution. Alternatively, a named boolean vector of the samples can be used to flag a specific sample.
 
 ```{r 219betaoutlier}
-<<<<<<< HEAD
 beta_outlier <- ifelse(colSums(betas > 0.2 & betas < 0.5) > 140000, T, F)
-=======
-beta_outlier <- ifelse(colSums(betas > 0.2 & betas < 0.5) > 100000, T, F)
->>>>>>> a881b47ac32537db4f8636228d059d1464fdc2ea
 RGset$beta_outlier <- beta_outlier
 
 beta_outlier[1:5]
@@ -393,11 +389,8 @@ The second PC is strongly linked to sex differences.
 pc_df %>% 
     ggplot(aes(x = PC1, y = PC2, color = sex)) +
     geom_point(size = 1.5) +
-<<<<<<< HEAD
     geom_text_repel(aes(label = ifelse((pc_df$PC2 > 10 & pc_df$PC1 < 0 & pc_df$sex == "Female") |
                                   (pc_df$PC2 < -12 & pc_df$sex == "Male"), Basename, ""), color = sex)) %>% 
-=======
->>>>>>> a881b47ac32537db4f8636228d059d1464fdc2ea
     labs(x = paste0("PC1 (", round(100*var_explained[1,2], 2), "%)"), 
          y = paste0("PC2 (", round(100*var_explained[2,2], 2), "%)"), 
          color = "Sex") +

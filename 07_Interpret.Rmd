@@ -27,7 +27,6 @@ limma_base <- limma_base %>%
 
 After adjusting for multiple CpGs, top hits can be extracted and inspected.
 
-<<<<<<< HEAD
 ```{r echo=F}
 top_cpgs <- limma_base %>% 
   filter(p <= 0.001) %>% 
@@ -41,13 +40,6 @@ top_cpgs <- limma_base %>%
 ```
 
 ```{r 702top}
-=======
-```{r 702top}
-top_cpgs <- limma_base %>% 
-  filter(padj <= 0.05) %>% 
-  arrange(padj)
-
->>>>>>> a881b47ac32537db4f8636228d059d1464fdc2ea
 print(paste0("There are ", 
              nrow(top_cpgs), " significant CpGs"))
 

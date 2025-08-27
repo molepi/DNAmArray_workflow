@@ -11,19 +11,8 @@
 
 
 
-<<<<<<< HEAD
-<<<<<<<< HEAD:docs/03_Predict.html
 <title>03_Predict.knit</title>
 
-========
-<title>03_Normalization.knit</title>
-
-<script src="site_libs/header-attrs-2.29/header-attrs.js"></script>
->>>>>>>> a881b47ac32537db4f8636228d059d1464fdc2ea:docs/03_Normalization.html
-=======
-<title>03_Predict.knit</title>
-
->>>>>>> a881b47ac32537db4f8636228d059d1464fdc2ea
 <script src="site_libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <link href="site_libs/bootstrap-3.3.5/css/lumen.min.css" rel="stylesheet" />
@@ -64,38 +53,17 @@
   }
 </style>
 <style type="text/css" data-origin="pandoc">
-<<<<<<< HEAD
-pre > code.sourceCode { white-space: pre; position: relative; }
-pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
-pre > code.sourceCode > span:empty { height: 1.2em; }
-.sourceCode { overflow: visible; }
-code.sourceCode > span { color: inherit; text-decoration: inherit; }
-=======
 a.sourceLine { display: inline-block; line-height: 1.25; }
 a.sourceLine { pointer-events: none; color: inherit; text-decoration: inherit; }
 a.sourceLine:empty { height: 1.2em; position: absolute; }
 .sourceCode { overflow: visible; }
 code.sourceCode { white-space: pre; position: relative; }
->>>>>>> a881b47ac32537db4f8636228d059d1464fdc2ea
 div.sourceCode { margin: 1em 0; }
 pre.sourceCode { margin: 0; }
 @media screen {
 div.sourceCode { overflow: auto; }
 }
 @media print {
-<<<<<<< HEAD
-pre > code.sourceCode { white-space: pre-wrap; }
-pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
-}
-pre.numberSource code
-  { counter-reset: source-line 0; }
-pre.numberSource code > span
-  { position: relative; left: -4em; counter-increment: source-line; }
-pre.numberSource code > span > a:first-child::before
-  { content: counter(source-line);
-    position: relative; left: -1em; text-align: right; vertical-align: baseline;
-    border: none; display: inline-block;
-=======
 code.sourceCode { white-space: pre-wrap; }
 a.sourceLine { text-indent: -1em; padding-left: 1em; }
 }
@@ -107,7 +75,6 @@ pre.numberSource a.sourceLine::before
   { content: attr(data-line-number);
     position: absolute; left: -5em; text-align: right; vertical-align: baseline;
     border: none; pointer-events: all;
->>>>>>> a881b47ac32537db4f8636228d059d1464fdc2ea
     -webkit-touch-callout: none; -webkit-user-select: none;
     -khtml-user-select: none; -moz-user-select: none;
     -ms-user-select: none; user-select: none;
@@ -119,15 +86,9 @@ pre.numberSource { margin-left: 3em; border-left: 1px solid #a0a0a0;  padding-le
 div.sourceCode
   { color: #1f1c1b; background-color: #ffffff; }
 @media screen {
-<<<<<<< HEAD
-pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
-}
-code span { color: #1f1c1b; } /* Normal */
-=======
 a.sourceLine::before { text-decoration: underline; }
 }
 code span. { color: #1f1c1b; } /* Normal */
->>>>>>> a881b47ac32537db4f8636228d059d1464fdc2ea
 code span.al { color: #bf0303; background-color: #f7e6e6; font-weight: bold; } /* Alert */
 code span.an { color: #ca60ca; } /* Annotation */
 code span.at { color: #0057ae; } /* Attribute */
@@ -457,23 +418,10 @@ div.tocify {
   <a href="02_SampleQualityControl.html">Sample QC</a>
 </li>
 <li>
-<<<<<<< HEAD
-<<<<<<<< HEAD:docs/03_Predict.html
-=======
->>>>>>> a881b47ac32537db4f8636228d059d1464fdc2ea
   <a href="03_Predict.html">Predict</a>
 </li>
 <li>
   <a href="04_Normalization.html">Normalize</a>
-<<<<<<< HEAD
-========
-  <a href="03_Normalization.html">Normalize</a>
-</li>
-<li>
-  <a href="04_Predict.html">Predict</a>
->>>>>>>> a881b47ac32537db4f8636228d059d1464fdc2ea:docs/03_Normalization.html
-=======
->>>>>>> a881b47ac32537db4f8636228d059d1464fdc2ea
 </li>
 <li>
   <a href="05_ProbeQC.html">Probe QC</a>
@@ -503,10 +451,6 @@ div.tocify {
 
 
 <hr />
-<<<<<<< HEAD
-<<<<<<<< HEAD:docs/03_Predict.html
-=======
->>>>>>> a881b47ac32537db4f8636228d059d1464fdc2ea
 <div id="phenotype-prediction" class="section level1">
 <h1>Phenotype Prediction</h1>
 <div id="motivation" class="section level2">
@@ -535,11 +479,7 @@ div.tocify {
 <div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb3-1" data-line-number="1"><span class="kw">table</span>(<span class="kw">rownames</span>(<span class="kw">as.data.frame</span>(BloodFrac.m)) <span class="op">==</span><span class="st"> </span><span class="kw">rownames</span>(targets))</a></code></pre></div>
 <pre><code>## 
 ## TRUE 
-<<<<<<< HEAD
 ##  598</code></pre>
-=======
-##  496</code></pre>
->>>>>>> a881b47ac32537db4f8636228d059d1464fdc2ea
 <div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb5-1" data-line-number="1">targets &lt;-<span class="st"> </span><span class="kw">cbind</span>(targets, BloodFrac.m)</a>
 <a class="sourceLine" id="cb5-2" data-line-number="2"><span class="kw">colData</span>(RGset) &lt;-<span class="st"> </span><span class="kw">DataFrame</span>(targets)</a></code></pre></div>
 <p>Other extensions, including UniLIFE which predicts 19 immune cell-types applicable to blood tissue of any age, are available from within EpiDISH, for use in specific contexts<sup>29</sup>.</p>
@@ -558,83 +498,12 @@ div.tocify {
 <pre><code>##         
 ##          Female Male
 ##   47,XXY      0    1
-<<<<<<< HEAD
 ##   Female    337    1
 ##   Male        2  257</code></pre>
 <p>As you can see, there is an outlier in the data, which we can remove.</p>
 <div class="sourceCode" id="cb11"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb11-1" data-line-number="1">targets &lt;-<span class="st"> </span>targets <span class="op">%&gt;%</span><span class="st"> </span></a>
 <a class="sourceLine" id="cb11-2" data-line-number="2"><span class="st">  </span><span class="kw">filter</span>(Basename <span class="op">!=</span><span class="st"> &quot;GSM3228809_200594740080_R01C01&quot;</span>)</a></code></pre></div>
 <p>This means that we can feel increased confidence that no incorrect labelling or mix-ups are remaining.</p>
-========
-<div id="functional-normalization" class="section level1">
-<h1>Functional normalization</h1>
-<div id="motivation" class="section level2">
-<h2>Motivation</h2>
-<p>Our workflow uses the functional normalization approach<sup>16</sup>,
-which exploits internal control probes designed to detect technical
-variations without assaying biological differences.</p>
-<p>It has been shown to perform favourably when compared to other
-approaches<sup>17</sup>. Using the internal control probes avoids the
-problems associated with global normalization methods, where biological
-variation can be mistaken for a technical effect and removed. This is
-especially important in studies where groups are expected to have
-differential methylation signatures, such as multiple tissue
-studies<sup>18</sup>.</p>
-<p>Conversations on the best approaches for normalization in DNAm data
-pipelines are ongoing<sup>19</sup>.</p>
-<hr />
-</div>
-</div>
-<div id="principal-components" class="section level1">
-<h1>Principal Components</h1>
-<p>The default of selecting only two principal components is often too
-low for this type of data. Often you will see a drop-off in proportion
-of variance explained after a certain number of principal components,
-and this can indicate an efficient selection.</p>
-<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" tabindex="-1"></a>var_explained <span class="sc">%&gt;%</span> <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x=</span>PC, <span class="at">y=</span>var_explained)) <span class="sc">+</span></span>
-<span id="cb1-2"><a href="#cb1-2" tabindex="-1"></a>  <span class="fu">geom_line</span>() <span class="sc">+</span></span>
-<span id="cb1-3"><a href="#cb1-3" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">color=</span><span class="st">&#39;grey5&#39;</span>, <span class="at">fill=</span><span class="st">&#39;#6DACBC&#39;</span>, <span class="at">shape=</span><span class="dv">21</span>, <span class="at">size=</span><span class="dv">3</span>) <span class="sc">+</span> </span>
-<span id="cb1-4"><a href="#cb1-4" tabindex="-1"></a>  <span class="fu">scale_x_continuous</span>(<span class="at">breaks=</span><span class="dv">1</span><span class="sc">:</span><span class="fu">ncol</span>(pca<span class="sc">$</span>x)) <span class="sc">+</span></span>
-<span id="cb1-5"><a href="#cb1-5" tabindex="-1"></a>  <span class="fu">xlab</span>(<span class="st">&quot;Principal Component&quot;</span>) <span class="sc">+</span> </span>
-<span id="cb1-6"><a href="#cb1-6" tabindex="-1"></a>  <span class="fu">ylab</span>(<span class="st">&quot;Proportion of variance explained&quot;</span>) <span class="sc">+</span></span>
-<span id="cb1-7"><a href="#cb1-7" tabindex="-1"></a>  <span class="fu">theme_bw</span>()</span></code></pre></div>
-<p><img src="03_Normalization_files/figure-html/301scree-1.png" width="672" /></p>
-<hr />
-</div>
-<div id="running-normalization" class="section level1">
-<h1>Running Normalization</h1>
-<p>In order to run normalization the annotation of the
-<code>RGset</code> must be updated for EPIC arrays.</p>
-<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" tabindex="-1"></a>RGset<span class="sc">@</span>annotation <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="at">array =</span> <span class="st">&quot;IlluminaHumanMethylationEPIC&quot;</span>, <span class="at">annotation =</span> <span class="st">&quot;ilm10b4.hg19&quot;</span>)</span></code></pre></div>
-<p>By default, functional normalization returns normalized copy number
-data making the returned <code>GenomicRatioSet</code> twice the size
-necessary when only beta-values or M-values are required. Therefore, we
-developed <code>preprocessFunnorm.DNAmArray()</code>, which adds an
-option not to return these to the <code>preprocessFunnorm()</code>
-function from <a
-href="https://bioconductor.org/packages/release/bioc/html/minfi.html"><strong>minfi</strong></a>.</p>
-<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" tabindex="-1"></a>RGset <span class="ot">&lt;-</span> <span class="fu">preprocessFunnorm.DNAmArray</span>(</span>
-<span id="cb3-2"><a href="#cb3-2" tabindex="-1"></a>  <span class="at">rgSet =</span> RGset,</span>
-<span id="cb3-3"><a href="#cb3-3" tabindex="-1"></a>  <span class="at">nPCs =</span> <span class="dv">4</span>,</span>
-<span id="cb3-4"><a href="#cb3-4" tabindex="-1"></a>  <span class="at">keepCN =</span> <span class="cn">FALSE</span>,</span>
-<span id="cb3-5"><a href="#cb3-5" tabindex="-1"></a>  <span class="at">verbose =</span> <span class="cn">TRUE</span></span>
-<span id="cb3-6"><a href="#cb3-6" tabindex="-1"></a>)</span></code></pre></div>
-<p>You can now extract the normalized beta values from this object. It
-can also be advisable to round the beta values to 4 significant figures,
-which both reduces the data size and provides a realistic measure of the
-available precision.</p>
-<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" tabindex="-1"></a>betas <span class="ot">&lt;-</span> <span class="fu">getBeta</span>(RGset, <span class="at">type=</span><span class="st">&quot;Illumina&quot;</span>)</span>
-<span id="cb4-2"><a href="#cb4-2" tabindex="-1"></a>betas <span class="ot">&lt;-</span> <span class="fu">round</span>(betas, <span class="dv">4</span>)</span></code></pre></div>
-<p>If required, these can be transformed to M-values using <a
-href="https://bioconductor.org/packages/release/bioc/html/minfi.html"><strong>minfi</strong></a>’s
-<code>getM()</code> which applies a logit2-transformation to the
-beta-values.</p>
->>>>>>>> a881b47ac32537db4f8636228d059d1464fdc2ea:docs/03_Normalization.html
-=======
-##   Female    270    0
-##   Male        2  223</code></pre>
-<p>As you can see, this is complete data, but the predicted and assumed sexes are identical. This means that we can feel increased confidence that no incorrect labelling or mix-ups are present.</p>
->>>>>>> a881b47ac32537db4f8636228d059d1464fdc2ea
 <hr />
 </div>
 

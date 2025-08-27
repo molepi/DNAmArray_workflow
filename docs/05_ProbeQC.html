@@ -499,7 +499,6 @@ div.tocify {
 <pre><code>## Filtering on number of beads... 
 ## On average 0.09 % of the probes ( 1052641 ) have number of beads below 3 
 ## Filtering on zero intensities... 
-<<<<<<< HEAD
 ## On average 0.004 % of the Type II probes ( 724574 ) have Red and/or Green intensity below 1 
 ## On average 0.004 % of the Type I probes ( 99964 ), measured in Green channel, have intensity below 1 
 ## On average 0.004 % of the Type I probes ( 184560 ), measured in Red channel, have intensity below 1 
@@ -509,16 +508,6 @@ div.tocify {
 ## ... done  300  out of  598  ... 
 ## ... done  400  out of  598  ... 
 ## ... done  500  out of  598  ...</code></pre>
-=======
-## On average 0.002 % of the Type II probes ( 724574 ) have Red and/or Green intensity below 1 
-## On average 0.003 % of the Type I probes ( 99964 ), measured in Green channel, have intensity below 1 
-## On average 0.003 % of the Type I probes ( 184560 ), measured in Red channel, have intensity below 1 
-## Set filtered probes in Red and/or Green channels to NA... 
-## ... done  100  out of  496  ... 
-## ... done  200  out of  496  ... 
-## ... done  300  out of  496  ... 
-## ... done  400  out of  496  ...</code></pre>
->>>>>>> a881b47ac32537db4f8636228d059d1464fdc2ea
 <p>There are differences between probe types that are used in <code>probeFiltering()</code>. Information on these can be extracted and stored using functions from <a href="https://bioconductor.org/packages/release/bioc/html/minfi.html"><strong>minfi</strong></a> (Feinberg, 2014).</p>
 <div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb7-1" data-line-number="1">locusNames &lt;-<span class="st"> </span><span class="kw">getManifestInfo</span>(RGset, <span class="st">&quot;locusNames&quot;</span>)</a>
 <a class="sourceLine" id="cb7-2" data-line-number="2">typeII &lt;-<span class="st"> </span><span class="kw">getProbeInfo</span>(RGset, <span class="dt">type=</span><span class="st">&quot;II&quot;</span>)</a>
@@ -526,22 +515,13 @@ div.tocify {
 <a class="sourceLine" id="cb7-4" data-line-number="4"></a>
 <a class="sourceLine" id="cb7-5" data-line-number="5">RGset</a></code></pre></div>
 <pre><code>## class: RGChannelSet 
-<<<<<<< HEAD
 ## dim: 1052641 598 
-=======
-## dim: 1052641 496 
->>>>>>> a881b47ac32537db4f8636228d059d1464fdc2ea
 ## metadata(0):
 ## assays(2): Green Red
 ## rownames(1052641): 1600101 1600111 ... 99810990 99810992
 ## rowData names(0):
-<<<<<<< HEAD
 ## colnames(598): GSM3228563_200550980002_R02C01
 ##   GSM3228564_200550980002_R03C01 ... GSM3229238_200598360007_R07C01
-=======
-## colnames(496): GSM3228585_200550980034_R01C01
-##   GSM3228586_200550980034_R02C01 ... GSM3229237_200598350015_R06C01
->>>>>>> a881b47ac32537db4f8636228d059d1464fdc2ea
 ##   GSM3229239_200598350080_R03C01
 ## colData names(25): sample_ID geo_accession ... Neu Mono
 ## Annotation
@@ -550,21 +530,12 @@ div.tocify {
 <p>Since functional noramlization doesn’t accept NA values, the normalized GenomicRatioSet and filtered RGChannelSet need to be merged. For this reason, we provide a <code>reduce</code> function in DNAmArray.</p>
 <div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb9-1" data-line-number="1">betas &lt;-<span class="st"> </span>DNAmArray<span class="op">::</span><span class="kw">reduce</span>(GRset, RGset, <span class="dt">what=</span><span class="st">&quot;beta&quot;</span>)</a></code></pre></div>
 <pre><code>## Calculate and filter on detection P-value... 
-<<<<<<< HEAD
 ## On average 0.17 % of the CpGs ( 866836 ) have detection P-value above the threshold  0.01 
 ## Transform to  beta -values... 
 ## On average 0.1 % of the probes ( 866836 ) were set to NA in the probe filtering step! 
 ## Calculate success rates and reduce... 
 ## Percentage of samples having success rate above 0.95 is 100 % 
 ## Percentage of CpGs having success rate above 0.95 is 99.51 %</code></pre>
-=======
-## On average 0.14 % of the CpGs ( 866836 ) have detection P-value above the threshold  0.01 
-## Transform to  beta -values... 
-## On average 0.09 % of the probes ( 866836 ) were set to NA in the probe filtering step! 
-## Calculate success rates and reduce... 
-## Percentage of samples having success rate above 0.95 is 100 % 
-## Percentage of CpGs having success rate above 0.95 is 99.72 %</code></pre>
->>>>>>> a881b47ac32537db4f8636228d059d1464fdc2ea
 <p>It can also be advisable to round the beta values to 4 significant figures, which both reduces the data size and provides a realistic measure of the available precision.</p>
 <div class="sourceCode" id="cb11"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb11-1" data-line-number="1">betas &lt;-<span class="st"> </span><span class="kw">round</span>(betas, <span class="dv">4</span>)</a></code></pre></div>
 <p>If required, these can be transformed to M-values using <a href="https://bioconductor.org/packages/release/bioc/html/minfi.html"><strong>minfi</strong></a>’s <code>getM()</code> which applies a logit2-transformation to the beta-values.</p>
@@ -582,11 +553,7 @@ div.tocify {
 <div class="sourceCode" id="cb12"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb12-1" data-line-number="1"><span class="kw">load</span>(<span class="st">&quot;./data/ENCODEBlacklist_CpGomit-EPIC.RData&quot;</span>)</a>
 <a class="sourceLine" id="cb12-2" data-line-number="2">betas &lt;-<span class="st"> </span>betas[<span class="op">!</span><span class="kw">rownames</span>(betas) <span class="op">%in%</span><span class="st"> </span>cpg_blacklist,]</a>
 <a class="sourceLine" id="cb12-3" data-line-number="3"><span class="kw">dim</span>(betas)</a></code></pre></div>
-<<<<<<< HEAD
 <pre><code>## [1] 853629    598</code></pre>
-=======
-<pre><code>## [1] 855423    496</code></pre>
->>>>>>> a881b47ac32537db4f8636228d059d1464fdc2ea
 <hr />
 </div>
 <div id="zhou-probes" class="section level1">
@@ -598,11 +565,7 @@ div.tocify {
 <pre><code>## [1] 99360</code></pre>
 <div class="sourceCode" id="cb16"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb16-1" data-line-number="1">betas &lt;-<span class="st"> </span>betas[<span class="op">!</span><span class="kw">rownames</span>(betas) <span class="op">%in%</span><span class="st"> </span>maskProbes,]</a>
 <a class="sourceLine" id="cb16-2" data-line-number="2"><span class="kw">dim</span>(betas)</a></code></pre></div>
-<<<<<<< HEAD
 <pre><code>## [1] 760171    598</code></pre>
-=======
-<pre><code>## [1] 761741    496</code></pre>
->>>>>>> a881b47ac32537db4f8636228d059d1464fdc2ea
 <hr />
 </div>
 <div id="sex-chromosomes" class="section level1">
@@ -612,11 +575,7 @@ div.tocify {
 <a class="sourceLine" id="cb18-2" data-line-number="2"><span class="st">              </span>dplyr<span class="op">::</span><span class="kw">filter</span>(chr <span class="op">%in%</span><span class="st"> </span><span class="kw">c</span>(<span class="st">&quot;X&quot;</span>, <span class="st">&quot;Y&quot;</span>)))<span class="op">$</span>cpg</a>
 <a class="sourceLine" id="cb18-3" data-line-number="3">betas &lt;-<span class="st"> </span>betas[<span class="op">!</span><span class="kw">rownames</span>(betas) <span class="op">%in%</span><span class="st"> </span>xy_cpgs,]</a>
 <a class="sourceLine" id="cb18-4" data-line-number="4"><span class="kw">dim</span>(betas)</a></code></pre></div>
-<<<<<<< HEAD
 <pre><code>## [1] 743324    598</code></pre>
-=======
-<pre><code>## [1] 744846    496</code></pre>
->>>>>>> a881b47ac32537db4f8636228d059d1464fdc2ea
 <hr />
 </div>
 <div id="outlier-removal" class="section level1">
@@ -630,11 +589,7 @@ div.tocify {
 <div class="sourceCode" id="cb20"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb20-1" data-line-number="1"><span class="kw">xtabs</span>(<span class="op">~</span><span class="kw">is.na</span>(betas))</a></code></pre></div>
 <pre><code>## is.na(betas)
 ##     FALSE      TRUE 
-<<<<<<< HEAD
 ## 444009175    498577</code></pre>
-=======
-## 369086545    357071</code></pre>
->>>>>>> a881b47ac32537db4f8636228d059d1464fdc2ea
 <div class="sourceCode" id="cb22"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb22-1" data-line-number="1">iqr_dnam &lt;-<span class="st"> </span><span class="kw">apply</span>(betas, <span class="dv">1</span>, <span class="cf">function</span>(x){</a>
 <a class="sourceLine" id="cb22-2" data-line-number="2">  iqr &lt;-<span class="st"> </span><span class="kw">IQR</span>(x, <span class="dt">na.rm =</span> <span class="ot">TRUE</span>)</a>
 <a class="sourceLine" id="cb22-3" data-line-number="3">  q1 &lt;-<span class="st"> </span><span class="kw">quantile</span>(x, <span class="dt">na.rm=</span><span class="ot">TRUE</span>)[[<span class="dv">2</span>]]</a>
@@ -645,15 +600,9 @@ div.tocify {
 <a class="sourceLine" id="cb22-8" data-line-number="8"><span class="kw">xtabs</span>(<span class="op">~</span><span class="kw">is.na</span>(iqr_dnam))</a></code></pre></div>
 <pre><code>## is.na(iqr_dnam)
 ##     FALSE      TRUE 
-<<<<<<< HEAD
 ## 440207884   4299868</code></pre>
 <div class="sourceCode" id="cb24"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb24-1" data-line-number="1"><span class="kw">dim</span>(iqr_dnam)</a></code></pre></div>
 <pre><code>## [1]    598 743324</code></pre>
-=======
-## 367258212   2185404</code></pre>
-<div class="sourceCode" id="cb24"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb24-1" data-line-number="1"><span class="kw">dim</span>(iqr_dnam)</a></code></pre></div>
-<pre><code>## [1]    496 744846</code></pre>
->>>>>>> a881b47ac32537db4f8636228d059d1464fdc2ea
 <div class="sourceCode" id="cb26"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb26-1" data-line-number="1">betas &lt;-<span class="st"> </span><span class="kw">t</span>(iqr_dnam)</a></code></pre></div>
 <hr />
 </div>
@@ -663,32 +612,18 @@ div.tocify {
 <div class="sourceCode" id="cb27"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb27-1" data-line-number="1">perc_na &lt;-<span class="st"> </span><span class="kw">rowSums</span>(<span class="kw">is.na</span>(iqr_dnam))<span class="op">*</span><span class="dv">100</span><span class="op">/</span><span class="kw">ncol</span>(iqr_dnam)</a>
 <a class="sourceLine" id="cb27-2" data-line-number="2"><span class="kw">summary</span>(perc_na)</a></code></pre></div>
 <pre><code>##    Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
-<<<<<<< HEAD
 ##  0.1453  0.1961  0.2444  0.9673  0.5073 12.2325</code></pre>
 <div class="sourceCode" id="cb29"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb29-1" data-line-number="1">betas &lt;-<span class="st"> </span>betas[,perc_na <span class="op">&lt;=</span><span class="st"> </span><span class="dv">95</span>]</a>
 <a class="sourceLine" id="cb29-2" data-line-number="2"><span class="kw">dim</span>(betas)</a></code></pre></div>
 <pre><code>## [1] 743324    598</code></pre>
-=======
-##  0.1694  0.2270  0.2727  0.5915  0.4517 17.5205</code></pre>
-<div class="sourceCode" id="cb29"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb29-1" data-line-number="1">betas &lt;-<span class="st"> </span>betas[,perc_na <span class="op">&lt;=</span><span class="st"> </span><span class="dv">95</span>]</a>
-<a class="sourceLine" id="cb29-2" data-line-number="2"><span class="kw">dim</span>(betas)</a></code></pre></div>
-<pre><code>## [1] 744846    496</code></pre>
->>>>>>> a881b47ac32537db4f8636228d059d1464fdc2ea
 <p>On the sample level, we keep only the samples where less than 5% of CpGs are missing.</p>
 <div class="sourceCode" id="cb31"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb31-1" data-line-number="1">perc_na &lt;-<span class="st"> </span><span class="kw">colSums</span>(<span class="kw">is.na</span>(iqr_dnam))<span class="op">*</span><span class="dv">100</span><span class="op">/</span><span class="kw">nrow</span>(iqr_dnam)</a>
 <a class="sourceLine" id="cb31-2" data-line-number="2"><span class="kw">summary</span>(perc_na)</a></code></pre></div>
 <pre><code>##    Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
-<<<<<<< HEAD
 ##  0.0000  0.1672  0.3344  0.9673  0.8361 25.7525</code></pre>
 <div class="sourceCode" id="cb33"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb33-1" data-line-number="1">betas &lt;-<span class="st"> </span>betas[perc_na <span class="op">&lt;=</span><span class="st"> </span><span class="dv">95</span>,]</a>
 <a class="sourceLine" id="cb33-2" data-line-number="2"><span class="kw">dim</span>(betas)</a></code></pre></div>
 <pre><code>## [1] 743324    598</code></pre>
-=======
-##  0.0000  0.2016  0.4032  0.5915  0.8065 28.6290</code></pre>
-<div class="sourceCode" id="cb33"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb33-1" data-line-number="1">betas &lt;-<span class="st"> </span>betas[perc_na <span class="op">&lt;=</span><span class="st"> </span><span class="dv">95</span>,]</a>
-<a class="sourceLine" id="cb33-2" data-line-number="2"><span class="kw">dim</span>(betas)</a></code></pre></div>
-<pre><code>## [1] 744846    496</code></pre>
->>>>>>> a881b47ac32537db4f8636228d059d1464fdc2ea
 <hr />
 </div>
 <div id="summarizedexperiment" class="section level1">
@@ -701,11 +636,7 @@ div.tocify {
 <a class="sourceLine" id="cb35-2" data-line-number="2"><span class="st">  </span>dplyr<span class="op">::</span><span class="kw">filter</span>(cpg <span class="op">%in%</span><span class="st"> </span><span class="kw">rownames</span>(betas))</a>
 <a class="sourceLine" id="cb35-3" data-line-number="3"></a>
 <a class="sourceLine" id="cb35-4" data-line-number="4"><span class="kw">dim</span>(anno)</a></code></pre></div>
-<<<<<<< HEAD
 <pre><code>## [1] 743324      8</code></pre>
-=======
-<pre><code>## [1] 744846      8</code></pre>
->>>>>>> a881b47ac32537db4f8636228d059d1464fdc2ea
 <p>Keep annotated probes</p>
 <div class="sourceCode" id="cb37"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb37-1" data-line-number="1">betas &lt;-<span class="st"> </span>betas[anno<span class="op">$</span>cpg, <span class="kw">colnames</span>(betas) <span class="op">%in%</span><span class="st"> </span><span class="kw">rownames</span>(targets)]</a></code></pre></div>
 <hr />
@@ -716,15 +647,9 @@ div.tocify {
 <div class="sourceCode" id="cb38"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb38-1" data-line-number="1">targets &lt;-<span class="st"> </span>targets[<span class="kw">rownames</span>(targets) <span class="op">%in%</span><span class="st"> </span><span class="kw">colnames</span>(betas), ]</a>
 <a class="sourceLine" id="cb38-2" data-line-number="2"></a>
 <a class="sourceLine" id="cb38-3" data-line-number="3"><span class="kw">dim</span>(targets)</a></code></pre></div>
-<<<<<<< HEAD
 <pre><code>## [1] 598  25</code></pre>
 <div class="sourceCode" id="cb40"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb40-1" data-line-number="1"><span class="kw">dim</span>(betas)</a></code></pre></div>
 <pre><code>## [1] 743324    598</code></pre>
-=======
-<pre><code>## [1] 496  25</code></pre>
-<div class="sourceCode" id="cb40"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb40-1" data-line-number="1"><span class="kw">dim</span>(betas)</a></code></pre></div>
-<pre><code>## [1] 744846    496</code></pre>
->>>>>>> a881b47ac32537db4f8636228d059d1464fdc2ea
 <hr />
 </div>
 <div id="methdata" class="section level2">
@@ -737,7 +662,6 @@ div.tocify {
 <a class="sourceLine" id="cb42-5" data-line-number="5"></a>
 <a class="sourceLine" id="cb42-6" data-line-number="6">methData</a></code></pre></div>
 <pre><code>## class: SummarizedExperiment 
-<<<<<<< HEAD
 ## dim: 743324 598 
 ## metadata(0):
 ## assays(1): beta
@@ -745,15 +669,6 @@ div.tocify {
 ## rowData names(8): cpg chr ... MASK_general probeType
 ## colnames(598): GSM3228563_200550980002_R02C01
 ##   GSM3228564_200550980002_R03C01 ... GSM3229238_200598360007_R07C01
-=======
-## dim: 744846 496 
-## metadata(0):
-## assays(1): beta
-## rownames(744846): cg09499020 cg16535257 ... cg08423507 cg24129471
-## rowData names(8): cpg chr ... MASK_general probeType
-## colnames(496): GSM3228585_200550980034_R01C01
-##   GSM3228586_200550980034_R02C01 ... GSM3229237_200598350015_R06C01
->>>>>>> a881b47ac32537db4f8636228d059d1464fdc2ea
 ##   GSM3229239_200598350080_R03C01
 ## colData names(25): sample_ID geo_accession ... Neu Mono</code></pre>
 You can read more about <a href="http://bioconductor.org/packages/SummarizedExperiment"><strong>SummarizedExperiment</strong></a> from the following resources:
@@ -776,22 +691,13 @@ You can read more about <a href="http://bioconductor.org/packages/SummarizedExpe
 <div class="sourceCode" id="cb44"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb44-1" data-line-number="1">RGset &lt;-<span class="st"> </span>RGset[, <span class="kw">colnames</span>(RGset) <span class="op">%in%</span><span class="st"> </span><span class="kw">colnames</span>(methData)]</a>
 <a class="sourceLine" id="cb44-2" data-line-number="2">RGset</a></code></pre></div>
 <pre><code>## class: RGChannelSet 
-<<<<<<< HEAD
 ## dim: 1052641 598 
-=======
-## dim: 1052641 496 
->>>>>>> a881b47ac32537db4f8636228d059d1464fdc2ea
 ## metadata(0):
 ## assays(2): Green Red
 ## rownames(1052641): 1600101 1600111 ... 99810990 99810992
 ## rowData names(0):
-<<<<<<< HEAD
 ## colnames(598): GSM3228563_200550980002_R02C01
 ##   GSM3228564_200550980002_R03C01 ... GSM3229238_200598360007_R07C01
-=======
-## colnames(496): GSM3228585_200550980034_R01C01
-##   GSM3228586_200550980034_R02C01 ... GSM3229237_200598350015_R06C01
->>>>>>> a881b47ac32537db4f8636228d059d1464fdc2ea
 ##   GSM3229239_200598350080_R03C01
 ## colData names(25): sample_ID geo_accession ... Neu Mono
 ## Annotation

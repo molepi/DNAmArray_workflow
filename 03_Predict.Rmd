@@ -63,7 +63,6 @@ Then a measure can be calculated, determining the sex of each sample and tabulat
 table(estimated_sex$predicted_sex, targets$sex)
 ```
 
-<<<<<<< HEAD
 As you can see, there is an outlier in the data, which we can remove.
 
 ```{r 306remove}
@@ -72,9 +71,6 @@ targets <- targets %>%
 ```
 
 This means that we can feel increased confidence that no incorrect labelling or mix-ups are remaining.
-=======
-As you can see, this is complete data, but the predicted and assumed sexes are identical. This means that we can feel increased confidence that no incorrect labelling or mix-ups are present.
->>>>>>> a881b47ac32537db4f8636228d059d1464fdc2ea
 
 ***
 

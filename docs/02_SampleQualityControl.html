@@ -708,28 +708,16 @@ EPIC v2
 <h1>Beta density plots</h1>
 <p>Using <code>densityPlot()</code> from <a href="https://bioconductor.org/packages/release/bioc/html/minfi.html"><strong>minfi</strong></a>, we can visualize the per sample average beta-value distribution. This gives us a global impression of the data and allows us to identify possible anomalous samples. We expect this distribution to be bimodal with the peaks representing methylated and unmethylated signals. Any centre peaks should be further investigated for problems, such as ambiguous mapping.</p>
 <p>Centre peaks can be identified using a <code>beta_outlier</code> object, which flags any samples with high beta values in the central part of the distribution. Alternatively, a named boolean vector of the samples can be used to flag a specific sample.</p>
-<<<<<<< HEAD
 <div class="sourceCode" id="cb28"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb28-1" data-line-number="1">beta_outlier &lt;-<span class="st"> </span><span class="kw">ifelse</span>(<span class="kw">colSums</span>(betas <span class="op">&gt;</span><span class="st"> </span><span class="fl">0.2</span> <span class="op">&amp;</span><span class="st"> </span>betas <span class="op">&lt;</span><span class="st"> </span><span class="fl">0.5</span>) <span class="op">&gt;</span><span class="st"> </span><span class="dv">130000</span>, T, F)</a>
-=======
-<div class="sourceCode" id="cb28"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb28-1" data-line-number="1">beta_outlier &lt;-<span class="st"> </span><span class="kw">ifelse</span>(<span class="kw">colSums</span>(betas <span class="op">&gt;</span><span class="st"> </span><span class="fl">0.2</span> <span class="op">&amp;</span><span class="st"> </span>betas <span class="op">&lt;</span><span class="st"> </span><span class="fl">0.5</span>) <span class="op">&gt;</span><span class="st"> </span><span class="dv">100000</span>, T, F)</a>
->>>>>>> a881b47ac32537db4f8636228d059d1464fdc2ea
 <a class="sourceLine" id="cb28-2" data-line-number="2">RGset<span class="op">$</span>beta_outlier &lt;-<span class="st"> </span>beta_outlier</a>
 <a class="sourceLine" id="cb28-3" data-line-number="3"></a>
 <a class="sourceLine" id="cb28-4" data-line-number="4">beta_outlier[<span class="dv">1</span><span class="op">:</span><span class="dv">5</span>]</a></code></pre></div>
 <pre><code>## GSM3228562_200550980002_R01C01 GSM3228563_200550980002_R02C01 
-<<<<<<< HEAD
 ##                          FALSE                          FALSE 
 ## GSM3228564_200550980002_R03C01 GSM3228565_200550980002_R04C01 
 ##                          FALSE                          FALSE 
 ## GSM3228566_200550980002_R05C01 
 ##                          FALSE</code></pre>
-=======
-##                           TRUE                           TRUE 
-## GSM3228564_200550980002_R03C01 GSM3228565_200550980002_R04C01 
-##                           TRUE                           TRUE 
-## GSM3228566_200550980002_R05C01 
-##                           TRUE</code></pre>
->>>>>>> a881b47ac32537db4f8636228d059d1464fdc2ea
 <p>These are then coloured in the beta values plot.</p>
 <div class="sourceCode" id="cb30"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb30-1" data-line-number="1"><span class="kw">densityPlot</span>(RGset, </a>
 <a class="sourceLine" id="cb30-2" data-line-number="2">            <span class="dt">main=</span><span class="st">&quot;Beta density plot&quot;</span>, </a>
@@ -739,7 +727,6 @@ EPIC v2
 <p>Any flagged samples can then be removed using the sample name.</p>
 <div class="sourceCode" id="cb31"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb31-1" data-line-number="1">flagged_samples &lt;-<span class="st"> </span><span class="kw">names</span>(beta_outlier[beta_outlier <span class="op">==</span><span class="st"> </span>T])</a>
 <a class="sourceLine" id="cb31-2" data-line-number="2">flagged_samples</a></code></pre></div>
-<<<<<<< HEAD
 <pre><code>##  [1] &quot;GSM3228573_200550980010_R05C01&quot; &quot;GSM3228575_200550980010_R07C01&quot;
 ##  [3] &quot;GSM3228576_200550980010_R08C01&quot; &quot;GSM3228577_200550980025_R01C01&quot;
 ##  [5] &quot;GSM3228578_200550980025_R02C01&quot; &quot;GSM3228579_200550980025_R03C01&quot;
@@ -763,84 +750,6 @@ EPIC v2
 ## [41] &quot;GSM3229026_200598350045_R08C01&quot; &quot;GSM3229043_200598350054_R01C01&quot;
 ## [43] &quot;GSM3229044_200598350054_R02C01&quot; &quot;GSM3229045_200598350054_R03C01&quot;
 ## [45] &quot;GSM3229046_200598350054_R04C01&quot; &quot;GSM3229048_200598350054_R06C01&quot;</code></pre>
-=======
-<pre><code>##   [1] &quot;GSM3228562_200550980002_R01C01&quot; &quot;GSM3228563_200550980002_R02C01&quot;
-##   [3] &quot;GSM3228564_200550980002_R03C01&quot; &quot;GSM3228565_200550980002_R04C01&quot;
-##   [5] &quot;GSM3228566_200550980002_R05C01&quot; &quot;GSM3228567_200550980002_R06C01&quot;
-##   [7] &quot;GSM3228568_200550980002_R07C01&quot; &quot;GSM3228569_200550980002_R08C01&quot;
-##   [9] &quot;GSM3228570_200550980010_R01C01&quot; &quot;GSM3228571_200550980010_R03C01&quot;
-##  [11] &quot;GSM3228572_200550980010_R04C01&quot; &quot;GSM3228573_200550980010_R05C01&quot;
-##  [13] &quot;GSM3228574_200550980010_R06C01&quot; &quot;GSM3228575_200550980010_R07C01&quot;
-##  [15] &quot;GSM3228576_200550980010_R08C01&quot; &quot;GSM3228577_200550980025_R01C01&quot;
-##  [17] &quot;GSM3228578_200550980025_R02C01&quot; &quot;GSM3228579_200550980025_R03C01&quot;
-##  [19] &quot;GSM3228580_200550980025_R04C01&quot; &quot;GSM3228581_200550980025_R05C01&quot;
-##  [21] &quot;GSM3228582_200550980025_R06C01&quot; &quot;GSM3228583_200550980025_R07C01&quot;
-##  [23] &quot;GSM3228584_200550980025_R08C01&quot; &quot;GSM3228592_200550980035_R01C01&quot;
-##  [25] &quot;GSM3228593_200550980035_R02C01&quot; &quot;GSM3228594_200550980035_R03C01&quot;
-##  [27] &quot;GSM3228595_200550980035_R04C01&quot; &quot;GSM3228596_200550980035_R05C01&quot;
-##  [29] &quot;GSM3228597_200550980035_R06C01&quot; &quot;GSM3228598_200550980035_R07C01&quot;
-##  [31] &quot;GSM3228599_200550980035_R08C01&quot; &quot;GSM3228618_200590490021_R05C01&quot;
-##  [33] &quot;GSM3228623_200590490052_R02C01&quot; &quot;GSM3228633_200590490056_R04C01&quot;
-##  [35] &quot;GSM3228634_200590490056_R05C01&quot; &quot;GSM3228638_200590490062_R02C01&quot;
-##  [37] &quot;GSM3228640_200590490062_R04C01&quot; &quot;GSM3228645_200590490074_R01C01&quot;
-##  [39] &quot;GSM3228675_200594720075_R07C01&quot; &quot;GSM3228678_200594720089_R02C01&quot;
-##  [41] &quot;GSM3228681_200594720089_R05C01&quot; &quot;GSM3228685_200594740031_R01C01&quot;
-##  [43] &quot;GSM3228692_200594740033_R01C01&quot; &quot;GSM3228700_200594740034_R01C01&quot;
-##  [45] &quot;GSM3228701_200594740034_R02C01&quot; &quot;GSM3228702_200594740034_R03C01&quot;
-##  [47] &quot;GSM3228703_200594740034_R04C01&quot; &quot;GSM3228704_200594740034_R05C01&quot;
-##  [49] &quot;GSM3228705_200594740034_R06C01&quot; &quot;GSM3228706_200594740034_R07C01&quot;
-##  [51] &quot;GSM3228707_200594740034_R08C01&quot; &quot;GSM3228711_200594740035_R04C01&quot;
-##  [53] &quot;GSM3228716_200594740039_R01C01&quot; &quot;GSM3228717_200594740039_R02C01&quot;
-##  [55] &quot;GSM3228718_200594740039_R03C01&quot; &quot;GSM3228719_200594740039_R04C01&quot;
-##  [57] &quot;GSM3228720_200594740039_R05C01&quot; &quot;GSM3228721_200594740039_R06C01&quot;
-##  [59] &quot;GSM3228722_200594740039_R07C01&quot; &quot;GSM3228723_200594740039_R08C01&quot;
-##  [61] &quot;GSM3228736_200594740047_R05C01&quot; &quot;GSM3228748_200594740052_R01C01&quot;
-##  [63] &quot;GSM3228766_200594740069_R03C01&quot; &quot;GSM3228774_200594740070_R03C01&quot;
-##  [65] &quot;GSM3228787_200594740073_R01C01&quot; &quot;GSM3228795_200594740075_R02C01&quot;
-##  [67] &quot;GSM3228796_200594740075_R03C01&quot; &quot;GSM3228825_200594740084_R01C01&quot;
-##  [69] &quot;GSM3228835_200594740085_R03C01&quot; &quot;GSM3228841_200594740086_R01C01&quot;
-##  [71] &quot;GSM3228848_200594740087_R01C01&quot; &quot;GSM3228849_200594740087_R02C01&quot;
-##  [73] &quot;GSM3228850_200594740087_R03C01&quot; &quot;GSM3228851_200594740087_R04C01&quot;
-##  [75] &quot;GSM3228852_200594740087_R05C01&quot; &quot;GSM3228853_200594740087_R06C01&quot;
-##  [77] &quot;GSM3228854_200594740087_R07C01&quot; &quot;GSM3228855_200594740087_R08C01&quot;
-##  [79] &quot;GSM3228856_200594740089_R01C01&quot; &quot;GSM3228880_200598340037_R01C01&quot;
-##  [81] &quot;GSM3228888_200598340040_R02C01&quot; &quot;GSM3228889_200598340040_R03C01&quot;
-##  [83] &quot;GSM3228890_200598340040_R04C01&quot; &quot;GSM3228895_200598350004_R01C01&quot;
-##  [85] &quot;GSM3228896_200598350004_R02C01&quot; &quot;GSM3228897_200598350004_R03C01&quot;
-##  [87] &quot;GSM3228898_200598350004_R04C01&quot; &quot;GSM3228899_200598350004_R05C01&quot;
-##  [89] &quot;GSM3228900_200598350004_R06C01&quot; &quot;GSM3228901_200598350004_R07C01&quot;
-##  [91] &quot;GSM3228902_200598350004_R08C01&quot; &quot;GSM3228908_200598350006_R02C01&quot;
-##  [93] &quot;GSM3228909_200598350006_R03C01&quot; &quot;GSM3228910_200598350006_R04C01&quot;
-##  [95] &quot;GSM3228911_200598350006_R05C01&quot; &quot;GSM3228923_200598350012_R01C01&quot;
-##  [97] &quot;GSM3228924_200598350012_R02C01&quot; &quot;GSM3228925_200598350012_R03C01&quot;
-##  [99] &quot;GSM3228929_200598350012_R07C01&quot; &quot;GSM3228955_200598350022_R04C01&quot;
-## [101] &quot;GSM3228961_200598350025_R02C01&quot; &quot;GSM3228970_200598360006_R02C01&quot;
-## [103] &quot;GSM3228978_200598350029_R03C01&quot; &quot;GSM3228988_200598350041_R01C01&quot;
-## [105] &quot;GSM3228990_200598350041_R03C01&quot; &quot;GSM3228997_200598350042_R02C01&quot;
-## [107] &quot;GSM3229004_200598350043_R01C01&quot; &quot;GSM3229005_200598350043_R02C01&quot;
-## [109] &quot;GSM3229006_200598350043_R03C01&quot; &quot;GSM3229007_200598350043_R04C01&quot;
-## [111] &quot;GSM3229008_200598350043_R05C01&quot; &quot;GSM3229009_200598350043_R06C01&quot;
-## [113] &quot;GSM3229012_200598350044_R01C01&quot; &quot;GSM3229013_200598350044_R02C01&quot;
-## [115] &quot;GSM3229014_200598350044_R03C01&quot; &quot;GSM3229015_200598350044_R04C01&quot;
-## [117] &quot;GSM3229016_200598350044_R06C01&quot; &quot;GSM3229017_200598350044_R07C01&quot;
-## [119] &quot;GSM3229019_200598350045_R01C01&quot; &quot;GSM3229020_200598350045_R02C01&quot;
-## [121] &quot;GSM3229021_200598350045_R03C01&quot; &quot;GSM3229022_200598350045_R04C01&quot;
-## [123] &quot;GSM3229023_200598350045_R05C01&quot; &quot;GSM3229024_200598350045_R06C01&quot;
-## [125] &quot;GSM3229025_200598350045_R07C01&quot; &quot;GSM3229026_200598350045_R08C01&quot;
-## [127] &quot;GSM3229036_200598350053_R02C01&quot; &quot;GSM3229043_200598350054_R01C01&quot;
-## [129] &quot;GSM3229044_200598350054_R02C01&quot; &quot;GSM3229045_200598350054_R03C01&quot;
-## [131] &quot;GSM3229046_200598350054_R04C01&quot; &quot;GSM3229047_200598350054_R05C01&quot;
-## [133] &quot;GSM3229048_200598350054_R06C01&quot; &quot;GSM3229049_200598350054_R07C01&quot;
-## [135] &quot;GSM3229050_200598350054_R08C01&quot; &quot;GSM3229061_200598350065_R03C01&quot;
-## [137] &quot;GSM3229069_200598350066_R03C01&quot; &quot;GSM3229098_200598350076_R01C01&quot;
-## [139] &quot;GSM3229110_200598350078_R01C01&quot; &quot;GSM3229111_200598350078_R02C01&quot;
-## [141] &quot;GSM3229112_200598350078_R03C01&quot; &quot;GSM3229153_200598360004_R02C01&quot;
-## [143] &quot;GSM3229154_200598360004_R03C01&quot; &quot;GSM3229155_200598360004_R04C01&quot;
-## [145] &quot;GSM3229167_200598360006_R01C01&quot; &quot;GSM3229169_200598360006_R03C01&quot;
-## [147] &quot;GSM3229173_200598360006_R07C01&quot; &quot;GSM3229192_200598360014_R04C01&quot;
-## [149] &quot;GSM3229220_200598360027_R08C01&quot; &quot;GSM3229229_200598350076_R02C01&quot;
-## [151] &quot;GSM3229238_200598360007_R07C01&quot;</code></pre>
->>>>>>> a881b47ac32537db4f8636228d059d1464fdc2ea
 <div class="sourceCode" id="cb33"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb33-1" data-line-number="1">targets &lt;-<span class="st"> </span>targets[<span class="op">!</span><span class="kw">rownames</span>(targets) <span class="op">%in%</span><span class="st"> </span>flagged_samples, ]</a>
 <a class="sourceLine" id="cb33-2" data-line-number="2"></a>
 <a class="sourceLine" id="cb33-3" data-line-number="3">RGset &lt;-<span class="st"> </span>RGset[,<span class="kw">colnames</span>(RGset) <span class="op">%in%</span><span class="st"> </span><span class="kw">rownames</span>(targets)]</a>
@@ -856,7 +765,6 @@ EPIC v2
 <a class="sourceLine" id="cb34-2" data-line-number="2">pca &lt;-<span class="st"> </span><span class="kw">prcomp</span>(tbetas, <span class="dt">center =</span> <span class="ot">TRUE</span>, <span class="dt">rank. =</span> <span class="dv">10</span>)</a>
 <a class="sourceLine" id="cb34-3" data-line-number="3"></a>
 <a class="sourceLine" id="cb34-4" data-line-number="4"><span class="kw">summary</span>(pca)</a></code></pre></div>
-<<<<<<< HEAD
 <pre><code>## Importance of first k=10 (out of 630) components:
 ##                            PC1     PC2      PC3    PC4     PC5     PC6     PC7
 ## Standard deviation     19.7853 13.4761 10.69483 9.9806 7.45295 4.37841 3.54276
@@ -866,17 +774,6 @@ EPIC v2
 ## Standard deviation     3.33319 3.1627 2.91509
 ## Proportion of Variance 0.00645 0.0058 0.00493
 ## Cumulative Proportion  0.51378 0.5196 0.52451</code></pre>
-=======
-<pre><code>## Importance of first k=10 (out of 526) components:
-##                            PC1     PC2     PC3     PC4     PC5     PC6     PC7
-## Standard deviation     15.0245 12.8122 9.86803 7.62670 4.27133 3.81015 3.57736
-## Proportion of Variance  0.1579  0.1148 0.06811 0.04068 0.01276 0.01015 0.00895
-## Cumulative Proportion   0.1579  0.2727 0.34081 0.38149 0.39425 0.40440 0.41336
-##                            PC8     PC9    PC10
-## Standard deviation     3.37456 3.23810 2.92641
-## Proportion of Variance 0.00796 0.00733 0.00599
-## Cumulative Proportion  0.42132 0.42865 0.43464</code></pre>
->>>>>>> a881b47ac32537db4f8636228d059d1464fdc2ea
 <hr />
 </div>
 <div id="screeplot" class="section level2">
@@ -888,7 +785,6 @@ EPIC v2
 <a class="sourceLine" id="cb36-4" data-line-number="4"></a>
 <a class="sourceLine" id="cb36-5" data-line-number="5">var_explained</a></code></pre></div>
 <pre><code>##    PC var_explained
-<<<<<<< HEAD
 ## 1   1   0.227144189
 ## 2   2   0.105376842
 ## 3   3   0.066369138
@@ -899,18 +795,6 @@ EPIC v2
 ## 8   8   0.006446705
 ## 9   9   0.005804229
 ## 10 10   0.004930854</code></pre>
-=======
-## 1   1   0.157885762
-## 2   2   0.114812612
-## 3   3   0.068108734
-## 4   4   0.040683261
-## 5   5   0.012760511
-## 6   6   0.010153764
-## 7   7   0.008950903
-## 8   8   0.007964833
-## 9   9   0.007333710
-## 10 10   0.005989818</code></pre>
->>>>>>> a881b47ac32537db4f8636228d059d1464fdc2ea
 <p>This can be plotted in a screeplot to visualize the structure of the DNAm data.</p>
 <div class="sourceCode" id="cb38"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb38-1" data-line-number="1">var_explained <span class="op">%&gt;%</span><span class="st"> </span></a>
 <a class="sourceLine" id="cb38-2" data-line-number="2"><span class="st">  </span><span class="kw">ggplot</span>(<span class="kw">aes</span>(<span class="dt">x=</span>PC, <span class="dt">y=</span>var_explained)) <span class="op">+</span></a>
@@ -975,19 +859,12 @@ EPIC v2
 <div class="sourceCode" id="cb45"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb45-1" data-line-number="1">pc_df <span class="op">%&gt;%</span><span class="st"> </span></a>
 <a class="sourceLine" id="cb45-2" data-line-number="2"><span class="st">    </span><span class="kw">ggplot</span>(<span class="kw">aes</span>(<span class="dt">x =</span> PC1, <span class="dt">y =</span> PC2, <span class="dt">color =</span> sex)) <span class="op">+</span></a>
 <a class="sourceLine" id="cb45-3" data-line-number="3"><span class="st">    </span><span class="kw">geom_point</span>(<span class="dt">size =</span> <span class="fl">1.5</span>) <span class="op">+</span></a>
-<<<<<<< HEAD
 <a class="sourceLine" id="cb45-4" data-line-number="4"><span class="st">    </span><span class="kw">geom_text_repel</span>(<span class="kw">aes</span>(<span class="dt">label =</span> <span class="kw">ifelse</span>((pc_df<span class="op">$</span>PC2 <span class="op">&gt;</span><span class="st"> </span><span class="dv">10</span> <span class="op">&amp;</span><span class="st"> </span>pc_df<span class="op">$</span>PC1 <span class="op">&lt;</span><span class="st"> </span><span class="dv">0</span> <span class="op">&amp;</span><span class="st"> </span>pc_df<span class="op">$</span>sex <span class="op">==</span><span class="st"> &quot;Female&quot;</span>) <span class="op">|</span></a>
 <a class="sourceLine" id="cb45-5" data-line-number="5"><span class="st">                                  </span>(pc_df<span class="op">$</span>PC2 <span class="op">&lt;</span><span class="st"> </span><span class="dv">-12</span> <span class="op">&amp;</span><span class="st"> </span>pc_df<span class="op">$</span>sex <span class="op">==</span><span class="st"> &quot;Male&quot;</span>), Basename, <span class="st">&quot;&quot;</span>), <span class="dt">color =</span> sex)) <span class="op">%&gt;%</span><span class="st"> </span></a>
 <a class="sourceLine" id="cb45-6" data-line-number="6"><span class="st">    </span><span class="kw">labs</span>(<span class="dt">x =</span> <span class="kw">paste0</span>(<span class="st">&quot;PC1 (&quot;</span>, <span class="kw">round</span>(<span class="dv">100</span><span class="op">*</span>var_explained[<span class="dv">1</span>,<span class="dv">2</span>], <span class="dv">2</span>), <span class="st">&quot;%)&quot;</span>), </a>
 <a class="sourceLine" id="cb45-7" data-line-number="7">         <span class="dt">y =</span> <span class="kw">paste0</span>(<span class="st">&quot;PC2 (&quot;</span>, <span class="kw">round</span>(<span class="dv">100</span><span class="op">*</span>var_explained[<span class="dv">2</span>,<span class="dv">2</span>], <span class="dv">2</span>), <span class="st">&quot;%)&quot;</span>), </a>
 <a class="sourceLine" id="cb45-8" data-line-number="8">         <span class="dt">color =</span> <span class="st">&quot;Sex&quot;</span>) <span class="op">+</span></a>
 <a class="sourceLine" id="cb45-9" data-line-number="9"><span class="st">    </span><span class="kw">theme_bw</span>()</a></code></pre></div>
-=======
-<a class="sourceLine" id="cb45-4" data-line-number="4"><span class="st">    </span><span class="kw">labs</span>(<span class="dt">x =</span> <span class="kw">paste0</span>(<span class="st">&quot;PC1 (&quot;</span>, <span class="kw">round</span>(<span class="dv">100</span><span class="op">*</span>var_explained[<span class="dv">1</span>,<span class="dv">2</span>], <span class="dv">2</span>), <span class="st">&quot;%)&quot;</span>), </a>
-<a class="sourceLine" id="cb45-5" data-line-number="5">         <span class="dt">y =</span> <span class="kw">paste0</span>(<span class="st">&quot;PC2 (&quot;</span>, <span class="kw">round</span>(<span class="dv">100</span><span class="op">*</span>var_explained[<span class="dv">2</span>,<span class="dv">2</span>], <span class="dv">2</span>), <span class="st">&quot;%)&quot;</span>), </a>
-<a class="sourceLine" id="cb45-6" data-line-number="6">         <span class="dt">color =</span> <span class="st">&quot;Sex&quot;</span>) <span class="op">+</span></a>
-<a class="sourceLine" id="cb45-7" data-line-number="7"><span class="st">    </span><span class="kw">theme_bw</span>()</a></code></pre></div>
->>>>>>> a881b47ac32537db4f8636228d059d1464fdc2ea
 <p><img src="02_SampleQualityControl_files/figure-html/229pcplot2-1.png" width="672" /></p>
 <hr />
 </div>
@@ -1037,19 +914,11 @@ EPIC v2
 <p>Betas can then be subset to include only these CpG probes of interest.</p>
 <div class="sourceCode" id="cb50"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb50-1" data-line-number="1">betas_snps &lt;-<span class="st"> </span>betas[snp_cpgs, ]</a>
 <a class="sourceLine" id="cb50-2" data-line-number="2"><span class="kw">dim</span>(betas_snps)</a></code></pre></div>
-<<<<<<< HEAD
 <pre><code>## [1] 28152   630</code></pre>
 <div class="sourceCode" id="cb52"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb52-1" data-line-number="1"><span class="kw">table</span>(<span class="kw">rownames</span>(targets) <span class="op">==</span><span class="st"> </span><span class="kw">colnames</span>(betas_snps))</a></code></pre></div>
 <pre><code>## 
 ## TRUE 
 ##  630</code></pre>
-=======
-<pre><code>## [1] 28152   526</code></pre>
-<div class="sourceCode" id="cb52"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb52-1" data-line-number="1"><span class="kw">table</span>(<span class="kw">rownames</span>(targets) <span class="op">==</span><span class="st"> </span><span class="kw">colnames</span>(betas_snps))</a></code></pre></div>
-<pre><code>## 
-## TRUE 
-##  526</code></pre>
->>>>>>> a881b47ac32537db4f8636228d059d1464fdc2ea
 <hr />
 <div id="assumed-relations" class="section level3">
 <h3>Assumed relations</h3>
@@ -1059,21 +928,12 @@ EPIC v2
 <a class="sourceLine" id="cb54-3" data-line-number="3">  <span class="dt">idy =</span> <span class="kw">colnames</span>(betas_snps))</a>
 <a class="sourceLine" id="cb54-4" data-line-number="4"><span class="kw">head</span>(relations)</a></code></pre></div>
 <pre><code>##                              idx                            idy
-<<<<<<< HEAD
 ## 1 GSM3228563_200550980002_R02C01 GSM3228563_200550980002_R02C01
 ## 2 GSM3228564_200550980002_R03C01 GSM3228563_200550980002_R02C01
 ## 3 GSM3228565_200550980002_R04C01 GSM3228563_200550980002_R02C01
 ## 4 GSM3228566_200550980002_R05C01 GSM3228563_200550980002_R02C01
 ## 5 GSM3228567_200550980002_R06C01 GSM3228563_200550980002_R02C01
 ## 6 GSM3228568_200550980002_R07C01 GSM3228563_200550980002_R02C01</code></pre>
-=======
-## 1 GSM3228585_200550980034_R01C01 GSM3228585_200550980034_R01C01
-## 2 GSM3228586_200550980034_R02C01 GSM3228585_200550980034_R01C01
-## 3 GSM3228587_200550980034_R03C01 GSM3228585_200550980034_R01C01
-## 4 GSM3228588_200550980034_R04C01 GSM3228585_200550980034_R01C01
-## 5 GSM3228589_200550980034_R05C01 GSM3228585_200550980034_R01C01
-## 6 GSM3228590_200550980034_R06C01 GSM3228585_200550980034_R01C01</code></pre>
->>>>>>> a881b47ac32537db4f8636228d059d1464fdc2ea
 <p>Sample names are saved, as a reference for which pairs exist.</p>
 <div class="sourceCode" id="cb56"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb56-1" data-line-number="1">relations<span class="op">$</span>sample_name_x &lt;-<span class="st"> </span>targets[relations<span class="op">$</span>idx, <span class="st">&quot;sample_ID&quot;</span>] </a>
 <a class="sourceLine" id="cb56-2" data-line-number="2">relations<span class="op">$</span>sample_name_y &lt;-<span class="st"> </span>targets[relations<span class="op">$</span>idy, <span class="st">&quot;sample_ID&quot;</span>]</a></code></pre></div>
@@ -1084,11 +944,7 @@ EPIC v2
 <a class="sourceLine" id="cb57-4" data-line-number="4"><span class="kw">table</span>(relations<span class="op">$</span>relation_type)</a></code></pre></div>
 <pre><code>## 
 ## identical unrelated 
-<<<<<<< HEAD
 ##       630    396270</code></pre>
-=======
-##       526    276150</code></pre>
->>>>>>> a881b47ac32537db4f8636228d059d1464fdc2ea
 <hr />
 </div>
 <div id="genotyping" class="section level3">
@@ -1109,7 +965,6 @@ EPIC v2
 <a class="sourceLine" id="cb59-5" data-line-number="5">                          <span class="dt">centers =</span> <span class="kw">c</span>(<span class="fl">0.2</span>, <span class="fl">0.5</span>, <span class="fl">0.8</span>),</a>
 <a class="sourceLine" id="cb59-6" data-line-number="6">                          <span class="dt">assayName=</span><span class="ot">NULL</span>)</a>
 <a class="sourceLine" id="cb59-7" data-line-number="7"><span class="kw">str</span>(genotype)</a></code></pre></div>
-<<<<<<< HEAD
 <pre><code>##  int [1:1146, 1:630] 1 2 1 1 1 2 3 1 3 2 ...
 ##  - attr(*, &quot;dimnames&quot;)=List of 2
 ##   ..$ : chr [1:1146] &quot;cg12213037&quot; &quot;cg19405842&quot; &quot;cg24925741&quot; &quot;cg01296877&quot; ...
@@ -1144,47 +999,11 @@ EPIC v2
 ## 4 GSM3228563_200550980002_R02C01 unrelated
 ## 5 GSM3228563_200550980002_R02C01 unrelated
 ## 6 GSM3228563_200550980002_R02C01 unrelated</code></pre>
-=======
-<pre><code>##  int [1:1136, 1:526] 1 2 1 2 3 2 3 1 3 2 ...
-##  - attr(*, &quot;dimnames&quot;)=List of 2
-##   ..$ : chr [1:1136] &quot;cg12213037&quot; &quot;cg19405842&quot; &quot;cg24925741&quot; &quot;cg01296877&quot; ...
-##   ..$ : chr [1:526] &quot;GSM3228585_200550980034_R01C01&quot; &quot;GSM3228586_200550980034_R02C01&quot; &quot;GSM3228587_200550980034_R03C01&quot; &quot;GSM3228588_200550980034_R04C01&quot; ...</code></pre>
-<p><code>alleleSharing</code> can then assess the relationships between different individuals, which can be unrelated, twins, or identical. This uses identity by state (IBS), a genetic similarity measure that compares at a single locus the genotypes between two individuals and counts the number of alleles shared (0, 1 or 2).Essentially, if a sample is the same then the mean IBS should be 2 (alleles) and the variance of this should be low (close to 0).</p>
-<div class="sourceCode" id="cb61"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb61-1" data-line-number="1">out &lt;-<span class="st"> </span><span class="kw">alleleSharing</span>(genotype, <span class="dt">relations =</span> relations)</a></code></pre></div>
-<pre><code>## Hash relations</code></pre>
-<pre><code>## Pruning 1136 SNPs ...</code></pre>
-<pre><code>## 0 SNPs removed because of low call rate!</code></pre>
-<pre><code>## 0 samples removed because too few SNPs called!</code></pre>
-<pre><code>## Using 1136 polymorphic SNPs to determine allele sharing.</code></pre>
-<pre><code>## Running `square` IBS algorithm!</code></pre>
-<pre><code>## 527 of 138601 (0.38%) ...</code></pre>
-<pre><code>## 47651 of 138601 (34.38%) ...</code></pre>
-<pre><code>## 85301 of 138601 (61.54%) ...</code></pre>
-<pre><code>## 112951 of 138601 (81.49%) ...</code></pre>
-<pre><code>## 130601 of 138601 (94.23%) ...</code></pre>
-<pre><code>## 138251 of 138601 (99.75%) ...</code></pre>
-<div class="sourceCode" id="cb74"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb74-1" data-line-number="1"><span class="kw">head</span>(out)</a></code></pre></div>
-<pre><code>##       mean       var                     colnames.x
-## 1 2.000000 0.0000000 GSM3228585_200550980034_R01C01
-## 2 1.318662 0.4446206 GSM3228586_200550980034_R02C01
-## 3 1.289613 0.4138480 GSM3228587_200550980034_R03C01
-## 4 1.320423 0.4170627 GSM3228588_200550980034_R04C01
-## 5 1.350352 0.4093038 GSM3228589_200550980034_R05C01
-## 6 1.322183 0.4194546 GSM3228590_200550980034_R06C01
-##                       colnames.y  relation
-## 1 GSM3228585_200550980034_R01C01 identical
-## 2 GSM3228585_200550980034_R01C01 unrelated
-## 3 GSM3228585_200550980034_R01C01 unrelated
-## 4 GSM3228585_200550980034_R01C01 unrelated
-## 5 GSM3228585_200550980034_R01C01 unrelated
-## 6 GSM3228585_200550980034_R01C01 unrelated</code></pre>
->>>>>>> a881b47ac32537db4f8636228d059d1464fdc2ea
 <hr />
 </div>
 <div id="identify-mismatches" class="section level3">
 <h3>Identify mismatches</h3>
 <p>The mean and variance of IBS can then be visualised using the <code>inferRelations()</code> function. Genetically similar sample comparisons will be plotted closer to the bottom, right of the graph, and those that are genetically dissimilar are in the top, left. A table of mismatches gives an overview of any identified.</p>
-<<<<<<< HEAD
 <div class="sourceCode" id="cb77"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb77-1" data-line-number="1">mismatches &lt;-<span class="st"> </span><span class="kw">inferRelations</span>(out, <span class="dt">verbose=</span><span class="ot">TRUE</span>)</a></code></pre></div>
 <pre><code>##                   Assumed relation
 ## Predicted relation identical unrelated
@@ -1199,28 +1018,11 @@ EPIC v2
 <p>There are 18 pairs of samples (n=36) that should be unrelated but are genetically identical on the basis of these beta-derived genotypes. To remove them from further analysis you can use the <code>mismatches</code> object:</p>
 <div class="sourceCode" id="cb81"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb81-1" data-line-number="1">removed_ids &lt;-<span class="st"> </span><span class="kw">unique</span>(<span class="kw">c</span>(mismatches<span class="op">$</span>colnames.x, mismatches<span class="op">$</span>colnames.y))</a>
 <a class="sourceLine" id="cb81-2" data-line-number="2">removed_ids</a></code></pre></div>
-=======
-<div class="sourceCode" id="cb76"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb76-1" data-line-number="1">mismatches &lt;-<span class="st"> </span><span class="kw">inferRelations</span>(out, <span class="dt">verbose=</span><span class="ot">TRUE</span>)</a></code></pre></div>
-<pre><code>##                   Assumed relation
-## Predicted relation identical unrelated
-##          identical       526        15
-##          unrelated         .    138060</code></pre>
-<p><img src="02_SampleQualityControl_files/figure-html/238plot-1.png" width="672" /></p>
-<div class="sourceCode" id="cb78"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb78-1" data-line-number="1"><span class="kw">table</span>(mismatches<span class="op">$</span>relation, mismatches<span class="op">$</span>predicted)</a></code></pre></div>
-<pre><code>##            
-##             identical unrelated
-##   identical         0         0
-##   unrelated        15         0</code></pre>
-<p>There are 18 pairs of samples (n=36) that should be unrelated but are genetically identical on the basis of these beta-derived genotypes. To remove them from further analysis you can use the <code>mismatches</code> object:</p>
-<div class="sourceCode" id="cb80"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb80-1" data-line-number="1">removed_ids &lt;-<span class="st"> </span><span class="kw">unique</span>(<span class="kw">c</span>(mismatches<span class="op">$</span>colnames.x, mismatches<span class="op">$</span>colnames.y))</a>
-<a class="sourceLine" id="cb80-2" data-line-number="2">removed_ids</a></code></pre></div>
->>>>>>> a881b47ac32537db4f8636228d059d1464fdc2ea
 <pre><code>##  [1] &quot;GSM3229240_200594740075_R08C01&quot; &quot;GSM3229222_200598350005_R03C01&quot;
 ##  [3] &quot;GSM3229223_200598350005_R06C01&quot; &quot;GSM3229224_200598350005_R08C01&quot;
 ##  [5] &quot;GSM3229104_200598350077_R03C01&quot; &quot;GSM3229119_200598350079_R02C01&quot;
 ##  [7] &quot;GSM3229225_200598350031_R02C01&quot; &quot;GSM3229226_200598350031_R04C01&quot;
 ##  [9] &quot;GSM3229227_200598350031_R05C01&quot; &quot;GSM3229228_200598350031_R07C01&quot;
-<<<<<<< HEAD
 ## [11] &quot;GSM3229229_200598350076_R02C01&quot; &quot;GSM3229230_200598350076_R03C01&quot;
 ## [13] &quot;GSM3229231_200598350076_R06C01&quot; &quot;GSM3229232_200598350080_R02C01&quot;
 ## [15] &quot;GSM3229233_200598350080_R05C01&quot; &quot;GSM3229234_200598350080_R07C01&quot;
@@ -1240,37 +1042,12 @@ EPIC v2
 <a class="sourceLine" id="cb83-6" data-line-number="6">RGset</a></code></pre></div>
 <pre><code>## class: RGChannelSetExtended 
 ## dim: 1052641 598 
-=======
-## [11] &quot;GSM3229230_200598350076_R03C01&quot; &quot;GSM3229231_200598350076_R06C01&quot;
-## [13] &quot;GSM3229232_200598350080_R02C01&quot; &quot;GSM3229233_200598350080_R05C01&quot;
-## [15] &quot;GSM3229234_200598350080_R07C01&quot; &quot;GSM3228624_200590490052_R03C01&quot;
-## [17] &quot;GSM3228904_200598350005_R04C01&quot; &quot;GSM3228905_200598350005_R05C01&quot;
-## [19] &quot;GSM3228906_200598350005_R07C01&quot; &quot;GSM3228922_200598350011_R08C01&quot;
-## [21] &quot;GSM3228948_200598350018_R05C01&quot; &quot;GSM3228984_200598350031_R01C01&quot;
-## [23] &quot;GSM3228985_200598350031_R03C01&quot; &quot;GSM3228986_200598350031_R06C01&quot;
-## [25] &quot;GSM3228987_200598350031_R08C01&quot; &quot;GSM3229099_200598350076_R04C01&quot;
-## [27] &quot;GSM3229100_200598350076_R05C01&quot; &quot;GSM3229126_200598350080_R01C01&quot;
-## [29] &quot;GSM3229128_200598350080_R06C01&quot; &quot;GSM3229129_200598350080_R08C01&quot;</code></pre>
-<div class="sourceCode" id="cb82"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb82-1" data-line-number="1">targets &lt;-<span class="st"> </span>targets[<span class="op">!</span><span class="kw">rownames</span>(targets) <span class="op">%in%</span><span class="st"> </span>removed_ids, ]</a>
-<a class="sourceLine" id="cb82-2" data-line-number="2"></a>
-<a class="sourceLine" id="cb82-3" data-line-number="3">RGset &lt;-<span class="st"> </span>RGset[,<span class="kw">colnames</span>(RGset) <span class="op">%in%</span><span class="st"> </span><span class="kw">rownames</span>(targets)]</a>
-<a class="sourceLine" id="cb82-4" data-line-number="4">betas &lt;-<span class="st"> </span>betas[,<span class="kw">colnames</span>(betas) <span class="op">%in%</span><span class="st"> </span><span class="kw">rownames</span>(targets)]</a>
-<a class="sourceLine" id="cb82-5" data-line-number="5"></a>
-<a class="sourceLine" id="cb82-6" data-line-number="6">RGset</a></code></pre></div>
-<pre><code>## class: RGChannelSetExtended 
-## dim: 1052641 496 
->>>>>>> a881b47ac32537db4f8636228d059d1464fdc2ea
 ## metadata(0):
 ## assays(5): Green Red GreenSD RedSD NBeads
 ## rownames(1052641): 1600101 1600111 ... 99810990 99810992
 ## rowData names(0):
-<<<<<<< HEAD
 ## colnames(598): GSM3228563_200550980002_R02C01
 ##   GSM3228564_200550980002_R03C01 ... GSM3229238_200598360007_R07C01
-=======
-## colnames(496): GSM3228585_200550980034_R01C01
-##   GSM3228586_200550980034_R02C01 ... GSM3229237_200598350015_R06C01
->>>>>>> a881b47ac32537db4f8636228d059d1464fdc2ea
 ##   GSM3229239_200598350080_R03C01
 ## colData names(15): sample_ID geo_accession ... filenames beta_outlier
 ## Annotation

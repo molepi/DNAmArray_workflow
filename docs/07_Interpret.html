@@ -469,7 +469,6 @@ div.tocify {
 <p>After adjusting for multiple CpGs, top hits can be extracted and inspected.</p>
 <div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb2-1" data-line-number="1">top_cpgs &lt;-<span class="st"> </span>limma_base <span class="op">%&gt;%</span><span class="st"> </span></a>
 <a class="sourceLine" id="cb2-2" data-line-number="2"><span class="st">  </span><span class="kw">filter</span>(padj <span class="op">&lt;=</span><span class="st"> </span><span class="fl">0.05</span>) <span class="op">%&gt;%</span><span class="st"> </span></a>
-<<<<<<< HEAD
 <a class="sourceLine" id="cb2-3" data-line-number="3"><span class="st">  </span><span class="kw">arrange</span>(padj)</a></code></pre></div>
 <div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb3-1" data-line-number="1"><span class="kw">print</span>(<span class="kw">paste0</span>(<span class="st">&quot;There are &quot;</span>, </a>
 <a class="sourceLine" id="cb3-2" data-line-number="2">             <span class="kw">nrow</span>(top_cpgs), <span class="st">&quot; significant CpGs&quot;</span>))</a></code></pre></div>
@@ -479,24 +478,11 @@ div.tocify {
 <a class="sourceLine" id="cb5-3" data-line-number="3">             <span class="kw">nrow</span>(top_cpgs <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">filter</span>(beta<span class="op">&gt;</span><span class="dv">0</span>)), </a>
 <a class="sourceLine" id="cb5-4" data-line-number="4">             <span class="st">&quot; are hypermethylated.&quot;</span>))</a></code></pre></div>
 <pre><code>## [1] &quot;1710 of these are hypomethylated, and 454 are hypermethylated.&quot;</code></pre>
-=======
-<a class="sourceLine" id="cb2-3" data-line-number="3"><span class="st">  </span><span class="kw">arrange</span>(padj)</a>
-<a class="sourceLine" id="cb2-4" data-line-number="4"></a>
-<a class="sourceLine" id="cb2-5" data-line-number="5"><span class="kw">print</span>(<span class="kw">paste0</span>(<span class="st">&quot;There are &quot;</span>, </a>
-<a class="sourceLine" id="cb2-6" data-line-number="6">             <span class="kw">nrow</span>(top_cpgs), <span class="st">&quot; significant CpGs&quot;</span>))</a></code></pre></div>
-<pre><code>## [1] &quot;There are 108274 significant CpGs&quot;</code></pre>
-<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb4-1" data-line-number="1"><span class="kw">print</span>(<span class="kw">paste0</span>(<span class="kw">nrow</span>(top_cpgs <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">filter</span>(beta<span class="op">&lt;</span><span class="dv">0</span>)), </a>
-<a class="sourceLine" id="cb4-2" data-line-number="2">             <span class="st">&quot; of these are hypomethylated, and &quot;</span>, </a>
-<a class="sourceLine" id="cb4-3" data-line-number="3">             <span class="kw">nrow</span>(top_cpgs <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">filter</span>(beta<span class="op">&gt;</span><span class="dv">0</span>)), </a>
-<a class="sourceLine" id="cb4-4" data-line-number="4">             <span class="st">&quot; are hypermethylated.&quot;</span>))</a></code></pre></div>
-<pre><code>## [1] &quot;34900 of these are hypomethylated, and 73374 are hypermethylated.&quot;</code></pre>
->>>>>>> a881b47ac32537db4f8636228d059d1464fdc2ea
 <hr />
 </div>
 <div id="volcano-plot" class="section level2">
 <h2>Volcano plot</h2>
 <p>Significant CpGs can be visualized using a volcano plot. First limits for the plot are extracted.</p>
-<<<<<<< HEAD
 <div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb7-1" data-line-number="1"><span class="cf">if</span>(<span class="kw">nrow</span>(top_cpgs) <span class="op">&gt;=</span><span class="st"> </span><span class="dv">1</span>){</a>
 <a class="sourceLine" id="cb7-2" data-line-number="2">   sig_limit &lt;-<span class="st"> </span><span class="kw">max</span>(top_cpgs<span class="op">$</span>p)</a>
 <a class="sourceLine" id="cb7-3" data-line-number="3">  } <span class="cf">else</span> {</a>
@@ -523,34 +509,6 @@ div.tocify {
 <a class="sourceLine" id="cb8-8" data-line-number="8"><span class="st">  </span><span class="kw">xlab</span>(<span class="st">&quot;Effect Size&quot;</span>) <span class="op">+</span></a>
 <a class="sourceLine" id="cb8-9" data-line-number="9"><span class="st">  </span><span class="kw">theme_bw</span>()</a>
 <a class="sourceLine" id="cb8-10" data-line-number="10"><span class="kw">print</span>(plot)</a></code></pre></div>
-=======
-<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb6-1" data-line-number="1"><span class="cf">if</span>(<span class="kw">nrow</span>(top_cpgs) <span class="op">&gt;=</span><span class="st"> </span><span class="dv">1</span>){</a>
-<a class="sourceLine" id="cb6-2" data-line-number="2">   sig_limit &lt;-<span class="st"> </span><span class="kw">max</span>(top_cpgs<span class="op">$</span>p)</a>
-<a class="sourceLine" id="cb6-3" data-line-number="3">  } <span class="cf">else</span> {</a>
-<a class="sourceLine" id="cb6-4" data-line-number="4">  sig_limit &lt;-<span class="st"> </span><span class="fl">10E-07</span></a>
-<a class="sourceLine" id="cb6-5" data-line-number="5">  }</a>
-<a class="sourceLine" id="cb6-6" data-line-number="6"></a>
-<a class="sourceLine" id="cb6-7" data-line-number="7">min &lt;-<span class="st"> </span><span class="kw">as.numeric</span>(<span class="kw">min</span>(</a>
-<a class="sourceLine" id="cb6-8" data-line-number="8">  <span class="kw">abs</span>(limma_base<span class="op">$</span>beta),</a>
-<a class="sourceLine" id="cb6-9" data-line-number="9">  <span class="dt">na.rm=</span><span class="ot">TRUE</span>))</a>
-<a class="sourceLine" id="cb6-10" data-line-number="10"></a>
-<a class="sourceLine" id="cb6-11" data-line-number="11">max &lt;-<span class="st"> </span><span class="kw">as.numeric</span>(<span class="kw">max</span>(</a>
-<a class="sourceLine" id="cb6-12" data-line-number="12">  <span class="kw">abs</span>(limma_base<span class="op">$</span>beta),</a>
-<a class="sourceLine" id="cb6-13" data-line-number="13">  <span class="dt">na.rm=</span><span class="ot">TRUE</span>)) </a>
-<a class="sourceLine" id="cb6-14" data-line-number="14"></a>
-<a class="sourceLine" id="cb6-15" data-line-number="15">p_max &lt;-<span class="st"> </span><span class="kw">as.numeric</span>(<span class="op">-</span><span class="kw">log10</span>(<span class="kw">min</span>(limma_base<span class="op">$</span>p, <span class="dt">na.rm=</span><span class="ot">TRUE</span>))) <span class="op">+</span><span class="st"> </span><span class="dv">2</span></a></code></pre></div>
-<p>Then the results can be visualized.</p>
-<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb7-1" data-line-number="1">plot &lt;-<span class="st"> </span>limma_base <span class="op">%&gt;%</span><span class="st"> </span></a>
-<a class="sourceLine" id="cb7-2" data-line-number="2"><span class="st">  </span><span class="kw">ggplot</span>(<span class="kw">aes</span>(<span class="dt">x =</span> beta, <span class="dt">y =</span> <span class="op">-</span><span class="kw">log10</span>(p))) <span class="op">+</span></a>
-<a class="sourceLine" id="cb7-3" data-line-number="3"><span class="st">  </span><span class="kw">geom_hline</span>(<span class="dt">yintercept =</span> <span class="op">-</span><span class="kw">log10</span>(sig_limit),</a>
-<a class="sourceLine" id="cb7-4" data-line-number="4">             <span class="dt">linetype =</span> <span class="st">&quot;dashed&quot;</span>) <span class="op">+</span></a>
-<a class="sourceLine" id="cb7-5" data-line-number="5"><span class="st">  </span><span class="kw">geom_point</span>(<span class="dt">color =</span> <span class="kw">ifelse</span>(limma_base<span class="op">$</span>p <span class="op">&gt;</span><span class="st"> </span>sig_limit, </a>
-<a class="sourceLine" id="cb7-6" data-line-number="6">                          <span class="st">&quot;#BBBBBB&quot;</span>,<span class="st">&quot;#4477AA&quot;</span>)) <span class="op">+</span></a>
-<a class="sourceLine" id="cb7-7" data-line-number="7"><span class="st">  </span><span class="kw">ylab</span>(<span class="kw">bquote</span>(<span class="op">-</span>log[<span class="dv">10</span>]<span class="op">~</span><span class="st">&quot;p&quot;</span>)) <span class="op">+</span></a>
-<a class="sourceLine" id="cb7-8" data-line-number="8"><span class="st">  </span><span class="kw">xlab</span>(<span class="st">&quot;Effect Size&quot;</span>) <span class="op">+</span></a>
-<a class="sourceLine" id="cb7-9" data-line-number="9"><span class="st">  </span><span class="kw">theme_bw</span>()</a>
-<a class="sourceLine" id="cb7-10" data-line-number="10"><span class="kw">print</span>(plot)</a></code></pre></div>
->>>>>>> a881b47ac32537db4f8636228d059d1464fdc2ea
 <p><img src="07_Interpret_files/figure-html/704plot-1.png" width="672" /></p>
 <hr />
 </div>
@@ -573,13 +531,8 @@ div.tocify {
 <h2>Annotations</h2>
 <p>The <a href="https://zwdzwd.github.io/InfiniumAnnotation">Zhou lab GitHub page</a><sup>15</sup> also provides Roadmap annotations for CpGs, on the basis of the original Roadmap reference epigenomes<sup>28</sup>. These annotations can be imported to annotate measured CpGs to chromatin states.</p>
 <p>First, we import the location annotations from before.</p>
-<<<<<<< HEAD
 <div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb9-1" data-line-number="1">manifest_hg19 &lt;-<span class="st"> </span><span class="kw">read_tsv</span>(</a>
 <a class="sourceLine" id="cb9-2" data-line-number="2">  <span class="st">&quot;./data/EPIC.hg19.manifest.tsv.gz&quot;</span>)</a></code></pre></div>
-=======
-<div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb8-1" data-line-number="1">manifest_hg19 &lt;-<span class="st"> </span><span class="kw">read_tsv</span>(</a>
-<a class="sourceLine" id="cb8-2" data-line-number="2">  <span class="st">&quot;./data/EPIC.hg19.manifest.tsv.gz&quot;</span>)</a></code></pre></div>
->>>>>>> a881b47ac32537db4f8636228d059d1464fdc2ea
 <pre><code>## Rows: 865918 Columns: 57
 ## ── Column specification ────────────────────────────────────────────────────────
 ## Delimiter: &quot;\t&quot;
@@ -589,7 +542,6 @@ div.tocify {
 ## 
 ## ℹ Use `spec()` to retrieve the full column specification for this data.
 ## ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.</code></pre>
-<<<<<<< HEAD
 <div class="sourceCode" id="cb11"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb11-1" data-line-number="1">anno &lt;-<span class="st"> </span>manifest_hg19 <span class="op">%&gt;%</span><span class="st"> </span></a>
 <a class="sourceLine" id="cb11-2" data-line-number="2"><span class="st">  </span>dplyr<span class="op">::</span><span class="kw">select</span>(</a>
 <a class="sourceLine" id="cb11-3" data-line-number="3">    <span class="dt">cpg =</span> probeID,</a>
@@ -607,25 +559,6 @@ div.tocify {
 <a class="sourceLine" id="cb11-15" data-line-number="15"><span class="st">  </span>dplyr<span class="op">::</span><span class="kw">filter</span>(cpg <span class="op">%in%</span><span class="st"> </span>limma_base<span class="op">$</span>cpg)</a></code></pre></div>
 <p>Next, we import the chromatin state annotations. In this instance we use the PBMC (E062) reference epigenome, but there are reference epigenomes for many distinct cell types and tissues available<sup>28</sup>. This is bound to the results data frame.</p>
 <div class="sourceCode" id="cb12"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb12-1" data-line-number="1">manifest_chrom &lt;-<span class="st"> </span><span class="kw">read_tsv</span>(<span class="st">&quot;./data/EPIC.hg19.REMC.chromHMM.tsv.gz&quot;</span>)</a></code></pre></div>
-=======
-<div class="sourceCode" id="cb10"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb10-1" data-line-number="1">anno &lt;-<span class="st"> </span>manifest_hg19 <span class="op">%&gt;%</span><span class="st"> </span></a>
-<a class="sourceLine" id="cb10-2" data-line-number="2"><span class="st">  </span>dplyr<span class="op">::</span><span class="kw">select</span>(</a>
-<a class="sourceLine" id="cb10-3" data-line-number="3">    <span class="dt">cpg =</span> probeID,</a>
-<a class="sourceLine" id="cb10-4" data-line-number="4">    <span class="dt">cpg_chr =</span> CpG_chrm,</a>
-<a class="sourceLine" id="cb10-5" data-line-number="5">    <span class="dt">cpg_start =</span> CpG_beg,</a>
-<a class="sourceLine" id="cb10-6" data-line-number="6">    <span class="dt">cpg_end =</span> CpG_end,</a>
-<a class="sourceLine" id="cb10-7" data-line-number="7">    <span class="dt">cpg_strand =</span> probe_strand,</a>
-<a class="sourceLine" id="cb10-8" data-line-number="8">    gene_HGNC</a>
-<a class="sourceLine" id="cb10-9" data-line-number="9">  ) <span class="op">%&gt;%</span><span class="st"> </span></a>
-<a class="sourceLine" id="cb10-10" data-line-number="10"><span class="st">  </span><span class="kw">mutate</span>(</a>
-<a class="sourceLine" id="cb10-11" data-line-number="11">    <span class="dt">cpg_chr =</span> <span class="kw">substr</span>(cpg_chr,<span class="dv">4</span>,<span class="dv">5</span>)</a>
-<a class="sourceLine" id="cb10-12" data-line-number="12">  )</a>
-<a class="sourceLine" id="cb10-13" data-line-number="13"></a>
-<a class="sourceLine" id="cb10-14" data-line-number="14">anno &lt;-<span class="st"> </span>anno <span class="op">%&gt;%</span><span class="st"> </span></a>
-<a class="sourceLine" id="cb10-15" data-line-number="15"><span class="st">  </span>dplyr<span class="op">::</span><span class="kw">filter</span>(cpg <span class="op">%in%</span><span class="st"> </span>limma_base<span class="op">$</span>cpg)</a></code></pre></div>
-<p>Next, we import the chromatin state annotations. In this instance we use the PBMC (E062) reference epigenome, but there are reference epigenomes for many distinct cell types and tissues available<sup>28</sup>. This is bound to the results data frame.</p>
-<div class="sourceCode" id="cb11"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb11-1" data-line-number="1">manifest_chrom &lt;-<span class="st"> </span><span class="kw">read_tsv</span>(<span class="st">&quot;./data/EPIC.hg19.REMC.chromHMM.tsv.gz&quot;</span>)</a></code></pre></div>
->>>>>>> a881b47ac32537db4f8636228d059d1464fdc2ea
 <pre><code>## Rows: 865918 Columns: 131
 ## ── Column specification ────────────────────────────────────────────────────────
 ## Delimiter: &quot;\t&quot;
@@ -634,27 +567,17 @@ div.tocify {
 ## 
 ## ℹ Use `spec()` to retrieve the full column specification for this data.
 ## ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.</code></pre>
-<<<<<<< HEAD
 <div class="sourceCode" id="cb14"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb14-1" data-line-number="1">manifest_chrom &lt;-<span class="st"> </span>manifest_chrom <span class="op">%&gt;%</span><span class="st"> </span></a>
 <a class="sourceLine" id="cb14-2" data-line-number="2"><span class="st">  </span>dplyr<span class="op">::</span><span class="kw">select</span>(<span class="dt">cpg =</span> probeID, E062)</a>
 <a class="sourceLine" id="cb14-3" data-line-number="3"></a>
 <a class="sourceLine" id="cb14-4" data-line-number="4">anno &lt;-<span class="st"> </span><span class="kw">left_join</span>(anno, manifest_chrom, <span class="dt">by=</span><span class="st">&quot;cpg&quot;</span>)</a>
 <a class="sourceLine" id="cb14-5" data-line-number="5"></a>
 <a class="sourceLine" id="cb14-6" data-line-number="6">limma_base &lt;-<span class="st"> </span><span class="kw">left_join</span>(limma_base, anno, <span class="dt">by=</span><span class="st">&quot;cpg&quot;</span>)</a></code></pre></div>
-=======
-<div class="sourceCode" id="cb13"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb13-1" data-line-number="1">manifest_chrom &lt;-<span class="st"> </span>manifest_chrom <span class="op">%&gt;%</span><span class="st"> </span></a>
-<a class="sourceLine" id="cb13-2" data-line-number="2"><span class="st">  </span>dplyr<span class="op">::</span><span class="kw">select</span>(<span class="dt">cpg =</span> probeID, E062)</a>
-<a class="sourceLine" id="cb13-3" data-line-number="3"></a>
-<a class="sourceLine" id="cb13-4" data-line-number="4">anno &lt;-<span class="st"> </span><span class="kw">left_join</span>(anno, manifest_chrom, <span class="dt">by=</span><span class="st">&quot;cpg&quot;</span>)</a>
-<a class="sourceLine" id="cb13-5" data-line-number="5"></a>
-<a class="sourceLine" id="cb13-6" data-line-number="6">limma_base &lt;-<span class="st"> </span><span class="kw">left_join</span>(limma_base, anno, <span class="dt">by=</span><span class="st">&quot;cpg&quot;</span>)</a></code></pre></div>
->>>>>>> a881b47ac32537db4f8636228d059d1464fdc2ea
 <hr />
 </div>
 <div id="running-enrichment" class="section level2">
 <h2>Running enrichment</h2>
 <p>Available states are stored as a vector.</p>
-<<<<<<< HEAD
 <div class="sourceCode" id="cb15"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb15-1" data-line-number="1">states &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="st">&quot;15_Quies&quot;</span>, <span class="st">&quot;14_ReprPCWk&quot;</span>, <span class="st">&quot;13_ReprPC&quot;</span>, </a>
 <a class="sourceLine" id="cb15-2" data-line-number="2">            <span class="st">&quot;12_EnhBiv&quot;</span>, <span class="st">&quot;11_BivFlnk&quot;</span>, <span class="st">&quot;10_TssBiv&quot;</span>, </a>
 <a class="sourceLine" id="cb15-3" data-line-number="3">            <span class="st">&quot;9_Het&quot;</span>, <span class="st">&quot;8_ZNF/Rpts&quot;</span>, <span class="st">&quot;7_Enh&quot;</span>, </a>
@@ -685,44 +608,11 @@ div.tocify {
 <a class="sourceLine" id="cb16-22" data-line-number="22">}</a></code></pre></div>
 <p>P-values again need to be adjusted for multiple testing.</p>
 <div class="sourceCode" id="cb17"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb17-1" data-line-number="1">res<span class="op">$</span>padj &lt;-<span class="st"> </span><span class="kw">p.adjust</span>(res<span class="op">$</span>p, <span class="dt">method=</span><span class="st">&#39;fdr&#39;</span>)</a></code></pre></div>
-=======
-<div class="sourceCode" id="cb14"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb14-1" data-line-number="1">states &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="st">&quot;15_Quies&quot;</span>, <span class="st">&quot;14_ReprPCWk&quot;</span>, <span class="st">&quot;13_ReprPC&quot;</span>, </a>
-<a class="sourceLine" id="cb14-2" data-line-number="2">            <span class="st">&quot;12_EnhBiv&quot;</span>, <span class="st">&quot;11_BivFlnk&quot;</span>, <span class="st">&quot;10_TssBiv&quot;</span>, </a>
-<a class="sourceLine" id="cb14-3" data-line-number="3">            <span class="st">&quot;9_Het&quot;</span>, <span class="st">&quot;8_ZNF/Rpts&quot;</span>, <span class="st">&quot;7_Enh&quot;</span>, </a>
-<a class="sourceLine" id="cb14-4" data-line-number="4">            <span class="st">&quot;6_EnhG&quot;</span>, <span class="st">&quot;5_TxWk&quot;</span>, <span class="st">&quot;4_Tx&quot;</span>,  </a>
-<a class="sourceLine" id="cb14-5" data-line-number="5">            <span class="st">&quot;3_TxFlnk&quot;</span>, <span class="st">&quot;2_TssAFlnk&quot;</span>, <span class="st">&quot;1_TssA&quot;</span>)</a></code></pre></div>
-<p>Then, we can run the enrichment analysis using logistic regression.</p>
-<div class="sourceCode" id="cb15"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb15-1" data-line-number="1"><span class="cf">for</span>(i <span class="cf">in</span> states){</a>
-<a class="sourceLine" id="cb15-2" data-line-number="2">  res_road &lt;-<span class="st"> </span>limma_base <span class="op">%&gt;%</span><span class="st"> </span></a>
-<a class="sourceLine" id="cb15-3" data-line-number="3"><span class="st">    </span><span class="kw">mutate</span>(</a>
-<a class="sourceLine" id="cb15-4" data-line-number="4">      <span class="dt">sig =</span> <span class="kw">ifelse</span>(limma_base<span class="op">$</span>cpg <span class="op">%in%</span><span class="st"> </span>top_cpgs<span class="op">$</span>cpg, <span class="dv">1</span>, <span class="dv">0</span>),</a>
-<a class="sourceLine" id="cb15-5" data-line-number="5">      <span class="dt">chrom =</span> <span class="kw">ifelse</span>(<span class="kw">grepl</span>(i, E062), <span class="dv">1</span>, <span class="dv">0</span>)</a>
-<a class="sourceLine" id="cb15-6" data-line-number="6">    )</a>
-<a class="sourceLine" id="cb15-7" data-line-number="7">  </a>
-<a class="sourceLine" id="cb15-8" data-line-number="8">  x &lt;-<span class="st"> </span><span class="kw">glm</span>(chrom <span class="op">~</span><span class="st"> </span>sig, <span class="dt">family=</span>binomial, <span class="dt">data=</span>res_road)</a>
-<a class="sourceLine" id="cb15-9" data-line-number="9">  out &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="kw">coef</span>(<span class="kw">summary</span>(x))[<span class="dv">2</span>,],</a>
-<a class="sourceLine" id="cb15-10" data-line-number="10">           <span class="kw">exp</span>(<span class="kw">cbind</span>(<span class="kw">coef</span>(x), <span class="kw">confint.default</span>(x)))[<span class="dv">2</span>,])</a>
-<a class="sourceLine" id="cb15-11" data-line-number="11">  <span class="kw">names</span>(out) &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="st">&#39;logOR&#39;</span>, <span class="st">&#39;SE&#39;</span>, <span class="st">&#39;z&#39;</span>, <span class="st">&#39;p&#39;</span>, <span class="st">&#39;OR&#39;</span>, <span class="st">&#39;low_CI&#39;</span>, <span class="st">&#39;upp_CI&#39;</span>)</a>
-<a class="sourceLine" id="cb15-12" data-line-number="12">  out &lt;-<span class="st"> </span><span class="kw">as.data.frame</span>(<span class="kw">t</span>(out))</a>
-<a class="sourceLine" id="cb15-13" data-line-number="13">  out<span class="op">$</span>Trait =<span class="st"> </span>i</a>
-<a class="sourceLine" id="cb15-14" data-line-number="14">  out &lt;-<span class="st"> </span>out <span class="op">%&gt;%</span><span class="st"> </span>dplyr<span class="op">::</span><span class="kw">select</span>(Trait, OR, logOR, </a>
-<a class="sourceLine" id="cb15-15" data-line-number="15">                               low_CI, upp_CI, z, p) </a>
-<a class="sourceLine" id="cb15-16" data-line-number="16">  </a>
-<a class="sourceLine" id="cb15-17" data-line-number="17">  <span class="cf">if</span>(i <span class="op">==</span><span class="st"> </span>states[<span class="dv">1</span>]){</a>
-<a class="sourceLine" id="cb15-18" data-line-number="18">    res &lt;-<span class="st"> </span>out</a>
-<a class="sourceLine" id="cb15-19" data-line-number="19">  } <span class="cf">else</span> {</a>
-<a class="sourceLine" id="cb15-20" data-line-number="20">    res &lt;-<span class="st"> </span><span class="kw">rbind</span>(res, out)</a>
-<a class="sourceLine" id="cb15-21" data-line-number="21">  }</a>
-<a class="sourceLine" id="cb15-22" data-line-number="22">}</a></code></pre></div>
-<p>P-values again need to be adjusted for multiple testing.</p>
-<div class="sourceCode" id="cb16"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb16-1" data-line-number="1">res<span class="op">$</span>padj &lt;-<span class="st"> </span><span class="kw">p.adjust</span>(res<span class="op">$</span>p, <span class="dt">method=</span><span class="st">&#39;fdr&#39;</span>)</a></code></pre></div>
->>>>>>> a881b47ac32537db4f8636228d059d1464fdc2ea
 <hr />
 </div>
 <div id="visualization" class="section level2">
 <h2>Visualization</h2>
 <p>These results can be visualized using a forest plot.</p>
-<<<<<<< HEAD
 <div class="sourceCode" id="cb18"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb18-1" data-line-number="1">chrom &lt;-<span class="st"> </span>res <span class="op">%&gt;%</span><span class="st"> </span></a>
 <a class="sourceLine" id="cb18-2" data-line-number="2"><span class="st">  </span><span class="kw">mutate</span>(</a>
 <a class="sourceLine" id="cb18-3" data-line-number="3">    <span class="dt">loglowCI =</span> <span class="kw">log</span>(low_CI),</a>
@@ -764,59 +654,6 @@ div.tocify {
 <a class="sourceLine" id="cb20-14" data-line-number="14"><span class="st">  </span><span class="kw">xlab</span>(<span class="st">&#39;log(OR)&#39;</span>) <span class="op">+</span><span class="st"> </span><span class="kw">ylab</span>(<span class="st">&#39;&#39;</span>) <span class="op">+</span><span class="st"> </span><span class="kw">xlim</span>(<span class="kw">c</span>(<span class="op">-</span><span class="dv">4</span>,<span class="dv">5</span>)) <span class="op">+</span></a>
 <a class="sourceLine" id="cb20-15" data-line-number="15"><span class="st">  </span><span class="kw">theme_bw</span>()</a>
 <a class="sourceLine" id="cb20-16" data-line-number="16"><span class="kw">print</span>(plot)</a></code></pre></div>
-=======
-<div class="sourceCode" id="cb17"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb17-1" data-line-number="1">chrom &lt;-<span class="st"> </span>res <span class="op">%&gt;%</span><span class="st"> </span></a>
-<a class="sourceLine" id="cb17-2" data-line-number="2"><span class="st">  </span><span class="kw">mutate</span>(</a>
-<a class="sourceLine" id="cb17-3" data-line-number="3">    <span class="dt">loglowCI =</span> <span class="kw">log</span>(low_CI),</a>
-<a class="sourceLine" id="cb17-4" data-line-number="4">    <span class="dt">loguppCI =</span> <span class="kw">log</span>(upp_CI),</a>
-<a class="sourceLine" id="cb17-5" data-line-number="5">    <span class="dt">padj =</span> <span class="kw">p.adjust</span>(p, <span class="dt">method=</span><span class="st">&#39;fdr&#39;</span>)</a>
-<a class="sourceLine" id="cb17-6" data-line-number="6">  ) <span class="op">%&gt;%</span><span class="st"> </span></a>
-<a class="sourceLine" id="cb17-7" data-line-number="7"><span class="st">  </span><span class="kw">filter</span>(OR <span class="op">&lt;</span><span class="st"> </span><span class="dv">200</span>)</a>
-<a class="sourceLine" id="cb17-8" data-line-number="8"></a>
-<a class="sourceLine" id="cb17-9" data-line-number="9">chrom <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">filter</span>(padj <span class="op">&lt;</span><span class="st"> </span><span class="fl">0.05</span>)</a></code></pre></div>
-<pre><code>##          Trait        OR       logOR    low_CI    upp_CI          z
-## 1  14_ReprPCWk 1.0975384  0.09306986 1.0769494 1.1185210   9.632432
-## 2    13_ReprPC 0.9121847 -0.09191275 0.8877549 0.9372868  -6.635975
-## 3    12_EnhBiv 0.9017869 -0.10337706 0.8433352 0.9642899  -3.023491
-## 4   11_BivFlnk 0.7653395 -0.26743574 0.7256514 0.8071983  -9.843507
-## 5    10_TssBiv 0.8464418 -0.16671379 0.8034076 0.8917812  -6.262121
-## 6   8_ZNF/Rpts 1.1830920  0.16813132 1.0184977 1.3742855   2.199770
-## 7        7_Enh 1.1363899  0.12785645 1.1009017 1.1730220   7.898478
-## 8       6_EnhG 1.2617928  0.23253355 1.1894714 1.3385114   7.721488
-## 9       5_TxWk 1.0691203  0.06683620 1.0483494 1.0903028   6.676930
-## 10        4_Tx 1.0537546  0.05235958 1.0316977 1.0762830   4.851251
-## 11  2_TssAFlnk 0.8620689 -0.14842013 0.8444516 0.8800537 -14.088628
-## 12      1_TssA 0.9191804 -0.08427288 0.8919303 0.9472630  -5.488465
-##               p         padj    loglowCI    loguppCI
-## 1  5.833211e-22 2.916606e-21  0.07413242  0.11200730
-## 2  3.223649e-11 6.907819e-11 -0.11905958 -0.06476592
-## 3  2.498768e-03 3.407411e-03 -0.17039077 -0.03636335
-## 4  7.311692e-23 5.483769e-22 -0.32068551 -0.21418598
-## 5  3.797750e-10 7.120780e-10 -0.21889307 -0.11453450
-## 6  2.782325e-02 3.477906e-02  0.01832866  0.31793399
-## 7  2.823289e-15 1.058733e-14  0.09612958  0.15958333
-## 8  1.149794e-14 3.449383e-14  0.17350900  0.29155811
-## 9  2.439988e-11 6.099969e-11  0.04721693  0.08645548
-## 10 1.226852e-06 1.840278e-06  0.03120567  0.07351348
-## 11 4.461444e-45 6.692166e-44 -0.16906785 -0.12777240
-## 12 4.054419e-08 6.757365e-08 -0.11436724 -0.05417853</code></pre>
-<div class="sourceCode" id="cb19"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb19-1" data-line-number="1">plot &lt;-<span class="st"> </span>chrom <span class="op">%&gt;%</span><span class="st"> </span></a>
-<a class="sourceLine" id="cb19-2" data-line-number="2"><span class="st">  </span><span class="kw">filter</span>(loglowCI <span class="op">&gt;</span><span class="st"> </span><span class="dv">-4</span>) <span class="op">%&gt;%</span><span class="st"> </span></a>
-<a class="sourceLine" id="cb19-3" data-line-number="3"><span class="st">  </span><span class="kw">ggplot</span>(<span class="kw">aes</span>(<span class="dt">x =</span> logOR, </a>
-<a class="sourceLine" id="cb19-4" data-line-number="4">             <span class="dt">y =</span> <span class="kw">reorder</span>(Trait,logOR),</a>
-<a class="sourceLine" id="cb19-5" data-line-number="5">             <span class="dt">xmin =</span> loglowCI,</a>
-<a class="sourceLine" id="cb19-6" data-line-number="6">             <span class="dt">xmax =</span> loguppCI)) <span class="op">+</span></a>
-<a class="sourceLine" id="cb19-7" data-line-number="7"><span class="st">  </span><span class="kw">geom_vline</span>(<span class="dt">xintercept=</span><span class="dv">0</span>, <span class="dt">linetype=</span><span class="st">&#39;dashed&#39;</span>) <span class="op">+</span></a>
-<a class="sourceLine" id="cb19-8" data-line-number="8"><span class="st">  </span><span class="kw">geom_errorbar</span>(<span class="dt">width=</span><span class="fl">0.5</span>,</a>
-<a class="sourceLine" id="cb19-9" data-line-number="9">                <span class="dt">position=</span><span class="kw">position_dodge</span>(<span class="dt">width=</span><span class="fl">0.9</span>)) <span class="op">+</span></a>
-<a class="sourceLine" id="cb19-10" data-line-number="10"><span class="st">  </span><span class="kw">geom_point</span>(<span class="kw">aes</span>(<span class="dt">fill=</span>padj),</a>
-<a class="sourceLine" id="cb19-11" data-line-number="11">             <span class="dt">size=</span><span class="dv">3</span>,</a>
-<a class="sourceLine" id="cb19-12" data-line-number="12">             <span class="dt">shape=</span><span class="dv">21</span>,</a>
-<a class="sourceLine" id="cb19-13" data-line-number="13">             <span class="dt">position=</span><span class="kw">position_dodge</span>(<span class="dt">width=</span><span class="fl">0.9</span>)) <span class="op">+</span></a>
-<a class="sourceLine" id="cb19-14" data-line-number="14"><span class="st">  </span><span class="kw">xlab</span>(<span class="st">&#39;log(OR)&#39;</span>) <span class="op">+</span><span class="st"> </span><span class="kw">ylab</span>(<span class="st">&#39;&#39;</span>) <span class="op">+</span><span class="st"> </span><span class="kw">xlim</span>(<span class="kw">c</span>(<span class="op">-</span><span class="dv">4</span>,<span class="dv">5</span>)) <span class="op">+</span></a>
-<a class="sourceLine" id="cb19-15" data-line-number="15"><span class="st">  </span><span class="kw">theme_bw</span>()</a>
-<a class="sourceLine" id="cb19-16" data-line-number="16"><span class="kw">print</span>(plot)</a></code></pre></div>
->>>>>>> a881b47ac32537db4f8636228d059d1464fdc2ea
 <p><img src="07_Interpret_files/figure-html/710plot-1.png" width="672" /></p>
 <hr />
 </div>
