@@ -42,6 +42,7 @@ library(SummarizedExperiment)
 
 gc()
 
+<<<<<<< HEAD
 library(BiocParallel)
 
 # detect the allocated cores from SLURM (fallback to 6)
@@ -50,16 +51,24 @@ nworkers <- as.integer(Sys.getenv("SLURM_CPUS_PER_TASK", "6"))
 register(MulticoreParam(workers = nworkers, progressbar = TRUE))
 
 set.seed(1)  # for reproducibility if any RNG is used internally
+=======
+methData <- methData[,1:20]
+>>>>>>> a881b47ac32537db4f8636228d059d1464fdc2ea
 targets <- as.data.frame(colData(methData))
 ```
 
 
 ```{r 601impute, warning=F}
 methData <- methyLImp2(
+<<<<<<< HEAD
   input = methData,
   type = "EPIC",
   BPPARAM = MulticoreParam(workers = nworkers, progressbar = TRUE),
   minibatch_frac = 0.5)
+=======
+  input = methData, 
+  type = "EPIC")
+>>>>>>> a881b47ac32537db4f8636228d059d1464fdc2ea
 ```
 
 We can extract `betas` for use in our predictors, and reduce precision as described earlier.
@@ -77,7 +86,11 @@ betas <- round(betas, 4)
 
 Principal components (PCs) of the beta values can be calculated using `prcomp` as before to investigate variables important to adjust for in the EWAS analysis.
 
+<<<<<<< HEAD
 ```{r 603pccalc}
+=======
+```{r 222pccalc}
+>>>>>>> a881b47ac32537db4f8636228d059d1464fdc2ea
 tbetas <- t(betas)
 pca <- prcomp(tbetas, center = TRUE, rank. = 10)
 ```
@@ -90,7 +103,11 @@ Each column in the `RGset` colData should be considered as a potential covariate
 
 Any constant variables are removed from the heatmap, as they will not explain variance in the data.
 
+<<<<<<< HEAD
 ```{r 604constant, warning=F, message=F}
+=======
+```{r 603constant, warning=F, message=F}
+>>>>>>> a881b47ac32537db4f8636228d059d1464fdc2ea
 plot_vars <- apply(targets, 2, function(x) sd(as.numeric(factor(x)), na.rm=T))
 
 plot_vars <- names(plot_vars[!plot_vars %in% c(NA, 0)])
@@ -102,7 +119,11 @@ heatmap_df <- targets %>%
 
 All variables are then converted to numeric and correlations between them and the PCs are calculated.
 
+<<<<<<< HEAD
 ```{r 605corrheatmap}
+=======
+```{r 604corrheatmap}
+>>>>>>> a881b47ac32537db4f8636228d059d1464fdc2ea
 heatmap_df <- apply(heatmap_df, 2, function(x) as.numeric(factor(x)))
 
 cxy <- round(cor(pca$x, scale(heatmap_df), use="pairwise.complete.obs"),2) 
@@ -110,7 +131,11 @@ cxy <- round(cor(pca$x, scale(heatmap_df), use="pairwise.complete.obs"),2)
 
 A heatmap can then be used to visualize these correlations and uncover measured variables that explain a large proportion of DNAm variance.
 
+<<<<<<< HEAD
 ```{r 606heatmap}
+=======
+```{r 605heatmap}
+>>>>>>> a881b47ac32537db4f8636228d059d1464fdc2ea
 col_fun <- colorRamp2(c(-1, 0, 1), c("#000042", "white", "#800000"))
 
 Heatmap(
@@ -164,7 +189,11 @@ Removing batch effects and using surrogate variables in differential expression 
 
 The full model and null model are specified with and without the variable of interest respectively. In this case, we adjust for `sex`, `age`, `plate`, `row`, `CD4Tnv`, `Baso`, `CD4Tmem`, `Bmem`, `Bnv`, `Treg`, `CD8Tmem`, `CD8Tnv`, `Eos`, `NK`, and `Mono`. Neutrophils are excluded to avoid collinearity as all predicted cell counts sum to 1.
 
+<<<<<<< HEAD
 ```{r 607models}
+=======
+```{r 606models}
+>>>>>>> a881b47ac32537db4f8636228d059d1464fdc2ea
 mod = model.matrix(~log_total_pbb + age + sex + plate + row + CD4Tnv + Baso + CD4Tmem + Bmem + Bnv + Treg + CD8Tmem + CD8Tnv + Eos + NK + Mono, data=targets)
 mod0 = model.matrix(~age + sex + plate + row + CD4Tnv + Baso + CD4Tmem + Bmem + Bnv + Treg + CD8Tmem + CD8Tnv + Eos + NK + Mono,data=targets)
 ```
@@ -175,7 +204,11 @@ mod0 = model.matrix(~age + sex + plate + row + CD4Tnv + Baso + CD4Tmem + Bmem + 
 
 This can then be used to estimate the appropriate number of latent factors to calculate.
 
+<<<<<<< HEAD
 ```{r 608num, eval=F}
+=======
+```{r 607num}
+>>>>>>> a881b47ac32537db4f8636228d059d1464fdc2ea
 n.sv = num.sv(assay(methData),
               mod,
               method="leek")
@@ -232,12 +265,15 @@ design <- model.matrix(formula,
 design[1:2,]
 ```
 
+<<<<<<< HEAD
 
 ```{r echo=F, warning=F, message=F}
 betas <- betas[ , rownames(design)]
 ```
 
 
+=======
+>>>>>>> a881b47ac32537db4f8636228d059d1464fdc2ea
 ***
 
 ## Random effects
