@@ -1,0 +1,76 @@
+```{r, child="_setup.Rmd"}
+```
+
+***
+
+# Phenotype Prediction #
+
+## Motivation ##
+
+Numerous phenotypic traits can be accurately inferred from DNA methylation (DNAm) data, including immune cell composition<sup>29</sup>, sex<sup>31</sup>, smoking status, and both chronological and biological age through the application of epigenetic clocks. These DNAm-derived predictions can be  valuable for enriching or completing sample metadata, especially when certain variables were not directly measured during sample collection. Moreover, they serve as an important quality control tool by helping to identify potential sample mix-ups or data inconsistencies—for instance, mismatches between predicted and recorded sex may indicate errors in sample labeling or processing.
+
+Here we outline methods to predict immune cell composition and sex from DNAm data as part of the DNAmArray pipeline.
+
+***
+
+## Cell counts ##
+
+The `EPIDish` package can be used to predict blood cell types. It is a R package that infers the proportions of a priori known cell-types present in a sample representing a mixture of such cell-types. Right now, the package can be used on DNAm data of blood-tissue of any age, from birth to old-age, generic epithelial tissue and breast tissue. The package also provides a function that allows the identification of differentially methylated cell-types and their directionality of change in Epigenome-Wide Association Studies.
+
+```{r 301epidish}
+data(cent12CT.m)
+
+BloodFrac.m <- epidish(beta.m = betas, 
+                       ref.m = cent12CT.m, 
+                       method = "RPC")$estF
+```
+
+After proportions of cell types have been estimated, they can be plotted and inspected.
+
+```{r 302plot}
+BloodFrac.m_long <- pivot_longer(as.data.frame(BloodFrac.m), cols = colnames(BloodFrac.m))
+
+BloodFrac.m_long %>% 
+  ggplot(aes(y=name, x=value)) +
+  geom_boxplot() +
+  theme_bw() + ylab('')
+```
+
+Cell counts can be added to `targets` for use later when building EWAS models.
+
+```{r 303add}
+table(rownames(as.data.frame(BloodFrac.m)) == rownames(targets))
+
+targets <- cbind(targets, BloodFrac.m)
+colData(RGset) <- DataFrame(targets)
+```
+
+Other extensions, including UniLIFE which predicts 19 immune cell-types applicable to blood tissue of any age, are available from within EpiDISH, for use in specific contexts<sup>29</sup>.
+
+***
+
+# Predict Sex #
+
+Sex can also be predicted from CpGs on the X-chromosome. Here, we outline the use of `estimateSex` from [**wateRmelon**](https://www.bioconductor.org/packages/devel/bioc/html/wateRmelon.html)<sup>31</sup>.
+
+```{r 304anno}
+estimated_sex <- estimateSex(betas, do_plot=TRUE)
+```
+
+Then a measure can be calculated, determining the sex of each sample and tabulated against recorded sex.
+
+```{r 305res}
+table(estimated_sex$predicted_sex, targets$sex)
+```
+
+As you can see, there is an outlier in the data, which we can remove.
+
+```{r 306remove}
+targets <- targets %>% 
+  filter(Basename != "GSM3228809_200594740080_R01C01")
+```
+
+This means that we can feel increased confidence that no incorrect labelling or mix-ups are remaining.
+
+***
+

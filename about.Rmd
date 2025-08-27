@@ -6,19 +6,85 @@
 
 # Acknowledgements #
 
-Contributors to the development of the package and workflow are: 
+Contributors to the development of the package and workflow include: 
 
-*Elmar W. Tobi, Roderick Slieker, Wouter den Hollander, Rene Luijk, Koen F. Dekkers and Bas Heijmans (PI) from Molecular Epidemiology, Department of Biomedical Data Sciences, Leiden University Medical Center, Leiden, The Netherlands*
+*Lucy Sinke, Tom Kuipers, Jazmin Taubert, Yunfeng Liu, Manhoor Sulaiman, Thomas Jonkman, Elmar W. Tobi, Roderick Slieker, Wouter den Hollander, Rene Luijk, Koen F. Dekkers, and Bas Heijmans (PI) from Molecular Epidemiology, Department of Biomedical Data Sciences, Leiden University Medical Center, Leiden, The Netherlands*
 
 Development of the workflow and generation of previously used example data in LLS was funded by BBMRI-NL, a research infrastructure financed by the Dutch government (NWO 184.021.007).
 
-Maarten van Iterson is the main author of the package and associated workflow. Lucy Sinke is the current author and maintainer and should be contacted with any questions: l.j.sinke@lumc.nl
+Lucy Sinke and Maarten van Iterson are the main authors of the package and associated workflow. Lucy Sinke is the current author and maintainer and should be contacted with any questions: l.j.sinke@lacdr.leidenuniv.nl
 
-Paul Hop and Jenny van Dongen were involved in testing and improving the pipeline.
+We are grateful to Paul Hop, Jenny van Dongen, and Helena Rasche for testing and improving the pipeline.
 
-Please cite van *Sinke, L., van Iterson, M., Cats, D., BIOS Consortium, Slieker, R., & Heijmans, B. (2019) 'DNAmArray: Streamlined workflow for the quality control, normalization, and analysis of Illumina methylation array data' http://doi.org/10.5281/zenodo.3355292* when using the [**DNAmArray**](https://github.com/molepi/DNAmArray) package or workflow.
+Please cite van *Sinke, L., van Iterson, M., Cats, D., BIOS Consortium, Kuipers, T. & Heijmans, B. (2019) 'DNAmArray: Streamlined workflow for the quality control, normalization, and analysis of Illumina methylation array data' http://doi.org/10.5281/zenodo.3355292* when using the [**DNAmArray**](https://github.com/molepi/DNAmArray) package or workflow.
 
 ```{r, child="_sessioninfo.Rmd"}
 ```
 
+***
+
 # References #
+
+<sup>1</sup> Dekkers, K.F., van Iterson, M., Slieker, R.C., <i>et al</i>. [Blood lipids influence DNA methylation in circulating cells](https://doi.org/10.1186/s13059-016-1000-6). <i>Genome Biol.</i> <b>17</b>, 138 (2016).
+
+<sup>2</sup> Slieker, R.C., van Iterson, M., Luijk, R. <i>et al</i>. [Age-related accrual of methylomic variability is linked to fundamental ageing mechanisms](https://doi.org/10.1186/s13059-016-1053-6). <i> Genome Biol.</i> <b>17</b>, 191 (2016).
+
+<sup>3</sup> Bonder, M., Luijk, R., Zhernakova, D. <i>et al</i>. [Disease variants alter transcription factor levels and methylation of their binding sites](https://doi.org/10.1038/ng.3721). <i>Nat Genet.</i> <b>49</b>, 131-138 (2017).
+
+<sup>4</sup> Luijk, R., Wu, H., Ward-Caviness, C.K. <i>et al</i>. [Autosomal genetic variation is associated with DNA methylation in regions variably escaping X-chromosome inactivation](https://doi.org/10.1038/s41467-018-05714-3). <i> Nat Commun.</i> <b>9</b>, 3738 (2018).
+
+<sup>5</sup> van Rooij, J., Mandaviya, P.R., Claringbould, A., <i>et al</i>. [Evaluation of commonly used analysis strategies for epigenome- and transcriptome-wide association studies through replication of large-scale population studies](https://doi.org/10.1186/s13059-019-1878-x). <i>Genome Biol.</i> <b>20</b>, 1:235 (2019).
+
+<sup>6</sup> Hop, P.J., Luijk, R., Daxinger, L., <i>et al</i>. [Genome-wide identification of genes regulating DNA methylation using genetic anchors for causal inference](https://doi.org/10.1186/s13059-020-02114-z). <i>Genome Biol.</i> <b>21</b>, 220 (2020).
+
+<sup>7</sup> Dekkers, K.F., Slieker, R.C., Ioan-Facsinay, A. <i>et al</i>. [Lipid-induced transcriptomic changes in blood link to lipid metabolism and allergic response](https://doi.org/10.1038/s41467-022-35663-x). <i>Nat Commun.</i> <b>14</b>, 544 (2023).
+
+<sup>8</sup> Lui, Y., Sinke, L., Jonkman, T.H., <i>et al</i>. [The inactive X chromosome accumulates widespread epigenetic variability with age](https://doi.org/10.1186/s13148-023-01549-y). <i>Clin Epigenetics.</i> <b>15</b>, 135 (2023).
+
+<sup>9</sup> Aryee, M.J., Jaffe, A.E., Corrada-Bravo, H. <i>et al</i>. [Minfi: a flexible and comprehensive Bioconductor package for the analysis of Infinium DNA methylation microarrays](https://doi.org/10.1093/bioinformatics/btu049). <i>Bioinformatics.</i> <b>30</b>, 10 (2014).
+
+<sup>10</sup> van Iterson, M., Tobi, E.W., Slieker, R.C., <i>et al</i>. [MethylAid: visual and interactive quality control of large Illumina 450k datasets](https://doi.org/10.1093/bioinformatics/btu566). <i>Bioinformatics</i> <b>30</b>, 23 (2014).
+
+<sup>11</sup> van Iterson, M., van Zwet, E.W., BIOS consortium, <i>et al</i>. [Controlling bias and inflation in epigenome- and transcriptome-wide association studies using the empirical null distribution](https://doi.org/10.1186/s13059-016-1131-9). <i>Genome Biol.</i> <b>18</b>, 19 (2017).
+
+<sup>12</sup> van Iterson, M., Cats, D., Hop, P. <i>et al</i>. [omicsPrint: detection of data linkage errors in multiple omics studies](https://doi.org/10.1093/bioinformatics/bty062). <i>Bioinformatics.</i> <b>34</b>, 12 (2018).
+
+<sup>13</sup> Curtis, S.W., Cobb, D.O., Kilaru, V. <i>et al</i>. [Exposure to polybrominated biphenyl (PBB) associates with genome-wide DNA methylation differences in peripheral blood](https://doi.org/10.1080/15592294.2019.1565590). <i>Epigenetics.</i> <b>14</b>, 1:52-66 (2019).
+
+<sup>14</sup> Davis, S. and Meltzer, P.S. [GEOquery: a bridge between the Gene Expression Omnibus (GEO) and BioConductor](https://doi.org/10.1093/bioinformatics/btm254). <i>Bioinformatics.</i> <b>23</b>, 14 (2007).
+
+<sup>15</sup> Zhou, W., Laird, P.W., and Shen, H. [Comprehensive characterization, annotation, and innovative use of Infinium DNA methylation BeadChip probes](https://doi.org/10.1093/nar/gkw967). <i>Nucleic Acids Res.</i> <b>45</b>, 4:e22 (2017).
+
+<sup>16</sup> Fortin, J-P., Labbe, A., Lemire, M. <i>et al</i>. [Functional normalization of 450k methylation array data improves replication in large cancer studies](https://doi.org/10.1186/s13059-014-0503-2). <i>Genome Biol.</i> <b>15</b>, 12:503 (2014).
+
+<sup>17</sup> Heiss, J.A. and Brenner, H. [Between-array normalization for 450k data](https://doi.org/10.3389/fgene.2015.00092). <i>Front Genet.</i> <b>6</b> (2015).
+
+<sup>18</sup> Min, J.L., Hemani, G., Davey-Smith, G., <i>et al</i>. [Meffil: efficient normalization and analysis of very large DNA methylation datasets](https://doi.org/10.1093/bioinformatics/bty476). <i>Bioinformatics.</i> <b>34</b>, 23:3983-3989 (2018).
+
+<sup>19</sup> Ori, A.P.S., Lu, A.T., Horvath, S., <i>et al</i>. [Significant variation in the performance of DNA methylation predictors across data preprocessing and normalization strategies](https://doi.org/10.1186/s13059-022-02793-w). <i>Genome Biol.</i> <b>23</b>, 225 (2022).
+
+<sup>20</sup> Plasienko, A., Di Lena, P., Nardini, C., <i>et al</i>. [methyLImp2: faster missing value estimation for DNA methylation data](https://doi.org/10.1093/bioinformatics/btae001). <i>Bioinformatics.</i> <b>40</b>, 1 (2024).
+
+<sup>21</sup> Zheng, S.C., Breeze, C.E., Beck, S., <i>et al</i>. [Identification of differentially methylated cell-types in Epigenome-Wide Association Studies](https://doi.org/10.1038/s41592-018-0213-x). <i>Nat Methods.</i> <b>15</b>, 1059-1066 (2018).
+
+<sup>22</sup> Amemiya, H.M., Kundaje, A., and Boyle, A.P. [The ENCODE Blacklist: Identification of Problematic Regions of the Genome](https://doi.org/10.1038/s41598-019-45839-z). <i>Sci Rep.</i> <b>9</b>, 9354 (2019).
+
+<sup>23</sup> Leek, J.T. and Storey, J.D. [Capturing heterogeneity in gene expression studies by surrogate variable analysis](https://doi.org/10.1371/journal.pgen.0030161). <i>PLoS Genet.</i> <b>9</b>, 1724-35 (2007). 
+
+<sup>24</sup> Johnson, W.E., Li, C., and Rabinovic, A. [Adjusting batch effects in microarray expression data using empirical Bayes methods](https://doi.org/10.1093/biostatistics/kxj037). <i>Biostatistics.</i> <b>8</b>, 1:118-27 (2006).
+
+<sup>25</sup> Leek, J.T. [svaseq: removing batch effects and other unwanted noise from sequencing data](https://doi.org.10.1093/nar/gku864). <i>Nucleic Acids Res.</i> <b>42</b>, 21:e161 (2014). 
+
+<sup>26</sup> Leek, J.T., Scharpf, R.B., Bravo, H.C. <i>et al</i>. [Tackling the widespread and critical impact of batch effects in high-throughput data](https://doi.org/10.1038/nrg2825). <i>Nat Rev Genet.</i> <b>11</b>, 10:733-9 (2010).
+
+<sup>27</sup> Ritchie, M.E., Phipson, B., Wu, D., <i>et al</i>. [limma powers differential expression analyses for RNA-sequencing and microarray studies](https://doi.org/10.1093/nar/gkv007). <i>Nucleic Acids Res.</i> <b>43</b>, 7 (2015).
+
+<sup>28</sup> Roadmap Epigenomics Consortium, Kundaje, A., Meuleman, W. <i>et al</i>. [Integrative analysis of 111 reference human epigenomes](https://doi.org/10.1038/nature14248). <i>Nature.</i> <b>518</b>, 7539:317-30 (2015).
+
+<sup>29</sup> Guo, X., Sulaiman, M., Neumann, A., <i>et al.</i> [Unified high-resolution immune cell fraction estimation in blood tissue from birth to old age](https://doi.org/10.1186/s13073-025-01489-7). <i>Genome Med.</i> <b>17</b>, 63 (2025).
+
+<sup>30</sup> Pidsley, R., Wong, C.C.Y., Volta, M., <i>et al.</i> [A data-driven approach to preprocessing Illumina 450K methylation array data](https://doi.org/10.1186/1471-2164-14-293). <i>BMC Genomics.</i> <b>14</b>, 293 (2013).
+
+<sup>31</sup> Wang, Y., Hannon, E., Grant, O.A., <i>et al.</i> [DNA methylation-based sex classifier to predict sex and identify sex chromosome aneuploidy](https://doi.org/10.1186/s12864-021-07675-2). <i>BMC Genomics.</i> <b>22</b>, 484 (2021).
+
+<sup>32</sup> Heinz, S., <i>et al.</i> [Simple combinations of lineage-determining transcription factors prime cis-regulatory elements required for macrophage and B cell identities](https://doi.org/10.1016/j.molcel.2010.05.004). <i>Mol Cell.</i> <b>38</b>, 4:576-89 (2010).

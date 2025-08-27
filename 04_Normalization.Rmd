@@ -1,0 +1,68 @@
+```{r, child="_setup.Rmd"}
+```
+
+***
+
+# Normalization #
+
+## Motivation ##
+
+Our workflow outline the use of functional normalization<sup>16</sup>, which exploits internal control probes designed to detect technical variations without assaying biological differences, and dasen as implemented by [**wateRmelon**](https://www.bioconductor.org/packages/devel/bioc/html/wateRmelon.html)<sup>30</sup>. Both are adjusted and updated to use the interpolatedXY method<sup>31</sup>.
+
+Functional normalization has been shown to perform favourably when compared to other approaches<sup>17</sup>. Using the internal control probes avoids the problems associated with global normalization methods, where biological variation can be mistaken for a technical effect and removed. This is especially important in studies where groups are expected to have differential methylation signatures, such as multiple tissue studies<sup>18</sup>.
+
+Conversations on the best approaches for normalization in DNAm data pipelines are ongoing<sup>19</sup>.
+
+***
+
+# Principal Components #
+
+The default of selecting only two principal components is often too low for this type of data. Often you will see a drop-off in proportion of variance explained after a certain number of principal components, and this can indicate an efficient selection.
+
+```{r 401scree}
+var_explained %>% ggplot(aes(x=PC, y=var_explained)) +
+  geom_line() +
+  geom_point(color='grey5', fill='#6DACBC', shape=21, size=3) + 
+  scale_x_continuous(breaks=1:ncol(pca$x)) +
+  xlab("Principal Component") + 
+  ylab("Proportion of variance explained") +
+  theme_bw()
+```
+
+***
+
+# Running Normalization #
+
+In order to run normalization the annotation of the `RGset` must be updated for EPIC arrays.
+
+```{r 402anno}
+RGset@annotation <- c(array = "IlluminaHumanMethylationEPIC", annotation = "ilm10b4.hg19")
+```
+
+We use the `adjustedFunnorm` function from [**wateRmelon**](https://www.bioconductor.org/packages/devel/bioc/html/wateRmelon.html), which uses the interpolated XY method<sup>31</sup>. By default, functional normalization returns normalized copy number data making the returned `GenomicRatioSet` twice the size necessary when only beta-values or M-values are required. Therefore, we set `keepCN` to FALSE. 
+
+```{r 403funnorm}
+GRset <- adjustedFunnorm(
+  rgSet = RGset,
+  nPCs = 4,
+  sex = ifelse(targets$sex == "Female", 0, 1),
+  keepCN = F,
+  verbose = T
+)
+
+GRset
+```
+
+It is also possible to use `adjustedDasen` to apply dasen normalization to normalize autosomal CpGs and infer the sex chromosome linked CpGs by linear interpolation on corrected autosomal CpGs. Instead of outputting a `GRset`, this function outputs the normalized beta values. Therefore, using this normalization removes the need for the DNAmArray `reduce` function in the next steps.
+
+```{r eval=F}
+betas <- adjustedDasen(mns = methylated(RGset),
+                       uns = unmethylated(RGset),
+                       onetwo = fData(RGset)[,fot(RGset)], 
+                       chr = fData(RGset)$CHR)
+```
+
+***
+
+
+

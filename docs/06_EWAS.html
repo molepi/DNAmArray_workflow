@@ -1,0 +1,925 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+<meta charset="utf-8" />
+<meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+
+
+
+
+<title>06_EWAS.knit</title>
+
+<script src="site_libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="site_libs/bootstrap-3.3.5/css/lumen.min.css" rel="stylesheet" />
+<script src="site_libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/respond.min.js"></script>
+<style>h1 {font-size: 34px;}
+       h1.title {font-size: 38px;}
+       h2 {font-size: 30px;}
+       h3 {font-size: 24px;}
+       h4 {font-size: 18px;}
+       h5 {font-size: 16px;}
+       h6 {font-size: 12px;}
+       code {color: inherit; background-color: rgba(0, 0, 0, 0.04);}
+       pre:not([class]) { background-color: white }</style>
+<script src="site_libs/jqueryui-1.13.2/jquery-ui.min.js"></script>
+<link href="site_libs/tocify-1.9.1/jquery.tocify.css" rel="stylesheet" />
+<script src="site_libs/tocify-1.9.1/jquery.tocify.js"></script>
+<script src="site_libs/navigation-1.1/tabsets.js"></script>
+
+<style type="text/css">
+  code{white-space: pre-wrap;}
+  span.smallcaps{font-variant: small-caps;}
+  span.underline{text-decoration: underline;}
+  div.column{display: inline-block; vertical-align: top; width: 50%;}
+  div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+  ul.task-list{list-style: none;}
+    </style>
+
+
+
+<style type="text/css">
+  code {
+    white-space: pre;
+  }
+  .sourceCode {
+    overflow: visible;
+  }
+</style>
+<style type="text/css" data-origin="pandoc">
+a.sourceLine { display: inline-block; line-height: 1.25; }
+a.sourceLine { pointer-events: none; color: inherit; text-decoration: inherit; }
+a.sourceLine:empty { height: 1.2em; position: absolute; }
+.sourceCode { overflow: visible; }
+code.sourceCode { white-space: pre; position: relative; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+code.sourceCode { white-space: pre-wrap; }
+a.sourceLine { text-indent: -1em; padding-left: 1em; }
+}
+pre.numberSource a.sourceLine
+  { position: relative; }
+pre.numberSource a.sourceLine:empty
+  { position: absolute; }
+pre.numberSource a.sourceLine::before
+  { content: attr(data-line-number);
+    position: absolute; left: -5em; text-align: right; vertical-align: baseline;
+    border: none; pointer-events: all;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    background-color: #ffffff;
+    color: #a0a0a0;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #a0a0a0;  padding-left: 4px; }
+div.sourceCode
+  { color: #1f1c1b; background-color: #ffffff; }
+@media screen {
+a.sourceLine::before { text-decoration: underline; }
+}
+code span. { color: #1f1c1b; } /* Normal */
+code span.al { color: #bf0303; background-color: #f7e6e6; font-weight: bold; } /* Alert */
+code span.an { color: #ca60ca; } /* Annotation */
+code span.at { color: #0057ae; } /* Attribute */
+code span.bn { color: #b08000; } /* BaseN */
+code span.bu { color: #644a9b; font-weight: bold; } /* BuiltIn */
+code span.cf { color: #1f1c1b; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #924c9d; } /* Char */
+code span.cn { color: #aa5500; } /* Constant */
+code span.co { color: #898887; } /* Comment */
+code span.cv { color: #0095ff; } /* CommentVar */
+code span.do { color: #607880; } /* Documentation */
+code span.dt { color: #0057ae; } /* DataType */
+code span.dv { color: #b08000; } /* DecVal */
+code span.er { color: #bf0303; text-decoration: underline; } /* Error */
+code span.ex { color: #0095ff; font-weight: bold; } /* Extension */
+code span.fl { color: #b08000; } /* Float */
+code span.fu { color: #644a9b; } /* Function */
+code span.im { color: #ff5500; } /* Import */
+code span.in { color: #b08000; } /* Information */
+code span.kw { color: #1f1c1b; font-weight: bold; } /* Keyword */
+code span.op { color: #1f1c1b; } /* Operator */
+code span.ot { color: #006e28; } /* Other */
+code span.pp { color: #006e28; } /* Preprocessor */
+code span.re { color: #0057ae; background-color: #e0e9f8; } /* RegionMarker */
+code span.sc { color: #3daee9; } /* SpecialChar */
+code span.ss { color: #ff5500; } /* SpecialString */
+code span.st { color: #bf0303; } /* String */
+code span.va { color: #0057ae; } /* Variable */
+code span.vs { color: #bf0303; } /* VerbatimString */
+code span.wa { color: #bf0303; } /* Warning */
+
+</style>
+<script>
+// apply pandoc div.sourceCode style to pre.sourceCode instead
+(function() {
+  var sheets = document.styleSheets;
+  for (var i = 0; i < sheets.length; i++) {
+    if (sheets[i].ownerNode.dataset["origin"] !== "pandoc") continue;
+    try { var rules = sheets[i].cssRules; } catch (e) { continue; }
+    var j = 0;
+    while (j < rules.length) {
+      var rule = rules[j];
+      // check if there is a div.sourceCode rule
+      if (rule.type !== rule.STYLE_RULE || rule.selectorText !== "div.sourceCode") {
+        j++;
+        continue;
+      }
+      var style = rule.style.cssText;
+      // check if color or background-color is set
+      if (rule.style.color === '' && rule.style.backgroundColor === '') {
+        j++;
+        continue;
+      }
+      // replace div.sourceCode by a pre.sourceCode rule
+      sheets[i].deleteRule(j);
+      sheets[i].insertRule('pre.sourceCode{' + style + '}', j);
+    }
+  }
+})();
+</script>
+
+
+
+
+<link rel="stylesheet" href="style.css" type="text/css" />
+
+
+
+<style type = "text/css">
+.main-container {
+  max-width: 940px;
+  margin-left: auto;
+  margin-right: auto;
+}
+img {
+  max-width:100%;
+}
+.tabbed-pane {
+  padding-top: 12px;
+}
+.html-widget {
+  margin-bottom: 20px;
+}
+button.code-folding-btn:focus {
+  outline: none;
+}
+summary {
+  display: list-item;
+}
+details > summary > p:only-child {
+  display: inline;
+}
+pre code {
+  padding: 0;
+}
+</style>
+
+
+<style type="text/css">
+.dropdown-submenu {
+  position: relative;
+}
+.dropdown-submenu>.dropdown-menu {
+  top: 0;
+  left: 100%;
+  margin-top: -6px;
+  margin-left: -1px;
+  border-radius: 0 6px 6px 6px;
+}
+.dropdown-submenu:hover>.dropdown-menu {
+  display: block;
+}
+.dropdown-submenu>a:after {
+  display: block;
+  content: " ";
+  float: right;
+  width: 0;
+  height: 0;
+  border-color: transparent;
+  border-style: solid;
+  border-width: 5px 0 5px 5px;
+  border-left-color: #cccccc;
+  margin-top: 5px;
+  margin-right: -10px;
+}
+.dropdown-submenu:hover>a:after {
+  border-left-color: #adb5bd;
+}
+.dropdown-submenu.pull-left {
+  float: none;
+}
+.dropdown-submenu.pull-left>.dropdown-menu {
+  left: -100%;
+  margin-left: 10px;
+  border-radius: 6px 0 6px 6px;
+}
+</style>
+
+<script type="text/javascript">
+// manage active state of menu based on current page
+$(document).ready(function () {
+  // active menu anchor
+  href = window.location.pathname
+  href = href.substr(href.lastIndexOf('/') + 1)
+  if (href === "")
+    href = "index.html";
+  var menuAnchor = $('a[href="' + href + '"]');
+
+  // mark the anchor link active (and if it's in a dropdown, also mark that active)
+  var dropdown = menuAnchor.closest('li.dropdown');
+  if (window.bootstrap) { // Bootstrap 4+
+    menuAnchor.addClass('active');
+    dropdown.find('> .dropdown-toggle').addClass('active');
+  } else { // Bootstrap 3
+    menuAnchor.parent().addClass('active');
+    dropdown.addClass('active');
+  }
+
+  // Navbar adjustments
+  var navHeight = $(".navbar").first().height() + 15;
+  var style = document.createElement('style');
+  var pt = "padding-top: " + navHeight + "px; ";
+  var mt = "margin-top: -" + navHeight + "px; ";
+  var css = "";
+  // offset scroll position for anchor links (for fixed navbar)
+  for (var i = 1; i <= 6; i++) {
+    css += ".section h" + i + "{ " + pt + mt + "}\n";
+  }
+  style.innerHTML = "body {" + pt + "padding-bottom: 40px; }\n" + css;
+  document.head.appendChild(style);
+});
+</script>
+
+<!-- tabsets -->
+
+<style type="text/css">
+.tabset-dropdown > .nav-tabs {
+  display: inline-table;
+  max-height: 500px;
+  min-height: 44px;
+  overflow-y: auto;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs > li.active:before, .tabset-dropdown > .nav-tabs.nav-tabs-open:before {
+  content: "\e259";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li.active:before {
+  content: "\e258";
+  font-family: 'Glyphicons Halflings';
+  border: none;
+}
+
+.tabset-dropdown > .nav-tabs > li.active {
+  display: block;
+}
+
+.tabset-dropdown > .nav-tabs > li > a,
+.tabset-dropdown > .nav-tabs > li > a:focus,
+.tabset-dropdown > .nav-tabs > li > a:hover {
+  border: none;
+  display: inline-block;
+  border-radius: 4px;
+  background-color: transparent;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li {
+  display: block;
+  float: none;
+}
+
+.tabset-dropdown > .nav-tabs > li {
+  display: none;
+}
+</style>
+
+<!-- code folding -->
+
+
+
+<style type="text/css">
+
+#TOC {
+  margin: 25px 0px 20px 0px;
+}
+@media (max-width: 768px) {
+#TOC {
+  position: relative;
+  width: 100%;
+}
+}
+
+@media print {
+.toc-content {
+  /* see https://github.com/w3c/csswg-drafts/issues/4434 */
+  float: right;
+}
+}
+
+.toc-content {
+  padding-left: 30px;
+  padding-right: 40px;
+}
+
+div.main-container {
+  max-width: 1200px;
+}
+
+div.tocify {
+  width: 20%;
+  max-width: 260px;
+  max-height: 85%;
+}
+
+@media (min-width: 768px) and (max-width: 991px) {
+  div.tocify {
+    width: 25%;
+  }
+}
+
+@media (max-width: 767px) {
+  div.tocify {
+    width: 100%;
+    max-width: none;
+  }
+}
+
+.tocify ul, .tocify li {
+  line-height: 20px;
+}
+
+.tocify-subheader .tocify-item {
+  font-size: 0.90em;
+}
+
+.tocify .list-group-item {
+  border-radius: 0px;
+}
+
+
+</style>
+
+
+
+</head>
+
+<body>
+
+
+<div class="container-fluid main-container">
+
+
+<!-- setup 3col/9col grid for toc_float and main content  -->
+<div class="row">
+<div class="col-xs-12 col-sm-4 col-md-3">
+<div id="TOC" class="tocify">
+</div>
+</div>
+
+<div class="toc-content col-xs-12 col-sm-8 col-md-9">
+
+
+
+
+<div class="navbar navbar-default  navbar-fixed-top" role="navigation">
+  <div class="container">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-bs-toggle="collapse" data-target="#navbar" data-bs-target="#navbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="index.html">DNAmArray</a>
+    </div>
+    <div id="navbar" class="navbar-collapse collapse">
+      <ul class="nav navbar-nav">
+        <li>
+  <a href="01_GettingStarted.html">Getting Started</a>
+</li>
+<li>
+  <a href="02_SampleQualityControl.html">Sample QC</a>
+</li>
+<li>
+  <a href="03_Predict.html">Predict</a>
+</li>
+<li>
+  <a href="04_Normalization.html">Normalize</a>
+</li>
+<li>
+  <a href="05_ProbeQC.html">Probe QC</a>
+</li>
+<li>
+  <a href="06_EWAS.html">Analyse</a>
+</li>
+<li>
+  <a href="07_Interpret.html">Interpret</a>
+</li>
+      </ul>
+      <ul class="nav navbar-nav navbar-right">
+        <li>
+  <a href="about.html">About</a>
+</li>
+      </ul>
+    </div><!--/.nav-collapse -->
+  </div><!--/.container -->
+</div><!--/.navbar -->
+
+<div id="header">
+
+
+
+
+</div>
+
+
+<hr />
+<div id="imputation" class="section level1">
+<h1>Imputation</h1>
+<div id="motivation" class="section level2">
+<h2>Motivation</h2>
+<p>Imputation is often required in DNAm studies, such as to ensure phenotype predictors have access to complete unbiased data or for algorithms that cannot accept NA values like SVA. Various options are available, including:</p>
+<ul>
+<li><code>impute.knn</code> from <a href="https://www.bioconductor.org/packages//2.12/bioc/html/impute.html"><strong>impute</strong></a>, a package for imputation of microarray data</li>
+<li><a href="https://cran.r-project.org/web/packages/missForest/index.html"><strong>missForest</strong></a>, which imputes data using random forests, and</li>
+<li><a href="https://bioconductor.org/packages/release/bioc/html/methyLImp2.html"><strong>methyLImp2</strong></a><sup>20</sup>, which is specifically designed for DNAm data</li>
+</ul>
+<p>Although in-depth benchmarking is yet to be completed, we outline the use of <code>methyLImp2</code> for imputation to create a complete matrix of beta values.</p>
+<p>Of note, EPICv2 CpGs have technical suffixes for CpG names, which predictors may not be updated for. Additionally, CpGs have up to 10 replicates. We advise selecting one of these at random to use in prediction, or selecting the one with the best performing detection p-value, which can be inspected using <code>detectionP()</code> from <code>minfi</code>.</p>
+<hr />
+</div>
+<div id="methylimp2" class="section level2">
+<h2>methyLImp2</h2>
+<p>The main function <code>methyLImp2</code> can take a SummarizedExperiment or beta matrix as input, and requires the array <code>type</code> to be specified (as 450k or EPIC). By default it will overwrite your SummarizedExperiment object.</p>
+<pre><code>##              used    (Mb) gc trigger    (Mb)    max used    (Mb)
+## Ncells   23346621  1246.9   38694734  2066.6    38694734  2066.6
+## Vcells 2876341126 21944.8 8625936037 65810.7 10781960631 82259.9</code></pre>
+<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb2-1" data-line-number="1">methData &lt;-<span class="st"> </span><span class="kw">methyLImp2</span>(</a>
+<a class="sourceLine" id="cb2-2" data-line-number="2">  <span class="dt">input =</span> methData,</a>
+<a class="sourceLine" id="cb2-3" data-line-number="3">  <span class="dt">type =</span> <span class="st">&quot;EPIC&quot;</span>,</a>
+<a class="sourceLine" id="cb2-4" data-line-number="4">  <span class="dt">BPPARAM =</span> <span class="kw">MulticoreParam</span>(<span class="dt">workers =</span> nworkers, <span class="dt">progressbar =</span> <span class="ot">TRUE</span>),</a>
+<a class="sourceLine" id="cb2-5" data-line-number="5">  <span class="dt">minibatch_frac =</span> <span class="fl">0.5</span>)</a></code></pre></div>
+<pre><code>##   |                                                                              |                                                                      |   0%  |                                                                              |===                                                                   |   5%  |                                                                              |======                                                                |   9%  |                                                                              |==========                                                            |  14%  |                                                                              |=============                                                         |  18%  |                                                                              |================                                                      |  23%  |                                                                              |===================                                                   |  27%  |                                                                              |======================                                                |  32%  |                                                                              |=========================                                             |  36%  |                                                                              |=============================                                         |  41%  |                                                                              |================================                                      |  45%  |                                                                              |===================================                                   |  50%  |                                                                              |======================================                                |  55%  |                                                                              |=========================================                             |  59%  |                                                                              |=============================================                         |  64%  |                                                                              |================================================                      |  68%  |                                                                              |===================================================                   |  73%  |                                                                              |======================================================                |  77%  |                                                                              |=========================================================             |  82%  |                                                                              |============================================================          |  86%  |                                                                              |================================================================      |  91%  |                                                                              |===================================================================   |  95%  |                                                                              |======================================================================| 100%</code></pre>
+<p>We can extract <code>betas</code> for use in our predictors, and reduce precision as described earlier.</p>
+<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb4-1" data-line-number="1">betas &lt;-<span class="st"> </span><span class="kw">assay</span>(methData)</a>
+<a class="sourceLine" id="cb4-2" data-line-number="2">betas &lt;-<span class="st"> </span><span class="kw">round</span>(betas, <span class="dv">4</span>)</a></code></pre></div>
+<hr />
+</div>
+</div>
+<div id="covariates" class="section level1">
+<h1>Covariates</h1>
+<div id="calculate-pcs" class="section level2">
+<h2>Calculate PCs</h2>
+<p>Principal components (PCs) of the beta values can be calculated using <code>prcomp</code> as before to investigate variables important to adjust for in the EWAS analysis.</p>
+<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb5-1" data-line-number="1">tbetas &lt;-<span class="st"> </span><span class="kw">t</span>(betas)</a>
+<a class="sourceLine" id="cb5-2" data-line-number="2">pca &lt;-<span class="st"> </span><span class="kw">prcomp</span>(tbetas, <span class="dt">center =</span> <span class="ot">TRUE</span>, <span class="dt">rank. =</span> <span class="dv">10</span>)</a></code></pre></div>
+<hr />
+</div>
+<div id="heatmap" class="section level2">
+<h2>Heatmap</h2>
+<p>Each column in the <code>RGset</code> colData should be considered as a potential covariate in EWAS models. Both technical and biological factors should be investigated as these may introduce batch effects or be clinically relevant. In order to assess this, you can visualize correlations with PCs as done previously in this workflow.</p>
+<p>Any constant variables are removed from the heatmap, as they will not explain variance in the data.</p>
+<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb6-1" data-line-number="1">plot_vars &lt;-<span class="st"> </span><span class="kw">apply</span>(targets, <span class="dv">2</span>, <span class="cf">function</span>(x) <span class="kw">sd</span>(<span class="kw">as.numeric</span>(<span class="kw">factor</span>(x)), <span class="dt">na.rm=</span>T))</a>
+<a class="sourceLine" id="cb6-2" data-line-number="2"></a>
+<a class="sourceLine" id="cb6-3" data-line-number="3">plot_vars &lt;-<span class="st"> </span><span class="kw">names</span>(plot_vars[<span class="op">!</span>plot_vars <span class="op">%in%</span><span class="st"> </span><span class="kw">c</span>(<span class="ot">NA</span>, <span class="dv">0</span>)])</a>
+<a class="sourceLine" id="cb6-4" data-line-number="4">plot_vars</a></code></pre></div>
+<pre><code>##  [1] &quot;sample_ID&quot;          &quot;geo_accession&quot;      &quot;sex&quot;               
+##  [4] &quot;age&quot;                &quot;log_total_pbb&quot;      &quot;pbb_153&quot;           
+##  [7] &quot;pbb_77&quot;             &quot;pbb_101&quot;            &quot;pbb_180&quot;           
+## [10] &quot;supplementary_file&quot; &quot;plate&quot;              &quot;row&quot;               
+## [13] &quot;Basename&quot;           &quot;CD4Tnv&quot;             &quot;Baso&quot;              
+## [16] &quot;CD4Tmem&quot;            &quot;Bmem&quot;               &quot;Bnv&quot;               
+## [19] &quot;Treg&quot;               &quot;CD8Tmem&quot;            &quot;CD8Tnv&quot;            
+## [22] &quot;Eos&quot;                &quot;NK&quot;                 &quot;Neu&quot;               
+## [25] &quot;Mono&quot;</code></pre>
+<div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb8-1" data-line-number="1">heatmap_df &lt;-<span class="st"> </span>targets <span class="op">%&gt;%</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb8-2" data-line-number="2"><span class="st">  </span>dplyr<span class="op">::</span><span class="kw">select</span>(<span class="kw">any_of</span>(plot_vars))</a></code></pre></div>
+<p>All variables are then converted to numeric and correlations between them and the PCs are calculated.</p>
+<div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb9-1" data-line-number="1">heatmap_df &lt;-<span class="st"> </span><span class="kw">apply</span>(heatmap_df, <span class="dv">2</span>, <span class="cf">function</span>(x) <span class="kw">as.numeric</span>(<span class="kw">factor</span>(x)))</a>
+<a class="sourceLine" id="cb9-2" data-line-number="2"></a>
+<a class="sourceLine" id="cb9-3" data-line-number="3">cxy &lt;-<span class="st"> </span><span class="kw">round</span>(<span class="kw">cor</span>(pca<span class="op">$</span>x, <span class="kw">scale</span>(heatmap_df), <span class="dt">use=</span><span class="st">&quot;pairwise.complete.obs&quot;</span>),<span class="dv">2</span>) </a></code></pre></div>
+<p>A heatmap can then be used to visualize these correlations and uncover measured variables that explain a large proportion of DNAm variance.</p>
+<div class="sourceCode" id="cb10"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb10-1" data-line-number="1">col_fun &lt;-<span class="st"> </span><span class="kw">colorRamp2</span>(<span class="kw">c</span>(<span class="op">-</span><span class="dv">1</span>, <span class="dv">0</span>, <span class="dv">1</span>), <span class="kw">c</span>(<span class="st">&quot;#000042&quot;</span>, <span class="st">&quot;white&quot;</span>, <span class="st">&quot;#800000&quot;</span>))</a>
+<a class="sourceLine" id="cb10-2" data-line-number="2"></a>
+<a class="sourceLine" id="cb10-3" data-line-number="3"><span class="kw">Heatmap</span>(</a>
+<a class="sourceLine" id="cb10-4" data-line-number="4">  <span class="kw">t</span>(cxy),                              </a>
+<a class="sourceLine" id="cb10-5" data-line-number="5">  <span class="dt">col =</span> col_fun,  </a>
+<a class="sourceLine" id="cb10-6" data-line-number="6">  <span class="dt">border =</span> <span class="st">&#39;grey5&#39;</span>,</a>
+<a class="sourceLine" id="cb10-7" data-line-number="7">  <span class="dt">cluster_columns =</span> <span class="ot">FALSE</span>,            </a>
+<a class="sourceLine" id="cb10-8" data-line-number="8">  <span class="dt">show_row_dend =</span> <span class="ot">TRUE</span>,             </a>
+<a class="sourceLine" id="cb10-9" data-line-number="9">  <span class="dt">show_column_dend =</span> <span class="ot">FALSE</span>,      </a>
+<a class="sourceLine" id="cb10-10" data-line-number="10">  <span class="dt">name =</span> <span class="st">&quot;Value&quot;</span>,                 </a>
+<a class="sourceLine" id="cb10-11" data-line-number="11">  <span class="dt">row_names_gp =</span> <span class="kw">gpar</span>(<span class="dt">fontsize =</span> <span class="dv">8</span>), </a>
+<a class="sourceLine" id="cb10-12" data-line-number="12">  <span class="dt">column_names_gp =</span> <span class="kw">gpar</span>(<span class="dt">fontsize =</span> <span class="dv">8</span>), </a>
+<a class="sourceLine" id="cb10-13" data-line-number="13">  <span class="dt">cell_fun =</span> <span class="cf">function</span>(j, i, x, y, width, height, fill) {</a>
+<a class="sourceLine" id="cb10-14" data-line-number="14">    <span class="kw">grid.rect</span>(x, y, width, height, </a>
+<a class="sourceLine" id="cb10-15" data-line-number="15">              <span class="dt">gp =</span> <span class="kw">gpar</span>(<span class="dt">col =</span> <span class="st">&quot;white&quot;</span>, <span class="dt">lwd =</span> <span class="dv">1</span>, <span class="dt">fill =</span> <span class="ot">NA</span>))</a>
+<a class="sourceLine" id="cb10-16" data-line-number="16">    <span class="kw">grid.text</span>(<span class="kw">ifelse</span>(<span class="kw">abs</span>(<span class="kw">t</span>(cxy)[i,j]) <span class="op">&gt;</span><span class="st"> </span><span class="fl">0.4</span>,</a>
+<a class="sourceLine" id="cb10-17" data-line-number="17">                     <span class="kw">sprintf</span>(<span class="st">&quot;%.2f&quot;</span>, <span class="kw">round</span>(<span class="kw">t</span>(cxy)[i, j], <span class="dv">2</span>)),</a>
+<a class="sourceLine" id="cb10-18" data-line-number="18">                     <span class="st">&quot;&quot;</span>), </a>
+<a class="sourceLine" id="cb10-19" data-line-number="19">              x, y, <span class="dt">gp =</span> <span class="kw">gpar</span>(<span class="dt">fontsize =</span> <span class="dv">8</span>, <span class="dt">col =</span> <span class="st">&quot;white&quot;</span>))</a>
+<a class="sourceLine" id="cb10-20" data-line-number="20">  }</a>
+<a class="sourceLine" id="cb10-21" data-line-number="21">)</a></code></pre></div>
+<p><img src="06_EWAS_files/figure-html/606heatmap-1.png" width="672" /></p>
+<p>By examining the correlations in the data, we can build our model in a more informed manner. The second PC is highly correlated with sex and, as is usual in EWAS, we intend to include this as a confounder.</p>
+<p>Some predicted cell counts appear of substantial importance and we advise also adjusting for these. Model specification should be informed by a combination of prior knowledge and inspection of patterns in the data.</p>
+<hr />
+</div>
+</div>
+<div id="sva" class="section level1">
+<h1>SVA</h1>
+<div id="motivation-1" class="section level2">
+<h2>Motivation</h2>
+<p>The <code>sva</code> package contains functions for removing batch effects and other unwanted variation in high-throughput experiments. Specifically, the sva package contains functions for the identifying and building surrogate variables for high-dimensional data sets. Surrogate variables are covariates constructed directly from high-dimensional data (like DNAm data) that can be used in subsequent analyses to adjust for unknown, unmodeled, or latent sources of noise.</p>
+<p>The sva package can be used to remove artifacts in three ways:</p>
+<ul>
+<li>identifying and estimating surrogate variables for unknown sources of variation in high-throughput experiments<sup>23</sup></li>
+<li>directly removing known batch effects using ComBat<sup>24</sup>, and</li>
+<li>removing batch effects with known control probes<sup>25</sup></li>
+</ul>
+<p>Removing batch effects and using surrogate variables in differential expression analysis have been shown to reduce dependence, stabilize error rate estimates, and improve reproducibility<sup>23,26</sup>. In addition to SVA, the <a href="https://cran.r-project.org/src/contrib/Archive/cate/"><strong>cate</strong></a> package provides a related framework that also estimates latent factors to account for unobserved confounders in high-dimensional data, and was previously the standard approach in epigenome-wide pipelines.</p>
+<hr />
+</div>
+<div id="specification" class="section level2">
+<h2>Specification</h2>
+<p>The full model and null model are specified with and without the variable of interest respectively. In this case, we adjust for <code>sex</code>, <code>age</code>, <code>plate</code>, <code>row</code>, <code>CD4Tnv</code>, <code>Baso</code>, <code>CD4Tmem</code>, <code>Bmem</code>, <code>Bnv</code>, <code>Treg</code>, <code>CD8Tmem</code>, <code>CD8Tnv</code>, <code>Eos</code>, <code>NK</code>, and <code>Mono</code>. Neutrophils are excluded to avoid collinearity as all predicted cell counts sum to 1.</p>
+<div class="sourceCode" id="cb11"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb11-1" data-line-number="1">mod =<span class="st"> </span><span class="kw">model.matrix</span>(<span class="op">~</span>log_total_pbb <span class="op">+</span><span class="st"> </span>age <span class="op">+</span><span class="st"> </span>sex <span class="op">+</span><span class="st"> </span>plate <span class="op">+</span><span class="st"> </span>row <span class="op">+</span><span class="st"> </span>CD4Tnv <span class="op">+</span><span class="st"> </span>Baso <span class="op">+</span><span class="st"> </span>CD4Tmem <span class="op">+</span><span class="st"> </span>Bmem <span class="op">+</span><span class="st"> </span>Bnv <span class="op">+</span><span class="st"> </span>Treg <span class="op">+</span><span class="st"> </span>CD8Tmem <span class="op">+</span><span class="st"> </span>CD8Tnv <span class="op">+</span><span class="st"> </span>Eos <span class="op">+</span><span class="st"> </span>NK <span class="op">+</span><span class="st"> </span>Mono, <span class="dt">data=</span>targets)</a>
+<a class="sourceLine" id="cb11-2" data-line-number="2">mod0 =<span class="st"> </span><span class="kw">model.matrix</span>(<span class="op">~</span>age <span class="op">+</span><span class="st"> </span>sex <span class="op">+</span><span class="st"> </span>plate <span class="op">+</span><span class="st"> </span>row <span class="op">+</span><span class="st"> </span>CD4Tnv <span class="op">+</span><span class="st"> </span>Baso <span class="op">+</span><span class="st"> </span>CD4Tmem <span class="op">+</span><span class="st"> </span>Bmem <span class="op">+</span><span class="st"> </span>Bnv <span class="op">+</span><span class="st"> </span>Treg <span class="op">+</span><span class="st"> </span>CD8Tmem <span class="op">+</span><span class="st"> </span>CD8Tnv <span class="op">+</span><span class="st"> </span>Eos <span class="op">+</span><span class="st"> </span>NK <span class="op">+</span><span class="st"> </span>Mono,<span class="dt">data=</span>targets)</a></code></pre></div>
+<hr />
+</div>
+<div id="latent-factor-calculation" class="section level2">
+<h2>Latent factor calculation</h2>
+<p>This can then be used to estimate the appropriate number of latent factors to calculate.</p>
+<div class="sourceCode" id="cb12"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb12-1" data-line-number="1">n.sv =<span class="st"> </span><span class="kw">num.sv</span>(<span class="kw">assay</span>(methData),</a>
+<a class="sourceLine" id="cb12-2" data-line-number="2">              mod,</a>
+<a class="sourceLine" id="cb12-3" data-line-number="3">              <span class="dt">method=</span><span class="st">&quot;leek&quot;</span>)</a></code></pre></div>
+<p>The latent factors can then be calculated with the <code>sva</code> function:</p>
+<div class="sourceCode" id="cb13"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb13-1" data-line-number="1">svobj =<span class="st"> </span><span class="kw">sva</span>(<span class="kw">assay</span>(methData),</a>
+<a class="sourceLine" id="cb13-2" data-line-number="2">            mod,</a>
+<a class="sourceLine" id="cb13-3" data-line-number="3">            mod0,</a>
+<a class="sourceLine" id="cb13-4" data-line-number="4">            <span class="dt">n.sv=</span><span class="dv">4</span>)</a></code></pre></div>
+<p>These can then be added to <code>targets</code> to include in the EWAS model.</p>
+<div class="sourceCode" id="cb14"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb14-1" data-line-number="1">sv_df &lt;-<span class="st"> </span><span class="kw">as.data.frame</span>(svobj<span class="op">$</span>sv)</a>
+<a class="sourceLine" id="cb14-2" data-line-number="2"><span class="kw">colnames</span>(sv_df) &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="st">&#39;SV1&#39;</span>, <span class="st">&#39;SV2&#39;</span>, <span class="st">&#39;SV3&#39;</span>, <span class="st">&#39;SV4&#39;</span>)</a>
+<a class="sourceLine" id="cb14-3" data-line-number="3">targets &lt;-<span class="st"> </span><span class="kw">cbind</span>(targets, sv_df)</a></code></pre></div>
+<hr />
+</div>
+</div>
+<div id="ewas" class="section level1">
+<h1>EWAS</h1>
+<div id="packages" class="section level2">
+<h2>Packages</h2>
+<p><a href="https://bioconductor.org/packages/release/bioc/html/limma.html"><strong>Limma</strong></a><sup>27</sup> is a package with excellent documentation that can be useful for smaller samples, due to the optional empirical Bayes step. Other packages that may be of interest for running EWAS include <strong>gee</strong> and <a href="https://cran.r-project.org/web/packages/cate/index.html"><strong>cate</strong></a>.</p>
+<hr />
+</div>
+<div id="formula" class="section level2">
+<h2>Formula</h2>
+<p>In order to run an EWAS a formula needs to be specified based on the above exploratory analyses and SVA.</p>
+<div class="sourceCode" id="cb15"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb15-1" data-line-number="1">formula &lt;-<span class="st"> </span><span class="er">~</span>log_total_pbb <span class="op">+</span><span class="st"> </span>age <span class="op">+</span><span class="st"> </span>sex <span class="op">+</span><span class="st"> </span>plate <span class="op">+</span><span class="st"> </span>row <span class="op">+</span><span class="st"> </span>CD4Tnv <span class="op">+</span><span class="st"> </span>Baso <span class="op">+</span><span class="st"> </span>CD4Tmem <span class="op">+</span><span class="st"> </span>Bmem <span class="op">+</span><span class="st"> </span>Bnv <span class="op">+</span><span class="st"> </span>Treg <span class="op">+</span><span class="st"> </span>CD8Tmem <span class="op">+</span><span class="st"> </span>CD8Tnv <span class="op">+</span><span class="st"> </span>Eos <span class="op">+</span><span class="st"> </span>NK <span class="op">+</span><span class="st"> </span>Mono <span class="op">+</span><span class="st"> </span>SV1 <span class="op">+</span><span class="st"> </span>SV2 <span class="op">+</span><span class="st"> </span>SV3 <span class="op">+</span><span class="st"> </span>SV4</a></code></pre></div>
+<p>You can then use this formula to create a design matrix.</p>
+<div class="sourceCode" id="cb16"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb16-1" data-line-number="1">design &lt;-<span class="st"> </span><span class="kw">model.matrix</span>(formula, </a>
+<a class="sourceLine" id="cb16-2" data-line-number="2">                       <span class="dt">data=</span>targets)</a>
+<a class="sourceLine" id="cb16-3" data-line-number="3">design[<span class="dv">1</span><span class="op">:</span><span class="dv">2</span>,]</a></code></pre></div>
+<pre><code>##                                (Intercept) log_total_pbb   age sexMale
+## GSM3228563_200550980002_R02C01           1    -2.7535707 31.46       0
+## GSM3228564_200550980002_R03C01           1    -0.3714986 46.72       1
+##                                plate200550980010 plate200550980025
+## GSM3228563_200550980002_R02C01                 0                 0
+## GSM3228564_200550980002_R03C01                 0                 0
+##                                plate200550980034 plate200550980035
+## GSM3228563_200550980002_R02C01                 0                 0
+## GSM3228564_200550980002_R03C01                 0                 0
+##                                plate200590490002 plate200590490017
+## GSM3228563_200550980002_R02C01                 0                 0
+## GSM3228564_200550980002_R03C01                 0                 0
+##                                plate200590490021 plate200590490052
+## GSM3228563_200550980002_R02C01                 0                 0
+## GSM3228564_200550980002_R03C01                 0                 0
+##                                plate200590490056 plate200590490062
+## GSM3228563_200550980002_R02C01                 0                 0
+## GSM3228564_200550980002_R03C01                 0                 0
+##                                plate200590490074 plate200590500076
+## GSM3228563_200550980002_R02C01                 0                 0
+## GSM3228564_200550980002_R03C01                 0                 0
+##                                plate200594720026 plate200594720075
+## GSM3228563_200550980002_R02C01                 0                 0
+## GSM3228564_200550980002_R03C01                 0                 0
+##                                plate200594720089 plate200594740031
+## GSM3228563_200550980002_R02C01                 0                 0
+## GSM3228564_200550980002_R03C01                 0                 0
+##                                plate200594740033 plate200594740034
+## GSM3228563_200550980002_R02C01                 0                 0
+## GSM3228564_200550980002_R03C01                 0                 0
+##                                plate200594740035 plate200594740039
+## GSM3228563_200550980002_R02C01                 0                 0
+## GSM3228564_200550980002_R03C01                 0                 0
+##                                plate200594740046 plate200594740047
+## GSM3228563_200550980002_R02C01                 0                 0
+## GSM3228564_200550980002_R03C01                 0                 0
+##                                plate200594740051 plate200594740052
+## GSM3228563_200550980002_R02C01                 0                 0
+## GSM3228564_200550980002_R03C01                 0                 0
+##                                plate200594740057 plate200594740069
+## GSM3228563_200550980002_R02C01                 0                 0
+## GSM3228564_200550980002_R03C01                 0                 0
+##                                plate200594740070 plate200594740072
+## GSM3228563_200550980002_R02C01                 0                 0
+## GSM3228564_200550980002_R03C01                 0                 0
+##                                plate200594740073 plate200594740075
+## GSM3228563_200550980002_R02C01                 0                 0
+## GSM3228564_200550980002_R03C01                 0                 0
+##                                plate200594740079 plate200594740080
+## GSM3228563_200550980002_R02C01                 0                 0
+## GSM3228564_200550980002_R03C01                 0                 0
+##                                plate200594740083 plate200594740084
+## GSM3228563_200550980002_R02C01                 0                 0
+## GSM3228564_200550980002_R03C01                 0                 0
+##                                plate200594740085 plate200594740086
+## GSM3228563_200550980002_R02C01                 0                 0
+## GSM3228564_200550980002_R03C01                 0                 0
+##                                plate200594740087 plate200594740089
+## GSM3228563_200550980002_R02C01                 0                 0
+## GSM3228564_200550980002_R03C01                 0                 0
+##                                plate200598340032 plate200598340033
+## GSM3228563_200550980002_R02C01                 0                 0
+## GSM3228564_200550980002_R03C01                 0                 0
+##                                plate200598340037 plate200598340040
+## GSM3228563_200550980002_R02C01                 0                 0
+## GSM3228564_200550980002_R03C01                 0                 0
+##                                plate200598350004 plate200598350005
+## GSM3228563_200550980002_R02C01                 0                 0
+## GSM3228564_200550980002_R03C01                 0                 0
+##                                plate200598350006 plate200598350011
+## GSM3228563_200550980002_R02C01                 0                 0
+## GSM3228564_200550980002_R03C01                 0                 0
+##                                plate200598350012 plate200598350015
+## GSM3228563_200550980002_R02C01                 0                 0
+## GSM3228564_200550980002_R03C01                 0                 0
+##                                plate200598350017 plate200598350018
+## GSM3228563_200550980002_R02C01                 0                 0
+## GSM3228564_200550980002_R03C01                 0                 0
+##                                plate200598350022 plate200598350025
+## GSM3228563_200550980002_R02C01                 0                 0
+## GSM3228564_200550980002_R03C01                 0                 0
+##                                plate200598350027 plate200598350029
+## GSM3228563_200550980002_R02C01                 0                 0
+## GSM3228564_200550980002_R03C01                 0                 0
+##                                plate200598350041 plate200598350042
+## GSM3228563_200550980002_R02C01                 0                 0
+## GSM3228564_200550980002_R03C01                 0                 0
+##                                plate200598350043 plate200598350044
+## GSM3228563_200550980002_R02C01                 0                 0
+## GSM3228564_200550980002_R03C01                 0                 0
+##                                plate200598350045 plate200598350052
+## GSM3228563_200550980002_R02C01                 0                 0
+## GSM3228564_200550980002_R03C01                 0                 0
+##                                plate200598350053 plate200598350054
+## GSM3228563_200550980002_R02C01                 0                 0
+## GSM3228564_200550980002_R03C01                 0                 0
+##                                plate200598350062 plate200598350065
+## GSM3228563_200550980002_R02C01                 0                 0
+## GSM3228564_200550980002_R03C01                 0                 0
+##                                plate200598350066 plate200598350067
+## GSM3228563_200550980002_R02C01                 0                 0
+## GSM3228564_200550980002_R03C01                 0                 0
+##                                plate200598350069 plate200598350075
+## GSM3228563_200550980002_R02C01                 0                 0
+## GSM3228564_200550980002_R03C01                 0                 0
+##                                plate200598350076 plate200598350077
+## GSM3228563_200550980002_R02C01                 0                 0
+## GSM3228564_200550980002_R03C01                 0                 0
+##                                plate200598350078 plate200598350079
+## GSM3228563_200550980002_R02C01                 0                 0
+## GSM3228564_200550980002_R03C01                 0                 0
+##                                plate200598350080 plate200598360001
+## GSM3228563_200550980002_R02C01                 0                 0
+## GSM3228564_200550980002_R03C01                 0                 0
+##                                plate200598360002 plate200598360003
+## GSM3228563_200550980002_R02C01                 0                 0
+## GSM3228564_200550980002_R03C01                 0                 0
+##                                plate200598360004 plate200598360005
+## GSM3228563_200550980002_R02C01                 0                 0
+## GSM3228564_200550980002_R03C01                 0                 0
+##                                plate200598360006 plate200598360007
+## GSM3228563_200550980002_R02C01                 0                 0
+## GSM3228564_200550980002_R03C01                 0                 0
+##                                plate200598360008 plate200598360014
+## GSM3228563_200550980002_R02C01                 0                 0
+## GSM3228564_200550980002_R03C01                 0                 0
+##                                plate200598360025 plate200598360026
+## GSM3228563_200550980002_R02C01                 0                 0
+## GSM3228564_200550980002_R03C01                 0                 0
+##                                plate200598360027 row     CD4Tnv       Baso
+## GSM3228563_200550980002_R02C01                 0   2 0.11996132 0.00000000
+## GSM3228564_200550980002_R03C01                 0   3 0.05616825 0.00408646
+##                                   CD4Tmem       Bmem        Bnv       Treg
+## GSM3228563_200550980002_R02C01 0.07081197 0.04298515 0.00000000 0.02895521
+## GSM3228564_200550980002_R03C01 0.06505466 0.03205729 0.03627479 0.03253338
+##                                   CD8Tmem     CD8Tnv         Eos         NK
+## GSM3228563_200550980002_R02C01 0.05436260 0.06774525 0.002143475 0.03400832
+## GSM3228564_200550980002_R03C01 0.02641348 0.00000000 0.013666271 0.06104596
+##                                     Mono
+## GSM3228563_200550980002_R02C01 0.0832361
+## GSM3228564_200550980002_R03C01 0.1756234</code></pre>
+<hr />
+</div>
+<div id="random-effects" class="section level2">
+<h2>Random effects</h2>
+<p>Random effects can be included using <code>duplicateCorrelation</code> and specifying the <code>block</code> argument. This is useful for paired experiments, not used in this example, but with example code shown here.</p>
+<div class="sourceCode" id="cb18"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb18-1" data-line-number="1">dupcor &lt;-<span class="st"> </span><span class="kw">duplicateCorrelation</span>(<span class="kw">assay</span>(methData),</a>
+<a class="sourceLine" id="cb18-2" data-line-number="2">                               design,</a>
+<a class="sourceLine" id="cb18-3" data-line-number="3">                               <span class="dt">block =</span> <span class="kw">colData</span>(methData)<span class="op">$</span>ID)</a></code></pre></div>
+<hr />
+</div>
+<div id="fitting-models" class="section level2">
+<h2>Fitting models</h2>
+<p>Models are fit using <code>lmFit</code>.</p>
+<div class="sourceCode" id="cb19"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb19-1" data-line-number="1">fit &lt;-<span class="st"> </span><span class="kw">lmFit</span>(betas, design)</a></code></pre></div>
+<p>Models can also be fit for random effects using the <code>dupcor</code> object created above.</p>
+<div class="sourceCode" id="cb20"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb20-1" data-line-number="1">fit &lt;-<span class="st"> </span><span class="kw">lmFit</span>(betas, design,</a>
+<a class="sourceLine" id="cb20-2" data-line-number="2">             <span class="dt">block =</span> <span class="kw">colData</span>(methData)<span class="op">$</span>ID,</a>
+<a class="sourceLine" id="cb20-3" data-line-number="3">             <span class="dt">correlation =</span> dupcor<span class="op">$</span>consensus.correlation)</a></code></pre></div>
+<hr />
+</div>
+<div id="extracting-results" class="section level2">
+<h2>Extracting results</h2>
+<p>Results can then be extracted from the <code>fit</code> object, including the:</p>
+<ul>
+<li>coefficients <code>coef</code></li>
+<li>standard errors <code>se</code></li>
+<li>t-statistics <code>tstat</code></li>
+<li>p-values <code>pval</code>, and</li>
+<li>number of observations <code>n</code></li>
+</ul>
+<div class="sourceCode" id="cb21"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb21-1" data-line-number="1">coef &lt;-<span class="st"> </span>fit<span class="op">$</span>coefficients[, <span class="dv">2</span>]</a>
+<a class="sourceLine" id="cb21-2" data-line-number="2">se &lt;-<span class="st"> </span>fit<span class="op">$</span>stdev.unscaled[, <span class="dv">2</span>] <span class="op">*</span><span class="st"> </span>fit<span class="op">$</span>sigma</a>
+<a class="sourceLine" id="cb21-3" data-line-number="3">tstat &lt;-<span class="st"> </span>coef <span class="op">/</span><span class="st"> </span>se</a>
+<a class="sourceLine" id="cb21-4" data-line-number="4">pval &lt;-<span class="st"> </span><span class="dv">2</span> <span class="op">*</span><span class="st"> </span><span class="kw">pt</span>(<span class="op">-</span><span class="kw">abs</span>(tstat), fit<span class="op">$</span>df.residual)</a>
+<a class="sourceLine" id="cb21-5" data-line-number="5">n &lt;-<span class="st"> </span><span class="kw">ncol</span>(design) <span class="op">+</span><span class="st"> </span>fit<span class="op">$</span>df.residual</a></code></pre></div>
+<hr />
+</div>
+</div>
+<div id="bacon" class="section level1">
+<h1><code>bacon</code></h1>
+<div id="motivation-2" class="section level2">
+<h2>Motivation</h2>
+<p>We developed a package called <a href="http://bioconductor.org/packages/bacon"><strong>bacon</strong></a><sup>11</sup> to estimate and correct for bias and inflation of test statistics in EWAS. This maximizes power while properly controlling the false positive rate, by estimating the empirical null distribution using Bayesian statistics. The utility of the tool was illustrated through the application of meta-analysis by performing epigenome- and transcriptome-wide association studies (EWASs/TWAS) on age and smoking which highlighted an overlap in differential methylation and expression of associated genes. However, it is important to note that this approach may not work well on smaller datasets and diagnostic plots are essential when applied in this setting (i.e. fewer than 200 samples).</p>
+<hr />
+</div>
+<div id="adjusting-for-bias-and-inflation" class="section level2">
+<h2>Adjusting for bias and inflation</h2>
+<p>We advise using <code>bacon</code> to estimate inflation and bias often observed in EWAS. This object can then be printed to report the estimated bias and inflation.</p>
+<div class="sourceCode" id="cb22"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb22-1" data-line-number="1">bc &lt;-<span class="st"> </span><span class="kw">bacon</span>(<span class="dt">teststatistics =</span> tstat,</a>
+<a class="sourceLine" id="cb22-2" data-line-number="2">            <span class="dt">effectsizes =</span> coef,</a>
+<a class="sourceLine" id="cb22-3" data-line-number="3">            <span class="dt">standarderrors =</span> se,</a>
+<a class="sourceLine" id="cb22-4" data-line-number="4">            <span class="dt">verbose =</span> <span class="ot">TRUE</span>)</a></code></pre></div>
+<pre><code>## Use multinomial weighted sampling...</code></pre>
+<pre><code>## threshold = -5.3980
+## Starting values:
+## p0 = 1.0000, p1 = 0.0000, p2 = 0.0000
+## mu0 = -0.2161, mu1 = 5.3589, mu2 = -5.7911
+## sigma0 = 1.0328, sigma1 = 1.0328, sigma2 = 1.0328</code></pre>
+<div class="sourceCode" id="cb25"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb25-1" data-line-number="1">bc</a></code></pre></div>
+<pre><code>## Bacon-object containing 1 set(s) of 743324 test-statistics.
+## ...estimated bias: -0.071.
+## ...estimated inflation: 0.94.
+## 
+## Empirical null estimates are based on 5000 iterations with a burnin-period of 2000.</code></pre>
+<p>P-values and t-statistics can then be adjusted</p>
+<div class="sourceCode" id="cb27"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb27-1" data-line-number="1">pval &lt;-<span class="st"> </span>bacon<span class="op">::</span><span class="kw">pval</span>(bc)</a>
+<a class="sourceLine" id="cb27-2" data-line-number="2">tstat &lt;-<span class="st"> </span>bacon<span class="op">::</span><span class="kw">tstat</span>(bc)</a></code></pre></div>
+<hr />
+</div>
+<div id="plots" class="section level2">
+<h2>Plots</h2>
+<p>Bacon also provides some visualizations of its performance, which can come in handy. In addition to inspecting diagnostic plots using <code>traces</code>, <code>posteriors</code>, and <code>fit</code>, checking the QQ plots as shown below is an essential step.</p>
+<div class="sourceCode" id="cb28"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb28-1" data-line-number="1"><span class="kw">print</span>(<span class="kw">plot</span>(bc, <span class="dt">type=</span><span class="st">&quot;hist&quot;</span>))</a></code></pre></div>
+<pre><code>## `stat_bin()` using `bins = 30`. Pick better value with `binwidth`.</code></pre>
+<p><img src="06_EWAS_files/figure-html/618plot-1.png" width="672" /></p>
+<div class="sourceCode" id="cb30"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb30-1" data-line-number="1"><span class="kw">print</span>(<span class="kw">plot</span>(bc, <span class="dt">type=</span><span class="st">&quot;qq&quot;</span>))</a></code></pre></div>
+<p><img src="06_EWAS_files/figure-html/618plot-2.png" width="672" /></p>
+<p>Additionally, rerunning bacon can provide an estimate of any residual bias or inflation.</p>
+<div class="sourceCode" id="cb31"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb31-1" data-line-number="1">bc &lt;-<span class="st"> </span>bacon<span class="op">::</span><span class="kw">bacon</span>(<span class="dt">teststatistics =</span> tstat,</a>
+<a class="sourceLine" id="cb31-2" data-line-number="2">                   <span class="dt">effectsizes =</span> coef,</a>
+<a class="sourceLine" id="cb31-3" data-line-number="3">                   <span class="dt">standarderrors =</span> se,</a>
+<a class="sourceLine" id="cb31-4" data-line-number="4">                   <span class="dt">verbose =</span> <span class="ot">TRUE</span>)</a></code></pre></div>
+<pre><code>## Use multinomial weighted sampling...</code></pre>
+<pre><code>## threshold = -5.3980
+## Starting values:
+## p0 = 1.0000, p1 = 0.0000, p2 = 0.0000
+## mu0 = -0.1549, mu1 = 5.8058, mu2 = -6.1157
+## sigma0 = 1.1043, sigma1 = 1.1043, sigma2 = 1.1043</code></pre>
+<div class="sourceCode" id="cb34"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb34-1" data-line-number="1">bc</a></code></pre></div>
+<pre><code>## Bacon-object containing 1 set(s) of 743324 test-statistics.
+## ...estimated bias: 0.007.
+## ...estimated inflation: 1.
+## 
+## Empirical null estimates are based on 5000 iterations with a burnin-period of 2000.</code></pre>
+<hr />
+</div>
+</div>
+<div id="saving-results" class="section level1">
+<h1>Saving results</h1>
+<p>Bacon-adjusted results can then be saved, for use in downstream analysis.</p>
+<div class="sourceCode" id="cb36"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb36-1" data-line-number="1">limma_base &lt;-<span class="st"> </span><span class="kw">data.frame</span>(<span class="dt">cpg =</span> <span class="kw">rownames</span>(fit<span class="op">$</span>coefficients), </a>
+<a class="sourceLine" id="cb36-2" data-line-number="2">                         <span class="dt">beta =</span> coef, <span class="dt">SE =</span> se, </a>
+<a class="sourceLine" id="cb36-3" data-line-number="3">                         <span class="dt">p =</span> pval, </a>
+<a class="sourceLine" id="cb36-4" data-line-number="4">                         <span class="dt">t =</span> tstat, <span class="dt">N =</span> n)</a></code></pre></div>
+<hr />
+</div>
+
+
+
+</div>
+</div>
+
+</div>
+
+<script>
+
+// add bootstrap table styles to pandoc tables
+function bootstrapStylePandocTables() {
+  $('tr.odd').parent('tbody').parent('table').addClass('table table-condensed');
+}
+$(document).ready(function () {
+  bootstrapStylePandocTables();
+});
+
+
+</script>
+
+<!-- tabsets -->
+
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+
+$(document).ready(function () {
+  $('.tabset-dropdown > .nav-tabs > li').click(function () {
+    $(this).parent().toggleClass('nav-tabs-open');
+  });
+});
+</script>
+
+<!-- code folding -->
+
+<script>
+$(document).ready(function ()  {
+
+    // temporarily add toc-ignore selector to headers for the consistency with Pandoc
+    $('.unlisted.unnumbered').addClass('toc-ignore')
+
+    // move toc-ignore selectors from section div to header
+    $('div.section.toc-ignore')
+        .removeClass('toc-ignore')
+        .children('h1,h2,h3,h4,h5').addClass('toc-ignore');
+
+    // establish options
+    var options = {
+      selectors: "h1,h2",
+      theme: "bootstrap3",
+      context: '.toc-content',
+      hashGenerator: function (text) {
+        return text.replace(/[.\\/?&!#<>]/g, '').replace(/\s/g, '_');
+      },
+      ignoreSelector: ".toc-ignore",
+      scrollTo: 0
+    };
+    options.showAndHide = true;
+    options.smoothScroll = true;
+
+    // tocify
+    var toc = $("#TOC").tocify(options).data("toc-tocify");
+});
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>

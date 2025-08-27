@@ -1,0 +1,360 @@
+```{r, child="_setup.Rmd"}
+```
+
+***
+
+```{r echo=F, warning=F, message=F}
+library(tidyverse)
+library(reshape2)
+library(circlize)
+library(ComplexHeatmap)
+library(SummarizedExperiment)
+```
+
+# Imputation #
+
+## Motivation ##
+
+Imputation is often required in DNAm studies, such as to ensure phenotype predictors have access to complete unbiased data or for algorithms that cannot accept NA values like SVA. Various options are available, including: 
+
+* `impute.knn` from [**impute**](https://www.bioconductor.org/packages//2.12/bioc/html/impute.html), a package for imputation of microarray data
+* [**missForest**](https://cran.r-project.org/web/packages/missForest/index.html), which imputes data using random forests, and
+* [**methyLImp2**](https://bioconductor.org/packages/release/bioc/html/methyLImp2.html)<sup>20</sup>, which is specifically designed for DNAm data
+
+Although in-depth benchmarking is yet to be completed, we outline the use of `methyLImp2` for imputation to create a complete matrix of beta values. 
+
+Of note, EPICv2 CpGs have technical suffixes for CpG names, which predictors may not be updated for. Additionally, CpGs have up to 10 replicates. We advise selecting one of these at random to use in prediction, or selecting the one with the best performing detection p-value, which can be inspected using `detectionP()` from `minfi`.
+
+***
+
+## methyLImp2 ##
+
+The main function `methyLImp2` can take a SummarizedExperiment or beta matrix as input, and requires the array `type` to be specified (as 450k or EPIC). By default it will overwrite your SummarizedExperiment object.
+
+```{r echo=F, warning=F, message=F}
+if (!requireNamespace("snow", quietly = TRUE)) {
+  install.packages("snow")
+  library(snow)
+}
+
+library(methyLImp2)
+library(SummarizedExperiment)
+
+gc()
+
+library(BiocParallel)
+
+# detect the allocated cores from SLURM (fallback to 6)
+nworkers <- as.integer(Sys.getenv("SLURM_CPUS_PER_TASK", "6"))
+
+register(MulticoreParam(workers = nworkers, progressbar = TRUE))
+
+set.seed(1)  # for reproducibility if any RNG is used internally
+targets <- as.data.frame(colData(methData))
+```
+
+
+```{r 601impute, warning=F}
+methData <- methyLImp2(
+  input = methData,
+  type = "EPIC",
+  BPPARAM = MulticoreParam(workers = nworkers, progressbar = TRUE),
+  minibatch_frac = 0.5)
+```
+
+We can extract `betas` for use in our predictors, and reduce precision as described earlier.
+
+```{r 602round}
+betas <- assay(methData)
+betas <- round(betas, 4)
+```
+
+***
+
+# Covariates #
+
+## Calculate PCs ##
+
+Principal components (PCs) of the beta values can be calculated using `prcomp` as before to investigate variables important to adjust for in the EWAS analysis.
+
+```{r 603pccalc}
+tbetas <- t(betas)
+pca <- prcomp(tbetas, center = TRUE, rank. = 10)
+```
+
+***
+
+## Heatmap ##
+
+Each column in the `RGset` colData should be considered as a potential covariate in EWAS models. Both technical and biological factors should be investigated as these may introduce batch effects or be clinically relevant. In order to assess this, you can visualize correlations with PCs as done previously in this workflow.
+
+Any constant variables are removed from the heatmap, as they will not explain variance in the data.
+
+```{r 604constant, warning=F, message=F}
+plot_vars <- apply(targets, 2, function(x) sd(as.numeric(factor(x)), na.rm=T))
+
+plot_vars <- names(plot_vars[!plot_vars %in% c(NA, 0)])
+plot_vars
+
+heatmap_df <- targets %>% 
+  dplyr::select(any_of(plot_vars))
+```
+
+All variables are then converted to numeric and correlations between them and the PCs are calculated.
+
+```{r 605corrheatmap}
+heatmap_df <- apply(heatmap_df, 2, function(x) as.numeric(factor(x)))
+
+cxy <- round(cor(pca$x, scale(heatmap_df), use="pairwise.complete.obs"),2) 
+```
+
+A heatmap can then be used to visualize these correlations and uncover measured variables that explain a large proportion of DNAm variance.
+
+```{r 606heatmap}
+col_fun <- colorRamp2(c(-1, 0, 1), c("#000042", "white", "#800000"))
+
+Heatmap(
+  t(cxy),                              
+  col = col_fun,  
+  border = 'grey5',
+  cluster_columns = FALSE,            
+  show_row_dend = TRUE,             
+  show_column_dend = FALSE,      
+  name = "Value",                 
+  row_names_gp = gpar(fontsize = 8), 
+  column_names_gp = gpar(fontsize = 8), 
+  cell_fun = function(j, i, x, y, width, height, fill) {
+    grid.rect(x, y, width, height, 
+              gp = gpar(col = "white", lwd = 1, fill = NA))
+    grid.text(ifelse(abs(t(cxy)[i,j]) > 0.4,
+                     sprintf("%.2f", round(t(cxy)[i, j], 2)),
+                     ""), 
+              x, y, gp = gpar(fontsize = 8, col = "white"))
+  }
+)
+```
+
+By examining the correlations in the data, we can build our model in a more informed manner. The second PC is highly correlated with sex and, as is usual in EWAS, we intend to include this as a confounder. 
+
+Some predicted cell counts appear of substantial importance and we advise also adjusting for these. Model specification should be informed by a combination of prior knowledge and inspection of patterns in the data. 
+
+***
+
+# SVA #
+
+```{r echo=F, warning=F, message=F}
+library(sva)
+```
+
+## Motivation ##
+
+The `sva` package contains functions for removing batch effects and other unwanted variation in high-throughput experiments. Specifically, the sva package contains functions for the identifying and building surrogate variables for high-dimensional data sets. Surrogate variables are covariates constructed directly from high-dimensional data (like DNAm data) that can be used in subsequent analyses to adjust for unknown, unmodeled, or latent sources of noise. 
+
+The sva package can be used to remove artifacts in three ways: 
+
+* identifying and estimating surrogate variables for unknown sources of variation in high-throughput experiments<sup>23</sup>
+* directly removing known batch effects using ComBat<sup>24</sup>, and
+* removing batch effects with known control probes<sup>25</sup>
+
+Removing batch effects and using surrogate variables in differential expression analysis have been shown to reduce dependence, stabilize error rate estimates, and improve reproducibility<sup>23,26</sup>. In addition to SVA, the [**cate**](https://cran.r-project.org/src/contrib/Archive/cate/) package provides a related framework that also estimates latent factors to account for unobserved confounders in high-dimensional data, and was previously the standard approach in epigenome-wide pipelines. 
+
+***
+
+## Specification ##
+
+The full model and null model are specified with and without the variable of interest respectively. In this case, we adjust for `sex`, `age`, `plate`, `row`, `CD4Tnv`, `Baso`, `CD4Tmem`, `Bmem`, `Bnv`, `Treg`, `CD8Tmem`, `CD8Tnv`, `Eos`, `NK`, and `Mono`. Neutrophils are excluded to avoid collinearity as all predicted cell counts sum to 1.
+
+```{r 607models}
+mod = model.matrix(~log_total_pbb + age + sex + plate + row + CD4Tnv + Baso + CD4Tmem + Bmem + Bnv + Treg + CD8Tmem + CD8Tnv + Eos + NK + Mono, data=targets)
+mod0 = model.matrix(~age + sex + plate + row + CD4Tnv + Baso + CD4Tmem + Bmem + Bnv + Treg + CD8Tmem + CD8Tnv + Eos + NK + Mono,data=targets)
+```
+
+***
+
+## Latent factor calculation ##
+
+This can then be used to estimate the appropriate number of latent factors to calculate.
+
+```{r 608num, eval=F}
+n.sv = num.sv(assay(methData),
+              mod,
+              method="leek")
+```
+
+The latent factors can then be calculated with the `sva` function:
+
+```{r 608predict, eval=F}
+svobj = sva(assay(methData),
+            mod,
+            mod0,
+            n.sv=4)
+```
+
+These can then be added to `targets` to include in the EWAS model.
+
+```{r 609add, eval=F}
+sv_df <- as.data.frame(svobj$sv)
+colnames(sv_df) <- c('SV1', 'SV2', 'SV3', 'SV4')
+targets <- cbind(targets, sv_df)
+```
+
+***
+
+# EWAS #
+
+```{r echo=F, warning=F, message=F}
+library(limma)
+```
+
+## Packages ##
+
+[**Limma**](https://bioconductor.org/packages/release/bioc/html/limma.html)<sup>27</sup> is a package with excellent documentation that can be useful for smaller samples, due to the optional empirical Bayes step. Other packages that may be of interest for running EWAS include **gee** and [**cate**](https://cran.r-project.org/web/packages/cate/index.html).
+
+***
+
+## Formula ##
+
+In order to run an EWAS a formula needs to be specified based on the above exploratory analyses and SVA.
+
+```{r 610formulareal, echo=F}
+formula <- ~log_total_pbb + age + sex + plate + row + CD4Tnv + Baso + CD4Tmem + Bmem + Bnv + Treg + CD8Tmem + CD8Tnv + Eos + NK + Mono
+```
+
+```{r 610formula, eval=F}
+formula <- ~log_total_pbb + age + sex + plate + row + CD4Tnv + Baso + CD4Tmem + Bmem + Bnv + Treg + CD8Tmem + CD8Tnv + Eos + NK + Mono + SV1 + SV2 + SV3 + SV4
+```
+
+You can then use this formula to create a design matrix.
+
+```{r 611design}
+design <- model.matrix(formula, 
+                       data=targets)
+design[1:2,]
+```
+
+
+```{r echo=F, warning=F, message=F}
+betas <- betas[ , rownames(design)]
+```
+
+
+***
+
+## Random effects
+
+Random effects can be included using `duplicateCorrelation` and specifying the `block` argument. This is useful for paired experiments, not used in this example, but with example code shown here.
+
+```{r 612random, eval=F}
+dupcor <- duplicateCorrelation(assay(methData),
+                               design,
+                               block = colData(methData)$ID)
+```
+
+***
+
+## Fitting models ##
+
+Models are fit using `lmFit`.
+
+```{r 613fit, warning=F}
+fit <- lmFit(betas, design)
+```
+
+Models can also be fit for random effects using the `dupcor` object created above.
+
+```{r 614fitrandom, eval=F}
+fit <- lmFit(betas, design,
+             block = colData(methData)$ID,
+             correlation = dupcor$consensus.correlation)
+```
+
+***
+
+## Extracting results ##
+
+Results can then be extracted from the `fit` object, including the:
+
+* coefficients `coef`
+* standard errors `se`
+* t-statistics `tstat`
+* p-values `pval`, and 
+* number of observations `n`
+
+```{r 615extract}
+coef <- fit$coefficients[, 2]
+se <- fit$stdev.unscaled[, 2] * fit$sigma
+tstat <- coef / se
+pval <- 2 * pt(-abs(tstat), fit$df.residual)
+n <- ncol(design) + fit$df.residual
+```
+
+***
+
+# `bacon` #
+
+```{r echo=F, warning=F, message=F}
+library(bacon)
+```
+
+## Motivation ##
+
+We developed a package called [**bacon**](http://bioconductor.org/packages/bacon)<sup>11</sup> to estimate and correct for bias and inflation of test statistics in EWAS. This maximizes power while properly controlling the false positive rate, by estimating the empirical null distribution using Bayesian statistics. The utility of the tool was illustrated through the application of meta-analysis by performing epigenome- and transcriptome-wide association studies (EWASs/TWAS) on age and smoking which highlighted an overlap in differential methylation and expression of associated genes. However, it is important to note that this approach may not work well on smaller datasets and diagnostic plots are essential when applied in this setting (i.e. fewer than 200 samples). 
+
+***
+
+## Adjusting for bias and inflation ##
+
+We advise using `bacon` to estimate inflation and bias often observed in EWAS. This object can then be printed to report the estimated bias and inflation.
+
+```{r 616bacon}
+bc <- bacon(teststatistics = tstat,
+            effectsizes = coef,
+            standarderrors = se,
+            verbose = TRUE)
+
+bc
+```
+
+P-values and t-statistics can then be adjusted
+
+```{r 617extract}
+pval <- bacon::pval(bc)
+tstat <- bacon::tstat(bc)
+```
+
+***
+
+## Plots ##
+
+Bacon also provides some visualizations of its performance, which can come in handy. In addition to inspecting diagnostic plots using `traces`, `posteriors`, and `fit`, checking the QQ plots as shown below is an essential step.  
+
+```{r 618plot, warning=F}
+print(plot(bc, type="hist"))
+print(plot(bc, type="qq"))
+```
+
+Additionally, rerunning bacon can provide an estimate of any residual bias or inflation.
+
+```{r 619rerun, warning=F}
+bc <- bacon::bacon(teststatistics = tstat,
+                   effectsizes = coef,
+                   standarderrors = se,
+                   verbose = TRUE)
+bc
+```
+
+***
+
+# Saving results
+
+Bacon-adjusted results can then be saved, for use in downstream analysis.
+
+```{r 620results}
+limma_base <- data.frame(cpg = rownames(fit$coefficients), 
+                         beta = coef, SE = se, 
+                         p = pval, 
+                         t = tstat, N = n)
+```
+
+***
+

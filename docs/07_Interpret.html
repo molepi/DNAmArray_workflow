@@ -1,0 +1,739 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+<meta charset="utf-8" />
+<meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+
+
+
+
+<title>07_Interpret.knit</title>
+
+<script src="site_libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="site_libs/bootstrap-3.3.5/css/lumen.min.css" rel="stylesheet" />
+<script src="site_libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/respond.min.js"></script>
+<style>h1 {font-size: 34px;}
+       h1.title {font-size: 38px;}
+       h2 {font-size: 30px;}
+       h3 {font-size: 24px;}
+       h4 {font-size: 18px;}
+       h5 {font-size: 16px;}
+       h6 {font-size: 12px;}
+       code {color: inherit; background-color: rgba(0, 0, 0, 0.04);}
+       pre:not([class]) { background-color: white }</style>
+<script src="site_libs/jqueryui-1.13.2/jquery-ui.min.js"></script>
+<link href="site_libs/tocify-1.9.1/jquery.tocify.css" rel="stylesheet" />
+<script src="site_libs/tocify-1.9.1/jquery.tocify.js"></script>
+<script src="site_libs/navigation-1.1/tabsets.js"></script>
+
+<style type="text/css">
+  code{white-space: pre-wrap;}
+  span.smallcaps{font-variant: small-caps;}
+  span.underline{text-decoration: underline;}
+  div.column{display: inline-block; vertical-align: top; width: 50%;}
+  div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+  ul.task-list{list-style: none;}
+    </style>
+
+
+
+<style type="text/css">
+  code {
+    white-space: pre;
+  }
+  .sourceCode {
+    overflow: visible;
+  }
+</style>
+<style type="text/css" data-origin="pandoc">
+a.sourceLine { display: inline-block; line-height: 1.25; }
+a.sourceLine { pointer-events: none; color: inherit; text-decoration: inherit; }
+a.sourceLine:empty { height: 1.2em; position: absolute; }
+.sourceCode { overflow: visible; }
+code.sourceCode { white-space: pre; position: relative; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+code.sourceCode { white-space: pre-wrap; }
+a.sourceLine { text-indent: -1em; padding-left: 1em; }
+}
+pre.numberSource a.sourceLine
+  { position: relative; }
+pre.numberSource a.sourceLine:empty
+  { position: absolute; }
+pre.numberSource a.sourceLine::before
+  { content: attr(data-line-number);
+    position: absolute; left: -5em; text-align: right; vertical-align: baseline;
+    border: none; pointer-events: all;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    background-color: #ffffff;
+    color: #a0a0a0;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #a0a0a0;  padding-left: 4px; }
+div.sourceCode
+  { color: #1f1c1b; background-color: #ffffff; }
+@media screen {
+a.sourceLine::before { text-decoration: underline; }
+}
+code span. { color: #1f1c1b; } /* Normal */
+code span.al { color: #bf0303; background-color: #f7e6e6; font-weight: bold; } /* Alert */
+code span.an { color: #ca60ca; } /* Annotation */
+code span.at { color: #0057ae; } /* Attribute */
+code span.bn { color: #b08000; } /* BaseN */
+code span.bu { color: #644a9b; font-weight: bold; } /* BuiltIn */
+code span.cf { color: #1f1c1b; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #924c9d; } /* Char */
+code span.cn { color: #aa5500; } /* Constant */
+code span.co { color: #898887; } /* Comment */
+code span.cv { color: #0095ff; } /* CommentVar */
+code span.do { color: #607880; } /* Documentation */
+code span.dt { color: #0057ae; } /* DataType */
+code span.dv { color: #b08000; } /* DecVal */
+code span.er { color: #bf0303; text-decoration: underline; } /* Error */
+code span.ex { color: #0095ff; font-weight: bold; } /* Extension */
+code span.fl { color: #b08000; } /* Float */
+code span.fu { color: #644a9b; } /* Function */
+code span.im { color: #ff5500; } /* Import */
+code span.in { color: #b08000; } /* Information */
+code span.kw { color: #1f1c1b; font-weight: bold; } /* Keyword */
+code span.op { color: #1f1c1b; } /* Operator */
+code span.ot { color: #006e28; } /* Other */
+code span.pp { color: #006e28; } /* Preprocessor */
+code span.re { color: #0057ae; background-color: #e0e9f8; } /* RegionMarker */
+code span.sc { color: #3daee9; } /* SpecialChar */
+code span.ss { color: #ff5500; } /* SpecialString */
+code span.st { color: #bf0303; } /* String */
+code span.va { color: #0057ae; } /* Variable */
+code span.vs { color: #bf0303; } /* VerbatimString */
+code span.wa { color: #bf0303; } /* Warning */
+
+</style>
+<script>
+// apply pandoc div.sourceCode style to pre.sourceCode instead
+(function() {
+  var sheets = document.styleSheets;
+  for (var i = 0; i < sheets.length; i++) {
+    if (sheets[i].ownerNode.dataset["origin"] !== "pandoc") continue;
+    try { var rules = sheets[i].cssRules; } catch (e) { continue; }
+    var j = 0;
+    while (j < rules.length) {
+      var rule = rules[j];
+      // check if there is a div.sourceCode rule
+      if (rule.type !== rule.STYLE_RULE || rule.selectorText !== "div.sourceCode") {
+        j++;
+        continue;
+      }
+      var style = rule.style.cssText;
+      // check if color or background-color is set
+      if (rule.style.color === '' && rule.style.backgroundColor === '') {
+        j++;
+        continue;
+      }
+      // replace div.sourceCode by a pre.sourceCode rule
+      sheets[i].deleteRule(j);
+      sheets[i].insertRule('pre.sourceCode{' + style + '}', j);
+    }
+  }
+})();
+</script>
+
+
+
+
+<link rel="stylesheet" href="style.css" type="text/css" />
+
+
+
+<style type = "text/css">
+.main-container {
+  max-width: 940px;
+  margin-left: auto;
+  margin-right: auto;
+}
+img {
+  max-width:100%;
+}
+.tabbed-pane {
+  padding-top: 12px;
+}
+.html-widget {
+  margin-bottom: 20px;
+}
+button.code-folding-btn:focus {
+  outline: none;
+}
+summary {
+  display: list-item;
+}
+details > summary > p:only-child {
+  display: inline;
+}
+pre code {
+  padding: 0;
+}
+</style>
+
+
+<style type="text/css">
+.dropdown-submenu {
+  position: relative;
+}
+.dropdown-submenu>.dropdown-menu {
+  top: 0;
+  left: 100%;
+  margin-top: -6px;
+  margin-left: -1px;
+  border-radius: 0 6px 6px 6px;
+}
+.dropdown-submenu:hover>.dropdown-menu {
+  display: block;
+}
+.dropdown-submenu>a:after {
+  display: block;
+  content: " ";
+  float: right;
+  width: 0;
+  height: 0;
+  border-color: transparent;
+  border-style: solid;
+  border-width: 5px 0 5px 5px;
+  border-left-color: #cccccc;
+  margin-top: 5px;
+  margin-right: -10px;
+}
+.dropdown-submenu:hover>a:after {
+  border-left-color: #adb5bd;
+}
+.dropdown-submenu.pull-left {
+  float: none;
+}
+.dropdown-submenu.pull-left>.dropdown-menu {
+  left: -100%;
+  margin-left: 10px;
+  border-radius: 6px 0 6px 6px;
+}
+</style>
+
+<script type="text/javascript">
+// manage active state of menu based on current page
+$(document).ready(function () {
+  // active menu anchor
+  href = window.location.pathname
+  href = href.substr(href.lastIndexOf('/') + 1)
+  if (href === "")
+    href = "index.html";
+  var menuAnchor = $('a[href="' + href + '"]');
+
+  // mark the anchor link active (and if it's in a dropdown, also mark that active)
+  var dropdown = menuAnchor.closest('li.dropdown');
+  if (window.bootstrap) { // Bootstrap 4+
+    menuAnchor.addClass('active');
+    dropdown.find('> .dropdown-toggle').addClass('active');
+  } else { // Bootstrap 3
+    menuAnchor.parent().addClass('active');
+    dropdown.addClass('active');
+  }
+
+  // Navbar adjustments
+  var navHeight = $(".navbar").first().height() + 15;
+  var style = document.createElement('style');
+  var pt = "padding-top: " + navHeight + "px; ";
+  var mt = "margin-top: -" + navHeight + "px; ";
+  var css = "";
+  // offset scroll position for anchor links (for fixed navbar)
+  for (var i = 1; i <= 6; i++) {
+    css += ".section h" + i + "{ " + pt + mt + "}\n";
+  }
+  style.innerHTML = "body {" + pt + "padding-bottom: 40px; }\n" + css;
+  document.head.appendChild(style);
+});
+</script>
+
+<!-- tabsets -->
+
+<style type="text/css">
+.tabset-dropdown > .nav-tabs {
+  display: inline-table;
+  max-height: 500px;
+  min-height: 44px;
+  overflow-y: auto;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs > li.active:before, .tabset-dropdown > .nav-tabs.nav-tabs-open:before {
+  content: "\e259";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li.active:before {
+  content: "\e258";
+  font-family: 'Glyphicons Halflings';
+  border: none;
+}
+
+.tabset-dropdown > .nav-tabs > li.active {
+  display: block;
+}
+
+.tabset-dropdown > .nav-tabs > li > a,
+.tabset-dropdown > .nav-tabs > li > a:focus,
+.tabset-dropdown > .nav-tabs > li > a:hover {
+  border: none;
+  display: inline-block;
+  border-radius: 4px;
+  background-color: transparent;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li {
+  display: block;
+  float: none;
+}
+
+.tabset-dropdown > .nav-tabs > li {
+  display: none;
+}
+</style>
+
+<!-- code folding -->
+
+
+
+<style type="text/css">
+
+#TOC {
+  margin: 25px 0px 20px 0px;
+}
+@media (max-width: 768px) {
+#TOC {
+  position: relative;
+  width: 100%;
+}
+}
+
+@media print {
+.toc-content {
+  /* see https://github.com/w3c/csswg-drafts/issues/4434 */
+  float: right;
+}
+}
+
+.toc-content {
+  padding-left: 30px;
+  padding-right: 40px;
+}
+
+div.main-container {
+  max-width: 1200px;
+}
+
+div.tocify {
+  width: 20%;
+  max-width: 260px;
+  max-height: 85%;
+}
+
+@media (min-width: 768px) and (max-width: 991px) {
+  div.tocify {
+    width: 25%;
+  }
+}
+
+@media (max-width: 767px) {
+  div.tocify {
+    width: 100%;
+    max-width: none;
+  }
+}
+
+.tocify ul, .tocify li {
+  line-height: 20px;
+}
+
+.tocify-subheader .tocify-item {
+  font-size: 0.90em;
+}
+
+.tocify .list-group-item {
+  border-radius: 0px;
+}
+
+
+</style>
+
+
+
+</head>
+
+<body>
+
+
+<div class="container-fluid main-container">
+
+
+<!-- setup 3col/9col grid for toc_float and main content  -->
+<div class="row">
+<div class="col-xs-12 col-sm-4 col-md-3">
+<div id="TOC" class="tocify">
+</div>
+</div>
+
+<div class="toc-content col-xs-12 col-sm-8 col-md-9">
+
+
+
+
+<div class="navbar navbar-default  navbar-fixed-top" role="navigation">
+  <div class="container">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-bs-toggle="collapse" data-target="#navbar" data-bs-target="#navbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="index.html">DNAmArray</a>
+    </div>
+    <div id="navbar" class="navbar-collapse collapse">
+      <ul class="nav navbar-nav">
+        <li>
+  <a href="01_GettingStarted.html">Getting Started</a>
+</li>
+<li>
+  <a href="02_SampleQualityControl.html">Sample QC</a>
+</li>
+<li>
+  <a href="03_Predict.html">Predict</a>
+</li>
+<li>
+  <a href="04_Normalization.html">Normalize</a>
+</li>
+<li>
+  <a href="05_ProbeQC.html">Probe QC</a>
+</li>
+<li>
+  <a href="06_EWAS.html">Analyse</a>
+</li>
+<li>
+  <a href="07_Interpret.html">Interpret</a>
+</li>
+      </ul>
+      <ul class="nav navbar-nav navbar-right">
+        <li>
+  <a href="about.html">About</a>
+</li>
+      </ul>
+    </div><!--/.nav-collapse -->
+  </div><!--/.container -->
+</div><!--/.navbar -->
+
+<div id="header">
+
+
+
+
+</div>
+
+
+<hr />
+<div id="top-cpgs" class="section level1">
+<h1>Top CpGs</h1>
+<div id="adjusting-for-multiple-testing" class="section level2">
+<h2>Adjusting for multiple testing</h2>
+<p>It is important to adjust p-values for multiple testing before performing any downstream analysis. The <code>p.adjust</code> method can be set to either:</p>
+<ul>
+<li><code>fdr</code> - less strict, often used for correlated measures like metabolites or</li>
+<li><code>bonferroni</code> - more strict, adjusts for all CpGs indepednently</li>
+</ul>
+<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb1-1" data-line-number="1">limma_base &lt;-<span class="st"> </span>limma_base <span class="op">%&gt;%</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb1-2" data-line-number="2"><span class="st">  </span><span class="kw">mutate</span>(<span class="dt">padj =</span> <span class="kw">p.adjust</span>(pval, <span class="dt">method=</span><span class="st">&quot;fdr&quot;</span>))</a></code></pre></div>
+<hr />
+</div>
+<div id="fetching-top-hits" class="section level2">
+<h2>Fetching top hits</h2>
+<p>After adjusting for multiple CpGs, top hits can be extracted and inspected.</p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb2-1" data-line-number="1">top_cpgs &lt;-<span class="st"> </span>limma_base <span class="op">%&gt;%</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb2-2" data-line-number="2"><span class="st">  </span><span class="kw">filter</span>(padj <span class="op">&lt;=</span><span class="st"> </span><span class="fl">0.05</span>) <span class="op">%&gt;%</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb2-3" data-line-number="3"><span class="st">  </span><span class="kw">arrange</span>(padj)</a></code></pre></div>
+<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb3-1" data-line-number="1"><span class="kw">print</span>(<span class="kw">paste0</span>(<span class="st">&quot;There are &quot;</span>, </a>
+<a class="sourceLine" id="cb3-2" data-line-number="2">             <span class="kw">nrow</span>(top_cpgs), <span class="st">&quot; significant CpGs&quot;</span>))</a></code></pre></div>
+<pre><code>## [1] &quot;There are 2164 significant CpGs&quot;</code></pre>
+<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb5-1" data-line-number="1"><span class="kw">print</span>(<span class="kw">paste0</span>(<span class="kw">nrow</span>(top_cpgs <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">filter</span>(beta<span class="op">&lt;</span><span class="dv">0</span>)), </a>
+<a class="sourceLine" id="cb5-2" data-line-number="2">             <span class="st">&quot; of these are hypomethylated, and &quot;</span>, </a>
+<a class="sourceLine" id="cb5-3" data-line-number="3">             <span class="kw">nrow</span>(top_cpgs <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">filter</span>(beta<span class="op">&gt;</span><span class="dv">0</span>)), </a>
+<a class="sourceLine" id="cb5-4" data-line-number="4">             <span class="st">&quot; are hypermethylated.&quot;</span>))</a></code></pre></div>
+<pre><code>## [1] &quot;1710 of these are hypomethylated, and 454 are hypermethylated.&quot;</code></pre>
+<hr />
+</div>
+<div id="volcano-plot" class="section level2">
+<h2>Volcano plot</h2>
+<p>Significant CpGs can be visualized using a volcano plot. First limits for the plot are extracted.</p>
+<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb7-1" data-line-number="1"><span class="cf">if</span>(<span class="kw">nrow</span>(top_cpgs) <span class="op">&gt;=</span><span class="st"> </span><span class="dv">1</span>){</a>
+<a class="sourceLine" id="cb7-2" data-line-number="2">   sig_limit &lt;-<span class="st"> </span><span class="kw">max</span>(top_cpgs<span class="op">$</span>p)</a>
+<a class="sourceLine" id="cb7-3" data-line-number="3">  } <span class="cf">else</span> {</a>
+<a class="sourceLine" id="cb7-4" data-line-number="4">  sig_limit &lt;-<span class="st"> </span><span class="fl">10E-07</span></a>
+<a class="sourceLine" id="cb7-5" data-line-number="5">  }</a>
+<a class="sourceLine" id="cb7-6" data-line-number="6"></a>
+<a class="sourceLine" id="cb7-7" data-line-number="7">min &lt;-<span class="st"> </span><span class="kw">as.numeric</span>(<span class="kw">min</span>(</a>
+<a class="sourceLine" id="cb7-8" data-line-number="8">  <span class="kw">abs</span>(limma_base<span class="op">$</span>beta),</a>
+<a class="sourceLine" id="cb7-9" data-line-number="9">  <span class="dt">na.rm=</span><span class="ot">TRUE</span>))</a>
+<a class="sourceLine" id="cb7-10" data-line-number="10"></a>
+<a class="sourceLine" id="cb7-11" data-line-number="11">max &lt;-<span class="st"> </span><span class="kw">as.numeric</span>(<span class="kw">max</span>(</a>
+<a class="sourceLine" id="cb7-12" data-line-number="12">  <span class="kw">abs</span>(limma_base<span class="op">$</span>beta),</a>
+<a class="sourceLine" id="cb7-13" data-line-number="13">  <span class="dt">na.rm=</span><span class="ot">TRUE</span>)) </a>
+<a class="sourceLine" id="cb7-14" data-line-number="14"></a>
+<a class="sourceLine" id="cb7-15" data-line-number="15">p_max &lt;-<span class="st"> </span><span class="kw">as.numeric</span>(<span class="op">-</span><span class="kw">log10</span>(<span class="kw">min</span>(limma_base<span class="op">$</span>p, <span class="dt">na.rm=</span><span class="ot">TRUE</span>))) <span class="op">+</span><span class="st"> </span><span class="dv">2</span></a></code></pre></div>
+<p>Then the results can be visualized.</p>
+<div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb8-1" data-line-number="1">plot &lt;-<span class="st"> </span>limma_base <span class="op">%&gt;%</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb8-2" data-line-number="2"><span class="st">  </span><span class="kw">ggplot</span>(<span class="kw">aes</span>(<span class="dt">x =</span> beta, <span class="dt">y =</span> <span class="op">-</span><span class="kw">log10</span>(p))) <span class="op">+</span></a>
+<a class="sourceLine" id="cb8-3" data-line-number="3"><span class="st">  </span><span class="kw">geom_hline</span>(<span class="dt">yintercept =</span> <span class="op">-</span><span class="kw">log10</span>(sig_limit),</a>
+<a class="sourceLine" id="cb8-4" data-line-number="4">             <span class="dt">linetype =</span> <span class="st">&quot;dashed&quot;</span>) <span class="op">+</span></a>
+<a class="sourceLine" id="cb8-5" data-line-number="5"><span class="st">  </span><span class="kw">geom_point</span>(<span class="dt">color =</span> <span class="kw">ifelse</span>(limma_base<span class="op">$</span>p <span class="op">&gt;</span><span class="st"> </span>sig_limit, </a>
+<a class="sourceLine" id="cb8-6" data-line-number="6">                          <span class="st">&quot;#BBBBBB&quot;</span>,<span class="st">&quot;#4477AA&quot;</span>)) <span class="op">+</span></a>
+<a class="sourceLine" id="cb8-7" data-line-number="7"><span class="st">  </span><span class="kw">ylab</span>(<span class="kw">bquote</span>(<span class="op">-</span>log[<span class="dv">10</span>]<span class="op">~</span><span class="st">&quot;p&quot;</span>)) <span class="op">+</span></a>
+<a class="sourceLine" id="cb8-8" data-line-number="8"><span class="st">  </span><span class="kw">xlab</span>(<span class="st">&quot;Effect Size&quot;</span>) <span class="op">+</span></a>
+<a class="sourceLine" id="cb8-9" data-line-number="9"><span class="st">  </span><span class="kw">theme_bw</span>()</a>
+<a class="sourceLine" id="cb8-10" data-line-number="10"><span class="kw">print</span>(plot)</a></code></pre></div>
+<p><img src="07_Interpret_files/figure-html/704plot-1.png" width="672" /></p>
+<hr />
+</div>
+</div>
+<div id="enrichment-analyses" class="section level1">
+<h1>Enrichment analyses</h1>
+<div id="motivation" class="section level2">
+<h2>Motivation</h2>
+<p>A simple list of CpGs gives little information about their relevance. Enrichment analyses can shine light on how best to interpret EWAS results and what may be driving the methylation signal.</p>
+<p>Here we give an example for chromatin state enrichment, but a similar principle can be applied to investigate enrichment for trait associations using previous EWAS results or CpG islands, for example.</p>
+<p>This is also only one type of follow-up analysis. Some other ideas include:</p>
+<ul>
+<li>Performing bidirectional two-sample Mendelian randomization between DNAm at identified CpGs and the trait to infer causal directions.</li>
+<li>Transcription factor binding site enrichment analysis using <a href="http://homer.ucsd.edu/homer/motif/"><strong>HOMER</strong></a><sup>32</sup></li>
+<li>Improving CpG-gene annotations with integrative analyses (e.g. using BIOS data) or genetic colocalization (e.g. using <code>coloc</code>)</li>
+</ul>
+<hr />
+</div>
+<div id="annotations" class="section level2">
+<h2>Annotations</h2>
+<p>The <a href="https://zwdzwd.github.io/InfiniumAnnotation">Zhou lab GitHub page</a><sup>15</sup> also provides Roadmap annotations for CpGs, on the basis of the original Roadmap reference epigenomes<sup>28</sup>. These annotations can be imported to annotate measured CpGs to chromatin states.</p>
+<p>First, we import the location annotations from before.</p>
+<div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb9-1" data-line-number="1">manifest_hg19 &lt;-<span class="st"> </span><span class="kw">read_tsv</span>(</a>
+<a class="sourceLine" id="cb9-2" data-line-number="2">  <span class="st">&quot;./data/EPIC.hg19.manifest.tsv.gz&quot;</span>)</a></code></pre></div>
+<pre><code>## Rows: 865918 Columns: 57
+## ── Column specification ────────────────────────────────────────────────────────
+## Delimiter: &quot;\t&quot;
+## chr (21): CpG_chrm, probe_strand, probeID, channel, designType, nextBase, ne...
+## dbl (24): CpG_beg, CpG_end, address_A, address_B, probeCpGcnt, context35, pr...
+## lgl (12): posMatch, MASK_mapping, MASK_typeINextBaseSwitch, MASK_rmsk15, MAS...
+## 
+## ℹ Use `spec()` to retrieve the full column specification for this data.
+## ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.</code></pre>
+<div class="sourceCode" id="cb11"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb11-1" data-line-number="1">anno &lt;-<span class="st"> </span>manifest_hg19 <span class="op">%&gt;%</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb11-2" data-line-number="2"><span class="st">  </span>dplyr<span class="op">::</span><span class="kw">select</span>(</a>
+<a class="sourceLine" id="cb11-3" data-line-number="3">    <span class="dt">cpg =</span> probeID,</a>
+<a class="sourceLine" id="cb11-4" data-line-number="4">    <span class="dt">cpg_chr =</span> CpG_chrm,</a>
+<a class="sourceLine" id="cb11-5" data-line-number="5">    <span class="dt">cpg_start =</span> CpG_beg,</a>
+<a class="sourceLine" id="cb11-6" data-line-number="6">    <span class="dt">cpg_end =</span> CpG_end,</a>
+<a class="sourceLine" id="cb11-7" data-line-number="7">    <span class="dt">cpg_strand =</span> probe_strand,</a>
+<a class="sourceLine" id="cb11-8" data-line-number="8">    gene_HGNC</a>
+<a class="sourceLine" id="cb11-9" data-line-number="9">  ) <span class="op">%&gt;%</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb11-10" data-line-number="10"><span class="st">  </span><span class="kw">mutate</span>(</a>
+<a class="sourceLine" id="cb11-11" data-line-number="11">    <span class="dt">cpg_chr =</span> <span class="kw">substr</span>(cpg_chr,<span class="dv">4</span>,<span class="dv">5</span>)</a>
+<a class="sourceLine" id="cb11-12" data-line-number="12">  )</a>
+<a class="sourceLine" id="cb11-13" data-line-number="13"></a>
+<a class="sourceLine" id="cb11-14" data-line-number="14">anno &lt;-<span class="st"> </span>anno <span class="op">%&gt;%</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb11-15" data-line-number="15"><span class="st">  </span>dplyr<span class="op">::</span><span class="kw">filter</span>(cpg <span class="op">%in%</span><span class="st"> </span>limma_base<span class="op">$</span>cpg)</a></code></pre></div>
+<p>Next, we import the chromatin state annotations. In this instance we use the PBMC (E062) reference epigenome, but there are reference epigenomes for many distinct cell types and tissues available<sup>28</sup>. This is bound to the results data frame.</p>
+<div class="sourceCode" id="cb12"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb12-1" data-line-number="1">manifest_chrom &lt;-<span class="st"> </span><span class="kw">read_tsv</span>(<span class="st">&quot;./data/EPIC.hg19.REMC.chromHMM.tsv.gz&quot;</span>)</a></code></pre></div>
+<pre><code>## Rows: 865918 Columns: 131
+## ── Column specification ────────────────────────────────────────────────────────
+## Delimiter: &quot;\t&quot;
+## chr (129): CpG_chrm, probeID, E001, E002, E003, E004, E005, E006, E007, E008...
+## dbl   (2): CpG_beg, CpG_end
+## 
+## ℹ Use `spec()` to retrieve the full column specification for this data.
+## ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.</code></pre>
+<div class="sourceCode" id="cb14"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb14-1" data-line-number="1">manifest_chrom &lt;-<span class="st"> </span>manifest_chrom <span class="op">%&gt;%</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb14-2" data-line-number="2"><span class="st">  </span>dplyr<span class="op">::</span><span class="kw">select</span>(<span class="dt">cpg =</span> probeID, E062)</a>
+<a class="sourceLine" id="cb14-3" data-line-number="3"></a>
+<a class="sourceLine" id="cb14-4" data-line-number="4">anno &lt;-<span class="st"> </span><span class="kw">left_join</span>(anno, manifest_chrom, <span class="dt">by=</span><span class="st">&quot;cpg&quot;</span>)</a>
+<a class="sourceLine" id="cb14-5" data-line-number="5"></a>
+<a class="sourceLine" id="cb14-6" data-line-number="6">limma_base &lt;-<span class="st"> </span><span class="kw">left_join</span>(limma_base, anno, <span class="dt">by=</span><span class="st">&quot;cpg&quot;</span>)</a></code></pre></div>
+<hr />
+</div>
+<div id="running-enrichment" class="section level2">
+<h2>Running enrichment</h2>
+<p>Available states are stored as a vector.</p>
+<div class="sourceCode" id="cb15"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb15-1" data-line-number="1">states &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="st">&quot;15_Quies&quot;</span>, <span class="st">&quot;14_ReprPCWk&quot;</span>, <span class="st">&quot;13_ReprPC&quot;</span>, </a>
+<a class="sourceLine" id="cb15-2" data-line-number="2">            <span class="st">&quot;12_EnhBiv&quot;</span>, <span class="st">&quot;11_BivFlnk&quot;</span>, <span class="st">&quot;10_TssBiv&quot;</span>, </a>
+<a class="sourceLine" id="cb15-3" data-line-number="3">            <span class="st">&quot;9_Het&quot;</span>, <span class="st">&quot;8_ZNF/Rpts&quot;</span>, <span class="st">&quot;7_Enh&quot;</span>, </a>
+<a class="sourceLine" id="cb15-4" data-line-number="4">            <span class="st">&quot;6_EnhG&quot;</span>, <span class="st">&quot;5_TxWk&quot;</span>, <span class="st">&quot;4_Tx&quot;</span>,  </a>
+<a class="sourceLine" id="cb15-5" data-line-number="5">            <span class="st">&quot;3_TxFlnk&quot;</span>, <span class="st">&quot;2_TssAFlnk&quot;</span>, <span class="st">&quot;1_TssA&quot;</span>)</a></code></pre></div>
+<p>Then, we can run the enrichment analysis using logistic regression.</p>
+<div class="sourceCode" id="cb16"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb16-1" data-line-number="1"><span class="cf">for</span>(i <span class="cf">in</span> states){</a>
+<a class="sourceLine" id="cb16-2" data-line-number="2">  res_road &lt;-<span class="st"> </span>limma_base <span class="op">%&gt;%</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb16-3" data-line-number="3"><span class="st">    </span><span class="kw">mutate</span>(</a>
+<a class="sourceLine" id="cb16-4" data-line-number="4">      <span class="dt">sig =</span> <span class="kw">ifelse</span>(limma_base<span class="op">$</span>cpg <span class="op">%in%</span><span class="st"> </span>top_cpgs<span class="op">$</span>cpg, <span class="dv">1</span>, <span class="dv">0</span>),</a>
+<a class="sourceLine" id="cb16-5" data-line-number="5">      <span class="dt">chrom =</span> <span class="kw">ifelse</span>(<span class="kw">grepl</span>(i, E062), <span class="dv">1</span>, <span class="dv">0</span>)</a>
+<a class="sourceLine" id="cb16-6" data-line-number="6">    )</a>
+<a class="sourceLine" id="cb16-7" data-line-number="7">  </a>
+<a class="sourceLine" id="cb16-8" data-line-number="8">  x &lt;-<span class="st"> </span><span class="kw">glm</span>(chrom <span class="op">~</span><span class="st"> </span>sig, <span class="dt">family=</span>binomial, <span class="dt">data=</span>res_road)</a>
+<a class="sourceLine" id="cb16-9" data-line-number="9">  out &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="kw">coef</span>(<span class="kw">summary</span>(x))[<span class="dv">2</span>,],</a>
+<a class="sourceLine" id="cb16-10" data-line-number="10">           <span class="kw">exp</span>(<span class="kw">cbind</span>(<span class="kw">coef</span>(x), <span class="kw">confint.default</span>(x)))[<span class="dv">2</span>,])</a>
+<a class="sourceLine" id="cb16-11" data-line-number="11">  <span class="kw">names</span>(out) &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="st">&#39;logOR&#39;</span>, <span class="st">&#39;SE&#39;</span>, <span class="st">&#39;z&#39;</span>, <span class="st">&#39;p&#39;</span>, <span class="st">&#39;OR&#39;</span>, <span class="st">&#39;low_CI&#39;</span>, <span class="st">&#39;upp_CI&#39;</span>)</a>
+<a class="sourceLine" id="cb16-12" data-line-number="12">  out &lt;-<span class="st"> </span><span class="kw">as.data.frame</span>(<span class="kw">t</span>(out))</a>
+<a class="sourceLine" id="cb16-13" data-line-number="13">  out<span class="op">$</span>Trait =<span class="st"> </span>i</a>
+<a class="sourceLine" id="cb16-14" data-line-number="14">  out &lt;-<span class="st"> </span>out <span class="op">%&gt;%</span><span class="st"> </span>dplyr<span class="op">::</span><span class="kw">select</span>(Trait, OR, logOR, </a>
+<a class="sourceLine" id="cb16-15" data-line-number="15">                               low_CI, upp_CI, z, p) </a>
+<a class="sourceLine" id="cb16-16" data-line-number="16">  </a>
+<a class="sourceLine" id="cb16-17" data-line-number="17">  <span class="cf">if</span>(i <span class="op">==</span><span class="st"> </span>states[<span class="dv">1</span>]){</a>
+<a class="sourceLine" id="cb16-18" data-line-number="18">    res &lt;-<span class="st"> </span>out</a>
+<a class="sourceLine" id="cb16-19" data-line-number="19">  } <span class="cf">else</span> {</a>
+<a class="sourceLine" id="cb16-20" data-line-number="20">    res &lt;-<span class="st"> </span><span class="kw">rbind</span>(res, out)</a>
+<a class="sourceLine" id="cb16-21" data-line-number="21">  }</a>
+<a class="sourceLine" id="cb16-22" data-line-number="22">}</a></code></pre></div>
+<p>P-values again need to be adjusted for multiple testing.</p>
+<div class="sourceCode" id="cb17"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb17-1" data-line-number="1">res<span class="op">$</span>padj &lt;-<span class="st"> </span><span class="kw">p.adjust</span>(res<span class="op">$</span>p, <span class="dt">method=</span><span class="st">&#39;fdr&#39;</span>)</a></code></pre></div>
+<hr />
+</div>
+<div id="visualization" class="section level2">
+<h2>Visualization</h2>
+<p>These results can be visualized using a forest plot.</p>
+<div class="sourceCode" id="cb18"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb18-1" data-line-number="1">chrom &lt;-<span class="st"> </span>res <span class="op">%&gt;%</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb18-2" data-line-number="2"><span class="st">  </span><span class="kw">mutate</span>(</a>
+<a class="sourceLine" id="cb18-3" data-line-number="3">    <span class="dt">loglowCI =</span> <span class="kw">log</span>(low_CI),</a>
+<a class="sourceLine" id="cb18-4" data-line-number="4">    <span class="dt">loguppCI =</span> <span class="kw">log</span>(upp_CI),</a>
+<a class="sourceLine" id="cb18-5" data-line-number="5">    <span class="dt">padj =</span> <span class="kw">p.adjust</span>(p, <span class="dt">method=</span><span class="st">&#39;fdr&#39;</span>)</a>
+<a class="sourceLine" id="cb18-6" data-line-number="6">  ) <span class="op">%&gt;%</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb18-7" data-line-number="7"><span class="st">  </span><span class="kw">filter</span>(OR <span class="op">&lt;</span><span class="st"> </span><span class="dv">200</span>)</a>
+<a class="sourceLine" id="cb18-8" data-line-number="8"></a>
+<a class="sourceLine" id="cb18-9" data-line-number="9">chrom <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">filter</span>(padj <span class="op">&lt;</span><span class="st"> </span><span class="fl">0.05</span>)</a></code></pre></div>
+<pre><code>##        Trait        OR      logOR    low_CI    upp_CI         z            p
+## 1   15_Quies 0.8043224 -0.2177550 0.7313977 0.8845183 -4.490519 7.104981e-06
+## 2  13_ReprPC 0.7172721 -0.3323000 0.5872881 0.8760253 -3.257462 1.124134e-03
+## 3 8_ZNF/Rpts 3.1038380  1.1326394 1.7117568 5.6280251  3.730232 1.913038e-04
+## 4      7_Enh 1.2743693  0.2424514 1.0498127 1.5469589  2.451491 1.422658e-02
+## 5       4_Tx 0.7265843 -0.3194007 0.6190704 0.8527702 -3.909276 9.257316e-05
+## 6 2_TssAFlnk 1.8413073  0.6104758 1.6571696 2.0459056 11.355896 6.932558e-30
+## 7     1_TssA 1.4858699  0.3960004 1.2644696 1.7460359  4.810399 1.506295e-06
+##           padj    loglowCI   loguppCI
+## 1 3.552490e-05 -0.31279795 -0.1227121
+## 2 2.810335e-03 -0.53223974 -0.1323603
+## 3 5.739114e-04  0.53752022  1.7277586
+## 4 3.048554e-02  0.04861179  0.4362910
+## 5 3.471494e-04 -0.47953624 -0.1592652
+## 6 1.039884e-28  0.50511112  0.7158405
+## 7 1.129721e-05  0.23465274  0.5573480</code></pre>
+<div class="sourceCode" id="cb20"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb20-1" data-line-number="1">plot &lt;-<span class="st"> </span>chrom <span class="op">%&gt;%</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb20-2" data-line-number="2"><span class="st">  </span><span class="kw">filter</span>(loglowCI <span class="op">&gt;</span><span class="st"> </span><span class="dv">-4</span>) <span class="op">%&gt;%</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb20-3" data-line-number="3"><span class="st">  </span><span class="kw">ggplot</span>(<span class="kw">aes</span>(<span class="dt">x =</span> logOR, </a>
+<a class="sourceLine" id="cb20-4" data-line-number="4">             <span class="dt">y =</span> <span class="kw">reorder</span>(Trait,logOR),</a>
+<a class="sourceLine" id="cb20-5" data-line-number="5">             <span class="dt">xmin =</span> loglowCI,</a>
+<a class="sourceLine" id="cb20-6" data-line-number="6">             <span class="dt">xmax =</span> loguppCI)) <span class="op">+</span></a>
+<a class="sourceLine" id="cb20-7" data-line-number="7"><span class="st">  </span><span class="kw">geom_vline</span>(<span class="dt">xintercept=</span><span class="dv">0</span>, <span class="dt">linetype=</span><span class="st">&#39;dashed&#39;</span>) <span class="op">+</span></a>
+<a class="sourceLine" id="cb20-8" data-line-number="8"><span class="st">  </span><span class="kw">geom_errorbar</span>(<span class="dt">width=</span><span class="fl">0.5</span>,</a>
+<a class="sourceLine" id="cb20-9" data-line-number="9">                <span class="dt">position=</span><span class="kw">position_dodge</span>(<span class="dt">width=</span><span class="fl">0.9</span>)) <span class="op">+</span></a>
+<a class="sourceLine" id="cb20-10" data-line-number="10"><span class="st">  </span><span class="kw">geom_point</span>(<span class="kw">aes</span>(<span class="dt">fill=</span>padj),</a>
+<a class="sourceLine" id="cb20-11" data-line-number="11">             <span class="dt">size=</span><span class="dv">3</span>,</a>
+<a class="sourceLine" id="cb20-12" data-line-number="12">             <span class="dt">shape=</span><span class="dv">21</span>,</a>
+<a class="sourceLine" id="cb20-13" data-line-number="13">             <span class="dt">position=</span><span class="kw">position_dodge</span>(<span class="dt">width=</span><span class="fl">0.9</span>)) <span class="op">+</span></a>
+<a class="sourceLine" id="cb20-14" data-line-number="14"><span class="st">  </span><span class="kw">xlab</span>(<span class="st">&#39;log(OR)&#39;</span>) <span class="op">+</span><span class="st"> </span><span class="kw">ylab</span>(<span class="st">&#39;&#39;</span>) <span class="op">+</span><span class="st"> </span><span class="kw">xlim</span>(<span class="kw">c</span>(<span class="op">-</span><span class="dv">4</span>,<span class="dv">5</span>)) <span class="op">+</span></a>
+<a class="sourceLine" id="cb20-15" data-line-number="15"><span class="st">  </span><span class="kw">theme_bw</span>()</a>
+<a class="sourceLine" id="cb20-16" data-line-number="16"><span class="kw">print</span>(plot)</a></code></pre></div>
+<p><img src="07_Interpret_files/figure-html/710plot-1.png" width="672" /></p>
+<hr />
+</div>
+</div>
+
+
+
+</div>
+</div>
+
+</div>
+
+<script>
+
+// add bootstrap table styles to pandoc tables
+function bootstrapStylePandocTables() {
+  $('tr.odd').parent('tbody').parent('table').addClass('table table-condensed');
+}
+$(document).ready(function () {
+  bootstrapStylePandocTables();
+});
+
+
+</script>
+
+<!-- tabsets -->
+
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+
+$(document).ready(function () {
+  $('.tabset-dropdown > .nav-tabs > li').click(function () {
+    $(this).parent().toggleClass('nav-tabs-open');
+  });
+});
+</script>
+
+<!-- code folding -->
+
+<script>
+$(document).ready(function ()  {
+
+    // temporarily add toc-ignore selector to headers for the consistency with Pandoc
+    $('.unlisted.unnumbered').addClass('toc-ignore')
+
+    // move toc-ignore selectors from section div to header
+    $('div.section.toc-ignore')
+        .removeClass('toc-ignore')
+        .children('h1,h2,h3,h4,h5').addClass('toc-ignore');
+
+    // establish options
+    var options = {
+      selectors: "h1,h2",
+      theme: "bootstrap3",
+      context: '.toc-content',
+      hashGenerator: function (text) {
+        return text.replace(/[.\\/?&!#<>]/g, '').replace(/\s/g, '_');
+      },
+      ignoreSelector: ".toc-ignore",
+      scrollTo: 0
+    };
+    options.showAndHide = true;
+    options.smoothScroll = true;
+
+    // tocify
+    var toc = $("#TOC").tocify(options).data("toc-tocify");
+});
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>

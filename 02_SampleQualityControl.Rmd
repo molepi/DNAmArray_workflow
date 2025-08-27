@@ -3,81 +3,68 @@
 
 ***
 
-# Using MethylAid #
+# Loading DNAm data #
 
-We now have the data we need to commence quality control, but some reformatting is needed. The [**MethylAid**](http://bioconductor.org/packages/MethylAid)
-(Luijk, 2014) package that we developed requires the targets data frame to store IDAT file root names in a `Basename` column. Sometimes, data comes with a sample sheet to faciliate this, but in this case the information needs to be extracted from the supplementary file column instead. 
+## Summarizing IDATs ##
+
+The [**MethylAid**](http://bioconductor.org/packages/MethylAid)<sup>10</sup> package, which will be used for quality control in this workflow, requires the targets data frame to contain a `Basename` variable that points to IDAT file names. Sometimes, data comes with a sample sheet to facilitate this, but in this example the information is extracted from the supplementary file column instead. 
 
 ```{r 201basename}
-targets$Basename <- substring(targets$supplementary_file,68,95)
+targets$Basename <- substring(targets$supplementary_file,68,106)
 head(targets$Basename)
+
+rownames(targets) <- sub("_Grn.idat", "", targets$Basename)
 ```
 
-The following sample quality control steps require the [**MethylAid**](http://bioconductor.org/packages/MethylAid) and [**BiocParallel**](https://bioconductor.org/packages/release/bioc/html/BiocParallel.html) packages. Using parallel processing and/or batches will reduce both memory load and run-times when extracting intensities from IDAT files. Please see the [MethylAid vignette](http://bioconductor.org/packages/release/bioc/vignettes/MethylAid/inst/doc/MethylAid.pdf) for more details.
+The following sample quality control steps will also require the [**BiocParallel**](https://bioconductor.org/packages/release/bioc/html/BiocParallel.html) package. Using parallel processing and/or batches will reduce both memory load and run-times when extracting intensities from IDAT files. Please see the [MethylAid vignette](http://bioconductor.org/packages/release/bioc/vignettes/MethylAid/inst/doc/MethylAid.pdf) for more details.
 
-```{r 203sdata}
-library(MethylAid)
-library(BiocParallel)
+The available number of cores is set usnig `MulticoreParam`, and IDATs are summarized using the `summarize` function.
+
+```{r 202sdata, warning=F, message=F}
 BPPARAM <- MulticoreParam(6)
-sData <- summarize(targets, batchSize=50, BPPARAM=BPPARAM, base="../GSE113018/IDATs")
+sData <- MethylAid::summarize(targets, batchSize=50, base="../GSE116339/IDATs")
 ```
-
-After this `summarize()`, the Shiny web application can be launched to `visualize()` the data and identify outliers. In this instance, there are no apparent outliers, but if found they can be removed from the dataset. To easier visualise if your data conforms to typical patterns, you can utilise the [**MethylAidData**](http://bioconductor.org/packages/release/data/experiment/html/MethylAidData.html) package alongside the `background` option. Darker blue colours indicate regions where many observations are found in the example data, and can serve as a guide for expected peak areas. 
-
-```{r 204methylaid, eval=FALSE}
-library(MethylAidData)
-data(exampleDataLarge)
-outliers <- visualize(sData, background=exampleDataLarge)
-targets <- targets[!(rownames(targets) %in% rownames(outliers)), ]
-```
-
-![](/exports/molepi/users/ljsinke/DNAmArray/DNAmArray_workflow/data/images/methylaid-eg.PNG)
-
-<br>
-This image shows an example of the plots available in [**MethylAid**](http://bioconductor.org/packages/MethylAid). Observations can be coloured by phenotype, outliers can be highlighted, and the background option can be toggled off and on. 
-
-***
-
-# Preparing `targets` #
-
-Before progressing further, it can help to take some time to get familiar with the `targets` data frame, removing duplicate information and converting variables to relevant classes. 
-
-``` {r 205structure}
-library(tidyverse)
-
-targets <- select(targets, geo_accession,
-                           cohort = source_name_ch1,
-                           sex = characteristics_ch1,
-                           cc = characteristics_ch1.1,
-                           age = characteristics_ch1.2,
-                           growth = characteristics_ch1.3,
-                           facial = characteristics_ch1.4,
-                           cns = characteristics_ch1.5,
-                           Basename)
-targets$age <- as.numeric(targets$age)
-
-str(targets)
-```
-
-This data frame consists of 138 observations, with 46 fetal alcohol spectrum disorder (FASD) cases and 92 controls, and phenotypic information for 36 variables is stored after cleaning. This includes values that quantify the severity of FASD in cases, such as `facial`, `growth`, and `cns`, as well as covariates we want to adjust for in the analysis, like `age` and `sex`.
 
 ***
 
 # Creating an `RGset` #
 
-For the rest of the pipeline, our data will need to be available as an `RGChannelSetExtended` object. Reading in large numbers of IDAT files is memory-intensive and time-consuming. Therefore, our [**DNAmArray**](https://github.com/molepi/DNAmArray) package offers the `read.metharray.exp.par()` function, which distributes the IDAT files to each of the workers registered using [**BiocParallel**](https://bioconductor.org/packages/release/bioc/html/BiocParallel.html). It then passes them in batches to `read.metharray.exp()` from [**minfi**](http://bioconductor.org/packages/minfi) (Feinberg, 2014) and combines the returned `RGset` objects.
+In addition to the `sData` object, which is used by MethylAid, it is useful to also create an `RGChannelSetExtended` object, which contains more extensive information on the data. Here, we use `read.metharray.exp()` from [**minfi**](http://bioconductor.org/packages/minfi)<sup>9</sup> but, since this has not been updated for the more recent arrays, we advise monkey patching the internal `.guessArrayTypes` function, with the appropriate array and annotation.
 
-```{r 206rgsetshow, warning=FALSE}
-library(DNAmArray)
-register(MulticoreParam(6))
-RGset <- read.metharray.exp(base="../GSE113018/IDATs", targets, verbose=FALSE, extended=TRUE)
+```{r 203patchminfi, warning=FALSE}
+.guessArrayTypes <- function(nProbes) {
+  if (nProbes > 850000) {
+    # EPIC v2 array 
+    arrayAnnotation <- c(array = "IlluminaHumanMethylationEPIC", annotation = "20a1.hg38")
+  } else if (nProbes > 622000) {
+    # EPIC (850k) array
+    arrayAnnotation <- c(array = "IlluminaHumanMethylationEPIC", annotation = "ilm10b4.hg19")
+  } else if (nProbes > 480000) {
+    # 450k array
+    arrayAnnotation <- c(array = "IlluminaHumanMethylation450k", annotation = "ilmn12.hg19")
+  } else {
+    # 27k array
+    arrayAnnotation <- c(array = "IlluminaHumanMethylation27k", annotation = "ilmn12.hg19")
+  }
+
+  arrayAnnotation
+}
+
+environment(.guessArrayTypes) <- asNamespace("minfi")
+assignInNamespace(".guessArrayTypes", .guessArrayTypes, ns = "minfi")
+```
+
+Then, proceed using `BiocParallel` and `minfi` to read in the IDAT files.
+
+```{r 204rgsetcalc, warning=FALSE}
+RGset <- read.metharray.exp(base="../GSE116339/IDATs/", targets, verbose=FALSE, extended=TRUE)
 ```
 
 Reading data in parallel is subject to errors and debugging is often difficult. Recently, [**BiocParallel**](https://bioconductor.org/packages/release/bioc/html/BiocParallel.html) has been extended with a comprehensive set of functions for debugging on various parallel architectures. If problems arise, we recommend using `BatchJobsParam()` with the `log=TRUE` option in order to facilitate resolution.
 
-Our data is now an `RGset` object that can used for visualization. You can see below that inside this object the `colData` holds the same information as `targets`, and that there are 5 `assay` layers. The annotation information tells us that the methylation was measured using a 450k array and that hg19 is the reference genome. 
+Our data is now an `RGset` object that can used for visualization. You can see below that inside this object the `colData` holds the same information as `targets`, and that there are 5 `assay` layers. The annotation information tells us that the methylation was measured using a EPIC array and that hg19 is the reference genome. 
 
-```{r 207rgset}
+```{r 205rgset}
 RGset
 ```
 
@@ -85,89 +72,467 @@ RGset
 
 # Beta values #
 
-In order to further visualize the data, we store the beta values using the `getBeta()` function from [**minfi**](https://bioconductor.org/packages/rel ease/bioc/html/minfi.html) (Feinberg, 2014). The `type="Illumina"` option adds 100 to the denominator of the beta-value calculation, preventing NA values being recorded when the methylated and unmethylated signal are both 0.
+In order to further visualize the data, we store the beta values using the `getBeta()` function from [**minfi**](https://bioconductor.org/packages/release/bioc/html/minfi.html). The `type="Illumina"` option adds 100 to the denominator of the beta-value calculation, preventing NA values being recorded when the methylated and unmethylated signal are both 0.
 
-```{r 208betas}
+```{r 206getbetas}
 betas <- getBeta(RGset, type="Illumina")
 ```
+
+On some environments, this function returns a list. In that case, the beta-values can be extracted using `betas$completeObs`.
+
+```{r 207betalist}
+if(is.list(betas)){
+  betas <- betas$completeObs
+}
+```
+
+It can also be advisable to round the beta values to 4 significant figures, which both reduces the data size and provides a realistic measure of the available precision.
+
+```{r 208roundbetas}
+betas <- round(betas, 4)
+```
+
+Now, `betas` contains beta values for each measured probe and sample.
+
+```{r 209betas}
+dim(betas)
+betas[1:5, 1:5]
+```
+
+***
+
+# MethylAid #
+
+## Control probes ##
+
+`MethylAid` plots to visualize sample quality are included in the `DNAmArray` package and their use is outlined below. 
+
+They rely on the following `qcProbes` object that specifies the control probes.
+
+```{r 210qcprobe}
+qcProbes = list(
+  BSI = "^BISULFITE CONVERSION I$",
+  BSII = "^BISULFITE CONVERSION II$",
+  EC = "^EXTENSION$",
+  SPI = "^SPECIFICITY I$",
+  HYB = "^HYBRIDIZATION$",
+  NP = "^NON-POLYMORPHIC$",
+  SPII = "^SPECIFICITY II$",
+  TR = "^TARGET REMOVAL$",
+  SC = "^STAINING$",
+  NC = "^NEGATIVE$"
+)
+```
+
+They also rely on array specific thresholds, which we advise to set on the basis of the following table:
+
+<table style="border-collapse: collapse; width: 100%; text-align: center;">
+  <thead>
+    <tr>
+      <th style="padding: 8px; border-bottom: 2px solid #ddd;">Array</th>
+      <th style="padding: 8px; border-bottom: 2px solid #ddd;">MU</th>
+      <th style="padding: 8px; border-bottom: 2px solid #ddd;">OP</th>
+      <th style="padding: 8px; border-bottom: 2px solid #ddd;">BS</th>
+      <th style="padding: 8px; border-bottom: 2px solid #ddd;">HC</th>
+      <th style="padding: 8px; border-bottom: 2px solid #ddd;">DP</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td style="padding: 8px;">450k</td>
+      <td style="padding: 8px;">10.5</td>
+      <td style="padding: 8px;">11.75</td>
+      <td style="padding: 8px;">12.75</td>
+      <td style="padding: 8px;">13.25</td>
+      <td style="padding: 8px;">0.95</td>
+    </tr>
+    <tr>
+      <td style="padding: 8px;">EPIC</td>
+      <td style="padding: 8px;">10</td>
+      <td style="padding: 8px;">12</td>
+      <td style="padding: 8px;">11.75</td>
+      <td style="padding: 8px;">12.75</td>
+      <td style="padding: 8px;">0.95</td>
+    </tr>
+    <tr>
+      <td style="padding: 8px;">EPIC v2</td>
+      <td style="padding: 8px;">10.5</td>
+      <td style="padding: 8px;">12.5</td>
+      <td style="padding: 8px;">12.75</td>
+      <td style="padding: 8px;">13.25</td>
+      <td style="padding: 8px;">0.95</td>
+    </tr>
+  </tbody>
+</table>
+
+
+The example data uses the EPIC array and the following thresholds
+
+```{r 211thresholds}
+thresholds <- c(10, 12, 11.75, 12.75, 0.95)
+```
+
+***
+
+## Plots ##
+
+All plots can be coloured by a variable in `targets`, specified by the `col` argument.
+
+`plotMU` plots a rotated MU plot. This shows the median methylated and unmethylated log2 intensities per sample, and flagging low-intensity outliers.
+
+```{r 212plotMU}
+plotMU(object = sData, threshold = thresholds[1], col="plate")
+```
+
+***
+
+`plotOP` plots the sample-dependent overall quality control on the basis of non-polymorphic (NP) control probes.
+
+NP control probes query each of the four nucleotides in a non-polymorphic region of the bisulfite genome. Signal intensity from these probes in the red (A and T) and green (C and G) channels can then be used to test overall performance of the assay, from amplification to detection. Intensity should be high in the red channel for NP probes querying A and T nucleotides, and high in the green channel for NP probes querying G and C nucleotides. The intensities for the relevant channel for NP probes are then combined and plotted per sample, where they should be above the specific threshold.
+
+```{r 213plotOP}
+plotOP(object = sData, threshold = thresholds[2], col="plate")
+```
+
+***
+
+`plotBS` assesses bisulfite conversion efficiency using control probes, identifying poorly converted samples. Type I BC control probes monitor the efficiency of the bisulfite conversion. If the conversion reaction was successful, the 'C' (converted) probes will be extended, but if the sample has unconverted DNA, the 'U' (unconverted) probes are extended instead. 
+
+Performance of the BC control probes C1 and C2 is monitored in the green channel, and C3 and C4 are monitored in the red channel. The intensities for the relevant channels are then combined for all BC control probes and plotted per sample to ensure they are above the specified threshold.
+
+```{r 214plotBS}
+plotBS(object = sData, threshold = thresholds[3], col="plate")
+```
+
+***
+
+`plotHC` uses hybridization controls to assess the hybridization step using synthetic targets, which complement the array perfectly. These synthetic targets are present in the hybridization buffer (RA1) at three concentration levels, and their performance is only monitored in the green channel. The difference in green intensity between the high (H) and low (L) concentration is combined and can be plotted to ensure it is above the specified threshold.
+
+```{r 215plotHC}
+plotHC(object = sData, threshold = thresholds[4], col="plate")
+```
+
+***
+
+`plotDP` is the last MethylAid plot we provide. This function instead takes the `RGset` as input, to enable the user to specify both how visually distinct from the background they consider a detected signal (`detP` argument is the detection p-value) and what proportion of probes they want to be meeting this criterion (`threshold` is this proportion). The default we suggest for all arrays is 0.01 (detP) and 0.95 (threshold), but this can be adjusted.
+
+This plot uses negative control probes, which are randomly permuted sequences that should not hybridize to the DNA template. The mean signal of these probes defines the background signal. This plot therefore show the fraction of probe visually distinct from the background signal in each sample, coloured by array number.
+
+```{r 216plotDP}
+plotDP(object = RGset, threshold = 0.95, detP=0.01, col="plate")
+```
+
+***
+
+## Outliers ##
+
+On the basis of the above thresholds, outliers can be extracted using the `get_outliers` function. The resulting table shows an indicator of which quality control step was failed.
+
+```{r 217outliers}
+outliers_auto <- get_outliers(object = sData, thresholds = thresholds)
+outliers_auto
+
+outliers <- substr(rownames(outliers_auto), 1, 10)
+```
+
+Outliers can then be removed from `targets` before proceding.
+
+```{r 218remove}
+targets <- targets %>% filter(!geo_accession %in% outliers)
+dim(targets)
+```
+
 
 ***
 
 # Beta density plots #
 
-Using `densityPlot()` from [**minfi**](https://bioconductor.org/packages/release/bioc/html/minfi.html) (Feinberg, 2014), we can visualize the per sample average beta-value distribution. This gives us a global impression of the data and allows us to identify possible anomalous samples. We expect this distribution to be bimodal with the peaks representing methylated and unmethylated signals. Any centre peaks should be further investigated for problems, such as ambiguous mapping. 
+Using `densityPlot()` from [**minfi**](https://bioconductor.org/packages/release/bioc/html/minfi.html), we can visualize the per sample average beta-value distribution. This gives us a global impression of the data and allows us to identify possible anomalous samples. We expect this distribution to be bimodal with the peaks representing methylated and unmethylated signals. Any centre peaks should be further investigated for problems, such as ambiguous mapping.
 
-```{r 209betaplot}
-library(minfi)
+Centre peaks can be identified using a `beta_outlier` object, which flags any samples with high beta values in the central part of the distribution. Alternatively, a named boolean vector of the samples can be used to flag a specific sample.
 
-ggbg <- function() {
-  points(0, 0, pch=16, cex=1e6, col="grey90")
-  grid(col="white", lty=1)
-}
+```{r 219betaoutlier}
+beta_outlier <- ifelse(colSums(betas > 0.2 & betas < 0.5) > 140000, T, F)
+RGset$beta_outlier <- beta_outlier
 
-par(mar=c(4,4,3,2), mgp=c(2.5,1,0), 
-    cex.main=1.5, font.main="1", 
-    fg="#6b6b6b", col.main="#4b4b4b")
+beta_outlier[1:5]
+```
 
+These are then coloured in the beta values plot.
+
+```{r 220betaplot}
 densityPlot(RGset, 
             main="Beta density plot", 
-            xlab="Beta values", 
-            panel.first=ggbg()) 
+            xlab="Beta values",
+            sampGroups = beta_outlier) 
 ``` 
 
-For this data, the density plot is clearly bimodal with no obvious outliers. 
+Any flagged samples can then be removed using the sample name.
+
+```{r 221flagged}
+flagged_samples <- names(beta_outlier[beta_outlier == T])
+flagged_samples
+
+targets <- targets[!rownames(targets) %in% flagged_samples, ]
+
+RGset <- RGset[,colnames(RGset) %in% rownames(targets)]
+betas <- betas[,colnames(betas) %in% rownames(targets)]
+```
 
 ***
 
-# Principal components plot #
+# Principal components analysis #
 
-Using the `prcomp_irlba()` function from [**irlba**](https://cran.r-project.org/web/packages/irlba/index.html) we can calculate principal components. By assessing the amount of variance explained by these and visualising them, we can better interpret the data. The package [**ggfortify**](https://cran.r-project.org/web/packages/ggfortify/index.html) helps [**ggplot2**](https://ggplot2.tidyverse.org/) interpret PCA objects, allowing `prcomp` objects to be passed to the `autoplot()` function. 
+## Calculate PCs ##
 
-```{r 212pcplot}
-library(irlba)
+Principal components (PCs) of the beta values can be calculated using `prcomp`.
 
-pc <- prcomp_irlba(t(betas), n=6)
-summary(pc)
+```{r 222pccalc}
+tbetas <- t(betas)
+pca <- prcomp(tbetas, center = TRUE, rank. = 10)
 
-library(ggfortify)
-
-autoplot(pc, data=targets, colour="sex", 
-         main="Principal components plot")
+summary(pca)
 ```
 
-In this instance, our principal components explain over 50% of the variance in the data and there is evidence of clustering in the plot. By passing the original data to the `autoplot()` function using the `data` option, we can investigate clustering by colouring candidate variables. Our data has yet to undergo probe masking, which removes sex chromosome data, so groups of principal components according to whether an individual is male or female appear in the plot. 
+***
+
+## Screeplot
+
+Variance explained by each PC can be calculated.
+
+```{r 223varexplained}
+var_explained =
+  data.frame(PC = 1:ncol(betas),
+             var_explained = pca$sdev^2 / sum(pca$sdev^2))[1:ncol(pca$x),]
+
+var_explained
+```
+
+This can be plotted in a screeplot to visualize the structure of the DNAm data.
+
+```{r 224screeplot}
+var_explained %>% 
+  ggplot(aes(x=PC, y=var_explained)) +
+  geom_line() +
+  geom_point(color='grey5', fill='#6DACBC', shape=21, size=3) + 
+  scale_x_continuous(breaks=1:ncol(pca$x)) +
+  xlab("Principal Component") + 
+  ylab("Proportion of variance explained") +
+  theme_bw()
+```
+
+***
+
+## Heatmap
+
+Any constant variables are removed from the heatmap, as they will not explain variance in the data.
+
+```{r 225constant, warning=F, message=F}
+plot_vars <- apply(targets, 2, function(x) sd(as.numeric(factor(x)), na.rm=T))
+
+plot_vars <- names(plot_vars[!plot_vars %in% c(NA, 0)])
+plot_vars
+
+heatmap_df <- targets %>% 
+  dplyr::select(any_of(plot_vars))
+```
+
+All variables are then converted to numeric and correlations between them and the PCs are calculated.
+
+```{r 226corrheatmap}
+heatmap_df <- apply(heatmap_df, 2, function(x) as.numeric(factor(x)))
+
+cxy <- round(cor(pca$x, scale(heatmap_df), use="pairwise.complete.obs"),2) 
+```
+
+A heatmap can then be used to visualize these correlations and uncover measured variables that explain a large proportion of DNAm variance.
+
+```{r 227heatmap}
+col_fun <- colorRamp2(c(-1, 0, 1), c("#000042", "white", "#800000"))
+
+Heatmap(
+  t(cxy),                              
+  col = col_fun,  
+  border = 'grey5',
+  cluster_columns = FALSE,            
+  show_row_dend = TRUE,             
+  show_column_dend = FALSE,      
+  name = "Value",                 
+  row_names_gp = gpar(fontsize = 8), 
+  column_names_gp = gpar(fontsize = 8), 
+  cell_fun = function(j, i, x, y, width, height, fill) {
+    grid.rect(x, y, width, height, 
+              gp = gpar(col = "white", lwd = 1, fill = NA))
+    grid.text(ifelse(abs(t(cxy)[i,j]) > 0.4,
+                     sprintf("%.2f", round(t(cxy)[i, j], 2)),
+                     ""), 
+              x, y, gp = gpar(fontsize = 10, col = "white"))
+  }
+)
+```
+
+***
+
+## Plot
+
+In order to further investigate flagged variables, we can add the PCs to the `targets` data frame.
+
+```{r 228bindpc}
+pc_df <- cbind(targets, pca$x)
+```
+
+PCs can then be plotted against each other, coloured by flagged variables.
+
+The second PC is strongly linked to sex differences.
+
+```{r 229pcplot2}
+pc_df %>% 
+    ggplot(aes(x = PC1, y = PC2, color = sex)) +
+    geom_point(size = 1.5) +
+    geom_text_repel(aes(label = ifelse((pc_df$PC2 > 10 & pc_df$PC1 < 0 & pc_df$sex == "Female") |
+                                  (pc_df$PC2 < -12 & pc_df$sex == "Male"), Basename, ""), color = sex)) %>% 
+    labs(x = paste0("PC1 (", round(100*var_explained[1,2], 2), "%)"), 
+         y = paste0("PC2 (", round(100*var_explained[2,2], 2), "%)"), 
+         color = "Sex") +
+    theme_bw()
+```
 
 ***
 
 # Checking Sample Relationships #
 
-[**omicsPrint**](http://bioconductor.org/packages/release/bioc/html/omicsPrint.html) (Van Iterson, 2018) is a package we developed to detect data linkage errors through inspecting sample relations in multiple omics studies. Included with the package is the `hm450.manifest.pop.GoNL` data, which stores SNP probe information in a `GRanges` class object. This is then used to create a subset of the beta values for genotyping. 
+## Annotations ##
 
-```{r 213omicsprint}
-library(omicsPrint)
-data(hm450.manifest.pop.GoNL)
+[**omicsPrint**](http://bioconductor.org/packages/release/bioc/html/omicsPrint.html)<sup>12</sup> is a package we developed to detect data linkage errors through inspecting sample relations in multiple omics studies. 
 
-cpgs <- names(hm450.manifest.pop.GoNL[mcols(hm450.manifest.pop.GoNL)$MASK.snp5.EAS])
-cpgs <- na.omit(match(cpgs, rownames(betas)))
-omicsBetas <- betas[cpgs,]
-omicsBetas[1:10, 1:2]
+Manifests can be downloaded from the [Zhou lab GitHub page](https://zwdzwd.github.io/InfiniumAnnotation)<sup>15</sup> for all commonly used arrays and reference genomes. For this example, we use SNP annotations downloaded for the EPIC array and the hg19 genome. 
+
+```{r 230snpcpgs}
+snp_cpgs <- read_tsv(
+  "./data/EPIC.hg19.manifest.pop.tsv.gz")
 ```
 
-The function `beta2genotype()` then genotypes the observations by measuring homozygous or heterozygous alleles at these SNP probes. Lastly `alleleSharing()` assesses the relationships between different individuals, which can be unrelated, twins, or identical. The results can then be visualised using the `inferRelations()` function.
+Columns of interest include:
 
-```{r 214genotype, message=FALSE, warning=FALSE}
-dnamCalls <- beta2genotype(omicsBetas, assayName="exprs")
-dim(dnamCalls)
-dnamCalls[1:5, 1:2]
+* cpg - ID of the probe for the CpG
+* chr - Chromosome where the CpG is located
+* start - Start position of the CpG
+* end - End position of the CpG
 
-omicsData <- alleleSharing(dnamCalls, verbose=TRUE)
-head(omicsData)
+```{r 231subset}
+snp_cpgs <- snp_cpgs %>% 
+  dplyr::select(
+    cpg = probeID,
+    chr = CpG_chrm,
+    start = CpG_beg,
+    end = CpG_end,
+    MASK_snp5_EUR
+  ) %>% 
+  mutate(
+    chr = substr(chr,4,5)
+  )
 
-mismatches <- inferRelations(omicsData)
+snp_cpgs <- (snp_cpgs %>% 
+               dplyr::filter(MASK_snp5_EUR == TRUE))$cpg
+
+print(paste0("There are ", length(snp_cpgs),
+             " CpGs containing common European SNPs"))
 ```
 
-Since there are no twins or relatives in our data, all observations are shown as unrelated. In data with sample relationships, this would be shown in the above graph as green or black clusters (Van Iterson, 2018). It is important to carry out this type of visualization before probe-filtering as otherwise the genotyping will be based on very few SNPs. 
+Betas can then be subset to include only these CpG probes of interest.
+
+```{r 232table}
+betas_snps <- betas[snp_cpgs, ]
+dim(betas_snps)
+
+table(rownames(targets) == colnames(betas_snps))
+```
 
 ***
 
+### Assumed relations
 
+Create a data frame of all pairwise sample comparisons.
+
+```{r 233grid}
+relations <- expand.grid(
+  idx = colnames(betas_snps), 
+  idy = colnames(betas_snps))
+head(relations)
+```
+
+Sample names are saved, as a reference for which pairs exist.
+
+```{r 234names}
+relations$sample_name_x <- targets[relations$idx, "sample_ID"] 
+relations$sample_name_y <- targets[relations$idy, "sample_ID"]
+```
+
+A relation_type variable is then set as `identical` if the samples come from the same individual and `unrelated` otherwise. We see that the 59 pairs comparing the same sample are set as `identical`.
+
+```{r 235relations}
+relations$relation_type <- "unrelated"
+relations$relation_type[relations$sample_name_x == relations$sample_name_y] <- "identical"
+
+table(relations$relation_type)
+```
+
+***
+
+### Genotyping
+
+The function `beta2genotype` from `omicsPrint` genotypes the observations by measuring homozygous or heterozygous alleles at these SNP probes. The arguments specified are:
+
+* `betas` - a beta matrix of probes possibly affected by SNPs
+* `na.rm` - whether to drop CpGs for which no clustering is observed
+* `minSep` - the minimal cluster separation
+* `minSize` - the size of the smallest cluster as a percentage
+* `centers` - centers of clusters
+* `assayName` - the name of the assay to be used
+
+```{r 236beta2genotype}
+genotype <- beta2genotype(betas_snps, 
+                          na.rm=TRUE,
+                          minSep = 0.25,
+                          minSize = 5,
+                          centers = c(0.2, 0.5, 0.8),
+                          assayName=NULL)
+str(genotype)
+```
+
+`alleleSharing` can then assess the relationships between different individuals, which can be unrelated, twins, or identical. This uses identity by state (IBS), a genetic similarity measure that compares at a single locus the genotypes between two individuals and counts the number of alleles shared (0, 1 or 2).Essentially, if a sample is the same then the mean IBS should be 2 (alleles) and the variance of this should be low (close to 0). 
+
+```{r 237alleleSharing}
+out <- alleleSharing(genotype, relations = relations)
+head(out)
+```
+
+***
+
+### Identify mismatches
+
+The mean and variance of IBS can then be visualised using the `inferRelations()` function. Genetically similar sample comparisons will be plotted closer to the bottom, right of the graph, and those that are genetically dissimilar are in the top, left. A table of mismatches gives an overview of any identified. 
+
+```{r 238plot}
+mismatches <- inferRelations(out, verbose=TRUE)
+
+table(mismatches$relation, mismatches$predicted)
+```
+
+There are 18 pairs of samples (n=36) that should be unrelated but are genetically identical on the basis of these beta-derived genotypes. To remove them from further analysis you can use the `mismatches` object:
+
+```{r 239mismatched}
+removed_ids <- unique(c(mismatches$colnames.x, mismatches$colnames.y))
+removed_ids
+
+targets <- targets[!rownames(targets) %in% removed_ids, ]
+
+RGset <- RGset[,colnames(RGset) %in% rownames(targets)]
+betas <- betas[,colnames(betas) %in% rownames(targets)]
+
+RGset
+```
+
+In data with sample relationships, this would be shown in the above graph as green or black clusters<sup>12</sup>. It is important to carry out this type of visualization before probe-filtering as otherwise the genotyping will be based on very few SNPs. 
+
+***

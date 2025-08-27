@@ -11,21 +11,47 @@
 
 
 
-<title>02_SampleQualityControl.utf8</title>
+<title>02_SampleQualityControl.knit</title>
 
-<script src="site_libs/jquery-1.11.3/jquery.min.js"></script>
+<script src="site_libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <link href="site_libs/bootstrap-3.3.5/css/lumen.min.css" rel="stylesheet" />
 <script src="site_libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
 <script src="site_libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
 <script src="site_libs/bootstrap-3.3.5/shim/respond.min.js"></script>
-<script src="site_libs/jqueryui-1.11.4/jquery-ui.min.js"></script>
+<style>h1 {font-size: 34px;}
+       h1.title {font-size: 38px;}
+       h2 {font-size: 30px;}
+       h3 {font-size: 24px;}
+       h4 {font-size: 18px;}
+       h5 {font-size: 16px;}
+       h6 {font-size: 12px;}
+       code {color: inherit; background-color: rgba(0, 0, 0, 0.04);}
+       pre:not([class]) { background-color: white }</style>
+<script src="site_libs/jqueryui-1.13.2/jquery-ui.min.js"></script>
 <link href="site_libs/tocify-1.9.1/jquery.tocify.css" rel="stylesheet" />
 <script src="site_libs/tocify-1.9.1/jquery.tocify.js"></script>
 <script src="site_libs/navigation-1.1/tabsets.js"></script>
 
+<style type="text/css">
+  code{white-space: pre-wrap;}
+  span.smallcaps{font-variant: small-caps;}
+  span.underline{text-decoration: underline;}
+  div.column{display: inline-block; vertical-align: top; width: 50%;}
+  div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+  ul.task-list{list-style: none;}
+    </style>
 
-<style type="text/css">code{white-space: pre;}</style>
+
+
+<style type="text/css">
+  code {
+    white-space: pre;
+  }
+  .sourceCode {
+    overflow: visible;
+  }
+</style>
 <style type="text/css" data-origin="pandoc">
 a.sourceLine { display: inline-block; line-height: 1.25; }
 a.sourceLine { pointer-events: none; color: inherit; text-decoration: inherit; }
@@ -102,13 +128,20 @@ code span.wa { color: #bf0303; } /* Warning */
   for (var i = 0; i < sheets.length; i++) {
     if (sheets[i].ownerNode.dataset["origin"] !== "pandoc") continue;
     try { var rules = sheets[i].cssRules; } catch (e) { continue; }
-    for (var j = 0; j < rules.length; j++) {
+    var j = 0;
+    while (j < rules.length) {
       var rule = rules[j];
       // check if there is a div.sourceCode rule
-      if (rule.type !== rule.STYLE_RULE || rule.selectorText !== "div.sourceCode") continue;
+      if (rule.type !== rule.STYLE_RULE || rule.selectorText !== "div.sourceCode") {
+        j++;
+        continue;
+      }
       var style = rule.style.cssText;
       // check if color or background-color is set
-      if (rule.style.color === '' && rule.style.backgroundColor === '') continue;
+      if (rule.style.color === '' && rule.style.backgroundColor === '') {
+        j++;
+        continue;
+      }
       // replace div.sourceCode by a pre.sourceCode rule
       sheets[i].deleteRule(j);
       sheets[i].insertRule('pre.sourceCode{' + style + '}', j);
@@ -116,39 +149,9 @@ code span.wa { color: #bf0303; } /* Warning */
   }
 })();
 </script>
-<style type="text/css">
-  pre:not([class]) {
-    background-color: white;
-  }
-</style>
 
 
-<style type="text/css">
-h1 {
-  font-size: 34px;
-}
-h1.title {
-  font-size: 38px;
-}
-h2 {
-  font-size: 30px;
-}
-h3 {
-  font-size: 24px;
-}
-h4 {
-  font-size: 18px;
-}
-h5 {
-  font-size: 16px;
-}
-h6 {
-  font-size: 12px;
-}
-.table th:not([align]) {
-  text-align: left;
-}
-</style>
+
 
 <link rel="stylesheet" href="style.css" type="text/css" />
 
@@ -159,10 +162,6 @@ h6 {
   max-width: 940px;
   margin-left: auto;
   margin-right: auto;
-}
-code {
-  color: inherit;
-  background-color: rgba(0, 0, 0, 0.04);
 }
 img {
   max-width:100%;
@@ -179,40 +178,16 @@ button.code-folding-btn:focus {
 summary {
   display: list-item;
 }
+details > summary > p:only-child {
+  display: inline;
+}
+pre code {
+  padding: 0;
+}
 </style>
 
 
 <style type="text/css">
-/* padding for bootstrap navbar */
-body {
-  padding-top: 54px;
-  padding-bottom: 40px;
-}
-/* offset scroll position for anchor links (for fixed navbar)  */
-.section h1 {
-  padding-top: 59px;
-  margin-top: -59px;
-}
-.section h2 {
-  padding-top: 59px;
-  margin-top: -59px;
-}
-.section h3 {
-  padding-top: 59px;
-  margin-top: -59px;
-}
-.section h4 {
-  padding-top: 59px;
-  margin-top: -59px;
-}
-.section h5 {
-  padding-top: 59px;
-  margin-top: -59px;
-}
-.section h6 {
-  padding-top: 59px;
-  margin-top: -59px;
-}
 .dropdown-submenu {
   position: relative;
 }
@@ -240,7 +215,7 @@ body {
   margin-right: -10px;
 }
 .dropdown-submenu:hover>a:after {
-  border-left-color: #ffffff;
+  border-left-color: #adb5bd;
 }
 .dropdown-submenu.pull-left {
   float: none;
@@ -252,7 +227,7 @@ body {
 }
 </style>
 
-<script>
+<script type="text/javascript">
 // manage active state of menu based on current page
 $(document).ready(function () {
   // active menu anchor
@@ -262,11 +237,28 @@ $(document).ready(function () {
     href = "index.html";
   var menuAnchor = $('a[href="' + href + '"]');
 
-  // mark it active
-  menuAnchor.parent().addClass('active');
+  // mark the anchor link active (and if it's in a dropdown, also mark that active)
+  var dropdown = menuAnchor.closest('li.dropdown');
+  if (window.bootstrap) { // Bootstrap 4+
+    menuAnchor.addClass('active');
+    dropdown.find('> .dropdown-toggle').addClass('active');
+  } else { // Bootstrap 3
+    menuAnchor.parent().addClass('active');
+    dropdown.addClass('active');
+  }
 
-  // if it's got a parent navbar menu mark it active as well
-  menuAnchor.closest('li.dropdown').addClass('active');
+  // Navbar adjustments
+  var navHeight = $(".navbar").first().height() + 15;
+  var style = document.createElement('style');
+  var pt = "padding-top: " + navHeight + "px; ";
+  var mt = "margin-top: -" + navHeight + "px; ";
+  var css = "";
+  // offset scroll position for anchor links (for fixed navbar)
+  for (var i = 1; i <= 6; i++) {
+    css += ".section h" + i + "{ " + pt + mt + "}\n";
+  }
+  style.innerHTML = "body {" + pt + "padding-bottom: 40px; }\n" + css;
+  document.head.appendChild(style);
 });
 </script>
 
@@ -278,13 +270,12 @@ $(document).ready(function () {
   max-height: 500px;
   min-height: 44px;
   overflow-y: auto;
-  background: white;
   border: 1px solid #ddd;
   border-radius: 4px;
 }
 
-.tabset-dropdown > .nav-tabs > li.active:before {
-  content: "";
+.tabset-dropdown > .nav-tabs > li.active:before, .tabset-dropdown > .nav-tabs.nav-tabs-open:before {
+  content: "\e259";
   font-family: 'Glyphicons Halflings';
   display: inline-block;
   padding: 10px;
@@ -292,16 +283,9 @@ $(document).ready(function () {
 }
 
 .tabset-dropdown > .nav-tabs.nav-tabs-open > li.active:before {
-  content: "&#xe258;";
-  border: none;
-}
-
-.tabset-dropdown > .nav-tabs.nav-tabs-open:before {
-  content: "";
+  content: "\e258";
   font-family: 'Glyphicons Halflings';
-  display: inline-block;
-  padding: 10px;
-  border-right: 1px solid #ddd;
+  border: none;
 }
 
 .tabset-dropdown > .nav-tabs > li.active {
@@ -404,7 +388,7 @@ div.tocify {
 
 
 <!-- setup 3col/9col grid for toc_float and main content  -->
-<div class="row-fluid">
+<div class="row">
 <div class="col-xs-12 col-sm-4 col-md-3">
 <div id="TOC" class="tocify">
 </div>
@@ -418,7 +402,7 @@ div.tocify {
 <div class="navbar navbar-default  navbar-fixed-top" role="navigation">
   <div class="container">
     <div class="navbar-header">
-      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-bs-toggle="collapse" data-target="#navbar" data-bs-target="#navbar">
         <span class="icon-bar"></span>
         <span class="icon-bar"></span>
         <span class="icon-bar"></span>
@@ -431,22 +415,22 @@ div.tocify {
   <a href="01_GettingStarted.html">Getting Started</a>
 </li>
 <li>
-  <a href="02_SampleQualityControl.html">Sample-level QC</a>
+  <a href="02_SampleQualityControl.html">Sample QC</a>
 </li>
 <li>
-  <a href="03_Normalization.html">Normalization</a>
+  <a href="03_Predict.html">Predict</a>
 </li>
 <li>
-  <a href="04_ProbeFiltering.html">Probe-level QC</a>
+  <a href="04_Normalization.html">Normalize</a>
 </li>
 <li>
-  <a href="05_Predict.html">Predictors</a>
+  <a href="05_ProbeQC.html">Probe QC</a>
 </li>
 <li>
-  <a href="06_Masking.html">Underperforming Probes</a>
+  <a href="06_EWAS.html">Analyse</a>
 </li>
 <li>
-  <a href="07_EWAS.html">Analysis</a>
+  <a href="07_Interpret.html">Interpret</a>
 </li>
       </ul>
       <ul class="nav navbar-nav navbar-right">
@@ -458,7 +442,7 @@ div.tocify {
   </div><!--/.container -->
 </div><!--/.navbar -->
 
-<div class="fluid-row" id="header">
+<div id="header">
 
 
 
@@ -467,186 +451,612 @@ div.tocify {
 
 
 <hr />
-<div id="using-methylaid" class="section level1">
-<h1>Using MethylAid</h1>
-<p>We now have the data we need to commence quality control, but some reformatting is needed. The <a href="http://bioconductor.org/packages/MethylAid"><strong>MethylAid</strong></a> (Luijk, 2014) package that we developed requires the targets data frame to store IDAT file root names in a <code>Basename</code> column. Sometimes, data comes with a sample sheet to faciliate this, but in this case the information needs to be extracted from the supplementary file column instead.</p>
-<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb1-1" data-line-number="1">targets<span class="op">$</span>Basename &lt;-<span class="st"> </span><span class="kw">substring</span>(targets<span class="op">$</span>supplementary_file,<span class="dv">68</span>,<span class="dv">95</span>)</a>
+<div id="loading-dnam-data" class="section level1">
+<h1>Loading DNAm data</h1>
+<div id="summarizing-idats" class="section level2">
+<h2>Summarizing IDATs</h2>
+<p>The <a href="http://bioconductor.org/packages/MethylAid"><strong>MethylAid</strong></a><sup>10</sup> package, which will be used for quality control in this workflow, requires the targets data frame to contain a <code>Basename</code> variable that points to IDAT file names. Sometimes, data comes with a sample sheet to facilitate this, but in this example the information is extracted from the supplementary file column instead.</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb1-1" data-line-number="1">targets<span class="op">$</span>Basename &lt;-<span class="st"> </span><span class="kw">substring</span>(targets<span class="op">$</span>supplementary_file,<span class="dv">68</span>,<span class="dv">106</span>)</a>
 <a class="sourceLine" id="cb1-2" data-line-number="2"><span class="kw">head</span>(targets<span class="op">$</span>Basename)</a></code></pre></div>
-<pre><code>## [1] &quot;GSM3092700_9985178096_R01C01&quot; &quot;GSM3092701_9985178127_R03C02&quot;
-## [3] &quot;GSM3092702_9986360109_R02C02&quot; &quot;GSM3092703_9985178087_R01C01&quot;
-## [5] &quot;GSM3092704_9985178090_R01C01&quot; &quot;GSM3092705_9985178090_R04C01&quot;</code></pre>
-<p>The following sample quality control steps require the <a href="http://bioconductor.org/packages/MethylAid"><strong>MethylAid</strong></a> and <a href="https://bioconductor.org/packages/release/bioc/html/BiocParallel.html"><strong>BiocParallel</strong></a> packages. Using parallel processing and/or batches will reduce both memory load and run-times when extracting intensities from IDAT files. Please see the <a href="http://bioconductor.org/packages/release/bioc/vignettes/MethylAid/inst/doc/MethylAid.pdf">MethylAid vignette</a> for more details.</p>
-<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb3-1" data-line-number="1"><span class="kw">library</span>(MethylAid)</a>
-<a class="sourceLine" id="cb3-2" data-line-number="2"><span class="kw">library</span>(BiocParallel)</a>
-<a class="sourceLine" id="cb3-3" data-line-number="3">BPPARAM &lt;-<span class="st"> </span><span class="kw">MulticoreParam</span>(<span class="dv">6</span>)</a>
-<a class="sourceLine" id="cb3-4" data-line-number="4">sData &lt;-<span class="st"> </span><span class="kw">summarize</span>(targets, <span class="dt">batchSize=</span><span class="dv">50</span>, <span class="dt">BPPARAM=</span>BPPARAM, <span class="dt">base=</span><span class="st">&quot;../GSE113018/IDATs&quot;</span>)</a></code></pre></div>
-<pre><code>## Start summarization ...</code></pre>
-<pre><code>## Summarize data in parallel...</code></pre>
-<pre><code>## Prepare data for plotting ...</code></pre>
-<pre><code>## ... Finished summarization.</code></pre>
-<p>After this <code>summarize()</code>, the Shiny web application can be launched to <code>visualize()</code> the data and identify outliers. In this instance, there are no apparent outliers, but if found they can be removed from the dataset. To easier visualise if your data conforms to typical patterns, you can utilise the <a href="http://bioconductor.org/packages/release/data/experiment/html/MethylAidData.html"><strong>MethylAidData</strong></a> package alongside the <code>background</code> option. Darker blue colours indicate regions where many observations are found in the example data, and can serve as a guide for expected peak areas.</p>
-<div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb8-1" data-line-number="1"><span class="kw">library</span>(MethylAidData)</a>
-<a class="sourceLine" id="cb8-2" data-line-number="2"><span class="kw">data</span>(exampleDataLarge)</a>
-<a class="sourceLine" id="cb8-3" data-line-number="3">outliers &lt;-<span class="st"> </span><span class="kw">visualize</span>(sData, <span class="dt">background=</span>exampleDataLarge)</a>
-<a class="sourceLine" id="cb8-4" data-line-number="4">targets &lt;-<span class="st"> </span>targets[<span class="op">!</span>(<span class="kw">rownames</span>(targets) <span class="op">%in%</span><span class="st"> </span><span class="kw">rownames</span>(outliers)), ]</a></code></pre></div>
-<p><img src="data/images/methylaid-eg.PNG" /></p>
-<p><br> This image shows an example of the plots available in <a href="http://bioconductor.org/packages/MethylAid"><strong>MethylAid</strong></a>. Observations can be coloured by phenotype, outliers can be highlighted, and the background option can be toggled off and on.</p>
+<pre><code>## [1] &quot;GSM3228562_200550980002_R01C01_Grn.idat&quot;
+## [2] &quot;GSM3228563_200550980002_R02C01_Grn.idat&quot;
+## [3] &quot;GSM3228564_200550980002_R03C01_Grn.idat&quot;
+## [4] &quot;GSM3228565_200550980002_R04C01_Grn.idat&quot;
+## [5] &quot;GSM3228566_200550980002_R05C01_Grn.idat&quot;
+## [6] &quot;GSM3228567_200550980002_R06C01_Grn.idat&quot;</code></pre>
+<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb3-1" data-line-number="1"><span class="kw">rownames</span>(targets) &lt;-<span class="st"> </span><span class="kw">sub</span>(<span class="st">&quot;_Grn.idat&quot;</span>, <span class="st">&quot;&quot;</span>, targets<span class="op">$</span>Basename)</a></code></pre></div>
+<p>The following sample quality control steps will also require the <a href="https://bioconductor.org/packages/release/bioc/html/BiocParallel.html"><strong>BiocParallel</strong></a> package. Using parallel processing and/or batches will reduce both memory load and run-times when extracting intensities from IDAT files. Please see the <a href="http://bioconductor.org/packages/release/bioc/vignettes/MethylAid/inst/doc/MethylAid.pdf">MethylAid vignette</a> for more details.</p>
+<p>The available number of cores is set usnig <code>MulticoreParam</code>, and IDATs are summarized using the <code>summarize</code> function.</p>
+<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb4-1" data-line-number="1">BPPARAM &lt;-<span class="st"> </span><span class="kw">MulticoreParam</span>(<span class="dv">6</span>)</a>
+<a class="sourceLine" id="cb4-2" data-line-number="2">sData &lt;-<span class="st"> </span>MethylAid<span class="op">::</span><span class="kw">summarize</span>(targets, <span class="dt">batchSize=</span><span class="dv">50</span>, <span class="dt">base=</span><span class="st">&quot;../GSE116339/IDATs&quot;</span>)</a></code></pre></div>
 <hr />
 </div>
-<div id="preparing-targets" class="section level1">
-<h1>Preparing <code>targets</code></h1>
-<p>Before progressing further, it can help to take some time to get familiar with the <code>targets</code> data frame, removing duplicate information and converting variables to relevant classes.</p>
-<div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb9-1" data-line-number="1"><span class="kw">library</span>(tidyverse)</a>
-<a class="sourceLine" id="cb9-2" data-line-number="2"></a>
-<a class="sourceLine" id="cb9-3" data-line-number="3">targets &lt;-<span class="st"> </span><span class="kw">select</span>(targets, geo_accession,</a>
-<a class="sourceLine" id="cb9-4" data-line-number="4">                           <span class="dt">cohort =</span> source_name_ch1,</a>
-<a class="sourceLine" id="cb9-5" data-line-number="5">                           <span class="dt">sex =</span> characteristics_ch1,</a>
-<a class="sourceLine" id="cb9-6" data-line-number="6">                           <span class="dt">cc =</span> characteristics_ch1<span class="fl">.1</span>,</a>
-<a class="sourceLine" id="cb9-7" data-line-number="7">                           <span class="dt">age =</span> characteristics_ch1<span class="fl">.2</span>,</a>
-<a class="sourceLine" id="cb9-8" data-line-number="8">                           <span class="dt">growth =</span> characteristics_ch1<span class="fl">.3</span>,</a>
-<a class="sourceLine" id="cb9-9" data-line-number="9">                           <span class="dt">facial =</span> characteristics_ch1<span class="fl">.4</span>,</a>
-<a class="sourceLine" id="cb9-10" data-line-number="10">                           <span class="dt">cns =</span> characteristics_ch1<span class="fl">.5</span>,</a>
-<a class="sourceLine" id="cb9-11" data-line-number="11">                           Basename)</a>
-<a class="sourceLine" id="cb9-12" data-line-number="12">targets<span class="op">$</span>age &lt;-<span class="st"> </span><span class="kw">as.numeric</span>(targets<span class="op">$</span>age)</a>
-<a class="sourceLine" id="cb9-13" data-line-number="13"></a>
-<a class="sourceLine" id="cb9-14" data-line-number="14"><span class="kw">str</span>(targets)</a></code></pre></div>
-<pre><code>## &#39;data.frame&#39;:    138 obs. of  9 variables:
-##  $ geo_accession: chr  &quot;GSM3092700&quot; &quot;GSM3092701&quot; &quot;GSM3092702&quot; &quot;GSM3092703&quot; ...
-##  $ cohort       : Factor w/ 2 levels &quot;FASD_discovery&quot;,..: 1 1 1 1 1 1 1 1 1 1 ...
-##  $ sex          : Factor w/ 2 levels &quot;gender: Female&quot;,..: 1 1 2 2 2 1 2 2 2 2 ...
-##  $ cc           : Factor w/ 2 levels &quot;disease state: control&quot;,..: 1 1 1 1 1 1 1 1 1 1 ...
-##  $ age          : num  50 19 110 39 97 103 5 25 13 44 ...
-##  $ growth       : Factor w/ 5 levels &quot;growth: 1&quot;,&quot;growth: 2&quot;,..: 5 5 5 5 5 5 5 5 5 5 ...
-##  $ facial       : Factor w/ 5 levels &quot;facial: 1&quot;,&quot;facial: 2&quot;,..: 5 5 5 5 5 5 5 5 5 5 ...
-##  $ cns          : Factor w/ 5 levels &quot;cns: 1&quot;,&quot;cns: 2&quot;,..: 5 5 5 5 5 5 5 5 5 5 ...
-##  $ Basename     : chr  &quot;GSM3092700_9985178096_R01C01&quot; &quot;GSM3092701_9985178127_R03C02&quot; &quot;GSM3092702_9986360109_R02C02&quot; &quot;GSM3092703_9985178087_R01C01&quot; ...</code></pre>
-<p>This data frame consists of 138 observations, with 46 fetal alcohol spectrum disorder (FASD) cases and 92 controls, and phenotypic information for 36 variables is stored after cleaning. This includes values that quantify the severity of FASD in cases, such as <code>facial</code>, <code>growth</code>, and <code>cns</code>, as well as covariates we want to adjust for in the analysis, like <code>age</code> and <code>sex</code>.</p>
-<hr />
 </div>
 <div id="creating-an-rgset" class="section level1">
 <h1>Creating an <code>RGset</code></h1>
-<p>For the rest of the pipeline, our data will need to be available as an <code>RGChannelSetExtended</code> object. Reading in large numbers of IDAT files is memory-intensive and time-consuming. Therefore, our <a href="https://github.com/molepi/DNAmArray"><strong>DNAmArray</strong></a> package offers the <code>read.metharray.exp.par()</code> function, which distributes the IDAT files to each of the workers registered using <a href="https://bioconductor.org/packages/release/bioc/html/BiocParallel.html"><strong>BiocParallel</strong></a>. It then passes them in batches to <code>read.metharray.exp()</code> from <a href="http://bioconductor.org/packages/minfi"><strong>minfi</strong></a> (Feinberg, 2014) and combines the returned <code>RGset</code> objects.</p>
-<div class="sourceCode" id="cb11"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb11-1" data-line-number="1"><span class="kw">library</span>(DNAmArray)</a>
-<a class="sourceLine" id="cb11-2" data-line-number="2"><span class="kw">register</span>(<span class="kw">MulticoreParam</span>(<span class="dv">6</span>))</a>
-<a class="sourceLine" id="cb11-3" data-line-number="3">RGset &lt;-<span class="st"> </span><span class="kw">read.metharray.exp</span>(<span class="dt">base=</span><span class="st">&quot;../GSE113018/IDATs&quot;</span>, targets, <span class="dt">verbose=</span><span class="ot">FALSE</span>, <span class="dt">extended=</span><span class="ot">TRUE</span>)</a></code></pre></div>
+<p>In addition to the <code>sData</code> object, which is used by MethylAid, it is useful to also create an <code>RGChannelSetExtended</code> object, which contains more extensive information on the data. Here, we use <code>read.metharray.exp()</code> from <a href="http://bioconductor.org/packages/minfi"><strong>minfi</strong></a><sup>9</sup> but, since this has not been updated for the more recent arrays, we advise monkey patching the internal <code>.guessArrayTypes</code> function, with the appropriate array and annotation.</p>
+<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb5-1" data-line-number="1">.guessArrayTypes &lt;-<span class="st"> </span><span class="cf">function</span>(nProbes) {</a>
+<a class="sourceLine" id="cb5-2" data-line-number="2">  <span class="cf">if</span> (nProbes <span class="op">&gt;</span><span class="st"> </span><span class="dv">850000</span>) {</a>
+<a class="sourceLine" id="cb5-3" data-line-number="3">    <span class="co"># EPIC v2 array </span></a>
+<a class="sourceLine" id="cb5-4" data-line-number="4">    arrayAnnotation &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="dt">array =</span> <span class="st">&quot;IlluminaHumanMethylationEPIC&quot;</span>, <span class="dt">annotation =</span> <span class="st">&quot;20a1.hg38&quot;</span>)</a>
+<a class="sourceLine" id="cb5-5" data-line-number="5">  } <span class="cf">else</span> <span class="cf">if</span> (nProbes <span class="op">&gt;</span><span class="st"> </span><span class="dv">622000</span>) {</a>
+<a class="sourceLine" id="cb5-6" data-line-number="6">    <span class="co"># EPIC (850k) array</span></a>
+<a class="sourceLine" id="cb5-7" data-line-number="7">    arrayAnnotation &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="dt">array =</span> <span class="st">&quot;IlluminaHumanMethylationEPIC&quot;</span>, <span class="dt">annotation =</span> <span class="st">&quot;ilm10b4.hg19&quot;</span>)</a>
+<a class="sourceLine" id="cb5-8" data-line-number="8">  } <span class="cf">else</span> <span class="cf">if</span> (nProbes <span class="op">&gt;</span><span class="st"> </span><span class="dv">480000</span>) {</a>
+<a class="sourceLine" id="cb5-9" data-line-number="9">    <span class="co"># 450k array</span></a>
+<a class="sourceLine" id="cb5-10" data-line-number="10">    arrayAnnotation &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="dt">array =</span> <span class="st">&quot;IlluminaHumanMethylation450k&quot;</span>, <span class="dt">annotation =</span> <span class="st">&quot;ilmn12.hg19&quot;</span>)</a>
+<a class="sourceLine" id="cb5-11" data-line-number="11">  } <span class="cf">else</span> {</a>
+<a class="sourceLine" id="cb5-12" data-line-number="12">    <span class="co"># 27k array</span></a>
+<a class="sourceLine" id="cb5-13" data-line-number="13">    arrayAnnotation &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="dt">array =</span> <span class="st">&quot;IlluminaHumanMethylation27k&quot;</span>, <span class="dt">annotation =</span> <span class="st">&quot;ilmn12.hg19&quot;</span>)</a>
+<a class="sourceLine" id="cb5-14" data-line-number="14">  }</a>
+<a class="sourceLine" id="cb5-15" data-line-number="15"></a>
+<a class="sourceLine" id="cb5-16" data-line-number="16">  arrayAnnotation</a>
+<a class="sourceLine" id="cb5-17" data-line-number="17">}</a>
+<a class="sourceLine" id="cb5-18" data-line-number="18"></a>
+<a class="sourceLine" id="cb5-19" data-line-number="19"><span class="kw">environment</span>(.guessArrayTypes) &lt;-<span class="st"> </span><span class="kw">asNamespace</span>(<span class="st">&quot;minfi&quot;</span>)</a>
+<a class="sourceLine" id="cb5-20" data-line-number="20"><span class="kw">assignInNamespace</span>(<span class="st">&quot;.guessArrayTypes&quot;</span>, .guessArrayTypes, <span class="dt">ns =</span> <span class="st">&quot;minfi&quot;</span>)</a></code></pre></div>
+<p>Then, proceed using <code>BiocParallel</code> and <code>minfi</code> to read in the IDAT files.</p>
+<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb6-1" data-line-number="1">RGset &lt;-<span class="st"> </span><span class="kw">read.metharray.exp</span>(<span class="dt">base=</span><span class="st">&quot;../GSE116339/IDATs/&quot;</span>, targets, <span class="dt">verbose=</span><span class="ot">FALSE</span>, <span class="dt">extended=</span><span class="ot">TRUE</span>)</a></code></pre></div>
 <p>Reading data in parallel is subject to errors and debugging is often difficult. Recently, <a href="https://bioconductor.org/packages/release/bioc/html/BiocParallel.html"><strong>BiocParallel</strong></a> has been extended with a comprehensive set of functions for debugging on various parallel architectures. If problems arise, we recommend using <code>BatchJobsParam()</code> with the <code>log=TRUE</code> option in order to facilitate resolution.</p>
-<p>Our data is now an <code>RGset</code> object that can used for visualization. You can see below that inside this object the <code>colData</code> holds the same information as <code>targets</code>, and that there are 5 <code>assay</code> layers. The annotation information tells us that the methylation was measured using a 450k array and that hg19 is the reference genome.</p>
-<div class="sourceCode" id="cb12"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb12-1" data-line-number="1">RGset</a></code></pre></div>
+<p>Our data is now an <code>RGset</code> object that can used for visualization. You can see below that inside this object the <code>colData</code> holds the same information as <code>targets</code>, and that there are 5 <code>assay</code> layers. The annotation information tells us that the methylation was measured using a EPIC array and that hg19 is the reference genome.</p>
+<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb7-1" data-line-number="1">RGset</a></code></pre></div>
 <pre><code>## class: RGChannelSetExtended 
-## dim: 622399 138 
+## dim: 1052641 679 
 ## metadata(0):
 ## assays(5): Green Red GreenSD RedSD NBeads
-## rownames(622399): 10600313 10600322 ... 74810490 74810492
+## rownames(1052641): 1600101 1600111 ... 99810990 99810992
 ## rowData names(0):
-## colnames(138): GSM3092700_9985178096_R01C01
-##   GSM3092701_9985178127_R03C02 ... GSM3093566_9020331152_R05C01
-##   GSM3093567_9020331152_R06C01
-## colData names(35): title public_date ... Basename filenames
+## colnames(679): GSM3228562_200550980002_R01C01
+##   GSM3228563_200550980002_R02C01 ... GSM3229239_200598350080_R03C01
+##   GSM3229240_200594740075_R08C01
+## colData names(14): sample_ID geo_accession ... Basename filenames
 ## Annotation
-##   array: IlluminaHumanMethylation450k
-##   annotation: ilmn12.hg19</code></pre>
+##   array: IlluminaHumanMethylationEPIC
+##   annotation: 20a1.hg38</code></pre>
 <hr />
 </div>
 <div id="beta-values" class="section level1">
 <h1>Beta values</h1>
-<p>In order to further visualize the data, we store the beta values using the <code>getBeta()</code> function from <a href="https://bioconductor.org/packages/rel%20ease/bioc/html/minfi.html"><strong>minfi</strong></a> (Feinberg, 2014). The <code>type=&quot;Illumina&quot;</code> option adds 100 to the denominator of the beta-value calculation, preventing NA values being recorded when the methylated and unmethylated signal are both 0.</p>
-<div class="sourceCode" id="cb14"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb14-1" data-line-number="1">betas &lt;-<span class="st"> </span><span class="kw">getBeta</span>(RGset, <span class="dt">type=</span><span class="st">&quot;Illumina&quot;</span>)</a></code></pre></div>
+<p>In order to further visualize the data, we store the beta values using the <code>getBeta()</code> function from <a href="https://bioconductor.org/packages/release/bioc/html/minfi.html"><strong>minfi</strong></a>. The <code>type=&quot;Illumina&quot;</code> option adds 100 to the denominator of the beta-value calculation, preventing NA values being recorded when the methylated and unmethylated signal are both 0.</p>
+<div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb9-1" data-line-number="1">betas &lt;-<span class="st"> </span><span class="kw">getBeta</span>(RGset, <span class="dt">type=</span><span class="st">&quot;Illumina&quot;</span>)</a></code></pre></div>
+<p>On some environments, this function returns a list. In that case, the beta-values can be extracted using <code>betas$completeObs</code>.</p>
+<div class="sourceCode" id="cb10"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb10-1" data-line-number="1"><span class="cf">if</span>(<span class="kw">is.list</span>(betas)){</a>
+<a class="sourceLine" id="cb10-2" data-line-number="2">  betas &lt;-<span class="st"> </span>betas<span class="op">$</span>completeObs</a>
+<a class="sourceLine" id="cb10-3" data-line-number="3">}</a></code></pre></div>
+<p>It can also be advisable to round the beta values to 4 significant figures, which both reduces the data size and provides a realistic measure of the available precision.</p>
+<div class="sourceCode" id="cb11"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb11-1" data-line-number="1">betas &lt;-<span class="st"> </span><span class="kw">round</span>(betas, <span class="dv">4</span>)</a></code></pre></div>
+<p>Now, <code>betas</code> contains beta values for each measured probe and sample.</p>
+<div class="sourceCode" id="cb12"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb12-1" data-line-number="1"><span class="kw">dim</span>(betas)</a></code></pre></div>
+<pre><code>## [1] 866836    679</code></pre>
+<div class="sourceCode" id="cb14"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb14-1" data-line-number="1">betas[<span class="dv">1</span><span class="op">:</span><span class="dv">5</span>, <span class="dv">1</span><span class="op">:</span><span class="dv">5</span>]</a></code></pre></div>
+<pre><code>##            GSM3228562_200550980002_R01C01 GSM3228563_200550980002_R02C01
+## cg18478105                         0.0504                         0.0000
+## cg09835024                         0.0745                         0.1027
+## cg14361672                         0.6650                         0.6541
+## cg01763666                         0.6506                         0.6182
+## cg12950382                         0.8633                         0.8001
+##            GSM3228564_200550980002_R03C01 GSM3228565_200550980002_R04C01
+## cg18478105                         0.0432                         0.0396
+## cg09835024                         0.0548                         0.0499
+## cg14361672                         0.6505                         0.6050
+## cg01763666                         0.6523                         0.6663
+## cg12950382                         0.8153                         0.8313
+##            GSM3228566_200550980002_R05C01
+## cg18478105                         0.0454
+## cg09835024                         0.0750
+## cg14361672                         0.7440
+## cg01763666                         0.6309
+## cg12950382                         0.7643</code></pre>
 <hr />
+</div>
+<div id="methylaid" class="section level1">
+<h1>MethylAid</h1>
+<div id="control-probes" class="section level2">
+<h2>Control probes</h2>
+<p><code>MethylAid</code> plots to visualize sample quality are included in the <code>DNAmArray</code> package and their use is outlined below.</p>
+<p>They rely on the following <code>qcProbes</code> object that specifies the control probes.</p>
+<div class="sourceCode" id="cb16"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb16-1" data-line-number="1">qcProbes =<span class="st"> </span><span class="kw">list</span>(</a>
+<a class="sourceLine" id="cb16-2" data-line-number="2">  <span class="dt">BSI =</span> <span class="st">&quot;^BISULFITE CONVERSION I$&quot;</span>,</a>
+<a class="sourceLine" id="cb16-3" data-line-number="3">  <span class="dt">BSII =</span> <span class="st">&quot;^BISULFITE CONVERSION II$&quot;</span>,</a>
+<a class="sourceLine" id="cb16-4" data-line-number="4">  <span class="dt">EC =</span> <span class="st">&quot;^EXTENSION$&quot;</span>,</a>
+<a class="sourceLine" id="cb16-5" data-line-number="5">  <span class="dt">SPI =</span> <span class="st">&quot;^SPECIFICITY I$&quot;</span>,</a>
+<a class="sourceLine" id="cb16-6" data-line-number="6">  <span class="dt">HYB =</span> <span class="st">&quot;^HYBRIDIZATION$&quot;</span>,</a>
+<a class="sourceLine" id="cb16-7" data-line-number="7">  <span class="dt">NP =</span> <span class="st">&quot;^NON-POLYMORPHIC$&quot;</span>,</a>
+<a class="sourceLine" id="cb16-8" data-line-number="8">  <span class="dt">SPII =</span> <span class="st">&quot;^SPECIFICITY II$&quot;</span>,</a>
+<a class="sourceLine" id="cb16-9" data-line-number="9">  <span class="dt">TR =</span> <span class="st">&quot;^TARGET REMOVAL$&quot;</span>,</a>
+<a class="sourceLine" id="cb16-10" data-line-number="10">  <span class="dt">SC =</span> <span class="st">&quot;^STAINING$&quot;</span>,</a>
+<a class="sourceLine" id="cb16-11" data-line-number="11">  <span class="dt">NC =</span> <span class="st">&quot;^NEGATIVE$&quot;</span></a>
+<a class="sourceLine" id="cb16-12" data-line-number="12">)</a></code></pre></div>
+<p>They also rely on array specific thresholds, which we advise to set on the basis of the following table:</p>
+<table style="border-collapse: collapse; width: 100%; text-align: center;">
+<thead>
+<tr>
+<th style="padding: 8px; border-bottom: 2px solid #ddd;">
+Array
+</th>
+<th style="padding: 8px; border-bottom: 2px solid #ddd;">
+MU
+</th>
+<th style="padding: 8px; border-bottom: 2px solid #ddd;">
+OP
+</th>
+<th style="padding: 8px; border-bottom: 2px solid #ddd;">
+BS
+</th>
+<th style="padding: 8px; border-bottom: 2px solid #ddd;">
+HC
+</th>
+<th style="padding: 8px; border-bottom: 2px solid #ddd;">
+DP
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="padding: 8px;">
+450k
+</td>
+<td style="padding: 8px;">
+10.5
+</td>
+<td style="padding: 8px;">
+11.75
+</td>
+<td style="padding: 8px;">
+12.75
+</td>
+<td style="padding: 8px;">
+13.25
+</td>
+<td style="padding: 8px;">
+0.95
+</td>
+</tr>
+<tr>
+<td style="padding: 8px;">
+EPIC
+</td>
+<td style="padding: 8px;">
+10
+</td>
+<td style="padding: 8px;">
+12
+</td>
+<td style="padding: 8px;">
+11.75
+</td>
+<td style="padding: 8px;">
+12.75
+</td>
+<td style="padding: 8px;">
+0.95
+</td>
+</tr>
+<tr>
+<td style="padding: 8px;">
+EPIC v2
+</td>
+<td style="padding: 8px;">
+10.5
+</td>
+<td style="padding: 8px;">
+12.5
+</td>
+<td style="padding: 8px;">
+12.75
+</td>
+<td style="padding: 8px;">
+13.25
+</td>
+<td style="padding: 8px;">
+0.95
+</td>
+</tr>
+</tbody>
+</table>
+<p>The example data uses the EPIC array and the following thresholds</p>
+<div class="sourceCode" id="cb17"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb17-1" data-line-number="1">thresholds &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="dv">10</span>, <span class="dv">12</span>, <span class="fl">11.75</span>, <span class="fl">12.75</span>, <span class="fl">0.95</span>)</a></code></pre></div>
+<hr />
+</div>
+<div id="plots" class="section level2">
+<h2>Plots</h2>
+<p>All plots can be coloured by a variable in <code>targets</code>, specified by the <code>col</code> argument.</p>
+<p><code>plotMU</code> plots a rotated MU plot. This shows the median methylated and unmethylated log2 intensities per sample, and flagging low-intensity outliers.</p>
+<div class="sourceCode" id="cb18"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb18-1" data-line-number="1"><span class="kw">plotMU</span>(<span class="dt">object =</span> sData, <span class="dt">threshold =</span> thresholds[<span class="dv">1</span>], <span class="dt">col=</span><span class="st">&quot;plate&quot;</span>)</a></code></pre></div>
+<p><img src="02_SampleQualityControl_files/figure-html/212plotMU-1.png" width="672" /></p>
+<hr />
+<p><code>plotOP</code> plots the sample-dependent overall quality control on the basis of non-polymorphic (NP) control probes.</p>
+<p>NP control probes query each of the four nucleotides in a non-polymorphic region of the bisulfite genome. Signal intensity from these probes in the red (A and T) and green (C and G) channels can then be used to test overall performance of the assay, from amplification to detection. Intensity should be high in the red channel for NP probes querying A and T nucleotides, and high in the green channel for NP probes querying G and C nucleotides. The intensities for the relevant channel for NP probes are then combined and plotted per sample, where they should be above the specific threshold.</p>
+<div class="sourceCode" id="cb19"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb19-1" data-line-number="1"><span class="kw">plotOP</span>(<span class="dt">object =</span> sData, <span class="dt">threshold =</span> thresholds[<span class="dv">2</span>], <span class="dt">col=</span><span class="st">&quot;plate&quot;</span>)</a></code></pre></div>
+<p><img src="02_SampleQualityControl_files/figure-html/213plotOP-1.png" width="672" /></p>
+<hr />
+<p><code>plotBS</code> assesses bisulfite conversion efficiency using control probes, identifying poorly converted samples. Type I BC control probes monitor the efficiency of the bisulfite conversion. If the conversion reaction was successful, the ‘C’ (converted) probes will be extended, but if the sample has unconverted DNA, the ‘U’ (unconverted) probes are extended instead.</p>
+<p>Performance of the BC control probes C1 and C2 is monitored in the green channel, and C3 and C4 are monitored in the red channel. The intensities for the relevant channels are then combined for all BC control probes and plotted per sample to ensure they are above the specified threshold.</p>
+<div class="sourceCode" id="cb20"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb20-1" data-line-number="1"><span class="kw">plotBS</span>(<span class="dt">object =</span> sData, <span class="dt">threshold =</span> thresholds[<span class="dv">3</span>], <span class="dt">col=</span><span class="st">&quot;plate&quot;</span>)</a></code></pre></div>
+<p><img src="02_SampleQualityControl_files/figure-html/214plotBS-1.png" width="672" /></p>
+<hr />
+<p><code>plotHC</code> uses hybridization controls to assess the hybridization step using synthetic targets, which complement the array perfectly. These synthetic targets are present in the hybridization buffer (RA1) at three concentration levels, and their performance is only monitored in the green channel. The difference in green intensity between the high (H) and low (L) concentration is combined and can be plotted to ensure it is above the specified threshold.</p>
+<div class="sourceCode" id="cb21"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb21-1" data-line-number="1"><span class="kw">plotHC</span>(<span class="dt">object =</span> sData, <span class="dt">threshold =</span> thresholds[<span class="dv">4</span>], <span class="dt">col=</span><span class="st">&quot;plate&quot;</span>)</a></code></pre></div>
+<p><img src="02_SampleQualityControl_files/figure-html/215plotHC-1.png" width="672" /></p>
+<hr />
+<p><code>plotDP</code> is the last MethylAid plot we provide. This function instead takes the <code>RGset</code> as input, to enable the user to specify both how visually distinct from the background they consider a detected signal (<code>detP</code> argument is the detection p-value) and what proportion of probes they want to be meeting this criterion (<code>threshold</code> is this proportion). The default we suggest for all arrays is 0.01 (detP) and 0.95 (threshold), but this can be adjusted.</p>
+<p>This plot uses negative control probes, which are randomly permuted sequences that should not hybridize to the DNA template. The mean signal of these probes defines the background signal. This plot therefore show the fraction of probe visually distinct from the background signal in each sample, coloured by array number.</p>
+<div class="sourceCode" id="cb22"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb22-1" data-line-number="1"><span class="kw">plotDP</span>(<span class="dt">object =</span> RGset, <span class="dt">threshold =</span> <span class="fl">0.95</span>, <span class="dt">detP=</span><span class="fl">0.01</span>, <span class="dt">col=</span><span class="st">&quot;plate&quot;</span>)</a></code></pre></div>
+<p><img src="02_SampleQualityControl_files/figure-html/216plotDP-1.png" width="672" /></p>
+<hr />
+</div>
+<div id="outliers" class="section level2">
+<h2>Outliers</h2>
+<p>On the basis of the above thresholds, outliers can be extracted using the <code>get_outliers</code> function. The resulting table shows an indicator of which quality control step was failed.</p>
+<div class="sourceCode" id="cb23"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb23-1" data-line-number="1">outliers_auto &lt;-<span class="st"> </span><span class="kw">get_outliers</span>(<span class="dt">object =</span> sData, <span class="dt">thresholds =</span> thresholds)</a>
+<a class="sourceLine" id="cb23-2" data-line-number="2">outliers_auto</a></code></pre></div>
+<pre><code>##                                   MU    OP    BS   HC    DP
+## GSM3228562_200550980002_R01C01 FALSE FALSE FALSE TRUE FALSE
+## GSM3228577_200550980025_R01C01 FALSE FALSE FALSE TRUE FALSE
+## GSM3228637_200590490062_R01C01 FALSE FALSE FALSE TRUE FALSE
+## GSM3228716_200594740039_R01C01 FALSE FALSE FALSE TRUE FALSE
+## GSM3228903_200598350005_R01C01 FALSE FALSE FALSE TRUE FALSE</code></pre>
+<div class="sourceCode" id="cb25"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb25-1" data-line-number="1">outliers &lt;-<span class="st"> </span><span class="kw">substr</span>(<span class="kw">rownames</span>(outliers_auto), <span class="dv">1</span>, <span class="dv">10</span>)</a></code></pre></div>
+<p>Outliers can then be removed from <code>targets</code> before proceding.</p>
+<div class="sourceCode" id="cb26"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb26-1" data-line-number="1">targets &lt;-<span class="st"> </span>targets <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">filter</span>(<span class="op">!</span>geo_accession <span class="op">%in%</span><span class="st"> </span>outliers)</a>
+<a class="sourceLine" id="cb26-2" data-line-number="2"><span class="kw">dim</span>(targets)</a></code></pre></div>
+<pre><code>## [1] 674  13</code></pre>
+<hr />
+</div>
 </div>
 <div id="beta-density-plots" class="section level1">
 <h1>Beta density plots</h1>
-<p>Using <code>densityPlot()</code> from <a href="https://bioconductor.org/packages/release/bioc/html/minfi.html"><strong>minfi</strong></a> (Feinberg, 2014), we can visualize the per sample average beta-value distribution. This gives us a global impression of the data and allows us to identify possible anomalous samples. We expect this distribution to be bimodal with the peaks representing methylated and unmethylated signals. Any centre peaks should be further investigated for problems, such as ambiguous mapping.</p>
-<div class="sourceCode" id="cb15"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb15-1" data-line-number="1"><span class="kw">library</span>(minfi)</a>
-<a class="sourceLine" id="cb15-2" data-line-number="2"></a>
-<a class="sourceLine" id="cb15-3" data-line-number="3">ggbg &lt;-<span class="st"> </span><span class="cf">function</span>() {</a>
-<a class="sourceLine" id="cb15-4" data-line-number="4">  <span class="kw">points</span>(<span class="dv">0</span>, <span class="dv">0</span>, <span class="dt">pch=</span><span class="dv">16</span>, <span class="dt">cex=</span><span class="fl">1e6</span>, <span class="dt">col=</span><span class="st">&quot;grey90&quot;</span>)</a>
-<a class="sourceLine" id="cb15-5" data-line-number="5">  <span class="kw">grid</span>(<span class="dt">col=</span><span class="st">&quot;white&quot;</span>, <span class="dt">lty=</span><span class="dv">1</span>)</a>
-<a class="sourceLine" id="cb15-6" data-line-number="6">}</a>
-<a class="sourceLine" id="cb15-7" data-line-number="7"></a>
-<a class="sourceLine" id="cb15-8" data-line-number="8"><span class="kw">par</span>(<span class="dt">mar=</span><span class="kw">c</span>(<span class="dv">4</span>,<span class="dv">4</span>,<span class="dv">3</span>,<span class="dv">2</span>), <span class="dt">mgp=</span><span class="kw">c</span>(<span class="fl">2.5</span>,<span class="dv">1</span>,<span class="dv">0</span>), </a>
-<a class="sourceLine" id="cb15-9" data-line-number="9">    <span class="dt">cex.main=</span><span class="fl">1.5</span>, <span class="dt">font.main=</span><span class="st">&quot;1&quot;</span>, </a>
-<a class="sourceLine" id="cb15-10" data-line-number="10">    <span class="dt">fg=</span><span class="st">&quot;#6b6b6b&quot;</span>, <span class="dt">col.main=</span><span class="st">&quot;#4b4b4b&quot;</span>)</a>
-<a class="sourceLine" id="cb15-11" data-line-number="11"></a>
-<a class="sourceLine" id="cb15-12" data-line-number="12"><span class="kw">densityPlot</span>(RGset, </a>
-<a class="sourceLine" id="cb15-13" data-line-number="13">            <span class="dt">main=</span><span class="st">&quot;Beta density plot&quot;</span>, </a>
-<a class="sourceLine" id="cb15-14" data-line-number="14">            <span class="dt">xlab=</span><span class="st">&quot;Beta values&quot;</span>, </a>
-<a class="sourceLine" id="cb15-15" data-line-number="15">            <span class="dt">panel.first=</span><span class="kw">ggbg</span>()) </a></code></pre></div>
-<p><img src="02_SampleQualityControl_files/figure-html/209betaplot-1.png" width="672" /></p>
-<p>For this data, the density plot is clearly bimodal with no obvious outliers.</p>
+<p>Using <code>densityPlot()</code> from <a href="https://bioconductor.org/packages/release/bioc/html/minfi.html"><strong>minfi</strong></a>, we can visualize the per sample average beta-value distribution. This gives us a global impression of the data and allows us to identify possible anomalous samples. We expect this distribution to be bimodal with the peaks representing methylated and unmethylated signals. Any centre peaks should be further investigated for problems, such as ambiguous mapping.</p>
+<p>Centre peaks can be identified using a <code>beta_outlier</code> object, which flags any samples with high beta values in the central part of the distribution. Alternatively, a named boolean vector of the samples can be used to flag a specific sample.</p>
+<div class="sourceCode" id="cb28"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb28-1" data-line-number="1">beta_outlier &lt;-<span class="st"> </span><span class="kw">ifelse</span>(<span class="kw">colSums</span>(betas <span class="op">&gt;</span><span class="st"> </span><span class="fl">0.2</span> <span class="op">&amp;</span><span class="st"> </span>betas <span class="op">&lt;</span><span class="st"> </span><span class="fl">0.5</span>) <span class="op">&gt;</span><span class="st"> </span><span class="dv">130000</span>, T, F)</a>
+<a class="sourceLine" id="cb28-2" data-line-number="2">RGset<span class="op">$</span>beta_outlier &lt;-<span class="st"> </span>beta_outlier</a>
+<a class="sourceLine" id="cb28-3" data-line-number="3"></a>
+<a class="sourceLine" id="cb28-4" data-line-number="4">beta_outlier[<span class="dv">1</span><span class="op">:</span><span class="dv">5</span>]</a></code></pre></div>
+<pre><code>## GSM3228562_200550980002_R01C01 GSM3228563_200550980002_R02C01 
+##                          FALSE                          FALSE 
+## GSM3228564_200550980002_R03C01 GSM3228565_200550980002_R04C01 
+##                          FALSE                          FALSE 
+## GSM3228566_200550980002_R05C01 
+##                          FALSE</code></pre>
+<p>These are then coloured in the beta values plot.</p>
+<div class="sourceCode" id="cb30"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb30-1" data-line-number="1"><span class="kw">densityPlot</span>(RGset, </a>
+<a class="sourceLine" id="cb30-2" data-line-number="2">            <span class="dt">main=</span><span class="st">&quot;Beta density plot&quot;</span>, </a>
+<a class="sourceLine" id="cb30-3" data-line-number="3">            <span class="dt">xlab=</span><span class="st">&quot;Beta values&quot;</span>,</a>
+<a class="sourceLine" id="cb30-4" data-line-number="4">            <span class="dt">sampGroups =</span> beta_outlier) </a></code></pre></div>
+<p><img src="02_SampleQualityControl_files/figure-html/220betaplot-1.png" width="672" /></p>
+<p>Any flagged samples can then be removed using the sample name.</p>
+<div class="sourceCode" id="cb31"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb31-1" data-line-number="1">flagged_samples &lt;-<span class="st"> </span><span class="kw">names</span>(beta_outlier[beta_outlier <span class="op">==</span><span class="st"> </span>T])</a>
+<a class="sourceLine" id="cb31-2" data-line-number="2">flagged_samples</a></code></pre></div>
+<pre><code>##  [1] &quot;GSM3228573_200550980010_R05C01&quot; &quot;GSM3228575_200550980010_R07C01&quot;
+##  [3] &quot;GSM3228576_200550980010_R08C01&quot; &quot;GSM3228577_200550980025_R01C01&quot;
+##  [5] &quot;GSM3228578_200550980025_R02C01&quot; &quot;GSM3228579_200550980025_R03C01&quot;
+##  [7] &quot;GSM3228580_200550980025_R04C01&quot; &quot;GSM3228581_200550980025_R05C01&quot;
+##  [9] &quot;GSM3228582_200550980025_R06C01&quot; &quot;GSM3228583_200550980025_R07C01&quot;
+## [11] &quot;GSM3228592_200550980035_R01C01&quot; &quot;GSM3228593_200550980035_R02C01&quot;
+## [13] &quot;GSM3228594_200550980035_R03C01&quot; &quot;GSM3228596_200550980035_R05C01&quot;
+## [15] &quot;GSM3228597_200550980035_R06C01&quot; &quot;GSM3228598_200550980035_R07C01&quot;
+## [17] &quot;GSM3228599_200550980035_R08C01&quot; &quot;GSM3228675_200594720075_R07C01&quot;
+## [19] &quot;GSM3228700_200594740034_R01C01&quot; &quot;GSM3228701_200594740034_R02C01&quot;
+## [21] &quot;GSM3228716_200594740039_R01C01&quot; &quot;GSM3228717_200594740039_R02C01&quot;
+## [23] &quot;GSM3228718_200594740039_R03C01&quot; &quot;GSM3228719_200594740039_R04C01&quot;
+## [25] &quot;GSM3228720_200594740039_R05C01&quot; &quot;GSM3228722_200594740039_R07C01&quot;
+## [27] &quot;GSM3228787_200594740073_R01C01&quot; &quot;GSM3228848_200594740087_R01C01&quot;
+## [29] &quot;GSM3228849_200594740087_R02C01&quot; &quot;GSM3228850_200594740087_R03C01&quot;
+## [31] &quot;GSM3228851_200594740087_R04C01&quot; &quot;GSM3228853_200594740087_R06C01&quot;
+## [33] &quot;GSM3228854_200594740087_R07C01&quot; &quot;GSM3228895_200598350004_R01C01&quot;
+## [35] &quot;GSM3228896_200598350004_R02C01&quot; &quot;GSM3228899_200598350004_R05C01&quot;
+## [37] &quot;GSM3228902_200598350004_R08C01&quot; &quot;GSM3229012_200598350044_R01C01&quot;
+## [39] &quot;GSM3229019_200598350045_R01C01&quot; &quot;GSM3229020_200598350045_R02C01&quot;
+## [41] &quot;GSM3229026_200598350045_R08C01&quot; &quot;GSM3229043_200598350054_R01C01&quot;
+## [43] &quot;GSM3229044_200598350054_R02C01&quot; &quot;GSM3229045_200598350054_R03C01&quot;
+## [45] &quot;GSM3229046_200598350054_R04C01&quot; &quot;GSM3229048_200598350054_R06C01&quot;</code></pre>
+<div class="sourceCode" id="cb33"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb33-1" data-line-number="1">targets &lt;-<span class="st"> </span>targets[<span class="op">!</span><span class="kw">rownames</span>(targets) <span class="op">%in%</span><span class="st"> </span>flagged_samples, ]</a>
+<a class="sourceLine" id="cb33-2" data-line-number="2"></a>
+<a class="sourceLine" id="cb33-3" data-line-number="3">RGset &lt;-<span class="st"> </span>RGset[,<span class="kw">colnames</span>(RGset) <span class="op">%in%</span><span class="st"> </span><span class="kw">rownames</span>(targets)]</a>
+<a class="sourceLine" id="cb33-4" data-line-number="4">betas &lt;-<span class="st"> </span>betas[,<span class="kw">colnames</span>(betas) <span class="op">%in%</span><span class="st"> </span><span class="kw">rownames</span>(targets)]</a></code></pre></div>
 <hr />
 </div>
-<div id="principal-components-plot" class="section level1">
-<h1>Principal components plot</h1>
-<p>Using the <code>prcomp_irlba()</code> function from <a href="https://cran.r-project.org/web/packages/irlba/index.html"><strong>irlba</strong></a> we can calculate principal components. By assessing the amount of variance explained by these and visualising them, we can better interpret the data. The package <a href="https://cran.r-project.org/web/packages/ggfortify/index.html"><strong>ggfortify</strong></a> helps <a href="https://ggplot2.tidyverse.org/"><strong>ggplot2</strong></a> interpret PCA objects, allowing <code>prcomp</code> objects to be passed to the <code>autoplot()</code> function.</p>
-<div class="sourceCode" id="cb16"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb16-1" data-line-number="1"><span class="kw">library</span>(irlba)</a>
-<a class="sourceLine" id="cb16-2" data-line-number="2"></a>
-<a class="sourceLine" id="cb16-3" data-line-number="3">pc &lt;-<span class="st"> </span><span class="kw">prcomp_irlba</span>(<span class="kw">t</span>(betas), <span class="dt">n=</span><span class="dv">6</span>)</a>
-<a class="sourceLine" id="cb16-4" data-line-number="4"><span class="kw">summary</span>(pc)</a></code></pre></div>
-<pre><code>## Importance of components:
-##                            PC1     PC2     PC3     PC4     PC5    PC6
-## Standard deviation     14.4041 10.1145 7.65700 6.83199 4.96062 3.7490
-## Proportion of Variance  0.2303  0.1136 0.06509 0.05182 0.02732 0.0156
-## Cumulative Proportion   0.2303  0.3439 0.40903 0.46085 0.48817 0.5038</code></pre>
-<div class="sourceCode" id="cb18"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb18-1" data-line-number="1"><span class="kw">library</span>(ggfortify)</a>
-<a class="sourceLine" id="cb18-2" data-line-number="2"></a>
-<a class="sourceLine" id="cb18-3" data-line-number="3"><span class="kw">autoplot</span>(pc, <span class="dt">data=</span>targets, <span class="dt">colour=</span><span class="st">&quot;sex&quot;</span>, </a>
-<a class="sourceLine" id="cb18-4" data-line-number="4">         <span class="dt">main=</span><span class="st">&quot;Principal components plot&quot;</span>)</a></code></pre></div>
-<p><img src="02_SampleQualityControl_files/figure-html/212pcplot-1.png" width="672" /></p>
-<p>In this instance, our principal components explain over 50% of the variance in the data and there is evidence of clustering in the plot. By passing the original data to the <code>autoplot()</code> function using the <code>data</code> option, we can investigate clustering by colouring candidate variables. Our data has yet to undergo probe masking, which removes sex chromosome data, so groups of principal components according to whether an individual is male or female appear in the plot.</p>
+<div id="principal-components-analysis" class="section level1">
+<h1>Principal components analysis</h1>
+<div id="calculate-pcs" class="section level2">
+<h2>Calculate PCs</h2>
+<p>Principal components (PCs) of the beta values can be calculated using <code>prcomp</code>.</p>
+<div class="sourceCode" id="cb34"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb34-1" data-line-number="1">tbetas &lt;-<span class="st"> </span><span class="kw">t</span>(betas)</a>
+<a class="sourceLine" id="cb34-2" data-line-number="2">pca &lt;-<span class="st"> </span><span class="kw">prcomp</span>(tbetas, <span class="dt">center =</span> <span class="ot">TRUE</span>, <span class="dt">rank. =</span> <span class="dv">10</span>)</a>
+<a class="sourceLine" id="cb34-3" data-line-number="3"></a>
+<a class="sourceLine" id="cb34-4" data-line-number="4"><span class="kw">summary</span>(pca)</a></code></pre></div>
+<pre><code>## Importance of first k=10 (out of 630) components:
+##                            PC1     PC2      PC3    PC4     PC5     PC6     PC7
+## Standard deviation     19.7853 13.4761 10.69483 9.9806 7.45295 4.37841 3.54276
+## Proportion of Variance  0.2271  0.1054  0.06637 0.0578 0.03223 0.01112 0.00728
+## Cumulative Proportion   0.2271  0.3325  0.39889 0.4567 0.48892 0.50005 0.50733
+##                            PC8    PC9    PC10
+## Standard deviation     3.33319 3.1627 2.91509
+## Proportion of Variance 0.00645 0.0058 0.00493
+## Cumulative Proportion  0.51378 0.5196 0.52451</code></pre>
 <hr />
+</div>
+<div id="screeplot" class="section level2">
+<h2>Screeplot</h2>
+<p>Variance explained by each PC can be calculated.</p>
+<div class="sourceCode" id="cb36"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb36-1" data-line-number="1">var_explained =</a>
+<a class="sourceLine" id="cb36-2" data-line-number="2"><span class="st">  </span><span class="kw">data.frame</span>(<span class="dt">PC =</span> <span class="dv">1</span><span class="op">:</span><span class="kw">ncol</span>(betas),</a>
+<a class="sourceLine" id="cb36-3" data-line-number="3">             <span class="dt">var_explained =</span> pca<span class="op">$</span>sdev<span class="op">^</span><span class="dv">2</span> <span class="op">/</span><span class="st"> </span><span class="kw">sum</span>(pca<span class="op">$</span>sdev<span class="op">^</span><span class="dv">2</span>))[<span class="dv">1</span><span class="op">:</span><span class="kw">ncol</span>(pca<span class="op">$</span>x),]</a>
+<a class="sourceLine" id="cb36-4" data-line-number="4"></a>
+<a class="sourceLine" id="cb36-5" data-line-number="5">var_explained</a></code></pre></div>
+<pre><code>##    PC var_explained
+## 1   1   0.227144189
+## 2   2   0.105376842
+## 3   3   0.066369138
+## 4   4   0.057800896
+## 5   5   0.032231104
+## 6   6   0.011123757
+## 7   7   0.007282860
+## 8   8   0.006446705
+## 9   9   0.005804229
+## 10 10   0.004930854</code></pre>
+<p>This can be plotted in a screeplot to visualize the structure of the DNAm data.</p>
+<div class="sourceCode" id="cb38"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb38-1" data-line-number="1">var_explained <span class="op">%&gt;%</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb38-2" data-line-number="2"><span class="st">  </span><span class="kw">ggplot</span>(<span class="kw">aes</span>(<span class="dt">x=</span>PC, <span class="dt">y=</span>var_explained)) <span class="op">+</span></a>
+<a class="sourceLine" id="cb38-3" data-line-number="3"><span class="st">  </span><span class="kw">geom_line</span>() <span class="op">+</span></a>
+<a class="sourceLine" id="cb38-4" data-line-number="4"><span class="st">  </span><span class="kw">geom_point</span>(<span class="dt">color=</span><span class="st">&#39;grey5&#39;</span>, <span class="dt">fill=</span><span class="st">&#39;#6DACBC&#39;</span>, <span class="dt">shape=</span><span class="dv">21</span>, <span class="dt">size=</span><span class="dv">3</span>) <span class="op">+</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb38-5" data-line-number="5"><span class="st">  </span><span class="kw">scale_x_continuous</span>(<span class="dt">breaks=</span><span class="dv">1</span><span class="op">:</span><span class="kw">ncol</span>(pca<span class="op">$</span>x)) <span class="op">+</span></a>
+<a class="sourceLine" id="cb38-6" data-line-number="6"><span class="st">  </span><span class="kw">xlab</span>(<span class="st">&quot;Principal Component&quot;</span>) <span class="op">+</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb38-7" data-line-number="7"><span class="st">  </span><span class="kw">ylab</span>(<span class="st">&quot;Proportion of variance explained&quot;</span>) <span class="op">+</span></a>
+<a class="sourceLine" id="cb38-8" data-line-number="8"><span class="st">  </span><span class="kw">theme_bw</span>()</a></code></pre></div>
+<p><img src="02_SampleQualityControl_files/figure-html/224screeplot-1.png" width="672" /></p>
+<hr />
+</div>
+<div id="heatmap" class="section level2">
+<h2>Heatmap</h2>
+<p>Any constant variables are removed from the heatmap, as they will not explain variance in the data.</p>
+<div class="sourceCode" id="cb39"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb39-1" data-line-number="1">plot_vars &lt;-<span class="st"> </span><span class="kw">apply</span>(targets, <span class="dv">2</span>, <span class="cf">function</span>(x) <span class="kw">sd</span>(<span class="kw">as.numeric</span>(<span class="kw">factor</span>(x)), <span class="dt">na.rm=</span>T))</a>
+<a class="sourceLine" id="cb39-2" data-line-number="2"></a>
+<a class="sourceLine" id="cb39-3" data-line-number="3">plot_vars &lt;-<span class="st"> </span><span class="kw">names</span>(plot_vars[<span class="op">!</span>plot_vars <span class="op">%in%</span><span class="st"> </span><span class="kw">c</span>(<span class="ot">NA</span>, <span class="dv">0</span>)])</a>
+<a class="sourceLine" id="cb39-4" data-line-number="4">plot_vars</a></code></pre></div>
+<pre><code>##  [1] &quot;sample_ID&quot;          &quot;geo_accession&quot;      &quot;sex&quot;               
+##  [4] &quot;age&quot;                &quot;log_total_pbb&quot;      &quot;pbb_153&quot;           
+##  [7] &quot;pbb_77&quot;             &quot;pbb_101&quot;            &quot;pbb_180&quot;           
+## [10] &quot;supplementary_file&quot; &quot;plate&quot;              &quot;row&quot;               
+## [13] &quot;Basename&quot;</code></pre>
+<div class="sourceCode" id="cb41"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb41-1" data-line-number="1">heatmap_df &lt;-<span class="st"> </span>targets <span class="op">%&gt;%</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb41-2" data-line-number="2"><span class="st">  </span>dplyr<span class="op">::</span><span class="kw">select</span>(<span class="kw">any_of</span>(plot_vars))</a></code></pre></div>
+<p>All variables are then converted to numeric and correlations between them and the PCs are calculated.</p>
+<div class="sourceCode" id="cb42"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb42-1" data-line-number="1">heatmap_df &lt;-<span class="st"> </span><span class="kw">apply</span>(heatmap_df, <span class="dv">2</span>, <span class="cf">function</span>(x) <span class="kw">as.numeric</span>(<span class="kw">factor</span>(x)))</a>
+<a class="sourceLine" id="cb42-2" data-line-number="2"></a>
+<a class="sourceLine" id="cb42-3" data-line-number="3">cxy &lt;-<span class="st"> </span><span class="kw">round</span>(<span class="kw">cor</span>(pca<span class="op">$</span>x, <span class="kw">scale</span>(heatmap_df), <span class="dt">use=</span><span class="st">&quot;pairwise.complete.obs&quot;</span>),<span class="dv">2</span>) </a></code></pre></div>
+<p>A heatmap can then be used to visualize these correlations and uncover measured variables that explain a large proportion of DNAm variance.</p>
+<div class="sourceCode" id="cb43"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb43-1" data-line-number="1">col_fun &lt;-<span class="st"> </span><span class="kw">colorRamp2</span>(<span class="kw">c</span>(<span class="op">-</span><span class="dv">1</span>, <span class="dv">0</span>, <span class="dv">1</span>), <span class="kw">c</span>(<span class="st">&quot;#000042&quot;</span>, <span class="st">&quot;white&quot;</span>, <span class="st">&quot;#800000&quot;</span>))</a>
+<a class="sourceLine" id="cb43-2" data-line-number="2"></a>
+<a class="sourceLine" id="cb43-3" data-line-number="3"><span class="kw">Heatmap</span>(</a>
+<a class="sourceLine" id="cb43-4" data-line-number="4">  <span class="kw">t</span>(cxy),                              </a>
+<a class="sourceLine" id="cb43-5" data-line-number="5">  <span class="dt">col =</span> col_fun,  </a>
+<a class="sourceLine" id="cb43-6" data-line-number="6">  <span class="dt">border =</span> <span class="st">&#39;grey5&#39;</span>,</a>
+<a class="sourceLine" id="cb43-7" data-line-number="7">  <span class="dt">cluster_columns =</span> <span class="ot">FALSE</span>,            </a>
+<a class="sourceLine" id="cb43-8" data-line-number="8">  <span class="dt">show_row_dend =</span> <span class="ot">TRUE</span>,             </a>
+<a class="sourceLine" id="cb43-9" data-line-number="9">  <span class="dt">show_column_dend =</span> <span class="ot">FALSE</span>,      </a>
+<a class="sourceLine" id="cb43-10" data-line-number="10">  <span class="dt">name =</span> <span class="st">&quot;Value&quot;</span>,                 </a>
+<a class="sourceLine" id="cb43-11" data-line-number="11">  <span class="dt">row_names_gp =</span> <span class="kw">gpar</span>(<span class="dt">fontsize =</span> <span class="dv">8</span>), </a>
+<a class="sourceLine" id="cb43-12" data-line-number="12">  <span class="dt">column_names_gp =</span> <span class="kw">gpar</span>(<span class="dt">fontsize =</span> <span class="dv">8</span>), </a>
+<a class="sourceLine" id="cb43-13" data-line-number="13">  <span class="dt">cell_fun =</span> <span class="cf">function</span>(j, i, x, y, width, height, fill) {</a>
+<a class="sourceLine" id="cb43-14" data-line-number="14">    <span class="kw">grid.rect</span>(x, y, width, height, </a>
+<a class="sourceLine" id="cb43-15" data-line-number="15">              <span class="dt">gp =</span> <span class="kw">gpar</span>(<span class="dt">col =</span> <span class="st">&quot;white&quot;</span>, <span class="dt">lwd =</span> <span class="dv">1</span>, <span class="dt">fill =</span> <span class="ot">NA</span>))</a>
+<a class="sourceLine" id="cb43-16" data-line-number="16">    <span class="kw">grid.text</span>(<span class="kw">ifelse</span>(<span class="kw">abs</span>(<span class="kw">t</span>(cxy)[i,j]) <span class="op">&gt;</span><span class="st"> </span><span class="fl">0.4</span>,</a>
+<a class="sourceLine" id="cb43-17" data-line-number="17">                     <span class="kw">sprintf</span>(<span class="st">&quot;%.2f&quot;</span>, <span class="kw">round</span>(<span class="kw">t</span>(cxy)[i, j], <span class="dv">2</span>)),</a>
+<a class="sourceLine" id="cb43-18" data-line-number="18">                     <span class="st">&quot;&quot;</span>), </a>
+<a class="sourceLine" id="cb43-19" data-line-number="19">              x, y, <span class="dt">gp =</span> <span class="kw">gpar</span>(<span class="dt">fontsize =</span> <span class="dv">10</span>, <span class="dt">col =</span> <span class="st">&quot;white&quot;</span>))</a>
+<a class="sourceLine" id="cb43-20" data-line-number="20">  }</a>
+<a class="sourceLine" id="cb43-21" data-line-number="21">)</a></code></pre></div>
+<p><img src="02_SampleQualityControl_files/figure-html/227heatmap-1.png" width="672" /></p>
+<hr />
+</div>
+<div id="plot" class="section level2">
+<h2>Plot</h2>
+<p>In order to further investigate flagged variables, we can add the PCs to the <code>targets</code> data frame.</p>
+<div class="sourceCode" id="cb44"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb44-1" data-line-number="1">pc_df &lt;-<span class="st"> </span><span class="kw">cbind</span>(targets, pca<span class="op">$</span>x)</a></code></pre></div>
+<p>PCs can then be plotted against each other, coloured by flagged variables.</p>
+<p>The second PC is strongly linked to sex differences.</p>
+<div class="sourceCode" id="cb45"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb45-1" data-line-number="1">pc_df <span class="op">%&gt;%</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb45-2" data-line-number="2"><span class="st">    </span><span class="kw">ggplot</span>(<span class="kw">aes</span>(<span class="dt">x =</span> PC1, <span class="dt">y =</span> PC2, <span class="dt">color =</span> sex)) <span class="op">+</span></a>
+<a class="sourceLine" id="cb45-3" data-line-number="3"><span class="st">    </span><span class="kw">geom_point</span>(<span class="dt">size =</span> <span class="fl">1.5</span>) <span class="op">+</span></a>
+<a class="sourceLine" id="cb45-4" data-line-number="4"><span class="st">    </span><span class="kw">geom_text_repel</span>(<span class="kw">aes</span>(<span class="dt">label =</span> <span class="kw">ifelse</span>((pc_df<span class="op">$</span>PC2 <span class="op">&gt;</span><span class="st"> </span><span class="dv">10</span> <span class="op">&amp;</span><span class="st"> </span>pc_df<span class="op">$</span>PC1 <span class="op">&lt;</span><span class="st"> </span><span class="dv">0</span> <span class="op">&amp;</span><span class="st"> </span>pc_df<span class="op">$</span>sex <span class="op">==</span><span class="st"> &quot;Female&quot;</span>) <span class="op">|</span></a>
+<a class="sourceLine" id="cb45-5" data-line-number="5"><span class="st">                                  </span>(pc_df<span class="op">$</span>PC2 <span class="op">&lt;</span><span class="st"> </span><span class="dv">-12</span> <span class="op">&amp;</span><span class="st"> </span>pc_df<span class="op">$</span>sex <span class="op">==</span><span class="st"> &quot;Male&quot;</span>), Basename, <span class="st">&quot;&quot;</span>), <span class="dt">color =</span> sex)) <span class="op">%&gt;%</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb45-6" data-line-number="6"><span class="st">    </span><span class="kw">labs</span>(<span class="dt">x =</span> <span class="kw">paste0</span>(<span class="st">&quot;PC1 (&quot;</span>, <span class="kw">round</span>(<span class="dv">100</span><span class="op">*</span>var_explained[<span class="dv">1</span>,<span class="dv">2</span>], <span class="dv">2</span>), <span class="st">&quot;%)&quot;</span>), </a>
+<a class="sourceLine" id="cb45-7" data-line-number="7">         <span class="dt">y =</span> <span class="kw">paste0</span>(<span class="st">&quot;PC2 (&quot;</span>, <span class="kw">round</span>(<span class="dv">100</span><span class="op">*</span>var_explained[<span class="dv">2</span>,<span class="dv">2</span>], <span class="dv">2</span>), <span class="st">&quot;%)&quot;</span>), </a>
+<a class="sourceLine" id="cb45-8" data-line-number="8">         <span class="dt">color =</span> <span class="st">&quot;Sex&quot;</span>) <span class="op">+</span></a>
+<a class="sourceLine" id="cb45-9" data-line-number="9"><span class="st">    </span><span class="kw">theme_bw</span>()</a></code></pre></div>
+<p><img src="02_SampleQualityControl_files/figure-html/229pcplot2-1.png" width="672" /></p>
+<hr />
+</div>
 </div>
 <div id="checking-sample-relationships" class="section level1">
 <h1>Checking Sample Relationships</h1>
-<p><a href="http://bioconductor.org/packages/release/bioc/html/omicsPrint.html"><strong>omicsPrint</strong></a> (Van Iterson, 2018) is a package we developed to detect data linkage errors through inspecting sample relations in multiple omics studies. Included with the package is the <code>hm450.manifest.pop.GoNL</code> data, which stores SNP probe information in a <code>GRanges</code> class object. This is then used to create a subset of the beta values for genotyping.</p>
-<div class="sourceCode" id="cb19"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb19-1" data-line-number="1"><span class="kw">library</span>(omicsPrint)</a>
-<a class="sourceLine" id="cb19-2" data-line-number="2"><span class="kw">data</span>(hm450.manifest.pop.GoNL)</a>
-<a class="sourceLine" id="cb19-3" data-line-number="3"></a>
-<a class="sourceLine" id="cb19-4" data-line-number="4">cpgs &lt;-<span class="st"> </span><span class="kw">names</span>(hm450.manifest.pop.GoNL[<span class="kw">mcols</span>(hm450.manifest.pop.GoNL)<span class="op">$</span>MASK.snp5.EAS])</a>
-<a class="sourceLine" id="cb19-5" data-line-number="5">cpgs &lt;-<span class="st"> </span><span class="kw">na.omit</span>(<span class="kw">match</span>(cpgs, <span class="kw">rownames</span>(betas)))</a>
-<a class="sourceLine" id="cb19-6" data-line-number="6">omicsBetas &lt;-<span class="st"> </span>betas[cpgs,]</a>
-<a class="sourceLine" id="cb19-7" data-line-number="7">omicsBetas[<span class="dv">1</span><span class="op">:</span><span class="dv">10</span>, <span class="dv">1</span><span class="op">:</span><span class="dv">2</span>]</a></code></pre></div>
-<pre><code>##            GSM3092700_9985178096_R01C01 GSM3092701_9985178127_R03C02
-## cg08477687                   0.54468085                   0.54966887
-## cg00645010                   0.24275471                   0.32130207
-## cg11422233                   0.13955638                   0.13357683
-## cg06402284                   0.06851498                   0.07967445
-## cg01551879                   0.03843844                   0.04584362
-## cg20788133                   0.77454387                   0.79749373
-## cg09139287                   0.55564877                   0.32102593
-## cg23100540                   0.32690807                   0.38246177
-## cg23999112                   0.74222364                   0.75032102
-## cg01062849                   0.88731665                   0.88230847</code></pre>
-<p>The function <code>beta2genotype()</code> then genotypes the observations by measuring homozygous or heterozygous alleles at these SNP probes. Lastly <code>alleleSharing()</code> assesses the relationships between different individuals, which can be unrelated, twins, or identical. The results can then be visualised using the <code>inferRelations()</code> function.</p>
-<div class="sourceCode" id="cb21"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb21-1" data-line-number="1">dnamCalls &lt;-<span class="st"> </span><span class="kw">beta2genotype</span>(omicsBetas, <span class="dt">assayName=</span><span class="st">&quot;exprs&quot;</span>)</a>
-<a class="sourceLine" id="cb21-2" data-line-number="2"><span class="kw">dim</span>(dnamCalls)</a></code></pre></div>
-<pre><code>## [1] 779 138</code></pre>
-<div class="sourceCode" id="cb23"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb23-1" data-line-number="1">dnamCalls[<span class="dv">1</span><span class="op">:</span><span class="dv">5</span>, <span class="dv">1</span><span class="op">:</span><span class="dv">2</span>]</a></code></pre></div>
-<pre><code>##            GSM3092700_9985178096_R01C01 GSM3092701_9985178127_R03C02
-## cg12213037                            2                            3
-## cg19405842                            2                            1
-## cg01296877                            2                            3
-## cg21783012                            2                            2
-## cg10091792                            3                            3</code></pre>
-<div class="sourceCode" id="cb25"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb25-1" data-line-number="1">omicsData &lt;-<span class="st"> </span><span class="kw">alleleSharing</span>(dnamCalls, <span class="dt">verbose=</span><span class="ot">TRUE</span>)</a>
-<a class="sourceLine" id="cb25-2" data-line-number="2"><span class="kw">head</span>(omicsData)</a></code></pre></div>
-<pre><code>##       mean       var                   colnames.x                   colnames.y
-## 1 2.000000 0.0000000 GSM3092700_9985178096_R01C01 GSM3092700_9985178096_R01C01
-## 2 1.644416 0.2474334 GSM3092701_9985178127_R03C02 GSM3092700_9985178096_R01C01
-## 3 1.682927 0.2502351 GSM3092702_9986360109_R02C02 GSM3092700_9985178096_R01C01
-## 4 1.594352 0.2953922 GSM3092703_9985178087_R01C01 GSM3092700_9985178096_R01C01
-## 5 1.290116 0.4504292 GSM3092704_9985178090_R01C01 GSM3092700_9985178096_R01C01
-## 6 1.317073 0.4147595 GSM3092705_9985178090_R04C01 GSM3092700_9985178096_R01C01
-##    relation
-## 1 identical
-## 2 unrelated
-## 3 unrelated
-## 4 unrelated
-## 5 unrelated
-## 6 unrelated</code></pre>
-<div class="sourceCode" id="cb27"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb27-1" data-line-number="1">mismatches &lt;-<span class="st"> </span><span class="kw">inferRelations</span>(omicsData)</a></code></pre></div>
-<p><img src="02_SampleQualityControl_files/figure-html/214genotype-1.png" width="672" /></p>
-<p>Since there are no twins or relatives in our data, all observations are shown as unrelated. In data with sample relationships, this would be shown in the above graph as green or black clusters (Van Iterson, 2018). It is important to carry out this type of visualization before probe-filtering as otherwise the genotyping will be based on very few SNPs.</p>
+<div id="annotations" class="section level2">
+<h2>Annotations</h2>
+<p><a href="http://bioconductor.org/packages/release/bioc/html/omicsPrint.html"><strong>omicsPrint</strong></a><sup>12</sup> is a package we developed to detect data linkage errors through inspecting sample relations in multiple omics studies.</p>
+<p>Manifests can be downloaded from the <a href="https://zwdzwd.github.io/InfiniumAnnotation">Zhou lab GitHub page</a><sup>15</sup> for all commonly used arrays and reference genomes. For this example, we use SNP annotations downloaded for the EPIC array and the hg19 genome.</p>
+<div class="sourceCode" id="cb46"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb46-1" data-line-number="1">snp_cpgs &lt;-<span class="st"> </span><span class="kw">read_tsv</span>(</a>
+<a class="sourceLine" id="cb46-2" data-line-number="2">  <span class="st">&quot;./data/EPIC.hg19.manifest.pop.tsv.gz&quot;</span>)</a></code></pre></div>
+<pre><code>## Rows: 865918 Columns: 66
+## ── Column specification ────────────────────────────────────────────────────────
+## Delimiter: &quot;\t&quot;
+## chr  (2): CpG_chrm, probeID
+## dbl  (2): CpG_beg, CpG_end
+## lgl (62): MASK_general_AFR, MASK_snp5_AFR, MASK_general_EAS, MASK_snp5_EAS, ...
+## 
+## ℹ Use `spec()` to retrieve the full column specification for this data.
+## ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.</code></pre>
+<p>Columns of interest include:</p>
+<ul>
+<li>cpg - ID of the probe for the CpG</li>
+<li>chr - Chromosome where the CpG is located</li>
+<li>start - Start position of the CpG</li>
+<li>end - End position of the CpG</li>
+</ul>
+<div class="sourceCode" id="cb48"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb48-1" data-line-number="1">snp_cpgs &lt;-<span class="st"> </span>snp_cpgs <span class="op">%&gt;%</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb48-2" data-line-number="2"><span class="st">  </span>dplyr<span class="op">::</span><span class="kw">select</span>(</a>
+<a class="sourceLine" id="cb48-3" data-line-number="3">    <span class="dt">cpg =</span> probeID,</a>
+<a class="sourceLine" id="cb48-4" data-line-number="4">    <span class="dt">chr =</span> CpG_chrm,</a>
+<a class="sourceLine" id="cb48-5" data-line-number="5">    <span class="dt">start =</span> CpG_beg,</a>
+<a class="sourceLine" id="cb48-6" data-line-number="6">    <span class="dt">end =</span> CpG_end,</a>
+<a class="sourceLine" id="cb48-7" data-line-number="7">    MASK_snp5_EUR</a>
+<a class="sourceLine" id="cb48-8" data-line-number="8">  ) <span class="op">%&gt;%</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb48-9" data-line-number="9"><span class="st">  </span><span class="kw">mutate</span>(</a>
+<a class="sourceLine" id="cb48-10" data-line-number="10">    <span class="dt">chr =</span> <span class="kw">substr</span>(chr,<span class="dv">4</span>,<span class="dv">5</span>)</a>
+<a class="sourceLine" id="cb48-11" data-line-number="11">  )</a>
+<a class="sourceLine" id="cb48-12" data-line-number="12"></a>
+<a class="sourceLine" id="cb48-13" data-line-number="13">snp_cpgs &lt;-<span class="st"> </span>(snp_cpgs <span class="op">%&gt;%</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb48-14" data-line-number="14"><span class="st">               </span>dplyr<span class="op">::</span><span class="kw">filter</span>(MASK_snp5_EUR <span class="op">==</span><span class="st"> </span><span class="ot">TRUE</span>))<span class="op">$</span>cpg</a>
+<a class="sourceLine" id="cb48-15" data-line-number="15"></a>
+<a class="sourceLine" id="cb48-16" data-line-number="16"><span class="kw">print</span>(<span class="kw">paste0</span>(<span class="st">&quot;There are &quot;</span>, <span class="kw">length</span>(snp_cpgs),</a>
+<a class="sourceLine" id="cb48-17" data-line-number="17">             <span class="st">&quot; CpGs containing common European SNPs&quot;</span>))</a></code></pre></div>
+<pre><code>## [1] &quot;There are 28152 CpGs containing common European SNPs&quot;</code></pre>
+<p>Betas can then be subset to include only these CpG probes of interest.</p>
+<div class="sourceCode" id="cb50"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb50-1" data-line-number="1">betas_snps &lt;-<span class="st"> </span>betas[snp_cpgs, ]</a>
+<a class="sourceLine" id="cb50-2" data-line-number="2"><span class="kw">dim</span>(betas_snps)</a></code></pre></div>
+<pre><code>## [1] 28152   630</code></pre>
+<div class="sourceCode" id="cb52"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb52-1" data-line-number="1"><span class="kw">table</span>(<span class="kw">rownames</span>(targets) <span class="op">==</span><span class="st"> </span><span class="kw">colnames</span>(betas_snps))</a></code></pre></div>
+<pre><code>## 
+## TRUE 
+##  630</code></pre>
 <hr />
+<div id="assumed-relations" class="section level3">
+<h3>Assumed relations</h3>
+<p>Create a data frame of all pairwise sample comparisons.</p>
+<div class="sourceCode" id="cb54"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb54-1" data-line-number="1">relations &lt;-<span class="st"> </span><span class="kw">expand.grid</span>(</a>
+<a class="sourceLine" id="cb54-2" data-line-number="2">  <span class="dt">idx =</span> <span class="kw">colnames</span>(betas_snps), </a>
+<a class="sourceLine" id="cb54-3" data-line-number="3">  <span class="dt">idy =</span> <span class="kw">colnames</span>(betas_snps))</a>
+<a class="sourceLine" id="cb54-4" data-line-number="4"><span class="kw">head</span>(relations)</a></code></pre></div>
+<pre><code>##                              idx                            idy
+## 1 GSM3228563_200550980002_R02C01 GSM3228563_200550980002_R02C01
+## 2 GSM3228564_200550980002_R03C01 GSM3228563_200550980002_R02C01
+## 3 GSM3228565_200550980002_R04C01 GSM3228563_200550980002_R02C01
+## 4 GSM3228566_200550980002_R05C01 GSM3228563_200550980002_R02C01
+## 5 GSM3228567_200550980002_R06C01 GSM3228563_200550980002_R02C01
+## 6 GSM3228568_200550980002_R07C01 GSM3228563_200550980002_R02C01</code></pre>
+<p>Sample names are saved, as a reference for which pairs exist.</p>
+<div class="sourceCode" id="cb56"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb56-1" data-line-number="1">relations<span class="op">$</span>sample_name_x &lt;-<span class="st"> </span>targets[relations<span class="op">$</span>idx, <span class="st">&quot;sample_ID&quot;</span>] </a>
+<a class="sourceLine" id="cb56-2" data-line-number="2">relations<span class="op">$</span>sample_name_y &lt;-<span class="st"> </span>targets[relations<span class="op">$</span>idy, <span class="st">&quot;sample_ID&quot;</span>]</a></code></pre></div>
+<p>A relation_type variable is then set as <code>identical</code> if the samples come from the same individual and <code>unrelated</code> otherwise. We see that the 59 pairs comparing the same sample are set as <code>identical</code>.</p>
+<div class="sourceCode" id="cb57"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb57-1" data-line-number="1">relations<span class="op">$</span>relation_type &lt;-<span class="st"> &quot;unrelated&quot;</span></a>
+<a class="sourceLine" id="cb57-2" data-line-number="2">relations<span class="op">$</span>relation_type[relations<span class="op">$</span>sample_name_x <span class="op">==</span><span class="st"> </span>relations<span class="op">$</span>sample_name_y] &lt;-<span class="st"> &quot;identical&quot;</span></a>
+<a class="sourceLine" id="cb57-3" data-line-number="3"></a>
+<a class="sourceLine" id="cb57-4" data-line-number="4"><span class="kw">table</span>(relations<span class="op">$</span>relation_type)</a></code></pre></div>
+<pre><code>## 
+## identical unrelated 
+##       630    396270</code></pre>
+<hr />
+</div>
+<div id="genotyping" class="section level3">
+<h3>Genotyping</h3>
+<p>The function <code>beta2genotype</code> from <code>omicsPrint</code> genotypes the observations by measuring homozygous or heterozygous alleles at these SNP probes. The arguments specified are:</p>
+<ul>
+<li><code>betas</code> - a beta matrix of probes possibly affected by SNPs</li>
+<li><code>na.rm</code> - whether to drop CpGs for which no clustering is observed</li>
+<li><code>minSep</code> - the minimal cluster separation</li>
+<li><code>minSize</code> - the size of the smallest cluster as a percentage</li>
+<li><code>centers</code> - centers of clusters</li>
+<li><code>assayName</code> - the name of the assay to be used</li>
+</ul>
+<div class="sourceCode" id="cb59"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb59-1" data-line-number="1">genotype &lt;-<span class="st"> </span><span class="kw">beta2genotype</span>(betas_snps, </a>
+<a class="sourceLine" id="cb59-2" data-line-number="2">                          <span class="dt">na.rm=</span><span class="ot">TRUE</span>,</a>
+<a class="sourceLine" id="cb59-3" data-line-number="3">                          <span class="dt">minSep =</span> <span class="fl">0.25</span>,</a>
+<a class="sourceLine" id="cb59-4" data-line-number="4">                          <span class="dt">minSize =</span> <span class="dv">5</span>,</a>
+<a class="sourceLine" id="cb59-5" data-line-number="5">                          <span class="dt">centers =</span> <span class="kw">c</span>(<span class="fl">0.2</span>, <span class="fl">0.5</span>, <span class="fl">0.8</span>),</a>
+<a class="sourceLine" id="cb59-6" data-line-number="6">                          <span class="dt">assayName=</span><span class="ot">NULL</span>)</a>
+<a class="sourceLine" id="cb59-7" data-line-number="7"><span class="kw">str</span>(genotype)</a></code></pre></div>
+<pre><code>##  int [1:1146, 1:630] 1 2 1 1 1 2 3 1 3 2 ...
+##  - attr(*, &quot;dimnames&quot;)=List of 2
+##   ..$ : chr [1:1146] &quot;cg12213037&quot; &quot;cg19405842&quot; &quot;cg24925741&quot; &quot;cg01296877&quot; ...
+##   ..$ : chr [1:630] &quot;GSM3228563_200550980002_R02C01&quot; &quot;GSM3228564_200550980002_R03C01&quot; &quot;GSM3228565_200550980002_R04C01&quot; &quot;GSM3228566_200550980002_R05C01&quot; ...</code></pre>
+<p><code>alleleSharing</code> can then assess the relationships between different individuals, which can be unrelated, twins, or identical. This uses identity by state (IBS), a genetic similarity measure that compares at a single locus the genotypes between two individuals and counts the number of alleles shared (0, 1 or 2).Essentially, if a sample is the same then the mean IBS should be 2 (alleles) and the variance of this should be low (close to 0).</p>
+<div class="sourceCode" id="cb61"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb61-1" data-line-number="1">out &lt;-<span class="st"> </span><span class="kw">alleleSharing</span>(genotype, <span class="dt">relations =</span> relations)</a></code></pre></div>
+<pre><code>## Hash relations</code></pre>
+<pre><code>## Pruning 1146 SNPs ...</code></pre>
+<pre><code>## 0 SNPs removed because of low call rate!</code></pre>
+<pre><code>## 0 samples removed because too few SNPs called!</code></pre>
+<pre><code>## Using 1146 polymorphic SNPs to determine allele sharing.</code></pre>
+<pre><code>## Running `square` IBS algorithm!</code></pre>
+<pre><code>## 631 of 198765 (0.32%) ...</code></pre>
+<pre><code>## 58051 of 198765 (29.21%) ...</code></pre>
+<pre><code>## 106101 of 198765 (53.38%) ...</code></pre>
+<pre><code>## 144151 of 198765 (72.52%) ...</code></pre>
+<pre><code>## 172201 of 198765 (86.64%) ...</code></pre>
+<pre><code>## 190251 of 198765 (95.72%) ...</code></pre>
+<pre><code>## 198301 of 198765 (99.77%) ...</code></pre>
+<div class="sourceCode" id="cb75"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb75-1" data-line-number="1"><span class="kw">head</span>(out)</a></code></pre></div>
+<pre><code>##       mean       var                     colnames.x
+## 1 2.000000 0.0000000 GSM3228563_200550980002_R02C01
+## 2 1.361257 0.3951439 GSM3228564_200550980002_R03C01
+## 3 1.343805 0.3917389 GSM3228565_200550980002_R04C01
+## 4 1.373473 0.4036276 GSM3228566_200550980002_R05C01
+## 5 1.351658 0.4220802 GSM3228567_200550980002_R06C01
+## 6 1.310646 0.3977381 GSM3228568_200550980002_R07C01
+##                       colnames.y  relation
+## 1 GSM3228563_200550980002_R02C01 identical
+## 2 GSM3228563_200550980002_R02C01 unrelated
+## 3 GSM3228563_200550980002_R02C01 unrelated
+## 4 GSM3228563_200550980002_R02C01 unrelated
+## 5 GSM3228563_200550980002_R02C01 unrelated
+## 6 GSM3228563_200550980002_R02C01 unrelated</code></pre>
+<hr />
+</div>
+<div id="identify-mismatches" class="section level3">
+<h3>Identify mismatches</h3>
+<p>The mean and variance of IBS can then be visualised using the <code>inferRelations()</code> function. Genetically similar sample comparisons will be plotted closer to the bottom, right of the graph, and those that are genetically dissimilar are in the top, left. A table of mismatches gives an overview of any identified.</p>
+<div class="sourceCode" id="cb77"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb77-1" data-line-number="1">mismatches &lt;-<span class="st"> </span><span class="kw">inferRelations</span>(out, <span class="dt">verbose=</span><span class="ot">TRUE</span>)</a></code></pre></div>
+<pre><code>##                   Assumed relation
+## Predicted relation identical unrelated
+##          identical       630        16
+##          unrelated         .    198119</code></pre>
+<p><img src="02_SampleQualityControl_files/figure-html/238plot-1.png" width="672" /></p>
+<div class="sourceCode" id="cb79"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb79-1" data-line-number="1"><span class="kw">table</span>(mismatches<span class="op">$</span>relation, mismatches<span class="op">$</span>predicted)</a></code></pre></div>
+<pre><code>##            
+##             identical unrelated
+##   identical         0         0
+##   unrelated        16         0</code></pre>
+<p>There are 18 pairs of samples (n=36) that should be unrelated but are genetically identical on the basis of these beta-derived genotypes. To remove them from further analysis you can use the <code>mismatches</code> object:</p>
+<div class="sourceCode" id="cb81"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb81-1" data-line-number="1">removed_ids &lt;-<span class="st"> </span><span class="kw">unique</span>(<span class="kw">c</span>(mismatches<span class="op">$</span>colnames.x, mismatches<span class="op">$</span>colnames.y))</a>
+<a class="sourceLine" id="cb81-2" data-line-number="2">removed_ids</a></code></pre></div>
+<pre><code>##  [1] &quot;GSM3229240_200594740075_R08C01&quot; &quot;GSM3229222_200598350005_R03C01&quot;
+##  [3] &quot;GSM3229223_200598350005_R06C01&quot; &quot;GSM3229224_200598350005_R08C01&quot;
+##  [5] &quot;GSM3229104_200598350077_R03C01&quot; &quot;GSM3229119_200598350079_R02C01&quot;
+##  [7] &quot;GSM3229225_200598350031_R02C01&quot; &quot;GSM3229226_200598350031_R04C01&quot;
+##  [9] &quot;GSM3229227_200598350031_R05C01&quot; &quot;GSM3229228_200598350031_R07C01&quot;
+## [11] &quot;GSM3229229_200598350076_R02C01&quot; &quot;GSM3229230_200598350076_R03C01&quot;
+## [13] &quot;GSM3229231_200598350076_R06C01&quot; &quot;GSM3229232_200598350080_R02C01&quot;
+## [15] &quot;GSM3229233_200598350080_R05C01&quot; &quot;GSM3229234_200598350080_R07C01&quot;
+## [17] &quot;GSM3228624_200590490052_R03C01&quot; &quot;GSM3228904_200598350005_R04C01&quot;
+## [19] &quot;GSM3228905_200598350005_R05C01&quot; &quot;GSM3228906_200598350005_R07C01&quot;
+## [21] &quot;GSM3228922_200598350011_R08C01&quot; &quot;GSM3228948_200598350018_R05C01&quot;
+## [23] &quot;GSM3228984_200598350031_R01C01&quot; &quot;GSM3228985_200598350031_R03C01&quot;
+## [25] &quot;GSM3228986_200598350031_R06C01&quot; &quot;GSM3228987_200598350031_R08C01&quot;
+## [27] &quot;GSM3229098_200598350076_R01C01&quot; &quot;GSM3229099_200598350076_R04C01&quot;
+## [29] &quot;GSM3229100_200598350076_R05C01&quot; &quot;GSM3229126_200598350080_R01C01&quot;
+## [31] &quot;GSM3229128_200598350080_R06C01&quot; &quot;GSM3229129_200598350080_R08C01&quot;</code></pre>
+<div class="sourceCode" id="cb83"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb83-1" data-line-number="1">targets &lt;-<span class="st"> </span>targets[<span class="op">!</span><span class="kw">rownames</span>(targets) <span class="op">%in%</span><span class="st"> </span>removed_ids, ]</a>
+<a class="sourceLine" id="cb83-2" data-line-number="2"></a>
+<a class="sourceLine" id="cb83-3" data-line-number="3">RGset &lt;-<span class="st"> </span>RGset[,<span class="kw">colnames</span>(RGset) <span class="op">%in%</span><span class="st"> </span><span class="kw">rownames</span>(targets)]</a>
+<a class="sourceLine" id="cb83-4" data-line-number="4">betas &lt;-<span class="st"> </span>betas[,<span class="kw">colnames</span>(betas) <span class="op">%in%</span><span class="st"> </span><span class="kw">rownames</span>(targets)]</a>
+<a class="sourceLine" id="cb83-5" data-line-number="5"></a>
+<a class="sourceLine" id="cb83-6" data-line-number="6">RGset</a></code></pre></div>
+<pre><code>## class: RGChannelSetExtended 
+## dim: 1052641 598 
+## metadata(0):
+## assays(5): Green Red GreenSD RedSD NBeads
+## rownames(1052641): 1600101 1600111 ... 99810990 99810992
+## rowData names(0):
+## colnames(598): GSM3228563_200550980002_R02C01
+##   GSM3228564_200550980002_R03C01 ... GSM3229238_200598360007_R07C01
+##   GSM3229239_200598350080_R03C01
+## colData names(15): sample_ID geo_accession ... filenames beta_outlier
+## Annotation
+##   array: IlluminaHumanMethylationEPIC
+##   annotation: 20a1.hg38</code></pre>
+<p>In data with sample relationships, this would be shown in the above graph as green or black clusters<sup>12</sup>. It is important to carry out this type of visualization before probe-filtering as otherwise the genotyping will be based on very few SNPs.</p>
+<hr />
+</div>
+</div>
 </div>
 
 
@@ -660,7 +1070,7 @@ div.tocify {
 
 // add bootstrap table styles to pandoc tables
 function bootstrapStylePandocTables() {
-  $('tr.header').parent('thead').parent('table').addClass('table table-condensed');
+  $('tr.odd').parent('tbody').parent('table').addClass('table table-condensed');
 }
 $(document).ready(function () {
   bootstrapStylePandocTables();
@@ -678,7 +1088,7 @@ $(document).ready(function () {
 
 $(document).ready(function () {
   $('.tabset-dropdown > .nav-tabs > li').click(function () {
-    $(this).parent().toggleClass('nav-tabs-open')
+    $(this).parent().toggleClass('nav-tabs-open');
   });
 });
 </script>
@@ -687,6 +1097,9 @@ $(document).ready(function () {
 
 <script>
 $(document).ready(function ()  {
+
+    // temporarily add toc-ignore selector to headers for the consistency with Pandoc
+    $('.unlisted.unnumbered').addClass('toc-ignore')
 
     // move toc-ignore selectors from section div to header
     $('div.section.toc-ignore')
